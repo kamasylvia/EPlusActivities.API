@@ -15,6 +15,7 @@ namespace IdentityServer.Extensions.Validators
         public string GrantType => "sms";
         public SMSGrantValidator(IVerificationCodeService verificationCodeService, IUserService userService)
         {
+            System.Console.WriteLine("SMS Constructor");
             _verificationCodeService = verificationCodeService;
             _userService = userService;
         }
@@ -22,8 +23,9 @@ namespace IdentityServer.Extensions.Validators
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
+            System.Console.WriteLine("SMS Working");
             var phone = context.Request.Raw["phone"];
-            var code = context.Request.Raw["sms_verification_code"];
+            var code = context.Request.Raw["code"];
             var error = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
 
             if (!string.IsNullOrEmpty(phone) && !string.IsNullOrEmpty(code))
@@ -46,10 +48,7 @@ namespace IdentityServer.Extensions.Validators
             else
             {
                 context.Result = error;
-
             }
-
         }
-
     }
 }

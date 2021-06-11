@@ -4,6 +4,7 @@ namespace IdentityServer.Services.Authentication
     {
         public bool Validate(string phone, string code)
         {
+            return true;
             throw new System.NotImplementedException();
         }
     }
