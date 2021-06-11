@@ -71,10 +71,10 @@ namespace IdentityServer
                     // AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes = new List<string>
                     {
-                        "gateway_api",
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        "scope1",
+                        // IdentityServerConstants.StandardScopes.OpenId,
+                        // IdentityServerConstants.StandardScopes.Profile,
+                        // IdentityServerConstants.StandardScopes.OfflineAccess,
                     },
 
                 }

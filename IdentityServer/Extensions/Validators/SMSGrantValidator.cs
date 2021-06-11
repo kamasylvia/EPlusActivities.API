@@ -31,15 +31,18 @@ namespace IdentityServer.Extensions.Validators
             if (!string.IsNullOrEmpty(phone) && !string.IsNullOrEmpty(code))
             {
                 //用户检查
-                _verificationCodeService.Validate(phone, code);
+                var userExists = _verificationCodeService.Validate(phone, code);
+                System.Console.WriteLine($"User exists: {userExists}");
                 //用户注册
                 var userId = await _userService.CheckOrCreate(phone);
+                /*
                 if (userId <= 0)
                 {
                     context.Result = error;
                     return;
                 }
 
+                */
                 context.Result = new GrantValidationResult(
                         subject: userId.ToString(),
                         authenticationMethod: GrantType

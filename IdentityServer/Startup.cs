@@ -9,6 +9,7 @@ using IdentityServer.Entities;
 using IdentityServer.Extensions.Validators;
 using IdentityServer.Services.Authentication;
 using IdentityServer4;
+using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -74,10 +75,11 @@ namespace IdentityServer
                 .AddAspNetIdentity<ApplicationUser>()
                 // SMS Validator
                 .AddExtensionGrantValidator<SMSGrantValidator>()
-                // this adds the config data from DB (clients, resources, CORS)
+                // this adds the config data from memory (clients, resources, CORS)
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients);
+                // this adds the config data from DB (clients, resources, CORS)
                 /*
                 .AddConfigurationStore(options =>
                 {
