@@ -15,20 +15,17 @@ namespace IdentityServer.Helpers
         public static string GetCode(string phoneNumber)
         {
             System.Console.WriteLine("GetCode working");
-            Totp totp;
-            if (_totps.TryGetValue(phoneNumber, out totp))
-            {
-                if (totp.RemainingSeconds(DateTime.Now) <= 0)
-                {
-                    System.Console.WriteLine("Enter iff");
-                    return totp.ComputeTotp(DateTime.Now);
-                }
-            }
-
             // 生成验证码
             var secretKey = KeyGeneration.GenerateRandomKey(20);
-            // Totp() 的构造函数中加入参数 totpSize 可以设定验证码长度，默认是 6 位数。
-            totp = new Totp(secretKey: secretKey, mode: OtpHashMode.Sha512);
+
+            /// <summary>
+            /// Totp() 构造函数参数说明：
+            /// </summary>
+            /// <param name="step">验证码有效期。单位为秒，默认是 30 秒。推荐值为 300-600，过短的有效期会导致验证失败。</param>
+            /// <param name="totpSize">验证码长度。默认为 6 位数。</param>
+            /// <returns></returns>
+            var totp = new Totp(secretKey: secretKey, mode: OtpHashMode.Sha512, step: 300);
+            
             _totps[phoneNumber] = totp;
             return totp.ComputeTotp(DateTime.Now);
         }
@@ -37,10 +34,11 @@ namespace IdentityServer.Helpers
         {
             Totp totp;
             long timeWindowUsed;
+            System.Console.WriteLine("Validate is working");
             if (_totps.TryGetValue(phoneNumber, out totp))
             {
                 _totps.Remove(phoneNumber);
-                return totp.VerifyTotp(code, out timeWindowUsed);
+                return totp.VerifyTotp(DateTime.Now, code, out timeWindowUsed);
             }
             return false;
         }

@@ -31,7 +31,7 @@ namespace IdentityServer.Extensions.Grants
                 var code = context.Request.Raw["code"];
 
                 // 通过openId和unionId 参数来进行数据库的相关验证
-                // var claimList = await ValidateUserAsync(phoneNumber);
+                var claimList = await ValidateUserAsync(phoneNumber, code);
 
                 //授权通过返回
                 context.Result = new GrantValidationResult
@@ -62,9 +62,14 @@ namespace IdentityServer.Extensions.Grants
         {
             var validate = TotpHelper.Validate(phoneNumber, code);
 
-            if (!validate)
+            if (validate)
             {
                 //注册用户
+                System.Console.WriteLine("验证通过！");
+            }
+            else
+            {
+                System.Console.WriteLine("验证失败！");
             }
 
             return new List<Claim>()

@@ -61,7 +61,7 @@ namespace IdentityServer.Controllers
             var uriString = "http://10.10.34.202:20015/api/sms/message/send";
             var contentObject = new
             {
-                messageContent = $"【农工商】验证码: {code}。您正在验证农工商用户，感谢您的支持！",
+                messageContent = $"【农工商】验证码: {code}。您正在验证农工商用户，10 分钟内同一手机号最多发送 3 次验证码，每个验证码有效期为 5 分钟，感谢您的支持！",
                 messageKey = "sms_test",
                 messageTarget = phoneNumber
             };
