@@ -1,14 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer.Entities;
+using IdentityServer.Helpers;
 using IdentityServer4.Validation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityServer.Extensions.Grants
 {
     public class SMSGrantValidator : IExtensionGrantValidator
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+        public SMSGrantValidator(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
         public string GrantType => CustomGrantType.SMSVerification;
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
@@ -17,19 +27,20 @@ namespace IdentityServer.Extensions.Grants
             try
             {
                 // 参数获取
-                var phone = context.Request.Raw["phone"];
+                var phoneNumber = context.Request.Raw["phone_number"];
                 var code = context.Request.Raw["code"];
 
                 // 通过openId和unionId 参数来进行数据库的相关验证
-                var claimList = await ValidateUserAsync(phone);
+                // var claimList = await ValidateUserAsync(phoneNumber);
 
                 //授权通过返回
                 context.Result = new GrantValidationResult
                 (
-                    subject: phone,
+                    subject: phoneNumber,
                     authenticationMethod: "SMS",
-                    claims: claimList.ToArray()
+                    claims: new List<Claim>()
                 );
+
             }
             catch (Exception ex)
             {
@@ -41,31 +52,24 @@ namespace IdentityServer.Extensions.Grants
             }
         }
 
-
         /// <summary>
         /// 验证用户
         /// </summary>
         /// <param name="loginName"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        private async Task<List<Claim>> ValidateUserAsync(string phone)
+        private async Task<List<Claim>> ValidateUserAsync(string phoneNumber, string code)
         {
-            // 数据库查询
-            var user = new ApplicationUser();
+            var validate = TotpHelper.Validate(phoneNumber, code);
 
-            await Task.Run(() =>
-            {
-                // TODO
-            });
-
-            if (user == null)
+            if (!validate)
             {
                 //注册用户
             }
 
             return new List<Claim>()
             {
-                new Claim(ClaimTypes.MobilePhone, phone),
+                new Claim(ClaimTypes.MobilePhone, phoneNumber),
             };
         }
     }

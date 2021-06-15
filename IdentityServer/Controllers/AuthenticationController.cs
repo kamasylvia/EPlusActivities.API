@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using IdentityServer.DTOs;
 using IdentityServer.Entities;
+using IdentityServer.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -38,38 +39,35 @@ namespace IdentityServer.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("verification")]
-        public async Task<IActionResult> GetVerificationCode([FromBody] VerifyDto verifyDto)
+        [HttpPost("verification-code")]
+        public async Task<IActionResult> GetVerificationCodeAsync([FromBody] VerificationCodeDto verificationCodeDto)
         {
-            System.Console.WriteLine("GetVerificationCode is working");
-            var secretKey = KeyGeneration.GenerateRandomKey(20);
-            var totp = new Totp(secretKey: secretKey, mode: OtpHashMode.Sha512);
-            var code = totp.ComputeTotp(DateTime.Now);
-            var response = await SendVerificationCode(verifyDto.PhoneNumber, code);
+            var phone = verificationCodeDto.PhoneNumber;
+            var code = TotpHelper.GetCode(phone);
+
+            var response = await SendVerificationCodeAsync(phone, code);
 
             var user = new ApplicationUser
             {
-                UserName = verifyDto.PhoneNumber,
-                PhoneNumber = verifyDto.PhoneNumber
+                UserName = phone,
+                PhoneNumber = phone
             };
-
 
             return Ok(response);
         }
 
-        private async Task<IActionResult> SendVerificationCode(string phone, string code)
+        private async Task<IActionResult> SendVerificationCodeAsync(string phoneNumber, string code)
         {
-            System.Console.WriteLine($"Phone: {phone}, code: {code}");
             var uriString = "http://10.10.34.202:20015/api/sms/message/send";
             var contentObject = new
             {
                 messageContent = $"【农工商】验证码: {code}。您正在验证农工商用户，感谢您的支持！",
                 messageKey = "sms_test",
-                messageTarget = phone
+                messageTarget = phoneNumber
             };
-            var httpContent = JsonContent.Create(contentObject);
+            var jsonContent = JsonContent.Create(contentObject);
             var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.PostAsync(uriString, httpContent);
+            var response = await httpClient.PostAsync(uriString, jsonContent);
 
             return Ok(response);
         }

@@ -9,7 +9,6 @@ using IdentityServer.Data;
 using IdentityServer.Entities;
 using IdentityServer.Extensions.Grants;
 using IdentityServer.Helpers;
-using IdentityServer.Services.Authentication;
 using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +44,7 @@ namespace IdentityServer
 
 
             services.AddControllers();
+            services.AddHttpClient();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "IdentityServer", Version = "v1" });
@@ -58,10 +58,6 @@ namespace IdentityServer
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddSingleton(new HttpClient());
-            services.AddHttpClient();
-            services.AddScoped<IVerificationCodeService, VerificationCodeService>()
-                .AddScoped<IUserService, UserService>();
 
             var builder = services.AddIdentityServer(options =>
             {
@@ -107,7 +103,7 @@ namespace IdentityServer
             {
                 builder.AddDeveloperSigningCredential();
             }
-            
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 

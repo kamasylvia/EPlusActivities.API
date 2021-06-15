@@ -8,7 +8,7 @@ namespace IdentityServer.Helpers
     {
         public AutoMapperProfile()
         {
-            CreateMap<VerifyDto, ApplicationUser>();
+            CreateMap<VerificationCodeDto, ApplicationUser>();
         }
     }
 }
