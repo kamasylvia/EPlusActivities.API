@@ -4,11 +4,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using IdentityServer.Data;
 using IdentityServer.Entities;
-using IdentityServer.Extensions.Validators;
+using IdentityServer.Extensions.Grants;
+using IdentityServer.Helpers;
 using IdentityServer.Services.Authentication;
-using IdentityServer4;
 using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +59,7 @@ namespace IdentityServer
                 .AddDefaultTokenProviders();
 
             services.AddSingleton(new HttpClient());
+            services.AddHttpClient();
             services.AddScoped<IVerificationCodeService, VerificationCodeService>()
                 .AddScoped<IUserService, UserService>();
 
@@ -76,28 +78,28 @@ namespace IdentityServer
                 // SMS Validator
                 .AddExtensionGrantValidator<SMSGrantValidator>()
                 // this adds the config data from memory (clients, resources, CORS)
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryClients(Config.Clients);
-                // this adds the config data from DB (clients, resources, CORS)
-                /*
-                .AddConfigurationStore(options =>
-                {
-                    options.ConfigureDbContext = builder =>
-                        builder.UseMySql(connectionString,
-                            sql => sql.MigrationsAssembly(migrationsAssembly));
-                })
-                // this adds the operational data from DB (codes, tokens, consents)
-                .AddOperationalStore(options =>
-                {
-                    options.ConfigureDbContext = builder =>
-                        builder.UseMySql(connectionString,
-                            sql => sql.MigrationsAssembly(migrationsAssembly));
+                .AddInMemoryIdentityResources(IS4Config.IdentityResources)
+                .AddInMemoryApiScopes(IS4Config.ApiScopes)
+                .AddInMemoryClients(IS4Config.Clients);
+            // this adds the config data from DB (clients, resources, CORS)
+            /*
+            .AddConfigurationStore(options =>
+            {
+                options.ConfigureDbContext = builder =>
+                    builder.UseMySql(connectionString,
+                        sql => sql.MigrationsAssembly(migrationsAssembly));
+            })
+            // this adds the operational data from DB (codes, tokens, consents)
+            .AddOperationalStore(options =>
+            {
+                options.ConfigureDbContext = builder =>
+                    builder.UseMySql(connectionString,
+                        sql => sql.MigrationsAssembly(migrationsAssembly));
 
-                    // this enables automatic token cleanup. this is optional.
-                    options.EnableTokenCleanup = true;
-                });
-                */
+                // this enables automatic token cleanup. this is optional.
+                options.EnableTokenCleanup = true;
+            });
+            */
 
 
             // not recommended for production - you need to store your key material somewhere secure
@@ -105,7 +107,8 @@ namespace IdentityServer
             {
                 builder.AddDeveloperSigningCredential();
             }
-
+            
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
