@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using AutoMapper;
+using IdentityServer.Configuration;
 using IdentityServer.Data;
 using IdentityServer.Entities;
 using IdentityServer.Extensions.Grants;
-using IdentityServer.Helpers;
+using IdentityServer.Services;
 using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +45,7 @@ namespace IdentityServer
 
             services.AddControllers();
             services.AddHttpClient();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "IdentityServer", Version = "v1" });
@@ -57,6 +58,11 @@ namespace IdentityServer
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            // 启用数据库仓库
+            services.AddTransient<IUserRepository, UserRepository>();
+            // 启用短信服务
+            services.AddTransient<ISmsService, SmsService>();
+
 
 
             var builder = services.AddIdentityServer(options =>
@@ -72,11 +78,11 @@ namespace IdentityServer
                 // .AddTestUsers(TestUsers.Users)
                 .AddAspNetIdentity<ApplicationUser>()
                 // SMS Validator
-                .AddExtensionGrantValidator<SMSGrantValidator>()
+                .AddExtensionGrantValidator<SmsGrantValidator>()
                 // this adds the config data from memory (clients, resources, CORS)
-                .AddInMemoryIdentityResources(IS4Config.IdentityResources)
-                .AddInMemoryApiScopes(IS4Config.ApiScopes)
-                .AddInMemoryClients(IS4Config.Clients);
+                .AddInMemoryIdentityResources(IdentityServer4Config.IdentityResources)
+                .AddInMemoryApiScopes(IdentityServer4Config.ApiScopes)
+                .AddInMemoryClients(IdentityServer4Config.Clients);
             // this adds the config data from DB (clients, resources, CORS)
             /*
             .AddConfigurationStore(options =>
