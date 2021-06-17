@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer.Constants.Grants;
+using IdentityServer.Constants;
 using IdentityServer.Entities;
 using IdentityServer.Helpers;
 using IdentityServer4.Models;
@@ -13,21 +13,25 @@ using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityServer.Extensions.Grants
 {
     public class SmsGrantValidator : IExtensionGrantValidator
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
         private readonly PhoneNumberTokenProvider<ApplicationUser> _phoneNumberTokenProvider;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public string GrantType => CustomGrantType.SMS;
         public SmsGrantValidator(
+            IConfiguration configuration,
             PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager)
         {
+            _configuration = configuration;
             _phoneNumberTokenProvider = phoneNumberTokenProvider;
             _signInManager = signInManager;
             _userManager = userManager;
@@ -45,6 +49,7 @@ namespace IdentityServer.Extensions.Grants
 
                 var requireRegister = false;
                 var user = await _userManager.FindByNameAsync(phoneNumber);
+                var secret = new Secret(_configuration["Secrets:DefaultSecret"]).Value;
 
                 if (user == null)
                 {
@@ -52,7 +57,7 @@ namespace IdentityServer.Extensions.Grants
                     {
                         UserName = phoneNumber,
                         PhoneNumber = phoneNumber,
-                        SecurityStamp = new Secret("secret").Value + phoneNumber.Sha256()
+                        SecurityStamp = secret + phoneNumber.Sha256()
                     };
                     requireRegister = true;
                 }

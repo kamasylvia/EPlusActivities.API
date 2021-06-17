@@ -5,19 +5,23 @@ using IdentityServer.DTOs;
 using IdentityServer.Entities;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityServer.Services
 {
     public class SmsService : ISmsService
     {
+        private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public SmsService(
+            IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
+            _configuration = configuration;
             _httpClientFactory = httpClientFactory;
         }
 
@@ -27,7 +31,8 @@ namespace IdentityServer.Services
                 {
                     UserName = smsDto.PhoneNumber,
                     PhoneNumber = smsDto.PhoneNumber,
-                    SecurityStamp = new Secret("secret").Value + smsDto.PhoneNumber.Sha256()
+                    SecurityStamp = new Secret(_configuration["Secrets:DefaultSecret"]).Value
+                                    + smsDto.PhoneNumber.Sha256()
                 };
 
         public async Task<HttpResponseMessage> SendAsync(string phoneNumber, string token)

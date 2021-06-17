@@ -1,4 +1,4 @@
-namespace IdentityServer.Constants.Grants
+namespace IdentityServer.Constants
 {
     public struct CustomGrantType
     {
