@@ -59,7 +59,7 @@ namespace IdentityServer.Controllers
         [HttpPost("sms")]
         public async Task<IActionResult> GetVerificationCodeAsync([FromBody] SmsDto smsDto)
         {
-            var user = _mapper.Map<ApplicationUser>(smsDto);
+            var user = await _smsService.GetSmsUserAsync(smsDto);
             var phoneNumber = smsDto.PhoneNumber;
 
             // 用 TotpHelper 生成的验证码可以设定有效期和更新时间
@@ -73,7 +73,6 @@ namespace IdentityServer.Controllers
             // 有效期：9 分钟
             // 重新生成周期：3 分钟
             var token = await _phoneNumberTokenProvider.GenerateAsync("sms", _userManager, user);
-
             var response = await _smsService.SendAsync(phoneNumber, token);
             return Ok(response);
         }

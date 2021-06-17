@@ -1,18 +1,34 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using IdentityServer.DTOs;
+using IdentityServer.Entities;
+using IdentityServer4.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityServer.Services
 {
     public class SmsService : ISmsService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public SmsService(IHttpClientFactory httpClientFactory)
+        public SmsService(
+            IHttpClientFactory httpClientFactory,
+            UserManager<ApplicationUser> userManager)
         {
+            _userManager = userManager;
             _httpClientFactory = httpClientFactory;
         }
 
+        public async Task<ApplicationUser> GetSmsUserAsync(SmsDto smsDto) =>
+            await _userManager.FindByNameAsync(smsDto.PhoneNumber)
+                ?? new ApplicationUser
+                {
+                    UserName = smsDto.PhoneNumber,
+                    PhoneNumber = smsDto.PhoneNumber,
+                    SecurityStamp = new Secret("secret").Value + smsDto.PhoneNumber.Sha256()
+                };
 
         public async Task<HttpResponseMessage> SendAsync(string phoneNumber, string token)
         {
@@ -25,9 +41,7 @@ namespace IdentityServer.Services
             };
             var jsonContent = JsonContent.Create(contentObject);
             var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.PostAsync(uriString, jsonContent);
-
-            return response;
+            return await httpClient.PostAsync(uriString, jsonContent);
         }
     }
 }

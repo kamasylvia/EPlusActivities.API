@@ -44,8 +44,7 @@ namespace IdentityServer.Extensions.Grants
                 // var channel = context.Request.Raw["channel"];
 
                 var requireRegister = false;
-                var user = await _userManager.Users.SingleOrDefaultAsync(x =>
-                    x.PhoneNumber == _userManager.NormalizeName(phoneNumber));
+                var user = await _userManager.FindByNameAsync(phoneNumber);
 
                 if (user == null)
                 {
@@ -58,7 +57,6 @@ namespace IdentityServer.Extensions.Grants
                     requireRegister = true;
                 }
 
-
                 // 验证
                 // var validationResult = TotpHelper.Validate(phoneNumber, code);
                 var validationResult =
@@ -68,7 +66,6 @@ namespace IdentityServer.Extensions.Grants
                         _userManager,
                         user);
 
-                System.Console.WriteLine($"验证结果：{validationResult}");
 
                 if (!validationResult)
                 {
@@ -83,15 +80,17 @@ namespace IdentityServer.Extensions.Grants
                 {
                     user.PhoneNumberConfirmed = true;
                     var creationResult = await _userManager.CreateAsync(user);
-                    if (creationResult != IdentityResult.Success)
+                    if (!creationResult.Succeeded)
                     {
                         context.Result = new GrantValidationResult(
                             TokenRequestErrors.InvalidGrant,
-                            "Failed to create a new User.");
+                            "Failed to sign up.");
                         return;
                     }
                 }
 
+                // 登录
+                await _signInManager.SignInAsync(user, true);
 
                 //授权通过返回
                 context.Result = new GrantValidationResult(

@@ -12,11 +12,7 @@ namespace IdentityServer.Configuration
             CreateMap<SmsDto, ApplicationUser>()
                 .ForMember(dest => dest.UserName,
                     opt => opt.MapFrom(
-                        src => src.PhoneNumber))
-                .ForMember(dest => dest.SecurityStamp,
-                    opt => opt.MapFrom(
-                        src => new Secret("secret", null).Value + src.PhoneNumber.Sha256()
-                    ));
+                        src => src.PhoneNumber));
         }
     }
 }
