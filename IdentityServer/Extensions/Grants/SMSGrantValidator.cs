@@ -5,7 +5,6 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer.Constants;
 using IdentityServer.Entities;
 using IdentityServer.Helpers;
 using IdentityServer4.Models;
@@ -24,7 +23,7 @@ namespace IdentityServer.Extensions.Grants
         private readonly PhoneNumberTokenProvider<ApplicationUser> _phoneNumberTokenProvider;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public string GrantType => CustomGrantType.SMS;
+        public string GrantType => OidcConstants.AuthenticationMethods.ConfirmationBySms;
         public SmsGrantValidator(
             IConfiguration configuration,
             PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider,
@@ -98,40 +97,20 @@ namespace IdentityServer.Extensions.Grants
                 await _signInManager.SignInAsync(user, true);
 
                 //授权通过返回
+                var claims = new List<Claim>()
+                    {
+                        new Claim(JwtClaimTypes.Role,"customer")
+                    };
+
                 context.Result = new GrantValidationResult(
-                    user.Id,
-                    OidcConstants.AuthenticationMethods.ConfirmationBySms);
+                    subject: user.Id,
+                    authenticationMethod: OidcConstants.AuthenticationMethods.ConfirmationBySms,
+                    claims: claims);
             }
             catch (Exception ex)
             {
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
             }
-        }
-
-        /// <summary>
-        /// 验证用户
-        /// </summary>
-        /// <param name="loginName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        private async Task<List<Claim>> ValidateUserAsync(string phoneNumber, string code)
-        {
-            var validation = TotpHelper.Validate(phoneNumber, code);
-
-            if (validation)
-            {
-                // 注册或登录，返回 ID
-                System.Console.WriteLine("验证通过！");
-            }
-            else
-            {
-                System.Console.WriteLine("验证失败！");
-            }
-
-            return new List<Claim>()
-            {
-                new Claim(ClaimTypes.MobilePhone, phoneNumber),
-            };
         }
     }
 }

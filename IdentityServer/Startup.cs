@@ -82,6 +82,7 @@ namespace IdentityServer
                 // this adds the config data from memory (clients, resources, CORS)
                 .AddInMemoryIdentityResources(IdentityServer4Config.IdentityResources)
                 .AddInMemoryApiScopes(IdentityServer4Config.ApiScopes)
+                .AddInMemoryApiResources(IdentityServer4Config.ApiResources)
                 .AddInMemoryClients(IdentityServer4Config.Clients);
             // this adds the config data from DB (clients, resources, CORS)
             /*

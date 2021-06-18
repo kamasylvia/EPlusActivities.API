@@ -3,6 +3,7 @@
 
 
 using System.Collections.Generic;
+using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 
@@ -20,9 +21,24 @@ namespace IdentityServer.Configuration
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("gateway_api","user service"),
+                new ApiScope("eplus"),
                 new ApiScope("scope1"),
                 new ApiScope("scope2"),
+            };
+
+        public static IEnumerable<ApiResource> ApiResources =>
+            new ApiResource[]
+            {
+                new ApiResource("eplus","E+ 小程序签到抽奖活动 API")
+                {
+                    // !!!重要
+                    Scopes = { "eplus"}
+                },
+                new ApiResource("api2","#api2")
+                {
+                    // !!!重要
+                    Scopes = { "scope2"}
+                },
             };
 
         public static IEnumerable<Client> Clients =>
@@ -37,7 +53,7 @@ namespace IdentityServer.Configuration
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
 
-                    AllowedScopes = { "scope1" }
+                    AllowedScopes = { "scope2" }
                 },
 
                 // interactive client using code flow + pkce
@@ -65,13 +81,13 @@ namespace IdentityServer.Configuration
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     AllowOfflineAccess = true,
                     RequireClientSecret = false,
-                    AccessTokenLifetime = 60*60,
+                    AccessTokenLifetime = 60*60*24,
                     SlidingRefreshTokenLifetime =  2592000,
-                    AllowedGrantTypes = {"sms"},
+                    AllowedGrantTypes = {OidcConstants.AuthenticationMethods.ConfirmationBySms},
                     // AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes = new List<string>
                     {
-                        "scope1",
+                        "eplus",
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
