@@ -4,10 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using IdentityServer.Configuration;
 using IdentityServer.Data;
 using IdentityServer.Entities;
-using IdentityServer.Extensions.Grants;
+using IdentityServer.IS4;
 using IdentityServer.Services;
 using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Builder;
@@ -55,11 +54,11 @@ namespace IdentityServer
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(connectionString));
             // 启用 Identity 服务 添加指定的用户和角色类型的默认标识系统配置
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             // 启用数据库仓库
-            services.AddTransient<IUserRepository, UserRepository>();
+            // services.AddTransient<IUserRepository, UserRepository>();
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
 
@@ -77,13 +76,14 @@ namespace IdentityServer
             })
                 // .AddTestUsers(TestUsers.Users)
                 .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<ProfileService>()
                 // SMS Validator
                 .AddExtensionGrantValidator<SmsGrantValidator>()
                 // this adds the config data from memory (clients, resources, CORS)
-                .AddInMemoryIdentityResources(IdentityServer4Config.IdentityResources)
-                .AddInMemoryApiScopes(IdentityServer4Config.ApiScopes)
-                .AddInMemoryApiResources(IdentityServer4Config.ApiResources)
-                .AddInMemoryClients(IdentityServer4Config.Clients);
+                .AddInMemoryIdentityResources(Config.IdentityResources)
+                .AddInMemoryApiScopes(Config.ApiScopes)
+                .AddInMemoryApiResources(Config.ApiResources)
+                .AddInMemoryClients(Config.Clients);
             // this adds the config data from DB (clients, resources, CORS)
             /*
             .AddConfigurationStore(options =>

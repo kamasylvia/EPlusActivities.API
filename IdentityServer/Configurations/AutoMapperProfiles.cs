@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using AutoMapper;
 using IdentityServer.DTOs;
 using IdentityServer.Entities;
@@ -12,7 +13,12 @@ namespace IdentityServer.Configuration
             CreateMap<SmsDto, ApplicationUser>()
                 .ForMember(dest => dest.UserName,
                     opt => opt.MapFrom(
-                        src => src.PhoneNumber));
+                        src => src.PhoneNumber
+                    ))
+                .ForMember(dest => dest.NormalizedUserName,
+                    opt => opt.MapFrom(
+                        src => src.PhoneNumber
+                    ));
         }
     }
 }

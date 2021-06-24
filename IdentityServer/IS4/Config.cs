@@ -3,41 +3,42 @@
 
 
 using System.Collections.Generic;
+using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 
-namespace IdentityServer.Configuration
+namespace IdentityServer.IS4
 {
-    public static class IdentityServer4Config
+    public static class Config
     {
         public static IEnumerable<IdentityResource> IdentityResources =>
                    new IdentityResource[]
                    {
                         new IdentityResources.OpenId(),
                         new IdentityResources.Profile(),
+                        new IdentityResource(
+                            name: "test.profile.name",
+                            displayName: "Test profile name",
+                            userClaims: new [] {"role", "policy"}
+                        )
                    };
 
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("eplus"),
+                new ApiScope("eplus.test.scope"),
                 new ApiScope("scope1"),
-                new ApiScope("scope2"),
+                new ApiScope("client.test.scope"),
             };
 
         public static IEnumerable<ApiResource> ApiResources =>
             new ApiResource[]
             {
-                new ApiResource("eplus","E+ 小程序签到抽奖活动 API")
+                new ApiResource("eplus.api","E+ 小程序签到抽奖活动 API")
                 {
                     // !!!重要
-                    Scopes = { "eplus"}
-                },
-                new ApiResource("api2","#api2")
-                {
-                    // !!!重要
-                    Scopes = { "scope2"}
+                    Scopes = { "eplus.test.scope"}
                 },
             };
 
@@ -53,7 +54,7 @@ namespace IdentityServer.Configuration
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
 
-                    AllowedScopes = { "scope2" }
+                    AllowedScopes = { "eplus.test.scope" }
                 },
 
                 // interactive client using code flow + pkce
@@ -69,7 +70,7 @@ namespace IdentityServer.Configuration
                     PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
 
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "scope2" }
+                    AllowedScopes = { "openid", "profile", "client.test" }
                 },
 
                 // interactive client using sms
@@ -87,7 +88,7 @@ namespace IdentityServer.Configuration
                     // AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes = new List<string>
                     {
-                        "eplus",
+                        "eplus.test.scope",
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,

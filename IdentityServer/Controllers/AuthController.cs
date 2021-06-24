@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using IdentityModel;
 using IdentityServer.DTOs;
 using IdentityServer.Entities;
 using IdentityServer.Helpers;
@@ -29,7 +30,6 @@ namespace IdentityServer.Controllers
         private readonly PhoneNumberTokenProvider<ApplicationUser> _phoneNumberTokenProvider;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMapper _mapper;
 
         public AuthController(
@@ -72,7 +72,11 @@ namespace IdentityServer.Controllers
             // 缺点：有效期和更新时间固定
             // 有效期：9 分钟
             // 重新生成周期：3 分钟
-            var token = await _phoneNumberTokenProvider.GenerateAsync("sms", _userManager, user);
+            var token = await _phoneNumberTokenProvider.GenerateAsync(
+                OidcConstants.AuthenticationMethods.ConfirmationBySms,
+                _userManager,
+                user);
+                
             var response = await _smsService.SendAsync(phoneNumber, token);
             return Ok(response);
         }

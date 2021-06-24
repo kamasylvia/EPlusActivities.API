@@ -1,10 +1,13 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using AutoMapper;
 using IdentityServer.DTOs;
 using IdentityServer.Entities;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace IdentityServer.Services
@@ -13,27 +16,46 @@ namespace IdentityServer.Services
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public SmsService(
             IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
+            IMapper mapper,
             UserManager<ApplicationUser> userManager)
         {
+            _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<ApplicationUser> GetSmsUserAsync(SmsDto smsDto) =>
-            await _userManager.FindByNameAsync(smsDto.PhoneNumber)
-                ?? new ApplicationUser
-                {
-                    UserName = smsDto.PhoneNumber,
-                    PhoneNumber = smsDto.PhoneNumber,
-                    SecurityStamp = new Secret(_configuration["Secrets:DefaultSecret"]).Value
-                                    + smsDto.PhoneNumber.Sha256()
-                };
+        public async Task<ApplicationUser> GetSmsUserAsync(SmsDto smsDto)
+        // =>
+        // await _userManager.Users.SingleOrDefaultAsync(x =>
+        //     x.PhoneNumber == smsDto.PhoneNumber)
+        //     ?? new ApplicationUser
+        //     {
+        //         UserName = smsDto.PhoneNumber,
+        //         PhoneNumber = smsDto.PhoneNumber,
+        //         SecurityStamp = new Secret(_configuration["Secrets:DefaultSecret"]).Value
+        //                         + smsDto.PhoneNumber.Sha256()
+        //     };
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(x =>
+                x.PhoneNumber == smsDto.PhoneNumber);
+
+            if (user == null)
+            {
+                user = _mapper.Map<ApplicationUser>(smsDto);
+                user.SecurityStamp = new Secret(_configuration["Secrets:DefaultSecret"]).Value
+                    + smsDto.PhoneNumber.Sha256();
+            }
+
+            System.Console.WriteLine($"User in SmsService: {user}");
+            return user;
+        }
 
         public async Task<HttpResponseMessage> SendAsync(string phoneNumber, string token)
         {
