@@ -8,7 +8,7 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 
-namespace IdentityServer.IS4
+namespace EPlusActivities.IS4
 {
     public static class Config
     {

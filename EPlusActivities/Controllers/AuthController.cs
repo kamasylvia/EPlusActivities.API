@@ -6,20 +6,18 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using IdentityModel;
-using IdentityServer.DTOs;
-using IdentityServer.Entities;
-using IdentityServer.Helpers;
-using IdentityServer.Services;
+using EPlusActivities.DTOs;
+using EPlusActivities.Entities;
+using EPlusActivities.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using OtpNet;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace IdentityServer.Controllers
+namespace EPlusActivities.Controllers
 {
     [Route("api/[controller]")]
     public class AuthController : Controller

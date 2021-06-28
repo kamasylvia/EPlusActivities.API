@@ -3,12 +3,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer.Entities;
+using EPlusActivities.Entities;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 
-namespace IdentityServer.IS4
+namespace EPlusActivities.IS4
 {
     /// <summary>
     /// Often IdentityServer requires identity information about users when creating tokens or when 

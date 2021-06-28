@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using IdentityServer.Entities;
+using EPlusActivities.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityServer.Data
+namespace EPlusActivities.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser,
         ApplicationRole,

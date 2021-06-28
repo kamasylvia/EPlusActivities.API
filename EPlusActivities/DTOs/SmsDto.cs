@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace IdentityServer.DTOs
+namespace EPlusActivities.DTOs
 {
     public class SmsDto
     {

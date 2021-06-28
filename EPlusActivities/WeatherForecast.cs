@@ -1,6 +1,6 @@
 using System;
 
-namespace IdentityServer
+namespace EPlusActivities
 {
     public class WeatherForecast
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace IdentityServer.Entities
+namespace EPlusActivities.Entities
 {
     public class ApplicationRole : IdentityRole
     {

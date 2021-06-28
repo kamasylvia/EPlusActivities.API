@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using IdentityServer.Entities;
+using EPlusActivities.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityServer.Data
+namespace EPlusActivities.Data
 {
     public class UserRepository : IUserRepository
     {

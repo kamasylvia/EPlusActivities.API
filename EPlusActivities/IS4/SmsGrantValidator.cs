@@ -6,8 +6,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer.Entities;
-using IdentityServer.Helpers;
+using EPlusActivities.Entities;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace IdentityServer.IS4
+namespace EPlusActivities.IS4
 {
     public class SmsGrantValidator : IExtensionGrantValidator
     {

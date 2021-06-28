@@ -5,7 +5,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 
 
-namespace IdentityServer.Entities
+namespace EPlusActivities.Entities
 {
     public class ApplicationUser : IdentityUser
     {

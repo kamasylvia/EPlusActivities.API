@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using IdentityServer.Entities;
+using EPlusActivities.Entities;
 
-namespace IdentityServer.Data
+namespace EPlusActivities.Data
 {
     public interface IUserRepository
     {

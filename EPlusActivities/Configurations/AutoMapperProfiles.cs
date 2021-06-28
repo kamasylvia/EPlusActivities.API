@@ -1,10 +1,10 @@
 using System.Collections.Specialized;
 using AutoMapper;
-using IdentityServer.DTOs;
-using IdentityServer.Entities;
+using EPlusActivities.DTOs;
+using EPlusActivities.Entities;
 using IdentityServer4.Models;
 
-namespace IdentityServer.Configuration
+namespace EPlusActivities.Configuration
 {
     public class AutoMapperProfiles : Profile
     {

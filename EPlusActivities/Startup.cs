@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using IdentityServer.Data;
-using IdentityServer.Entities;
-using IdentityServer.IS4;
-using IdentityServer.Services;
+using EPlusActivities.Data;
+using EPlusActivities.Entities;
+using EPlusActivities.IS4;
+using EPlusActivities.Services;
 using IdentityServer4.AspNetIdentity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -21,7 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace IdentityServer
+namespace EPlusActivities
 {
     public class Startup
     {
@@ -76,7 +78,7 @@ namespace IdentityServer
             })
                 // .AddTestUsers(TestUsers.Users)
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddProfileService<ProfileService>()
+                // .AddProfileService<ProfileService>()
                 // SMS Validator
                 .AddExtensionGrantValidator<SmsGrantValidator>()
                 // this adds the config data from memory (clients, resources, CORS)
@@ -111,6 +113,35 @@ namespace IdentityServer
                 builder.AddDeveloperSigningCredential();
             }
 
+            // 受保护的 API 设置
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                    {
+                        //IdentityServer地址
+                        options.Authority = "http://localhost:52537";
+                        //对应Idp中ApiResource的Name
+                        options.Audience = "eplus.api";
+                        //不使用https
+                        options.RequireHttpsMetadata = false;
+                    });
+
+            //基于策略授权
+            services.AddAuthorization(options =>
+                {
+                    options.AddPolicy("EPlusPolicy", builder =>
+                        {
+                            builder.RequireRole("admin", "manager", "customer");
+                            builder.RequireScope("eplus.scope");
+                        });
+                    options.AddPolicy("TestPolicy", builder =>
+                        {
+                            builder.RequireRole("admin", "manager", "customer");
+                            builder.RequireScope("eplus.test.scope");
+                        });
+                });
+
+
+            // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
