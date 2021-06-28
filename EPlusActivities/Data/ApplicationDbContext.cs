@@ -17,6 +17,10 @@ namespace EPlusActivities.Data
         IdentityRoleClaim<string>,
         IdentityUserToken<string>>
     {
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<Prize> Prizes { get; set; }
+        public DbSet<WinningResult> WinningResults { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
           : base(options)
@@ -46,7 +50,30 @@ namespace EPlusActivities.Data
                         .IsRequired();
             });
 
-            // Seed database
+            // one-to-many
+            builder.Entity<ApplicationUser>()
+                   .HasMany(u => u.Addresses)
+                   .WithOne(a => a.User)
+                   .HasForeignKey(a => a.UserId);
+            builder.Entity<ApplicationUser>()
+                   .HasMany(u => u.WinningResults)
+                   .WithOne(a => a.Winner)
+                   .HasForeignKey(a => a.WinnerId);
+
+            // one-to-one
+            builder.Entity<WinningResult>()
+                   .HasOne(result => result.Activity)
+                   .WithOne(activity => activity.WinningResult)
+                   .HasForeignKey<Activity>(activity => activity.WinningResultId);
+            builder.Entity<WinningResult>()
+                   .HasOne(result => result.PrizeItem)
+                   .WithOne(prize => prize.WinningResult)
+                   .HasForeignKey<Prize>(prize => prize.WinningResultId);
+
+
+            /*
+            Seed data
+            */
             var seedUser = new ApplicationUser
             {
                 Id = Guid.NewGuid().ToString(),
@@ -80,6 +107,44 @@ namespace EPlusActivities.Data
                     role.NormalizedName = role.Name.ToUpper();
                     builder.Entity<ApplicationRole>().HasData(role);
                 });
+
+            // Seed others
+            var addressId = Guid.NewGuid().ToString();
+            var prizeId = Guid.NewGuid().ToString();
+            var activityId = Guid.NewGuid().ToString();
+            var resultId = Guid.NewGuid().ToString();
+            builder.Entity<Prize>().HasData(
+                new Prize
+                {
+                    Id = prizeId,
+                    Name = "Seed",
+                    WinningResultId = resultId
+                }
+            );
+            builder.Entity<WinningResult>().HasData(
+                new WinningResult
+                {
+                    Id = resultId,
+                    WinnerId = seedUser.Id,
+                    ActivityId = activityId,
+                    PrizeId = prizeId,
+                }
+            );
+            builder.Entity<Activity>().HasData(
+                new Activity
+                {
+                    Id = activityId,
+                    Name = "Seed",
+                }
+            );
+            builder.Entity<Address>().HasData(
+                new Address
+                {
+                    Id = addressId,
+                    UserId = seedUser.Id,
+                }
+            );
+
         }
     }
 }
