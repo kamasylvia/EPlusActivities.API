@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace EPlusActivities.Entities
 {
     public class Address
     {
+        [Key]
         public string Id { get; set; }
         public string Country { get; set; }
         public string Province { get; set; }

@@ -17,10 +17,10 @@ namespace EPlusActivities.Data
         IdentityRoleClaim<string>,
         IdentityUserToken<string>>
     {
-        public DbSet<Address> Addresses { get; set; }
-        public DbSet<Activity> Activities { get; set; }
-        public DbSet<Prize> Prizes { get; set; }
-        public DbSet<WinningResult> WinningResults { get; set; }
+        public virtual DbSet<Address> Addresses { get; set; }
+        public virtual DbSet<Activity> Activities { get; set; }
+        public virtual DbSet<Prize> Prizes { get; set; }
+        public virtual DbSet<WinningResult> WinningResults { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
           : base(options)

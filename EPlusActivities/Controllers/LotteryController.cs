@@ -11,6 +11,10 @@ namespace EPlusActivities.Controllers
     [Route("api/[controller]")]
     public class LotteryController : Controller
     {
+        public LotteryController()
+        {
+        }
+
         // GET: api/values
         [HttpGet]
         public IEnumerable<string> Get()
