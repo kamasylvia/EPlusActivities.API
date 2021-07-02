@@ -31,5 +31,8 @@ namespace EPlusActivities.API.Data.Repositories
             await _context.WinningResults.Where(wr => wr.WinnerId == userId)
                                          .Select(wr => wr.PrizeItem)
                                          .ToListAsync();
+
+        public async Task<bool> ExistsAsync(Guid id) =>
+            await _context.Prizes.AnyAsync(p => p.Id == id);
     }
 }

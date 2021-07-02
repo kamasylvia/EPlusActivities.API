@@ -13,6 +13,6 @@ namespace EPlusActivities.API.Data.Repositories
         Task<IEnumerable<T>> FindAllAsync();
         Task<T> FindByIdAsync(Guid id);
         Task<bool> SaveAsync();
-        async Task<bool> ExistsAsync(Guid id) => await FindByIdAsync(id) is not null;
+        Task<bool> ExistsAsync(Guid id);
     }
 }

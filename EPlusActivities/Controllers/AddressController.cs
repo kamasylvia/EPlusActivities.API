@@ -55,6 +55,12 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<AddressDto>> AddAddressAsync([FromBody] AddressDto addressDto)
         {
             // 参数验证
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            // 参数验证
             if (await _addressRepository.ExistsAsync(addressDto.Id))
             {
                 return BadRequest(new ArgumentException("地址已存在"));
@@ -80,10 +86,10 @@ namespace EPlusActivities.API.Controllers
             var result = await _addressRepository.SaveAsync();
             if (!result)
             {
-                return BadRequest(new DbUpdateException("保存到数据库时遇到错误。"));
+                return BadRequest(new DbUpdateException("保存到数据库时遇到错误"));
             }
 
-            // 获取新地址。因为新地址 ID 是由这数据库生成，所以要从数据库获取。
+            // 获取新地址。因为新地址 ID 是由数据库生成，所以要从数据库获取。
             var newAddresses = await _addressRepository.FindByUserIdAsync(user.Id);
             var newAddress = newAddresses.Except(oldAddresses);
 
@@ -95,22 +101,31 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Roles = "customer, admin, manager")]
         public async Task<IActionResult> ChangeAddressAsync([FromBody] AddressDto addressDto)
         {
-            var oldAddress = await _addressRepository.FindByIdAsync(addressDto.Id);
-            if (oldAddress is null)
+            // 参数验证
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            // 参数验证
+            if (!await _addressRepository.ExistsAsync(addressDto.Id))
             {
                 return BadRequest(new ArgumentNullException("地址不存在"));
             }
 
-            var newAddress = _mapper.Map<Address>(addressDto);
-            try
+            // 参数验证
+            var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
+            if (user is null)
             {
-                _addressRepository.Update(newAddress);
+                return BadRequest(new ArgumentNullException("用户不存在"));
             }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return Ok();
+
+            // 更新数据库
+            var address = _mapper.Map<Address>(addressDto);
+            _addressRepository.Update(address);
+            var result = await _addressRepository.SaveAsync();
+            
+            return result ? NoContent() : BadRequest(new DbUpdateException("保存到数据库时遇到错误"));
         }
 
         [HttpPost("[Action]")]
@@ -135,19 +150,8 @@ namespace EPlusActivities.API.Controllers
             return Ok();
         }
 
+        private async Task<bool> ExistsAsync(AddressDto addressDto)
+            => await _addressRepository.FindByIdAsync(addressDto.Id) is not null;
 
-
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

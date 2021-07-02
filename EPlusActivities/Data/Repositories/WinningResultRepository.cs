@@ -16,6 +16,9 @@ namespace EPlusActivities.API.Data.Repositories
         public async Task AddAsync(WinningResult item) =>
             await _context.WinningResults.AddAsync(item);
 
+        public async Task<bool> ExistsAsync(Guid id) =>
+            await _context.WinningResults.AnyAsync(wr => wr.Id == id);
+
         public async Task<IEnumerable<WinningResult>> FindAllAsync() =>
             await _context.WinningResults.ToListAsync();
 

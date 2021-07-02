@@ -29,5 +29,7 @@ namespace EPlusActivities.API.Data.Repositories
 
         public async Task<IEnumerable<Address>> FindByUserIdAsync(Guid userId) =>
             await _context.Addresses.Where(a => a.UserId == userId).ToListAsync();
+
+        public async Task<bool> ExistsAsync(Guid id) => await _context.Addresses.AnyAsync(a => a.Id == id);
     }
 }
