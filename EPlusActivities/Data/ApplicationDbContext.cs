@@ -1,21 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using EPlusActivities.Entities;
+using EPlusActivities.API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace EPlusActivities.Data
+namespace EPlusActivities.API.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser,
         ApplicationRole,
-        string,
-        IdentityUserClaim<string>,
+        Guid,
+        IdentityUserClaim<Guid>,
         ApplicationUserRole,
-        IdentityUserLogin<string>,
-        IdentityRoleClaim<string>,
-        IdentityUserToken<string>>
+        IdentityUserLogin<Guid>,
+        IdentityRoleClaim<Guid>,
+        IdentityUserToken<Guid>>
     {
         public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<Activity> Activities { get; set; }
@@ -62,13 +62,15 @@ namespace EPlusActivities.Data
 
             // one-to-one
             builder.Entity<WinningResult>()
-                   .HasOne(result => result.Activity)
+                   .HasOne(result => result.ActivityItem)
                    .WithOne(activity => activity.WinningResult)
-                   .HasForeignKey<Activity>(activity => activity.WinningResultId);
+                   .HasForeignKey<Activity>(activity => activity.WinningResultId)
+                   .IsRequired();
             builder.Entity<WinningResult>()
                    .HasOne(result => result.PrizeItem)
                    .WithOne(prize => prize.WinningResult)
-                   .HasForeignKey<Prize>(prize => prize.WinningResultId);
+                   .HasForeignKey<Prize>(prize => prize.WinningResultId)
+                   .IsRequired();
 
 
             /*
@@ -76,14 +78,14 @@ namespace EPlusActivities.Data
             */
             var seedUser = new ApplicationUser
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 UserName = "Seed",
                 NormalizedUserName = "Seed".ToUpper(),
                 PhoneNumber = "11111111111"
             };
             var seedRole = new ApplicationRole
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Name = "Seed",
                 NormalizedName = "Seed".ToUpper()
             };
@@ -103,16 +105,16 @@ namespace EPlusActivities.Data
             var roles = JsonSerializer.Deserialize<List<ApplicationRole>>(roleData);
             roles.ForEach(role =>
                 {
-                    role.Id = Guid.NewGuid().ToString();
+                    role.Id = Guid.NewGuid();
                     role.NormalizedName = role.Name.ToUpper();
                     builder.Entity<ApplicationRole>().HasData(role);
                 });
 
             // Seed others
-            var addressId = Guid.NewGuid().ToString();
-            var prizeId = Guid.NewGuid().ToString();
-            var activityId = Guid.NewGuid().ToString();
-            var resultId = Guid.NewGuid().ToString();
+            var addressId = Guid.NewGuid();
+            var prizeId = Guid.NewGuid();
+            var activityId = Guid.NewGuid();
+            var resultId = Guid.NewGuid();
             builder.Entity<Prize>().HasData(
                 new Prize
                 {
@@ -135,6 +137,7 @@ namespace EPlusActivities.Data
                 {
                     Id = activityId,
                     Name = "Seed",
+                    WinningResultId = resultId
                 }
             );
             builder.Entity<Address>().HasData(

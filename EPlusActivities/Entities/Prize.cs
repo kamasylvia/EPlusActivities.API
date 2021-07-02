@@ -1,11 +1,12 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.Entities
+namespace EPlusActivities.API.Entities
 {
     public class Prize
     {
         [Key]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         // 奖品名称
         public string Name { get; set; }
@@ -26,7 +27,7 @@ namespace EPlusActivities.Entities
         public string PictureUrl { get; set; }
 
         // 所处的中奖结果
-        public string WinningResultId { get; set; }
+        public Guid WinningResultId { get; set; }
         public WinningResult WinningResult { get; set; }
     }
 }

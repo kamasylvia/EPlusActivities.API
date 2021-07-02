@@ -5,9 +5,9 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 
 
-namespace EPlusActivities.Entities
+namespace EPlusActivities.API.Entities
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser<Guid>
     {
         // 注册渠道
         public string RegisterChannel { get; set; }
@@ -39,7 +39,7 @@ namespace EPlusActivities.Entities
         // 外键
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
-        public virtual ICollection<WinningResult> WinningResults { get; set; }
+        public virtual ICollection<WinningResult> WinningResults { get; set; } 
 
 
 

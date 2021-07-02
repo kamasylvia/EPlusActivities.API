@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using EPlusActivities.Data;
-using EPlusActivities.Entities;
-using EPlusActivities.IS4;
-using EPlusActivities.Services;
+using EPlusActivities.API.Data;
+using EPlusActivities.API.Data.Repositories;
+using EPlusActivities.API.Entities;
+using EPlusActivities.API.Identity;
+using EPlusActivities.API.Services;
 using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -15,15 +17,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
-namespace EPlusActivities
+namespace EPlusActivities.API
 {
     public class Startup
     {
@@ -44,7 +47,9 @@ namespace EPlusActivities
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+
             services.AddHttpClient();
 
             services.AddSwaggerGen(c =>
@@ -54,13 +59,17 @@ namespace EPlusActivities
 
             // 数据库配置系统应用用户数据上下文
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(connectionString));
+                options.UseMySql(connectionString,
+                o => o.ServerVersion(new Version(8, 0, 25), ServerType.MySql)));
             // 启用 Identity 服务 添加指定的用户和角色类型的默认标识系统配置
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             // 启用数据库仓库
-            // services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IAddressRepository, AddressRepository>()
+                    .AddTransient<IWinningResultRepository, WinningResultRepository>()
+                    .AddTransient<IRepository<Activity>, ActivityRepository>()
+                    .AddTransient<IRepository<Prize>, PrizeRepository>();
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
 
@@ -136,7 +145,7 @@ namespace EPlusActivities
                     options.AddPolicy("TestPolicy", builder =>
                         {
                             builder.RequireRole("admin", "manager", "customer");
-                            builder.RequireScope("eplus.test.scope");
+                            builder.RequireClaim("phone_number");
                         });
                 });
 
@@ -160,6 +169,8 @@ namespace EPlusActivities
             app.UseRouting();
 
             app.UseIdentityServer();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

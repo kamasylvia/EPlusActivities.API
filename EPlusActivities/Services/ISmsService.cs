@@ -1,9 +1,9 @@
 using System.Net.Http;
 using System.Threading.Tasks;
-using EPlusActivities.DTOs;
-using EPlusActivities.Entities;
+using EPlusActivities.API.DTOs;
+using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.Services
+namespace EPlusActivities.API.Services
 {
     public interface ISmsService
     {

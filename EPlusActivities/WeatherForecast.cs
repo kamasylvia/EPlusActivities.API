@@ -1,6 +1,6 @@
 using System;
 
-namespace EPlusActivities
+namespace EPlusActivities.API
 {
     public class WeatherForecast
     {

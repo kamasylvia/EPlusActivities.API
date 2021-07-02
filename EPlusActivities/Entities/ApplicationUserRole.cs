@@ -1,8 +1,9 @@
+using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.Entities
+namespace EPlusActivities.API.Entities
 {
-    public class ApplicationUserRole : IdentityUserRole<string>
+    public class ApplicationUserRole : IdentityUserRole<Guid>
     {
         public ApplicationUser User { get; set; }
         public ApplicationRole Role { get; set; }

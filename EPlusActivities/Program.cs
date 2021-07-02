@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EPlusActivities.Data;
-using EPlusActivities.Entities;
+using EPlusActivities.API.Data;
+using EPlusActivities.API.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace EPlusActivities
+namespace EPlusActivities.API
 {
     public class Program
     {

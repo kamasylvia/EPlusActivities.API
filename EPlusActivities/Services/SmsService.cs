@@ -3,14 +3,14 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.DTOs;
-using EPlusActivities.Entities;
+using EPlusActivities.API.DTOs;
+using EPlusActivities.API.Entities;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace EPlusActivities.Services
+namespace EPlusActivities.API.Services
 {
     public class SmsService : ISmsService
     {

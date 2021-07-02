@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EPlusActivities.API.Entities;
 using IdentityModel;
-using EPlusActivities.Entities;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace EPlusActivities.IS4
+namespace EPlusActivities.API.Identity
 {
     public class SmsGrantValidator : IExtensionGrantValidator
     {
@@ -112,7 +112,8 @@ namespace EPlusActivities.IS4
                         return;
                     }
 
-                    await _userManager.AddToRoleAsync(user, "Customer".ToUpper());
+                    // await _userManager.AddToRoleAsync(user, "Customer".ToUpper());
+                    await _userManager.AddToRolesAsync(user, new string[] { "Customer".ToUpper() });
                 }
 
                 // 直接登录

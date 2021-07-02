@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EPlusActivities.Entities;
+using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.Data.Repositories
+namespace EPlusActivities.API.Data.Repositories
 {
     public interface IAddressRepository : IRepository<Address>
     {
-        Task<IEnumerable<Address>> GetByUserIdAsync(string userId);
+        Task<IEnumerable<Address>> FindByUserIdAsync(Guid userId);
     }
 }

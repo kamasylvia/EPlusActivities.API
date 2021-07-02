@@ -1,4 +1,6 @@
-namespace EPlusActivities.Data.Repositories
+using System.Threading.Tasks;
+
+namespace EPlusActivities.API.Data.Repositories
 {
     public abstract class RepositoryBase
     {
@@ -7,5 +9,7 @@ namespace EPlusActivities.Data.Repositories
         {
             _context = context;
         }
+        public async Task<bool> SaveAsync() => await _context.SaveChangesAsync() >= 0;
+
     }
 }

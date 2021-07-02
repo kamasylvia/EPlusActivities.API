@@ -1,10 +1,10 @@
 using System.Collections.Specialized;
 using AutoMapper;
-using EPlusActivities.DTOs;
-using EPlusActivities.Entities;
+using EPlusActivities.API.DTOs;
+using EPlusActivities.API.Entities;
 using IdentityServer4.Models;
 
-namespace EPlusActivities.Configuration
+namespace EPlusActivities.API.Configuration
 {
     public class AutoMapperProfiles : Profile
     {
@@ -19,6 +19,10 @@ namespace EPlusActivities.Configuration
                     opt => opt.MapFrom(
                         src => src.PhoneNumber
                     ));
+            CreateMap<ApplicationUser, UserDto>();
+            CreateMap<Address, AddressDto>();
+            CreateMap<AddressDto, Address>();
+            CreateMap<Activity, ActivityDto>();
         }
     }
 }

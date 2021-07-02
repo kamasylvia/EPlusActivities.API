@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EPlusActivities.Entities;
+using EPlusActivities.API.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace EPlusActivities.Data.Repositories
+namespace EPlusActivities.API.Data.Repositories
 {
     public class ActivityRepository : RepositoryBase, IRepository<Activity>
     {
@@ -13,10 +15,10 @@ namespace EPlusActivities.Data.Repositories
 
         public async Task AddAsync(Activity item) => await _context.Activities.AddAsync(item);
 
-        public async Task<IEnumerable<Activity>> GetAllAsync() =>
+        public async Task<IEnumerable<Activity>> FindAllAsync() =>
             await _context.Activities.ToListAsync();
 
-        public async Task<Activity> GetByIdAsync(string id) =>
+        public async Task<Activity> FindByIdAsync(Guid id) =>
             await _context.Activities.FindAsync(id);
 
         public void Remove(Activity item) => _context.Activities.Remove(item);

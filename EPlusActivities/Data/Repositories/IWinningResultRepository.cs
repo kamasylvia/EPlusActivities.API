@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EPlusActivities.Entities;
+using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.Data.Repositories
+namespace EPlusActivities.API.Data.Repositories
 {
     public interface IWinningResultRepository : IRepository<WinningResult>
     {
-        Task<IEnumerable<WinningResult>> GetByUserIdAsync(string userId);
+        Task<IEnumerable<WinningResult>> FindByUserIdAsync(string userId);
     }
 }

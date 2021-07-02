@@ -1,15 +1,17 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.Entities
+namespace EPlusActivities.API.Entities
 {
     public class Activity
     {
-        public string Id { get; set; }
+        [Key]
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-        public string WinningResultId { get; set; }
+        public Guid WinningResultId { get; set; }
         public WinningResult WinningResult { get; set; }
     }
 }

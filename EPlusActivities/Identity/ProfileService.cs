@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EPlusActivities.API.Entities;
 using IdentityModel;
-using EPlusActivities.Entities;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.IS4
+namespace EPlusActivities.API.Identity
 {
     /// <summary>
     /// Often IdentityServer requires identity information about users when creating tokens or when 
@@ -74,9 +74,10 @@ namespace EPlusActivities.IS4
             };
 
             var roles = await _userManager.GetRolesAsync(user);
+            // var claims = await _userManager.GetClaimsAsync(user);
             claims.AddRange(roles.Select(role => new Claim(JwtClaimTypes.Role, role)));
 
-            return claims;
+            return claims.ToList();
         }
     }
 }

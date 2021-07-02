@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EPlusActivities.Controllers
+namespace EPlusActivities.API.Controllers
 {
 
     [Route("api/[controller]")]
@@ -12,7 +12,8 @@ namespace EPlusActivities.Controllers
     {
         // GET: api/values
         [HttpGet]
-        // [Authorize(Policy = "TestPolicy")]
+        // [Authorize(Roles = "customer")]
+        [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> Get()
         {
             var result = Json(from c in HttpContext.User.Claims select new { c.Type, c.Value });

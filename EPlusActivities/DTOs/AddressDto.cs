@@ -1,17 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.API.Entities
+namespace EPlusActivities.API.DTOs
 {
-    public class Address
+    public class AddressDto
     {
-        [Key]
         public Guid Id { get; set; }
 
         // 收件人
         public string Recipient { get; set; }
 
         // 收件人电话
+        [Phone]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "手机号必须为 11 位数字。")]
         public string RecipientPhoneNumber { get; set; }
         
         public string Country { get; set; }
@@ -26,8 +29,6 @@ namespace EPlusActivities.API.Entities
         // 邮编
         public string Postcode { get; set; }
 
-
         public Guid UserId { get; set; }
-        public ApplicationUser User { get; set; }
     }
 }

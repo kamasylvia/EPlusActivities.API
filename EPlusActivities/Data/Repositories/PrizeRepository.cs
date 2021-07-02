@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.Entities;
+using EPlusActivities.API.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace EPlusActivities.Data.Repositories
+namespace EPlusActivities.API.Data.Repositories
 {
     public class PrizeRepository : RepositoryBase, IRepository<Prize>
     {
@@ -19,13 +21,13 @@ namespace EPlusActivities.Data.Repositories
 
         public void Update(Prize prize) => _context.Prizes.Update(prize);
 
-        public async Task<IEnumerable<Prize>> GetAllAsync() =>
+        public async Task<IEnumerable<Prize>> FindAllAsync() =>
             await _context.Prizes.ToListAsync();
 
-        public async Task<Prize> GetByIdAsync(string id) =>
+        public async Task<Prize> FindByIdAsync(Guid id) =>
             await _context.Prizes.FindAsync(id);
 
-        public async Task<IEnumerable<Prize>> GetPrizesByUserIdAsync(string userId) =>
+        public async Task<IEnumerable<Prize>> FindPrizesByUserIdAsync(Guid userId) =>
             await _context.WinningResults.Where(wr => wr.WinnerId == userId)
                                          .Select(wr => wr.PrizeItem)
                                          .ToListAsync();
