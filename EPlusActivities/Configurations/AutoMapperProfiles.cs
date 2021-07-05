@@ -20,6 +20,7 @@ namespace EPlusActivities.API.Configuration
                         src => src.PhoneNumber
                     ));
             CreateMap<ApplicationUser, UserDto>();
+            CreateMap<UserDto, ApplicationUser>();
             CreateMap<Address, AddressDto>();
             CreateMap<AddressDto, Address>();
             CreateMap<Activity, ActivityDto>();

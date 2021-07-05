@@ -17,81 +17,119 @@ namespace EPlusActivities.API.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IMapper _mapper;
         public AccountController(
             UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             IMapper mapper)
         {
+            _signInManager = signInManager;
             _mapper = mapper;
             _userManager = userManager;
         }
 
         [HttpGet("[action]")]
         [Authorize(Roles = "customer")]
-        public async Task<ActionResult<UserDto>> GetUserAsync([FromBody] AccountDto accountDto)
-        {
-            var response = await _userManager.FindByIdAsync(accountDto.UserId);
-
-            if (response is null && accountDto.PhoneNumber is null)
-            {
-                return BadRequest(new ArgumentNullException("用户不存在"));
-            }
-            else if (response is null)
-            {
-                response = await _userManager.FindByNameAsync(accountDto.PhoneNumber);
-            }
-
-            return response is null
-                ? BadRequest(new ArgumentNullException("用户不存在"))
-                : Ok(_mapper.Map<UserDto>(response));
-        }
-
-        [HttpPatch("[Action]")]
-        [Authorize(Roles = "customer, admin, manager")]
-        public async Task<IActionResult> ChangePhoneNumber([FromBody] AccountDto accountDto)
+        public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (accountDto.PhoneNumber is null)
-            {
-                return BadRequest(new ArgumentNullException("手机号不得为空"));
-            }
-
-            var user = await _userManager.FindByIdAsync(accountDto.UserId);
+            var user = await _userManager.FindByIdAsync(loginDto.UserId.ToString());
             if (user is null)
             {
-                return BadRequest(new ArgumentNullException("用户不存在"));
+                return NotFound(new ArgumentException("用户不存在"));
+            }
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return await GetUserAsync(loginDto);
+        }
+
+
+        [HttpGet("[action]")]
+        [Authorize(Roles = "customer")]
+        public async Task<ActionResult<UserDto>> GetUserAsync([FromBody] LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.FindByIdAsync(loginDto.UserId.ToString());
+
+            return user is null
+                ? NotFound(new ArgumentException("用户不存在"))
+                : Ok(_mapper.Map<UserDto>(user));
+        }
+
+        [HttpPatch("[Action]")]
+        [Authorize(Roles = "customer, admin, manager")]
+        public async Task<IActionResult> ChangePhoneNumber([FromBody] UserDto userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (userDto.PhoneNumber is null)
+            {
+                return BadRequest(new ArgumentException("手机号不能为空"));
+            }
+
+            var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
+            if (user is null)
+            {
+                return NotFound(new ArgumentException("用户不存在"));
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(
                 user,
-                accountDto.PhoneNumber);
+                userDto.PhoneNumber);
             var result = await _userManager.ChangePhoneNumberAsync(
                 user,
-                accountDto.PhoneNumber,
+                userDto.PhoneNumber,
                 token);
             return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
         }
 
-        [HttpDelete("[Action]")]
+        [HttpPost("[Action]")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> AddUserAsync([FromBody] UserDto userDto)
+        {
+            // Not Completed
+            var user = _mapper.Map<ApplicationUser>(userDto);
+            var result = await _userManager.CreateAsync(user);
+            return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
+        }
+
+        [HttpPut("[Action]")]
         [Authorize(Roles = "customer, admin, manager")]
         public async Task<IActionResult> UpdateUserAsync([FromBody] UserDto userDto)
         {
-            return Ok();
+            // Not Completed
+            var user = _mapper.Map<ApplicationUser>(userDto);
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
         }
-        
+
 
         [HttpDelete("[Action]")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteUserAsync([FromBody] AccountDto accountDto)
+        // [Authorize(Roles = "admin")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> DeleteUserAsync([FromBody] UserDto userDto)
         {
-            var user = await _userManager.FindByIdAsync(accountDto.UserId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
             {
-                return BadRequest(new ArgumentNullException("用户不存在"));
+                return NotFound(new ArgumentException("用户不存在"));
             }
 
             var result = await _userManager.DeleteAsync(user);
