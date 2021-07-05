@@ -13,7 +13,7 @@ namespace EPlusActivities.API.Entities
 
         // 收件人电话
         public string RecipientPhoneNumber { get; set; }
-        
+
         public string Country { get; set; }
 
         // 省、直辖市、自治区
@@ -27,6 +27,7 @@ namespace EPlusActivities.API.Entities
         public string Postcode { get; set; }
 
 
+        [Required]
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
     }

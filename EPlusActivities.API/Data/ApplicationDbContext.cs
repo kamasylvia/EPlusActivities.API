@@ -54,11 +54,13 @@ namespace EPlusActivities.API.Data
             builder.Entity<ApplicationUser>()
                    .HasMany(u => u.Addresses)
                    .WithOne(a => a.User)
-                   .HasForeignKey(a => a.UserId);
+                   .HasForeignKey(a => a.UserId)
+                   .IsRequired();
             builder.Entity<ApplicationUser>()
                    .HasMany(u => u.WinningResults)
                    .WithOne(a => a.Winner)
-                   .HasForeignKey(a => a.WinnerId);
+                   .HasForeignKey(a => a.WinnerId)
+                   .IsRequired();
 
             // one-to-one
             builder.Entity<WinningResult>()
