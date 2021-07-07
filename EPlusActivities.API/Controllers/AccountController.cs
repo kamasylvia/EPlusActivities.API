@@ -55,11 +55,7 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<UserDto>> GetUserAsync([FromBody] LoginDto loginDto)
         {
-            var userId = loginDto.UserId;
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            user.Addresses = (await _addressRepository.FindByUserIdAsync(userId)).ToList();
-
-
+            var user = await _userManager.FindByIdAsync(loginDto.UserId.ToString());
             return user is null
                 ? NotFound("用户不存在")
                 : Ok(_mapper.Map<UserDto>(user));
@@ -79,6 +75,11 @@ namespace EPlusActivities.API.Controllers
             if (user is null)
             {
                 return NotFound("用户不存在");
+            }
+
+            if (user.PhoneNumber == userDto.PhoneNumber)
+            {
+                return NotFound("新手机号与旧手机号相同");
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(

@@ -12,7 +12,7 @@ namespace EPlusActivities.API.Controllers
     {
         // GET: api/values
         [HttpGet]
-        // [Authorize(Roles = "customer")]
+        // [Authorize(Roles = "test")]
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> Get()
         {
