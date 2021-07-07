@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace EPlusActivities.API.Identity
+namespace EPlusActivities.API.Infrastructure.Identity
 {
     public class SmsGrantValidator : IExtensionGrantValidator
     {
@@ -80,22 +80,17 @@ namespace EPlusActivities.API.Identity
                         _userManager,
                         user);
 
-                System.Console.WriteLine($"Valication result = {validationResult}");
-
-                System.Console.WriteLine($"User in validation: {user}");
-
                 if (!validationResult)
                 {
                     context.Result = new GrantValidationResult(
                         TokenRequestErrors.InvalidGrant,
-                        "Invalidate failed.");
+                        "短信验证失败");
                     return;
                 }
 
                 // 注册
                 if (requireRegister)
                 {
-                    System.Console.WriteLine("开始注测用户");
                     user.PhoneNumberConfirmed = true;
                     user.RegisterChannel = loginChannel;
                     user.LoginChannel = loginChannel;
@@ -103,12 +98,11 @@ namespace EPlusActivities.API.Identity
                     var creationResult = await _userManager.CreateAsync(user);
                     if (!creationResult.Succeeded)
                     {
-                        System.Console.WriteLine("注册失败");
                         // var errors = creationResult.Errors.Select(err =>
                         //     $"Error { err.Code} : {err.Description}");
                         context.Result = new GrantValidationResult(
                             TokenRequestErrors.InvalidGrant,
-                            "Failed to sign up}");
+                            "用户注册失败}");
                         return;
                     }
 
@@ -117,9 +111,7 @@ namespace EPlusActivities.API.Identity
                 }
 
                 // 直接登录
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                System.Console.WriteLine("验证完成，返回结果。");
+                // await _signInManager.SignInAsync(user, isPersistent: false);
 
                 context.Result = new GrantValidationResult(
                     subject: user.Id.ToString(),

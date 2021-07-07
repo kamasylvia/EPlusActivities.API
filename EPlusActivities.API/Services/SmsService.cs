@@ -32,16 +32,6 @@ namespace EPlusActivities.API.Services
         }
 
         public async Task<ApplicationUser> GetSmsUserAsync(SmsDto smsDto)
-        // =>
-        // await _userManager.Users.SingleOrDefaultAsync(x =>
-        //     x.PhoneNumber == smsDto.PhoneNumber)
-        //     ?? new ApplicationUser
-        //     {
-        //         UserName = smsDto.PhoneNumber,
-        //         PhoneNumber = smsDto.PhoneNumber,
-        //         SecurityStamp = new Secret(_configuration["Secrets:DefaultSecret"]).Value
-        //                         + smsDto.PhoneNumber.Sha256()
-        //     };
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(x =>
                 x.PhoneNumber == smsDto.PhoneNumber);
@@ -53,7 +43,6 @@ namespace EPlusActivities.API.Services
                     + smsDto.PhoneNumber.Sha256();
             }
 
-            System.Console.WriteLine($"User in SmsService: {user}");
             return user;
         }
 

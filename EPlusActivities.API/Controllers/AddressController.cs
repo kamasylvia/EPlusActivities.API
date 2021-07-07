@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Data.Repositories;
+using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
 using Microsoft.AspNetCore.Authorization;

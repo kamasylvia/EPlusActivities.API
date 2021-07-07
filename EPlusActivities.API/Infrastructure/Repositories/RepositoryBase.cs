@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
+using EPlusActivities.API.Data;
 
-namespace EPlusActivities.API.Data.Repositories
+namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public abstract class RepositoryBase
     {

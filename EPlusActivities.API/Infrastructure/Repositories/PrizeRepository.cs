@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace EPlusActivities.API.Data.Repositories
+namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class PrizeRepository : RepositoryBase, IRepository<Prize>
     {

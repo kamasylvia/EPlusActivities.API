@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace EPlusActivities.API.Data.Repositories
+namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class ActivityRepository : RepositoryBase, IRepository<Activity>
     {

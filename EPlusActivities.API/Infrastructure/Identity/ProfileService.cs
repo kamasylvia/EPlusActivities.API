@@ -8,7 +8,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.API.Identity
+namespace EPlusActivities.API.Infrastructure.Identity
 {
     /// <summary>
     /// Often IdentityServer requires identity information about users when creating tokens or when 

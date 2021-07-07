@@ -16,7 +16,7 @@ namespace EPlusActivities.API.DTOs
         [Phone]
         [StringLength(11, MinimumLength = 11, ErrorMessage = "手机号必须为 11 位数字。")]
         public string RecipientPhoneNumber { get; set; }
-        
+
         public string Country { get; set; }
 
         // 省、直辖市、自治区
@@ -29,6 +29,7 @@ namespace EPlusActivities.API.DTOs
         // 邮编
         public string Postcode { get; set; }
 
+        [Required]
         public Guid UserId { get; set; }
     }
 }

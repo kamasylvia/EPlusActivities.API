@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace EPlusActivities.API.Data.Repositories
+namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public interface IRepository<T> where T : class
     {

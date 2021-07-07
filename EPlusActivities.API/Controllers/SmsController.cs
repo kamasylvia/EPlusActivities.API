@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 
 namespace EPlusActivities.API.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class SmsController : Controller
     {
