@@ -6,6 +6,7 @@ using AutoMapper;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +29,14 @@ namespace EPlusActivities.API.Controllers
             SignInManager<ApplicationUser> signInManager,
             IMapper mapper)
         {
-            _signInManager = signInManager;
-            _mapper = mapper;
-            _userManager = userManager;
-            _addressRepository = addressRepository;
+            _signInManager = signInManager
+                ?? throw new ArgumentNullException(nameof(signInManager));
+            _mapper = mapper
+                ?? throw new ArgumentNullException(nameof(mapper));
+            _userManager = userManager
+                ?? throw new ArgumentNullException(nameof(userManager));
+            _addressRepository = addressRepository
+                ?? throw new ArgumentNullException(nameof(addressRepository));
         }
 
         [HttpGet("[action]")]

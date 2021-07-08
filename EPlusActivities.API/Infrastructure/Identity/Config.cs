@@ -84,6 +84,7 @@ namespace EPlusActivities.API.Infrastructure.Identity
                     RequireClientSecret = false,
                     AccessTokenLifetime = 60*60*24,
                     SlidingRefreshTokenLifetime =  2592000,
+                    AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedGrantTypes = {OidcConstants.AuthenticationMethods.ConfirmationBySms},
                     // AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes = new List<string>
