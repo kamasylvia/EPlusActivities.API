@@ -40,10 +40,13 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync([FromBody] AddressDto addressDto)
         {
+            var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
+            if (user is null)
+            {
+                return BadRequest("用户不存在");
+            }
             var addresses = await _addressRepository.FindByUserIdAsync(addressDto.UserId);
-            return addresses is null
-                ? BadRequest("用户不存在")
-                : Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses));
+            return Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses));
         }
 
         [HttpGet]

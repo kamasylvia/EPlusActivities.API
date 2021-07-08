@@ -23,23 +23,19 @@ namespace EPlusActivities.API.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IAddressRepository _addressRepository;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        // private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IMapper _mapper;
         public UserController(
             UserManager<ApplicationUser> userManager,
-            IAddressRepository addressRepository,
-            SignInManager<ApplicationUser> signInManager,
+            // SignInManager<ApplicationUser> signInManager,
             IMapper mapper)
         {
-            _signInManager = signInManager
-                ?? throw new ArgumentNullException(nameof(signInManager));
+            // _signInManager = signInManager
+            //     ?? throw new ArgumentNullException(nameof(signInManager));
             _mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
             _userManager = userManager
                 ?? throw new ArgumentNullException(nameof(userManager));
-            _addressRepository = addressRepository
-                ?? throw new ArgumentNullException(nameof(addressRepository));
         }
 
         [HttpGet]

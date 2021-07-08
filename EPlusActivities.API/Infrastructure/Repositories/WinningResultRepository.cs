@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
@@ -26,8 +27,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<WinningResult> FindByIdAsync(Guid id) =>
             await _context.WinningResults.FindAsync(id);
 
-        public async Task<IEnumerable<WinningResult>> FindByUserIdAsync(string userId) =>
-            (await _context.Users.FindAsync(userId)).WinningResults;
+        public async Task<IEnumerable<WinningResult>> FindByUserIdAsync(Guid userId) =>
+            await _context.WinningResults.Where(a => a.WinnerId == userId).ToListAsync();
 
         public void Remove(WinningResult item) => _context.WinningResults.Remove(item);
 
