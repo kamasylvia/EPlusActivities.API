@@ -32,8 +32,5 @@ namespace EPlusActivities.API.DTOs
 
         // 连续签到天数
         public int SequentialAttendanceDays { get; set; }
-        public ICollection<AddressDto> Addresses { get; set; }
-        public ICollection<WinningResult> WinningResults { get; set; }
-        // public ICollection<WinningResult> WinningResults { get; set; }
     }
 }

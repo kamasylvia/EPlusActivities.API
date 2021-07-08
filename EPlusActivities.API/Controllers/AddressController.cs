@@ -6,6 +6,7 @@ using AutoMapper;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
+using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EPlusActivities.API.Controllers
 {
     [ApiController]
+    [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
     public class AddressController : Controller
     {
@@ -49,7 +51,7 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<AddressDto>> GetByIdAsync([FromBody] AddressDto addressDto)
         {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id);
-            return address is null ? BadRequest("地址不存在，请检查传入的地址 id") : Ok(address);
+            return address is null ? BadRequest("地址不存在") : Ok(address);
         }
 
         [HttpPost]
@@ -83,7 +85,7 @@ namespace EPlusActivities.API.Controllers
             var result = await _addressRepository.SaveAsync();
             if (!result)
             {
-                return BadRequest("保存到数据库时遇到错误");
+                return new InternalServerErrorObjectResult("保存到数据库时发生错误");
             }
 
             // 获取新地址。因为新地址 ID 是由数据库生成，所以要从数据库获取。
@@ -117,7 +119,7 @@ namespace EPlusActivities.API.Controllers
             _addressRepository.Update(address);
             var result = await _addressRepository.SaveAsync();
 
-            return result ? Ok("操作成功") : BadRequest("保存到数据库时遇到错误");
+            return result ? Ok() : new InternalServerErrorObjectResult("保存到数据库时遇到错误");
         }
 
         [HttpDelete]
@@ -134,7 +136,7 @@ namespace EPlusActivities.API.Controllers
             _addressRepository.Remove(address);
             var result = await _addressRepository.SaveAsync();
 
-            return result ? Ok("操作成功") : new InternalServerErrorObjectResult("保存到数据库时遇到错误");
+            return result ? Ok() : new InternalServerErrorObjectResult("保存到数据库时遇到错误");
         }
     }
 }

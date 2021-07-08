@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EPlusActivities.API.Controllers
 {
     [ApiController]
-    [EPlusResultFilterAttribute]
+    [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
     public class UserController : Controller
     {
@@ -54,7 +54,7 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPatch("phonenumber")]
-        // [Authorize(Roles = "customer, admin, manager")]
+        // [Authorize(Roles = "test")]
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> ChangePhoneNumber([FromBody] UserDto userDto)
         {
@@ -87,7 +87,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             result = await _userManager.SetUserNameAsync(user, userDto.PhoneNumber);
-            return result.Succeeded ? NoContent() : BadRequest(result.Errors);
+            return result.Succeeded ? Ok() : BadRequest(result.Errors);
         }
 
         [HttpPost]
@@ -97,7 +97,7 @@ namespace EPlusActivities.API.Controllers
             // Not Completed
             var user = _mapper.Map<ApplicationUser>(userDto);
             var result = await _userManager.CreateAsync(user);
-            return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
+            return result.Succeeded ? Ok() : BadRequest(result.Errors);
         }
 
         [HttpPut]
@@ -107,7 +107,7 @@ namespace EPlusActivities.API.Controllers
             // Not Completed
             var user = _mapper.Map<ApplicationUser>(userDto);
             var result = await _userManager.UpdateAsync(user);
-            return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
+            return result.Succeeded ? Ok() : BadRequest(result.Errors);
         }
 
 
@@ -123,7 +123,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             var result = await _userManager.DeleteAsync(user);
-            return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
+            return result.Succeeded ? Ok() : BadRequest(result.Errors);
         }
     }
 }
