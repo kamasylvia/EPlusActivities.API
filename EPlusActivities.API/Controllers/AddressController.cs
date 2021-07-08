@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -133,7 +134,7 @@ namespace EPlusActivities.API.Controllers
             _addressRepository.Remove(address);
             var result = await _addressRepository.SaveAsync();
 
-            return result ? Ok("操作成功") : BadRequest("保存到数据库时遇到错误");
+            return result ? Ok("操作成功") : new InternalServerErrorObjectResult("保存到数据库时遇到错误");
         }
     }
 }

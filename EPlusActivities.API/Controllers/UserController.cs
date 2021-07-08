@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.ActionResults;
+using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EPlusActivities.API.Controllers
 {
     [ApiController]
+    [EPlusResultFilterAttribute]
     [Route("api/[controller]")]
     public class UserController : Controller
     {
@@ -38,22 +41,6 @@ namespace EPlusActivities.API.Controllers
             _addressRepository = addressRepository
                 ?? throw new ArgumentNullException(nameof(addressRepository));
         }
-
-        [HttpGet("[action]")]
-        // [Authorize(Roles = "customer")]
-        [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
-        {
-            var user = await _userManager.FindByIdAsync(loginDto.UserId.ToString());
-            if (user is null)
-            {
-                return NotFound("用户不存在");
-            }
-
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return await GetUserAsync(loginDto);
-        }
-
 
         [HttpGet]
         // [Authorize(Roles = "customer")]
@@ -84,7 +71,7 @@ namespace EPlusActivities.API.Controllers
 
             if (user.PhoneNumber == userDto.PhoneNumber)
             {
-                return NotFound("新手机号与旧手机号相同");
+                return BadRequest("新手机号与旧手机号相同");
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(
@@ -100,7 +87,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             result = await _userManager.SetUserNameAsync(user, userDto.PhoneNumber);
-            return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
+            return result.Succeeded ? NoContent() : BadRequest(result.Errors);
         }
 
         [HttpPost]
