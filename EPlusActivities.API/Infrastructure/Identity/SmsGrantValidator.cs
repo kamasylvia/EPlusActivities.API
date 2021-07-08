@@ -110,8 +110,12 @@ namespace EPlusActivities.API.Infrastructure.Identity
                     await _userManager.AddToRolesAsync(user, new string[] { "Customer".ToUpper() });
                 }
 
-                // 直接登录
-                // await _signInManager.SignInAsync(user, isPersistent: false);
+                /*
+                    非常重要！
+                    验证时 IdentityUser 直接登录才能使得 API 的授权认证成功执行。
+                    否则访问受保护的 API 将返回 404。
+                */
+                await _signInManager.SignInAsync(user, isPersistent: false);
 
                 context.Result = new GrantValidationResult(
                     subject: user.Id.ToString(),
