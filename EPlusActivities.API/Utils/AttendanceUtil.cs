@@ -11,18 +11,26 @@ namespace EPlusActivities.API.Utils
         public static bool AttendHelper(ApplicationUser user)
         {
             var now = DateTime.Now.Date;
+
             if (user.LastAttendanceDate == now)
             {
                 return false;
             }
-            else if (IsSequential(user.LastAttendanceDate, now))
-            {
-                user.SequentialAttendanceDays++;
-            }
-            else
-            {
-                user.SequentialAttendanceDays = 1;
-            }
+
+            #region Update LastAttendanceDate and SequentialAttendanceDays
+            user.SequentialAttendanceDays = 
+                IsSequential(user.LastAttendanceDate, now)
+                ? user.SequentialAttendanceDays + 1
+                : 1;
+            #endregion
+
+            #region Update credit
+            user.Credit += 
+                user.SequentialAttendanceDays < 7
+                ? user.SequentialAttendanceDays * 10
+                : 70;
+            #endregion
+
             user.LastAttendanceDate = now;
             return true;
         }

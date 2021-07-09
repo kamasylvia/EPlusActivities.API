@@ -72,15 +72,15 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region one-to-one
-            builder.Entity<Lottery>()
-                   .HasOne(result => result.ActivityItem)
-                   .WithOne(activity => activity.Lottery)
-                   .HasForeignKey<Activity>(activity => activity.LotteryId)
+            builder.Entity<Prize>()
+                   .HasOne(prize => prize.Lottery)
+                   .WithOne(lottery => lottery.PrizeItem)
+                   .HasForeignKey<Lottery>(lottery => lottery.PrizeId)
                    .IsRequired();
-            builder.Entity<Lottery>()
-                   .HasOne(result => result.PrizeItem)
-                   .WithOne(prize => prize.Lottery)
-                   .HasForeignKey<Prize>(prize => prize.LotteryId)
+            builder.Entity<Activity>()
+                   .HasOne(activity => activity.Lottery)
+                   .WithOne(lottery => lottery.ActivityItem)
+                   .HasForeignKey<Lottery>(lottery => lottery.ActivityId)
                    .IsRequired();
             #endregion
 

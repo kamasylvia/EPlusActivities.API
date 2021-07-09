@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class PrizeRepository : RepositoryBase, IRepository<Prize>
+    public class PrizeRepository : RepositoryBase, IPrizeRepository
     {
         public PrizeRepository(ApplicationDbContext context) : base(context)
         {
@@ -28,10 +28,9 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<Prize> FindByIdAsync(Guid id) =>
             await _context.Prizes.FindAsync(id);
 
-        public async Task<IEnumerable<Prize>> FindPrizesByUserIdAsync(Guid userId) =>
-            await _context.Lotteries.Where(wr => wr.WinnerId == userId)
-                                         .Select(wr => wr.PrizeItem)
-                                         .ToListAsync();
+        public async Task<IEnumerable<Prize>> FindByNameAsync(string name) =>
+            await _context.Prizes.Where(p => p.Name.Contains(name))
+                                 .ToArrayAsync();
 
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.Prizes.AnyAsync(p => p.Id == id);

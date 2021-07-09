@@ -28,6 +28,9 @@ namespace EPlusActivities.API.Configuration
             CreateMap<AttendanceDto, Attendance>();
             CreateMap<Attendance, AttendanceDto>();
             CreateMap<Activity, ActivityDto>();
+            CreateMap<ActivityDto, Activity>();
+            CreateMap<Prize, PrizeDto>();
+            CreateMap<PrizeDto, Prize>();
         }
     }
 }
