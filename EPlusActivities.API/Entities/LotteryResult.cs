@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.Entities
 {
-    public class WinningResult
+    public class LotteryResult
     {
         [Key]
         public Guid Id { get; set; }

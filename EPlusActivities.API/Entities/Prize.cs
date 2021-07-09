@@ -27,7 +27,7 @@ namespace EPlusActivities.API.Entities
         public string PictureUrl { get; set; }
 
         // 所处的中奖结果
-        public Guid WinningResultId { get; set; }
-        public WinningResult WinningResult { get; set; }
+        public Guid LotteryResultId { get; set; }
+        public LotteryResult LotteryResult { get; set; }
     }
 }

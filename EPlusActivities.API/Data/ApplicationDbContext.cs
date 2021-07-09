@@ -18,9 +18,10 @@ namespace EPlusActivities.API.Data
         IdentityUserToken<Guid>>
     {
         public virtual DbSet<Address> Addresses { get; set; }
+        public virtual DbSet<Attendance> AttendanceRecord { get; set; }
         public virtual DbSet<Activity> Activities { get; set; }
         public virtual DbSet<Prize> Prizes { get; set; }
-        public virtual DbSet<WinningResult> WinningResults { get; set; }
+        public virtual DbSet<LotteryResult> LotteryResults { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
           : base(options)
@@ -57,21 +58,26 @@ namespace EPlusActivities.API.Data
                    .HasForeignKey(a => a.UserId)
                    .IsRequired();
             builder.Entity<ApplicationUser>()
-                   .HasMany(u => u.WinningResults)
+                   .HasMany(u => u.LotteryResults)
                    .WithOne(a => a.Winner)
                    .HasForeignKey(a => a.WinnerId)
                    .IsRequired();
+            builder.Entity<ApplicationUser>()
+                   .HasMany(u => u.AttendanceRecord)
+                   .WithOne(a => a.User)
+                   .HasForeignKey(a => a.UserId)
+                   .IsRequired();
 
             // one-to-one
-            builder.Entity<WinningResult>()
+            builder.Entity<LotteryResult>()
                    .HasOne(result => result.ActivityItem)
-                   .WithOne(activity => activity.WinningResult)
-                   .HasForeignKey<Activity>(activity => activity.WinningResultId)
+                   .WithOne(activity => activity.LotteryResult)
+                   .HasForeignKey<Activity>(activity => activity.LotteryResultId)
                    .IsRequired();
-            builder.Entity<WinningResult>()
+            builder.Entity<LotteryResult>()
                    .HasOne(result => result.PrizeItem)
-                   .WithOne(prize => prize.WinningResult)
-                   .HasForeignKey<Prize>(prize => prize.WinningResultId)
+                   .WithOne(prize => prize.LotteryResult)
+                   .HasForeignKey<Prize>(prize => prize.LotteryResultId)
                    .IsRequired();
 
 
@@ -122,11 +128,11 @@ namespace EPlusActivities.API.Data
                 {
                     Id = prizeId,
                     Name = "Seed",
-                    WinningResultId = resultId
+                    LotteryResultId = resultId
                 }
             );
-            builder.Entity<WinningResult>().HasData(
-                new WinningResult
+            builder.Entity<LotteryResult>().HasData(
+                new LotteryResult
                 {
                     Id = resultId,
                     WinnerId = seedUser.Id,
@@ -139,7 +145,7 @@ namespace EPlusActivities.API.Data
                 {
                     Id = activityId,
                     Name = "Seed",
-                    WinningResultId = resultId
+                    LotteryResultId = resultId
                 }
             );
             builder.Entity<Address>().HasData(

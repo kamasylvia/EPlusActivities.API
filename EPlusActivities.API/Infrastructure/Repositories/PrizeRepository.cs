@@ -29,7 +29,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Prizes.FindAsync(id);
 
         public async Task<IEnumerable<Prize>> FindPrizesByUserIdAsync(Guid userId) =>
-            await _context.WinningResults.Where(wr => wr.WinnerId == userId)
+            await _context.LotteryResults.Where(wr => wr.WinnerId == userId)
                                          .Select(wr => wr.PrizeItem)
                                          .ToListAsync();
 

@@ -11,7 +11,7 @@ namespace EPlusActivities.API.Entities
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-        public Guid WinningResultId { get; set; }
-        public WinningResult WinningResult { get; set; }
+        public Guid LotteryResultId { get; set; }
+        public LotteryResult LotteryResult { get; set; }
     }
 }

@@ -9,29 +9,29 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class WinningResultRepository : RepositoryBase, IWinningResultRepository
+    public class LotteryResultRepository : RepositoryBase, ILotteryResultRepository
     {
-        public WinningResultRepository(ApplicationDbContext context) : base(context)
+        public LotteryResultRepository(ApplicationDbContext context) : base(context)
         {
         }
 
-        public async Task AddAsync(WinningResult item) =>
-            await _context.WinningResults.AddAsync(item);
+        public async Task AddAsync(LotteryResult item) =>
+            await _context.LotteryResults.AddAsync(item);
 
         public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.WinningResults.AnyAsync(wr => wr.Id == id);
+            await _context.LotteryResults.AnyAsync(wr => wr.Id == id);
 
-        public async Task<IEnumerable<WinningResult>> FindAllAsync() =>
-            await _context.WinningResults.ToListAsync();
+        public async Task<IEnumerable<LotteryResult>> FindAllAsync() =>
+            await _context.LotteryResults.ToListAsync();
 
-        public async Task<WinningResult> FindByIdAsync(Guid id) =>
-            await _context.WinningResults.FindAsync(id);
+        public async Task<LotteryResult> FindByIdAsync(Guid id) =>
+            await _context.LotteryResults.FindAsync(id);
 
-        public async Task<IEnumerable<WinningResult>> FindByUserIdAsync(Guid userId) =>
-            await _context.WinningResults.Where(a => a.WinnerId == userId).ToListAsync();
+        public async Task<IEnumerable<LotteryResult>> FindByUserIdAsync(Guid userId) =>
+            await _context.LotteryResults.Where(a => a.WinnerId == userId).ToListAsync();
 
-        public void Remove(WinningResult item) => _context.WinningResults.Remove(item);
+        public void Remove(LotteryResult item) => _context.LotteryResults.Remove(item);
 
-        public void Update(WinningResult item) => _context.WinningResults.Update(item);
+        public void Update(LotteryResult item) => _context.LotteryResults.Update(item);
     }
 }
