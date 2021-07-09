@@ -3,10 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.Entities
 {
-    public class LotteryResult
+    public class Lottery
     {
         [Key]
         public Guid Id { get; set; }
+        
+        public string Channel { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
 
         [Required]
         public Guid WinnerId { get; set; }

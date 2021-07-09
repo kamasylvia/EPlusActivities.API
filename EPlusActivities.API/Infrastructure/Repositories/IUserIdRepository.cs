@@ -5,8 +5,9 @@ using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public interface IAddressRepository : IRepository<Address>
+    public interface IUserIdRepository<T> : IRepository<T>
+        where T : class
     {
-        Task<IEnumerable<Address>> FindByUserIdAsync(Guid userId);
+        Task<IEnumerable<T>> FindByUserIdAsync(Guid userId);
     }
 }

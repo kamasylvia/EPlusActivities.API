@@ -67,8 +67,9 @@ namespace EPlusActivities.API
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             // 启用数据库仓库
-            services.AddTransient<IAddressRepository, AddressRepository>()
-                    .AddTransient<ILotteryResultRepository, LotteryResultRepository>()
+            services.AddTransient<IUserIdRepository<Address>, AddressRepository>()
+                    .AddTransient<IUserIdRepository<Lottery>, LotteryRepository>()
+                    .AddTransient<IAttendanceRepository, AttendanceRepository>()
                     .AddTransient<IRepository<Activity>, ActivityRepository>()
                     .AddTransient<IRepository<Prize>, PrizeRepository>();
             // 启用短信服务

@@ -23,8 +23,10 @@ namespace EPlusActivities.API.Configuration
             CreateMap<UserDto, ApplicationUser>();
             CreateMap<Address, AddressDto>();
             CreateMap<AddressDto, Address>();
-            CreateMap<LotteryDto, LotteryResult>();
-            CreateMap<LotteryResult, LotteryDto>();
+            CreateMap<LotteryDto, Lottery>();
+            CreateMap<Lottery, LotteryDto>();
+            CreateMap<AttendanceDto, Attendance>();
+            CreateMap<Attendance, AttendanceDto>();
             CreateMap<Activity, ActivityDto>();
         }
     }

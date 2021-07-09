@@ -4,8 +4,10 @@ namespace EPlusActivities.API.DTOs
 {
     public class LotteryDto
     {
-        public Guid WinnerId { get; set; }
+        public Guid Id { get; set; }
         public string Channel { get; set; }
-        public string PhoneNumber { get; set; }
+        public Guid WinnerId { get; set; }
+        public Guid ActivityId { get; set; }
+        public Guid PrizeId { get; set; }
     }
 }

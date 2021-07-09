@@ -54,6 +54,7 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> ChangePhoneNumber([FromBody] UserDto userDto)
         {
+            #region 参数验证
             if (userDto.PhoneNumber is null)
             {
                 return BadRequest("手机号不能为空");
@@ -67,8 +68,9 @@ namespace EPlusActivities.API.Controllers
 
             if (user.PhoneNumber == userDto.PhoneNumber)
             {
-                return BadRequest("新手机号与旧手机号相同");
+                return Conflict("新手机号与旧手机号相同");
             }
+            #endregion
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(
                 user,
@@ -103,20 +105,21 @@ namespace EPlusActivities.API.Controllers
             // Not Completed
             var user = _mapper.Map<ApplicationUser>(userDto);
             var result = await _userManager.UpdateAsync(user);
-            return result.Succeeded ? Ok() : BadRequest(result.Errors);
+            return result.Succeeded ? Ok() : new InternalServerErrorObjectResult(result.Errors);
         }
-
 
         [HttpDelete]
         // [Authorize(Roles = "admin")]
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> DeleteUserAsync([FromBody] UserDto userDto)
         {
+            #region 参数验证
             var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
             {
                 return NotFound("用户不存在");
             }
+            #endregion
 
             var result = await _userManager.DeleteAsync(user);
             return result.Succeeded ? Ok() : BadRequest(result.Errors);

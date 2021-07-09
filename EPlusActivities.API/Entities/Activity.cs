@@ -9,9 +9,9 @@ namespace EPlusActivities.API.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
-        public Guid LotteryResultId { get; set; }
-        public LotteryResult LotteryResult { get; set; }
+        public Guid LotteryId { get; set; }
+        public Lottery Lottery { get; set; }
     }
 }

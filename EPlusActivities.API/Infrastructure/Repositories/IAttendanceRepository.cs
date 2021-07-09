@@ -5,8 +5,8 @@ using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public interface ILotteryResultRepository : IRepository<LotteryResult>
+    public interface IAttendanceRepository : IRepository<Attendance>
     {
-        Task<IEnumerable<LotteryResult>> FindByUserIdAsync(Guid userId);
+        Task<IEnumerable<Attendance>> FindByUserIdAsync(Guid userId, DateTime startTime);
     }
 }

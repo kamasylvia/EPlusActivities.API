@@ -21,18 +21,18 @@ namespace EPlusActivities.API.Controllers
     public class LotteryController : Controller
     {
         private readonly IMapper _mapper;
-        private readonly LotteryResultRepository _lotteryResultRepository;
+        private readonly LotteryRepository _lotteryRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public LotteryController(
-            LotteryResultRepository lotteryResultRepository,
+            LotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IMapper mapper)
         {
             _mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
-            _lotteryResultRepository = lotteryResultRepository
-                ?? throw new ArgumentNullException(nameof(lotteryResultRepository));
+            _lotteryRepository = lotteryRepository
+                ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _userManager = userManager
                 ?? throw new ArgumentNullException(nameof(userManager));
         }
@@ -40,20 +40,20 @@ namespace EPlusActivities.API.Controllers
         // GET: api/values
         [HttpGet("list")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryResults([FromBody] LotteryDto lotteryDto)
+        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteries([FromBody] LotteryDto lotteryDto)
         {
             var user = await _userManager.FindByIdAsync(lotteryDto.WinnerId.ToString());
             if (user is null)
             {
                 return BadRequest("用户不存在");
             }
-            var lotteryResults = await _lotteryResultRepository.FindByUserIdAsync(lotteryDto.WinnerId);
-            return Ok(_mapper.Map<LotteryDto>(lotteryResults));
+            var lotterys = await _lotteryRepository.FindByUserIdAsync(lotteryDto.WinnerId);
+            return Ok(_mapper.Map<LotteryDto>(lotterys));
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> AddLotteryResult([FromBody] LotteryDto lotteryDto)
+        public async Task<IActionResult> AddLottery([FromBody] LotteryDto lotteryDto)
         {
             return Ok();
         }

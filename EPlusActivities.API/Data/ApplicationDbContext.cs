@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Data
         public virtual DbSet<Attendance> AttendanceRecord { get; set; }
         public virtual DbSet<Activity> Activities { get; set; }
         public virtual DbSet<Prize> Prizes { get; set; }
-        public virtual DbSet<LotteryResult> LotteryResults { get; set; }
+        public virtual DbSet<Lottery> Lotteries { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
           : base(options)
@@ -35,7 +35,8 @@ namespace EPlusActivities.API.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            // many-to-many
+            #region 构建外键关系
+            #region many-to-many
             builder.Entity<ApplicationUserRole>(userRole =>
             {
                 userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -50,15 +51,16 @@ namespace EPlusActivities.API.Data
                         .HasForeignKey(ur => ur.UserId)
                         .IsRequired();
             });
+            #endregion
 
-            // one-to-many
+            #region one-to-many
             builder.Entity<ApplicationUser>()
                    .HasMany(u => u.Addresses)
                    .WithOne(a => a.User)
                    .HasForeignKey(a => a.UserId)
                    .IsRequired();
             builder.Entity<ApplicationUser>()
-                   .HasMany(u => u.LotteryResults)
+                   .HasMany(u => u.Lotteries)
                    .WithOne(a => a.Winner)
                    .HasForeignKey(a => a.WinnerId)
                    .IsRequired();
@@ -67,23 +69,25 @@ namespace EPlusActivities.API.Data
                    .WithOne(a => a.User)
                    .HasForeignKey(a => a.UserId)
                    .IsRequired();
+            #endregion
 
-            // one-to-one
-            builder.Entity<LotteryResult>()
+            #region one-to-one
+            builder.Entity<Lottery>()
                    .HasOne(result => result.ActivityItem)
-                   .WithOne(activity => activity.LotteryResult)
-                   .HasForeignKey<Activity>(activity => activity.LotteryResultId)
+                   .WithOne(activity => activity.Lottery)
+                   .HasForeignKey<Activity>(activity => activity.LotteryId)
                    .IsRequired();
-            builder.Entity<LotteryResult>()
+            builder.Entity<Lottery>()
                    .HasOne(result => result.PrizeItem)
-                   .WithOne(prize => prize.LotteryResult)
-                   .HasForeignKey<Prize>(prize => prize.LotteryResultId)
+                   .WithOne(prize => prize.Lottery)
+                   .HasForeignKey<Prize>(prize => prize.LotteryId)
                    .IsRequired();
+            #endregion
 
+            #endregion
 
-            /*
-            Seed data
-            */
+            #region Seed data
+            #region Seed users
             var seedUser = new ApplicationUser
             {
                 Id = Guid.NewGuid(),
@@ -107,8 +111,9 @@ namespace EPlusActivities.API.Data
                         RoleId = seedRole.Id,
                     }
                 );
+            #endregion
 
-            // Seed roles
+            #region Seed roles
             var roleData = System.IO.File.ReadAllText("Data/RoleSeedData.json");
             var roles = JsonSerializer.Deserialize<List<ApplicationRole>>(roleData);
             roles.ForEach(role =>
@@ -117,24 +122,28 @@ namespace EPlusActivities.API.Data
                     role.NormalizedName = role.Name.ToUpper();
                     builder.Entity<ApplicationRole>().HasData(role);
                 });
+            #endregion
 
-            // Seed others
+            #region Seed other data
             var addressId = Guid.NewGuid();
             var prizeId = Guid.NewGuid();
             var activityId = Guid.NewGuid();
             var resultId = Guid.NewGuid();
+            var attendanceId = Guid.NewGuid();
+            var seedDate = DateTime.Now.Date;
             builder.Entity<Prize>().HasData(
                 new Prize
                 {
                     Id = prizeId,
                     Name = "Seed",
-                    LotteryResultId = resultId
+                    LotteryId = resultId
                 }
             );
-            builder.Entity<LotteryResult>().HasData(
-                new LotteryResult
+            builder.Entity<Lottery>().HasData(
+                new Lottery
                 {
                     Id = resultId,
+                    Date = seedDate,
                     WinnerId = seedUser.Id,
                     ActivityId = activityId,
                     PrizeId = prizeId,
@@ -145,7 +154,7 @@ namespace EPlusActivities.API.Data
                 {
                     Id = activityId,
                     Name = "Seed",
-                    LotteryResultId = resultId
+                    LotteryId = resultId
                 }
             );
             builder.Entity<Address>().HasData(
@@ -155,7 +164,16 @@ namespace EPlusActivities.API.Data
                     UserId = seedUser.Id,
                 }
             );
-
+            builder.Entity<Attendance>().HasData(
+                new Attendance
+                {
+                    Id = attendanceId,
+                    Date = seedDate,
+                    UserId = seedUser.Id,
+                }
+            );
+            #endregion
+            #endregion
         }
     }
 }

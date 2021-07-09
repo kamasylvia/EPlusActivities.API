@@ -19,18 +19,14 @@ namespace EPlusActivities.API.Entities
         [Required]
         public DateTime RegisterDate { get; set; }
 
-        // 上次登录日期
-        public DateTime? LastActiveDate { get; set; }
-
-
         // 积分
         public int Credit { get; set; }
 
         // 是否会员
         public bool IsMember { get; set; }
 
-        // 签到天数
-        public int AttendanceDays { get; set; }
+        // 上次签到日期
+        public DateTime? LastAttendanceDate { get; set; }
 
         // 连续签到天数
         public int SequentialAttendanceDays { get; set; }
@@ -40,7 +36,7 @@ namespace EPlusActivities.API.Entities
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<Attendance> AttendanceRecord { get; set; }
-        public virtual ICollection<LotteryResult> LotteryResults { get; set; }
+        public virtual ICollection<Lottery> Lotteries { get; set; }
 
 
 

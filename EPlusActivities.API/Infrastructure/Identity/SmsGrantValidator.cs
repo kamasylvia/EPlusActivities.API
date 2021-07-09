@@ -44,7 +44,7 @@ namespace EPlusActivities.API.Infrastructure.Identity
         {
             try
             {
-                // 参数获取
+                #region 参数获取
                 // 未来版本的 AutoMapper 可以自动获取参数。
                 var phoneNumber = context.Request.Raw["phone_number"];
                 var token = context.Request.Raw["token"];
@@ -52,7 +52,9 @@ namespace EPlusActivities.API.Infrastructure.Identity
 
                 var requireRegister = false;
                 var secret = new Secret(_configuration["Secrets:DefaultSecret"]).Value;
+                #endregion
 
+                #region 获取用户
                 // 这是 EF Core 内置的查询方法，速度很慢，所以用下面的 LINQ 替代。
                 // var user = await _userManager.FindByNameAsync(phoneNumber);
 
@@ -70,9 +72,9 @@ namespace EPlusActivities.API.Infrastructure.Identity
                     };
                     requireRegister = true;
                 }
+                #endregion
 
-                // 验证
-                // var validationResult = TotpHelper.Validate(phoneNumber, code);
+                #region 验证
                 var validationResult =
                     await _phoneNumberTokenProvider.ValidateAsync(
                         OidcConstants.AuthenticationMethods.ConfirmationBySms,
@@ -87,8 +89,9 @@ namespace EPlusActivities.API.Infrastructure.Identity
                         "短信验证失败");
                     return;
                 }
+                #endregion
 
-                // 注册
+                #region 注册
                 if (requireRegister)
                 {
                     user.PhoneNumberConfirmed = true;
@@ -98,8 +101,6 @@ namespace EPlusActivities.API.Infrastructure.Identity
                     var creationResult = await _userManager.CreateAsync(user);
                     if (!creationResult.Succeeded)
                     {
-                        // var errors = creationResult.Errors.Select(err =>
-                        //     $"Error { err.Code} : {err.Description}");
                         context.Result = new GrantValidationResult(
                             TokenRequestErrors.InvalidGrant,
                             "用户注册失败}");
@@ -109,13 +110,16 @@ namespace EPlusActivities.API.Infrastructure.Identity
                     // await _userManager.AddToRoleAsync(user, "Customer".ToUpper());
                     await _userManager.AddToRolesAsync(user, new string[] { "Customer".ToUpper() });
                 }
+                #endregion
 
+                #region 登录
                 /*
                     非常重要！
-                    验证时 IdentityUser 直接登录才能使得 API 的授权认证成功执行。
+                    验证方法中 IdentityUser 直接登录才能使得 API 的授权认证成功执行。
                     否则访问受保护的 API 将返回 404。
                 */
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                #endregion
 
                 context.Result = new GrantValidationResult(
                     subject: user.Id.ToString(),

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class AddressRepository : RepositoryBase, IAddressRepository
+    public class AddressRepository : RepositoryBase, IUserIdRepository<Address>
     {
         public AddressRepository(ApplicationDbContext context) : base(context)
         {
