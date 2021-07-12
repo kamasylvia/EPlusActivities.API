@@ -10,6 +10,7 @@ namespace EPlusActivities.API.DTOs
         [Required]
         public Guid Id { get; set; }
 
+        [Required]
         [Phone]
         [StringLength(11, MinimumLength = 11, ErrorMessage = "手机号必须为 11 位数字。")]
         public string PhoneNumber { get; set; }
@@ -19,6 +20,7 @@ namespace EPlusActivities.API.DTOs
         public string RegisterChannel { get; set; }
 
         // 登录渠道
+        [Required]
         public string LoginChannel { get; set; }
 
         // 注册日期
