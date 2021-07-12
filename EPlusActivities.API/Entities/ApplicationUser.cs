@@ -36,7 +36,7 @@ namespace EPlusActivities.API.Entities
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<Attendance> AttendanceRecord { get; set; }
-        public virtual ICollection<Lottery> Lotteries { get; set; }
+        public virtual ICollection<Lottery> LotteryResults { get; set; }
 
 
 

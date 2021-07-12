@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EPlusActivities.API.Entities
 {
@@ -27,7 +28,6 @@ namespace EPlusActivities.API.Entities
         public string PictureUrl { get; set; }
 
         // 所处的中奖结果
-        public Guid? LotteryId { get; set; }
         public Lottery Lottery { get; set; }
     }
 }

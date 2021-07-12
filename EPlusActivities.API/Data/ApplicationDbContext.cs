@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Data
         public virtual DbSet<Attendance> AttendanceRecord { get; set; }
         public virtual DbSet<Activity> Activities { get; set; }
         public virtual DbSet<Prize> Prizes { get; set; }
-        public virtual DbSet<Lottery> Lotteries { get; set; }
+        public virtual DbSet<Lottery> LotteryResults { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
           : base(options)
@@ -35,6 +35,7 @@ namespace EPlusActivities.API.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
+            /*
             #region 构建外键关系
             #region many-to-many
             builder.Entity<ApplicationUserRole>(userRole =>
@@ -174,6 +175,7 @@ namespace EPlusActivities.API.Data
             );
             #endregion
             #endregion
+            */
         }
     }
 }

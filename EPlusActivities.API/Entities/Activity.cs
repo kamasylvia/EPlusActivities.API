@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.Entities
@@ -12,8 +13,6 @@ namespace EPlusActivities.API.Entities
         [Required]
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-
-        public Guid? LotteryId { get; set; }
-        public Lottery Lottery { get; set; }
+        public IEnumerable<Lottery> LotteryResults { get; set; }
     }
 }

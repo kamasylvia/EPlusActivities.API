@@ -15,22 +15,22 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         }
 
         public async Task AddAsync(Lottery item) =>
-            await _context.Lotteries.AddAsync(item);
+            await _context.LotteryResults.AddAsync(item);
 
         public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.Lotteries.AnyAsync(wr => wr.Id == id);
+            await _context.LotteryResults.AnyAsync(wr => wr.Id == id);
 
         public async Task<IEnumerable<Lottery>> FindAllAsync() =>
-            await _context.Lotteries.ToListAsync();
+            await _context.LotteryResults.ToListAsync();
 
         public async Task<Lottery> FindByIdAsync(Guid id) =>
-            await _context.Lotteries.FindAsync(id);
+            await _context.LotteryResults.FindAsync(id);
 
         public async Task<IEnumerable<Lottery>> FindByUserIdAsync(Guid userId) =>
-            await _context.Lotteries.Where(a => a.WinnerId == userId).ToListAsync();
+            await _context.LotteryResults.Where(a => a.WinnerId == userId).ToListAsync();
 
-        public void Remove(Lottery item) => _context.Lotteries.Remove(item);
+        public void Remove(Lottery item) => _context.LotteryResults.Remove(item);
 
-        public void Update(Lottery item) => _context.Lotteries.Update(item);
+        public void Update(Lottery item) => _context.LotteryResults.Update(item);
     }
 }

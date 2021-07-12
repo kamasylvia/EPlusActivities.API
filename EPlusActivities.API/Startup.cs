@@ -5,10 +5,11 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using EPlusActivities.API.Infrastructure;
-using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure;
 using EPlusActivities.API.Infrastructure.Identity;
+using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services;
 using IdentityServer4.AspNetIdentity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,7 +26,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using EPlusActivities.API.Data;
 
 namespace EPlusActivities.API
 {
@@ -157,7 +157,12 @@ namespace EPlusActivities.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -175,6 +180,8 @@ namespace EPlusActivities.API
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            DbInitializer.Initialize(env, context, userManager, roleManager);
 
             app.UseEndpoints(endpoints =>
             {
