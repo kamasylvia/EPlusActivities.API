@@ -9,6 +9,16 @@ namespace EPlusActivities.API.Infrastructure.ActionResults
             : base(error)
         {
             StatusCode = StatusCodes.Status500InternalServerError;
+            if (error is string err)
+            {
+                Value = new ProblemDetails
+                {
+                    Type = "https://httpstatuses.com/500",
+                    Status = StatusCodes.Status500InternalServerError,
+                    Title = "Internal Server Error",
+                    Detail = err
+                };
+            }
         }
     }
 
