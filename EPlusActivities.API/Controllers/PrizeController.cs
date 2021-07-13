@@ -47,12 +47,12 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<PrizeDto>> GetByIdAsync([FromBody] PrizeDto prizeDto)
         {
-            if (!prizeDto.Id.HasValue)
+            if (prizeDto.Id == Guid.Empty)
             {
                 return BadRequest("奖品 ID 不得为空");
             }
 
-            var prize = await _prizeRepository.FindByIdAsync(prizeDto.Id.Value);
+            var prize = await _prizeRepository.FindByIdAsync(prizeDto.Id);
 
             return prize is null ? NotFound("未找到奖品信息") : Ok(prize);
         }

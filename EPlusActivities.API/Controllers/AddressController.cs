@@ -60,14 +60,14 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<AddressDto>> GetByIdAsync([FromBody] AddressDto addressDto)
         {
             #region 参数验证
-            if (!addressDto.Id.HasValue)
+            if (addressDto.Id == Guid.Empty)
             {
                 return BadRequest("地址 ID 不得为空");
             }
             #endregion
 
-            var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
-            return address is null ? NotFound("地址不存在") : Ok(address);
+            var address = await _addressRepository.FindByIdAsync(addressDto.Id);
+            return address is null ? NotFound($"{addressDto.Id} 地址不存在") : Ok(address);
         }
 
         [HttpPost]
@@ -76,9 +76,9 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<AddressDto>> AddAddressAsync([FromBody] AddressDto addressDto)
         {
             #region 参数验证
-            if (addressDto.Id.HasValue && await _addressRepository.ExistsAsync(addressDto.Id.Value))
+            if (await _addressRepository.ExistsAsync(addressDto.Id))
             {
-                return BadRequest("地址已存在");
+                return Conflict("地址已存在");
             }
 
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
@@ -112,12 +112,12 @@ namespace EPlusActivities.API.Controllers
         public async Task<IActionResult> UpdateAddressAsync([FromBody] AddressDto addressDto)
         {
             #region 参数验证
-            if (!addressDto.Id.HasValue)
+            if (addressDto.Id == Guid.Empty)
             {
                 return BadRequest("地址 ID 不得为空");
             }
 
-            if (!await _addressRepository.ExistsAsync(addressDto.Id.Value))
+            if (!await _addressRepository.ExistsAsync(addressDto.Id))
             {
                 return NotFound("地址不存在");
             }
@@ -144,15 +144,15 @@ namespace EPlusActivities.API.Controllers
         public async Task<IActionResult> DeleteAddressAsync([FromBody] AddressDto addressDto)
         {
             #region 参数验证
-            if (!addressDto.Id.HasValue)
+            if (addressDto.Id == Guid.Empty)
             {
                 return BadRequest("地址 ID 不得为空");
             }
 
-            var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
+            var address = await _addressRepository.FindByIdAsync(addressDto.Id);
             if (address is null)
             {
-                return BadRequest("地址不存在");
+                return NotFound("地址不存在");
             }
             #endregion
 

@@ -23,8 +23,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Attendance>> FindAllAsync() =>
             await _context.AttendanceRecord.ToListAsync();
 
-        public async Task<Attendance> FindByIdAsync(Guid id) =>
-            await _context.AttendanceRecord.FindAsync(id);
+        public async Task<Attendance> FindByIdAsync(params object[] keyValues) =>
+            await _context.AttendanceRecord.FindAsync(keyValues);
 
         public async Task<IEnumerable<Attendance>> FindByUserIdAsync(Guid userId, DateTime startTime) =>
             await _context.AttendanceRecord.Where(a => a.UserId == userId

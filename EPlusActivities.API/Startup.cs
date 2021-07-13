@@ -72,9 +72,11 @@ namespace EPlusActivities.API
             // 启用数据库仓库
             services.AddTransient<IFindByUserIdRepository<Address>, AddressRepository>()
                     .AddTransient<IFindByUserIdRepository<Lottery>, LotteryRepository>()
-                    .AddTransient<IAttendanceRepository, AttendanceRepository>()
                     .AddTransient<IRepository<Activity>, ActivityRepository>()
-                    .AddTransient<IFindByNameRepository<Prize>, PrizeRepository>();
+                    .AddTransient<IRepository<Category>, CategoryRepository>()
+                    .AddTransient<IFindByNameRepository<Prize>, PrizeRepository>()
+                    .AddTransient<IAttendanceRepository, AttendanceRepository>()
+                    .AddTransient<IBrandRepository, BrandRepository>();
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
 

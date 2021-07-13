@@ -22,8 +22,8 @@ namespace EPlusActivities.API.Data
         {
             if (environment.IsDevelopment())
             {
-                // var deleted = context.Database.EnsureDeleted();
-                // System.Console.WriteLine($"The old database is deleted: {deleted}");
+                var deleted = context.Database.EnsureDeleted();
+                System.Console.WriteLine($"The old database is deleted: {deleted}");
                 var created = context.Database.EnsureCreated();
                 System.Console.WriteLine($"The new database is created: {created}");
             }

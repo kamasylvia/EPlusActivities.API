@@ -18,13 +18,13 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.LotteryResults.AddAsync(item);
 
         public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.LotteryResults.AnyAsync(wr => wr.Id == id);
+            await _context.LotteryResults.AnyAsync(lr => lr.Id == id);
 
         public async Task<IEnumerable<Lottery>> FindAllAsync() =>
             await _context.LotteryResults.ToListAsync();
 
-        public async Task<Lottery> FindByIdAsync(Guid id) =>
-            await _context.LotteryResults.FindAsync(id);
+        public async Task<Lottery> FindByIdAsync(params object[] keyValues) =>
+            await _context.LotteryResults.FindAsync(keyValues);
 
         public async Task<IEnumerable<Lottery>> FindByUserIdAsync(Guid userId) =>
             await _context.LotteryResults.Where(a => a.WinnerId == userId).ToListAsync();

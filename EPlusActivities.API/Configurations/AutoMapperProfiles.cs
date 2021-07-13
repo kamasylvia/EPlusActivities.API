@@ -31,6 +31,10 @@ namespace EPlusActivities.API.Configuration
             CreateMap<ActivityDto, Activity>();
             CreateMap<Prize, PrizeDto>();
             CreateMap<PrizeDto, Prize>();
+            CreateMap<BrandDto, Brand>();
+            CreateMap<Brand, BrandDto>();
+            CreateMap<CategoryDto, Category>();
+            CreateMap<Brand, CategoryDto>();
         }
     }
 }

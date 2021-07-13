@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class BrandRepository : RepositoryBase, IFindByNameRepository<Brand>
+    public class BrandRepository : RepositoryBase, IBrandRepository
     {
         public BrandRepository(ApplicationDbContext context) : base(context)
         {
@@ -19,13 +19,17 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.Brands.AnyAsync(b => b.Id == id);
 
+        public async Task<bool> ExistsAsync(string name) =>
+            await _context.Brands.AnyAsync(b => b.Name == name);
+
         public async Task<IEnumerable<Brand>> FindAllAsync() => await _context.Brands.ToListAsync();
 
-        public async Task<Brand> FindByIdAsync(Guid id) => await _context.Brands.FindAsync(id);
+        public async Task<Brand> FindByIdAsync(params object[] keyValues) =>
+            await _context.Brands.FindAsync(keyValues);
 
-        public async Task<IEnumerable<Brand>> FindByNameAsync(string name) =>
-            await _context.Brands.Where(p => p.Name.Contains(name))
-                                 .ToArrayAsync();
+        public async Task<Brand> FindByNameAsync(string name) =>
+            await _context.Brands.Where(p => p.Name == name)
+                                 .SingleOrDefaultAsync();
 
         public void Remove(Brand item) => _context.Brands.Remove(item);
 

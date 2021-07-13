@@ -37,6 +37,11 @@ namespace EPlusActivities.API.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
+            #region Set unique properties
+            builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
+            builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
+            #endregion
+
             /*
             #region 构建外键关系
             #region many-to-many
@@ -87,95 +92,6 @@ namespace EPlusActivities.API.Data
                    .IsRequired();
             #endregion
 
-            #endregion
-
-            #region Seed data
-            #region Seed users
-            var seedUser = new ApplicationUser
-            {
-                Id = Guid.NewGuid(),
-                UserName = "Seed",
-                NormalizedUserName = "Seed".ToUpper(),
-                PhoneNumber = "11111111111"
-            };
-            var seedRole = new ApplicationRole
-            {
-                Id = Guid.NewGuid(),
-                Name = "Seed",
-                NormalizedName = "Seed".ToUpper()
-            };
-
-            builder.Entity<ApplicationUser>().HasData(seedUser);
-            builder.Entity<ApplicationRole>().HasData(seedRole);
-            builder.Entity<ApplicationUserRole>().HasData(
-                    new ApplicationUserRole
-                    {
-                        UserId = seedUser.Id,
-                        RoleId = seedRole.Id,
-                    }
-                );
-            #endregion
-
-            #region Seed roles
-            var roleData = System.IO.File.ReadAllText("Data/RoleSeedData.json");
-            var roles = JsonSerializer.Deserialize<List<ApplicationRole>>(roleData);
-            roles.ForEach(role =>
-                {
-                    role.Id = Guid.NewGuid();
-                    role.NormalizedName = role.Name.ToUpper();
-                    builder.Entity<ApplicationRole>().HasData(role);
-                });
-            #endregion
-
-            #region Seed other data
-            var addressId = Guid.NewGuid();
-            var prizeId = Guid.NewGuid();
-            var activityId = Guid.NewGuid();
-            var resultId = Guid.NewGuid();
-            var attendanceId = Guid.NewGuid();
-            var seedDate = DateTime.Now.Date;
-            builder.Entity<Prize>().HasData(
-                new Prize
-                {
-                    Id = prizeId,
-                    Name = "Seed",
-                    LotteryId = resultId
-                }
-            );
-            builder.Entity<Lottery>().HasData(
-                new Lottery
-                {
-                    Id = resultId,
-                    Date = seedDate,
-                    WinnerId = seedUser.Id,
-                    ActivityId = activityId,
-                    PrizeId = prizeId,
-                }
-            );
-            builder.Entity<Activity>().HasData(
-                new Activity
-                {
-                    Id = activityId,
-                    Name = "Seed",
-                    LotteryId = resultId
-                }
-            );
-            builder.Entity<Address>().HasData(
-                new Address
-                {
-                    Id = addressId,
-                    UserId = seedUser.Id,
-                }
-            );
-            builder.Entity<Attendance>().HasData(
-                new Attendance
-                {
-                    Id = attendanceId,
-                    Date = seedDate,
-                    UserId = seedUser.Id,
-                }
-            );
-            #endregion
             #endregion
             */
         }

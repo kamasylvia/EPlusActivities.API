@@ -7,7 +7,7 @@ namespace EPlusActivities.API.DTOs
 {
     public class AddressDto
     {
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         // 收件人
         public string Recipient { get; set; }
