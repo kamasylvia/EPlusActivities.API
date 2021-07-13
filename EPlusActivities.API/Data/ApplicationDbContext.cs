@@ -40,6 +40,7 @@ namespace EPlusActivities.API.Data
             #region Set unique properties
             builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
+            builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
             #endregion
 
             /*

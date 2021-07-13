@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class BrandRepository : RepositoryBase, IBrandRepository
+    public class BrandRepository : RepositoryBase, INameExistsRepository<Brand>
     {
         public BrandRepository(ApplicationDbContext context) : base(context)
         {

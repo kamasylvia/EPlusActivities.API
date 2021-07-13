@@ -10,9 +10,10 @@ namespace EPlusActivities.API.Entities
         [Key]
         public Guid Id { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
-        public IEnumerable<Prize> Prizes{ get; set; }
+        public IEnumerable<Prize> Prizes { get; set; }
 
         public Brand(string name)
         {

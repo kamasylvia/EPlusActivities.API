@@ -3,9 +3,9 @@ using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public interface IBrandRepository : IRepository<Brand>
+    public interface INameExistsRepository<T> : IRepository<T> where T : class
     {
         Task<bool> ExistsAsync(string name);
-        Task<Brand> FindByNameAsync(string name);
+        Task<T> FindByNameAsync(string name);
     }
 }
