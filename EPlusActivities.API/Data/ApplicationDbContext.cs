@@ -20,6 +20,8 @@ namespace EPlusActivities.API.Data
         public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<Attendance> AttendanceRecord { get; set; }
         public virtual DbSet<Activity> Activities { get; set; }
+        public virtual DbSet<Brand> Brands { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Prize> Prizes { get; set; }
         public virtual DbSet<Lottery> LotteryResults { get; set; }
 

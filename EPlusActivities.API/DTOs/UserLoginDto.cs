@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.DTOs
 {
-    public class LoginDto
+    public class UserLoginDto
     {
         [Required]
         public Guid UserId { get; set; }

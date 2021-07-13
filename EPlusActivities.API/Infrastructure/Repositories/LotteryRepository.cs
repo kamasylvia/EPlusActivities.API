@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class LotteryRepository : RepositoryBase, IUserIdRepository<Lottery>
+    public class LotteryRepository : RepositoryBase, IFindByUserIdRepository<Lottery>
     {
         public LotteryRepository(ApplicationDbContext context) : base(context)
         {

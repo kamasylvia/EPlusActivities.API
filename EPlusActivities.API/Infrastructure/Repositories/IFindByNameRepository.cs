@@ -4,8 +4,8 @@ using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public interface IPrizeRepository : IRepository<Prize>
+    public interface IFindByNameRepository<T> : IRepository<T> where T : class
     {
-         Task<IEnumerable<Prize>> FindByNameAsync(string name);
+        Task<IEnumerable<T>> FindByNameAsync(string name);
     }
 }

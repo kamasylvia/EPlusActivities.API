@@ -34,7 +34,10 @@ namespace EPlusActivities.API
         public IWebHostEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
 
-        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
+        public Startup(
+            IWebHostEnvironment environment,
+            IConfiguration configuration
+            )
         {
             Environment = environment;
             Configuration = configuration;
@@ -67,11 +70,11 @@ namespace EPlusActivities.API
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             // 启用数据库仓库
-            services.AddTransient<IUserIdRepository<Address>, AddressRepository>()
-                    .AddTransient<IUserIdRepository<Lottery>, LotteryRepository>()
+            services.AddTransient<IFindByUserIdRepository<Address>, AddressRepository>()
+                    .AddTransient<IFindByUserIdRepository<Lottery>, LotteryRepository>()
                     .AddTransient<IAttendanceRepository, AttendanceRepository>()
                     .AddTransient<IRepository<Activity>, ActivityRepository>()
-                    .AddTransient<IRepository<Prize>, PrizeRepository>();
+                    .AddTransient<IFindByNameRepository<Prize>, PrizeRepository>();
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class PrizeRepository : RepositoryBase, IPrizeRepository
+    public class PrizeRepository : RepositoryBase, IFindByNameRepository<Prize>
     {
         public PrizeRepository(ApplicationDbContext context) : base(context)
         {

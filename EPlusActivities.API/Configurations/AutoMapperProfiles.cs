@@ -19,8 +19,8 @@ namespace EPlusActivities.API.Configuration
                     opt => opt.MapFrom(
                         src => src.PhoneNumber
                     ));
-            CreateMap<ApplicationUser, UserDto>();
-            CreateMap<UserDto, ApplicationUser>();
+            CreateMap<ApplicationUser, UserDetailsDto>();
+            CreateMap<UserDetailsDto, ApplicationUser>();
             CreateMap<Address, AddressDto>();
             CreateMap<AddressDto, Address>();
             CreateMap<LotteryDto, Lottery>();

@@ -4,6 +4,8 @@ using System.Text.Json;
 using EPlusActivities.API.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace EPlusActivities.API.Data
 {
@@ -18,10 +20,18 @@ namespace EPlusActivities.API.Data
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager)
         {
-            var deleted = context.Database.EnsureDeleted();
-            System.Console.WriteLine($"The old database is deleted: {deleted}");
-            var created = context.Database.EnsureCreated();
-            System.Console.WriteLine($"The new database is created: {created}");
+            if (environment.IsDevelopment())
+            {
+                // var deleted = context.Database.EnsureDeleted();
+                // System.Console.WriteLine($"The old database is deleted: {deleted}");
+                var created = context.Database.EnsureCreated();
+                System.Console.WriteLine($"The new database is created: {created}");
+            }
+            
+            if (environment.IsProduction())
+            {
+                context.Database.Migrate();
+            }
 
             // Look for any Data.
             if (context.Users.Any())
@@ -78,8 +88,23 @@ namespace EPlusActivities.API.Data
             var activity = new Activity();
             context.Activities.Add(activity);
             #endregion
+
+            #region Seed Brands
+            var brand = new Brand("Seed");
+            context.Brands.Add(brand);
+            #endregion
+
+            #region Seed Categories
+            var category = new Category("Seed");
+            context.Categories.Add(category);
+            #endregion
+
             #region Seed Prizes
-            var prize = new Prize();
+            var prize = new Prize
+            {
+                Brand = brand,
+                Category = category,
+            };
             context.Prizes.Add(prize);
             #endregion
 

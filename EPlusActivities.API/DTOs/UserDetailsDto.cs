@@ -5,7 +5,7 @@ using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.DTOs
 {
-    public class UserDto
+    public class UserDetailsDto
     {
         [Required]
         public Guid Id { get; set; }

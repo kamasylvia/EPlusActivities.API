@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class AddressRepository : RepositoryBase, IUserIdRepository<Address>
+    public class AddressRepository : RepositoryBase, IFindByUserIdRepository<Address>
     {
         public AddressRepository(ApplicationDbContext context) : base(context)
         {
@@ -19,7 +19,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Addresses.AddAsync(address);
 
         public async Task<Address> FindByIdAsync(Guid id) =>
-            id.ToString() is null ? null : await _context.Addresses.FindAsync(id);
+            await _context.Addresses.FindAsync(id);
 
         public async Task<IEnumerable<Address>> FindAllAsync() =>
             await _context.Addresses.ToListAsync();

@@ -23,11 +23,11 @@ namespace EPlusActivities.API.Controllers
     public class AddressController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUserIdRepository<Address> _addressRepository;
+        private readonly IFindByUserIdRepository<Address> _addressRepository;
         private readonly IMapper _mapper;
         public AddressController(
             UserManager<ApplicationUser> userManager,
-            IUserIdRepository<Address> addressRepository,
+            IFindByUserIdRepository<Address> addressRepository,
             IMapper mapper)
         {
             _addressRepository = addressRepository
