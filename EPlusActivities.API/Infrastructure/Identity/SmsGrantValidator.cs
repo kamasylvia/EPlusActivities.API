@@ -19,18 +19,26 @@ namespace EPlusActivities.API.Infrastructure.Identity
     public class SmsGrantValidator : IExtensionGrantValidator
     {
         private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly RoleManager<ApplicationRole> _roleManager;
+
         private readonly IConfiguration _configuration;
-        private readonly PhoneNumberTokenProvider<ApplicationUser> _phoneNumberTokenProvider;
+
+        private readonly PhoneNumberTokenProvider<ApplicationUser>
+            _phoneNumberTokenProvider;
+
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public string GrantType => OidcConstants.AuthenticationMethods.ConfirmationBySms;
+        public string GrantType =>
+            OidcConstants.AuthenticationMethods.ConfirmationBySms;
+
         public SmsGrantValidator(
             IConfiguration configuration,
             PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager
+        )
         {
             _configuration = configuration;
             _phoneNumberTokenProvider = phoneNumberTokenProvider;
@@ -38,7 +46,6 @@ namespace EPlusActivities.API.Infrastructure.Identity
             _userManager = userManager;
             _roleManager = roleManager;
         }
-
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
@@ -51,45 +58,58 @@ namespace EPlusActivities.API.Infrastructure.Identity
                 var loginChannel = context.Request.Raw["login_channel"];
 
                 var requireRegister = false;
-                var secret = new Secret(_configuration["Secrets:DefaultSecret"]).Value;
+                var secret =
+                    new Secret(_configuration["Secrets:DefaultSecret"]).Value;
                 #endregion
+
+
 
                 #region 获取用户
                 // 这是 EF Core 内置的查询方法，速度很慢，所以用下面的 LINQ 替代。
                 // var user = await _userManager.FindByNameAsync(phoneNumber);
-
-                var user = await _userManager.Users.SingleOrDefaultAsync(x =>
-                    x.PhoneNumber == phoneNumber);
+                var user =
+                    await _userManager
+                        .Users
+                        .SingleOrDefaultAsync(x =>
+                            x.PhoneNumber == phoneNumber);
 
                 if (user == null)
                 {
-                    user = new ApplicationUser
-                    {
-                        UserName = phoneNumber,
-                        NormalizedUserName = phoneNumber,
-                        PhoneNumber = phoneNumber,
-                        SecurityStamp = secret + phoneNumber.Sha256()
-                    };
+                    user =
+                        new ApplicationUser
+                        {
+                            UserName = phoneNumber,
+                            NormalizedUserName = phoneNumber,
+                            PhoneNumber = phoneNumber,
+                            SecurityStamp = secret + phoneNumber.Sha256()
+                        };
                     requireRegister = true;
                 }
                 #endregion
 
+
+
                 #region 验证
                 var validationResult =
-                    await _phoneNumberTokenProvider.ValidateAsync(
-                        OidcConstants.AuthenticationMethods.ConfirmationBySms,
+                    await _phoneNumberTokenProvider
+                        .ValidateAsync(OidcConstants
+                            .AuthenticationMethods
+                            .ConfirmationBySms,
                         token,
                         _userManager,
                         user);
 
                 if (!validationResult)
                 {
-                    context.Result = new GrantValidationResult(
-                        TokenRequestErrors.InvalidGrant,
-                        "短信验证失败");
+                    context.Result =
+                        new GrantValidationResult(TokenRequestErrors
+                                .InvalidGrant,
+                            "短信验证失败");
                     return;
                 }
                 #endregion
+
+
 
                 #region 注册
                 if (requireRegister)
@@ -101,16 +121,21 @@ namespace EPlusActivities.API.Infrastructure.Identity
                     var creationResult = await _userManager.CreateAsync(user);
                     if (!creationResult.Succeeded)
                     {
-                        context.Result = new GrantValidationResult(
-                            TokenRequestErrors.InvalidGrant,
-                            "用户注册失败}");
+                        context.Result =
+                            new GrantValidationResult(TokenRequestErrors
+                                    .InvalidGrant,
+                                "用户注册失败}");
                         return;
                     }
 
                     // await _userManager.AddToRoleAsync(user, "Customer".ToUpper());
-                    await _userManager.AddToRolesAsync(user, new string[] { "Customer".ToUpper() });
+                    await _userManager
+                        .AddToRolesAsync(user,
+                        new string[] { "Customer".ToUpper() });
                 }
                 #endregion
+
+
 
                 #region 登录
                 /*
@@ -121,14 +146,18 @@ namespace EPlusActivities.API.Infrastructure.Identity
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 #endregion
 
-                context.Result = new GrantValidationResult(
-                    subject: user.Id.ToString(),
-                    authenticationMethod: OidcConstants.AuthenticationMethods.ConfirmationBySms
-                    );
+
+                context.Result =
+                    new GrantValidationResult(subject: user.Id.ToString(),
+                        authenticationMethod: OidcConstants
+                            .AuthenticationMethods
+                            .ConfirmationBySms);
             }
             catch (Exception ex)
             {
-                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, ex.Message);
+                context.Result =
+                    new GrantValidationResult(TokenRequestErrors.InvalidGrant,
+                        ex.Message);
             }
         }
     }

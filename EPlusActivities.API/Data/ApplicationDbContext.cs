@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser,
+    public class ApplicationDbContext : IdentityDbContext
+       <ApplicationUser,
         ApplicationRole,
         Guid,
         IdentityUserClaim<Guid>,
@@ -18,27 +19,40 @@ namespace EPlusActivities.API.Data
         IdentityUserToken<Guid>>
     {
         public virtual DbSet<Address> Addresses { get; set; }
+
         public virtual DbSet<Attendance> AttendanceRecord { get; set; }
+
         public virtual DbSet<Activity> Activities { get; set; }
+
         public virtual DbSet<Brand> Brands { get; set; }
+
         public virtual DbSet<Category> Categories { get; set; }
+
         public virtual DbSet<Prize> Prizes { get; set; }
+
         public virtual DbSet<Lottery> LotteryResults { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-          : base(options)
+        public ApplicationDbContext(
+            DbContextOptions<ApplicationDbContext> options
+        ) :
+            base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
             #region Set unique properties
-            builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
+            builder
+                .Entity<ApplicationUser>()
+                .HasIndex(u => u.PhoneNumber)
+                .IsUnique();
+
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
             #endregion
@@ -70,8 +84,8 @@ namespace EPlusActivities.API.Data
                    .IsRequired();
             builder.Entity<ApplicationUser>()
                    .HasMany(u => u.Lotteries)
-                   .WithOne(a => a.Winner)
-                   .HasForeignKey(a => a.WinnerId)
+                   .WithOne(a => a.User)
+                   .HasForeignKey(a => a.UserId)
                    .IsRequired();
             builder.Entity<ApplicationUser>()
                    .HasMany(u => u.AttendanceRecord)

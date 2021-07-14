@@ -5,13 +5,18 @@ namespace EPlusActivities.API.Infrastructure.ActionResults
 {
     public class ApiResult : ActionResult
     {
-
         public int? StatusCode { get; set; }
+
         public object Data { get; set; }
+
         public object Errors { get; set; }
+
         public bool Succeeded { get; set; }
 
-        public ApiResult() { }
+        public ApiResult()
+        {
+        }
+
         public ApiResult(ObjectResult objectResult)
         {
             StatusCode = objectResult.StatusCode;
@@ -42,7 +47,7 @@ namespace EPlusActivities.API.Infrastructure.ActionResults
             switch (statusCodeResult)
             {
                 case OkResult:
-                case NoContentResult:   // 暂时无效
+                case NoContentResult: // 暂时无效
                     Data = "操作成功";
                     Succeeded = true;
                     break;

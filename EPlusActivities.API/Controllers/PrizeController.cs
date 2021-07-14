@@ -73,15 +73,14 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<PrizeDto>> AddPrizeAsync([FromBody] PrizeDto prizeDto)
         {
             #region 参数验证
-            if (string.IsNullOrEmpty(prizeDto.Name))
+            if (await _prizeRepository.ExistsAsync(prizeDto.Id))
             {
-                return BadRequest("The prize name could not be null or empty.");
+                return Conflict("This prize is already existed");
             }
             #endregion
 
-            var prize = await GetPrizeAsync(prizeDto);
-
             #region 数据库操作
+            var prize = await GetPrizeAsync(prizeDto);
             await _prizeRepository.AddAsync(prize);
             var succeeded = await _prizeRepository.SaveAsync();
             #endregion
@@ -136,7 +135,7 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region 数据库操作
-            var prize = _mapper.Map<Prize>(prizeDto);
+            var prize = await _prizeRepository.FindByIdAsync(prizeDto.Id);
             _prizeRepository.Remove(prize);
             var succeeded = await _prizeRepository.SaveAsync();
 

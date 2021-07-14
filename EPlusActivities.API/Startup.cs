@@ -32,12 +32,13 @@ namespace EPlusActivities.API
     public class Startup
     {
         public IWebHostEnvironment Environment { get; }
+
         public IConfiguration Configuration { get; }
 
         public Startup(
             IWebHostEnvironment environment,
             IConfiguration configuration
-            )
+        )
         {
             Environment = environment;
             Configuration = configuration;
@@ -46,62 +47,87 @@ namespace EPlusActivities.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var connectionString =
+                Configuration.GetConnectionString("DefaultConnection");
+
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
-            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+            var migrationsAssembly =
+                typeof (Startup).GetTypeInfo().Assembly.GetName().Name;
 
-
-            services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+            services
+                .AddControllers()
+                .AddJsonOptions(x =>
+                    x.JsonSerializerOptions.ReferenceHandler =
+                        ReferenceHandler.Preserve);
 
             services.AddHttpClient();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "IdentityServer", Version = "v1" });
-            });
+            services
+                .AddSwaggerGen(c =>
+                {
+                    c
+                        .SwaggerDoc("v1",
+                        new OpenApiInfo {
+                            Title = "IdentityServer",
+                            Version = "v1"
+                        });
+                });
 
             // 数据库配置系统应用用户数据上下文
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(connectionString,
-                o => o.ServerVersion(new Version(8, 0, 25), ServerType.MySql)));
+            services
+                .AddDbContext<ApplicationDbContext>(options =>
+                    options
+                        .UseMySql(connectionString,
+                        o =>
+                            o
+                                .ServerVersion(new Version(8, 0, 25),
+                                ServerType.MySql)));
+
             // 启用 Identity 服务 添加指定的用户和角色类型的默认标识系统配置
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services
+                .AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
             // 启用数据库仓库
-            services.AddTransient<IFindByUserIdRepository<Address>, AddressRepository>()
-                    .AddTransient<IFindByUserIdRepository<Lottery>, LotteryRepository>()
-                    .AddTransient<IRepository<Activity>, ActivityRepository>()
-                    .AddTransient<IFindByNameRepository<Prize>, PrizeRepository>()
-                    .AddTransient<IAttendanceRepository, AttendanceRepository>()
-                    .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
-                    .AddTransient<INameExistsRepository<Category>, CategoryRepository>();
+            services
+                .AddTransient
+                <IFindByUserIdRepository<Address>, AddressRepository>()
+                .AddTransient
+                <IFindByUserIdRepository<Lottery>, LotteryRepository>()
+                .AddTransient<IRepository<Activity>, ActivityRepository>()
+                .AddTransient<IFindByNameRepository<Prize>, PrizeRepository>()
+                .AddTransient<IAttendanceRepository, AttendanceRepository>()
+                .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
+                .AddTransient
+                <INameExistsRepository<Category>, CategoryRepository>();
+
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
 
+            var builder =
+                services
+                    .AddIdentityServer(options =>
+                    {
+                        options.Events.RaiseErrorEvents = true;
+                        options.Events.RaiseInformationEvents = true;
+                        options.Events.RaiseFailureEvents = true;
+                        options.Events.RaiseSuccessEvents = true;
 
+                        // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
+                        options.EmitStaticAudienceClaim = true;
+                    })
+                    .// .AddTestUsers(TestUsers.Users)
+                    AddAspNetIdentity<ApplicationUser>()
+                    .// .AddProfileService<ProfileService>()
+                    // SMS Validator
+                    AddExtensionGrantValidator<SmsGrantValidator>()
+                    .// this adds the config data from memory (clients, resources, CORS)
+                    AddInMemoryIdentityResources(Config.IdentityResources)
+                    .AddInMemoryApiScopes(Config.ApiScopes)
+                    .AddInMemoryApiResources(Config.ApiResources)
+                    .AddInMemoryClients(Config.Clients);
 
-            var builder = services.AddIdentityServer(options =>
-            {
-                options.Events.RaiseErrorEvents = true;
-                options.Events.RaiseInformationEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseSuccessEvents = true;
-
-                // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
-                options.EmitStaticAudienceClaim = true;
-            })
-                // .AddTestUsers(TestUsers.Users)
-                .AddAspNetIdentity<ApplicationUser>()
-                // .AddProfileService<ProfileService>()
-                // SMS Validator
-                .AddExtensionGrantValidator<SmsGrantValidator>()
-                // this adds the config data from memory (clients, resources, CORS)
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryApiResources(Config.ApiResources)
-                .AddInMemoryClients(Config.Clients);
             // this adds the config data from DB (clients, resources, CORS)
             /*
             .AddConfigurationStore(options =>
@@ -121,8 +147,6 @@ namespace EPlusActivities.API
                 options.EnableTokenCleanup = true;
             });
             */
-
-
             // not recommended for production - you need to store your key material somewhere secure
             if (Environment.IsDevelopment())
             {
@@ -130,32 +154,39 @@ namespace EPlusActivities.API
             }
 
             // 受保护的 API 设置
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
-                    {
-                        //IdentityServer地址
-                        options.Authority = "http://localhost:52537";
-                        //对应Idp中ApiResource的Name
-                        options.Audience = "eplus.api";
-                        //不使用https
-                        options.RequireHttpsMetadata = false;
-                    });
+                {
+                    //IdentityServer地址
+                    options.Authority = "http://localhost:52537";
+
+                    //对应Idp中ApiResource的Name
+                    options.Audience = "eplus.api";
+
+                    //不使用https
+                    options.RequireHttpsMetadata = false;
+                });
 
             //基于策略授权
-            services.AddAuthorization(options =>
+            services
+                .AddAuthorization(options =>
                 {
-                    options.AddPolicy("EPlusPolicy", builder =>
+                    options
+                        .AddPolicy("EPlusPolicy",
+                        builder =>
                         {
                             builder.RequireRole("admin", "manager", "customer");
                             builder.RequireScope("eplus.scope");
                         });
-                    options.AddPolicy("TestPolicy", builder =>
+                    options
+                        .AddPolicy("TestPolicy",
+                        builder =>
                         {
                             builder.RequireRole("admin", "manager", "customer");
                             builder.RequireClaim("phone_number");
                         });
                 });
-
 
             // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -167,13 +198,18 @@ namespace EPlusActivities.API
             IWebHostEnvironment env,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager)
+            RoleManager<ApplicationRole> roleManager
+        )
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityServer v1"));
+                app
+                    .UseSwaggerUI(c =>
+                        c
+                            .SwaggerEndpoint("/swagger/v1/swagger.json",
+                            "IdentityServer v1"));
             }
 
             app.UseHttpsRedirection();
@@ -186,12 +222,13 @@ namespace EPlusActivities.API
 
             app.UseAuthorization();
 
-            DbInitializer.Initialize(env, context, userManager, roleManager);
+            DbInitializer.Initialize (env, context, userManager, roleManager);
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
         }
     }
 }

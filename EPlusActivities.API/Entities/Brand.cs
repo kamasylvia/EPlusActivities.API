@@ -6,7 +6,6 @@ namespace EPlusActivities.API.Entities
 {
     public class Brand
     {
-
         [Key]
         public Guid Id { get; set; }
 

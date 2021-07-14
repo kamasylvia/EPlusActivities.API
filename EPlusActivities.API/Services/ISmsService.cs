@@ -8,6 +8,7 @@ namespace EPlusActivities.API.Services
     public interface ISmsService
     {
         Task<HttpResponseMessage> SendAsync(string phoneNumber, string token);
+
         Task<ApplicationUser> GetSmsUserAsync(SmsDto smsDto);
     }
 }

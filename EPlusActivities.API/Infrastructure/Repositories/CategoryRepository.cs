@@ -8,13 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class CategoryRepository : RepositoryBase, INameExistsRepository<Category>
+    public class
+    CategoryRepository
+    : RepositoryBase, INameExistsRepository<Category>
     {
-        public CategoryRepository(ApplicationDbContext context) : base(context)
+        public CategoryRepository(ApplicationDbContext context) :
+            base(context)
         {
         }
 
-        public async Task AddAsync(Category item) => await _context.Categories.AddAsync(item);
+        public async Task AddAsync(Category item) =>
+            await _context.Categories.AddAsync(item);
 
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.Categories.AnyAsync(c => c.Id == id);
@@ -29,8 +33,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Categories.FindAsync(id);
 
         public async Task<Category> FindByNameAsync(string name) =>
-            await _context.Categories.Where(c => c.Name == name)
-                                     .SingleOrDefaultAsync();
+            await _context
+                .Categories
+                .Where(c => c.Name == name)
+                .SingleOrDefaultAsync();
 
         public void Remove(Category item) => _context.Categories.Remove(item);
 

@@ -85,7 +85,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Activities
-            var activity = new Activity();
+            var activity = new Activity("Seed");
             context.Activities.Add(activity);
             #endregion
 
@@ -111,7 +111,7 @@ namespace EPlusActivities.API.Data
             #region Seed LotteryResults
             var lottery = new Lottery
             {
-                Winner = user,
+                User = user,
                 Prize = prize,
                 Activity = activity,
                 Channel = "Seed Data"

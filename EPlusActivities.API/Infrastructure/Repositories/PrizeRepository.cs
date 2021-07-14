@@ -12,11 +12,13 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class PrizeRepository : RepositoryBase, IFindByNameRepository<Prize>
     {
-        public PrizeRepository(ApplicationDbContext context) : base(context)
+        public PrizeRepository(ApplicationDbContext context) :
+            base(context)
         {
         }
 
-        public async Task AddAsync(Prize prize) => await _context.Prizes.AddAsync(prize);
+        public async Task AddAsync(Prize prize) =>
+            await _context.Prizes.AddAsync(prize);
 
         public void Remove(Prize prize) => _context.Prizes.Remove(prize);
 
@@ -26,13 +28,17 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Prizes.ToListAsync();
 
         public async Task<Prize> FindByIdAsync(Guid id) =>
-            await _context.Prizes.Include(prize => prize.Brand)
-                                 .Include(prize => prize.Category)
-                                 .SingleOrDefaultAsync(prize => prize.Id == id);
+            await _context
+                .Prizes
+                .Include(prize => prize.Brand)
+                .Include(prize => prize.Category)
+                .SingleOrDefaultAsync(prize => prize.Id == id);
 
         public async Task<IEnumerable<Prize>> FindByNameAsync(string name) =>
-            await _context.Prizes.Where(p => p.Name.Contains(name))
-                                 .ToArrayAsync();
+            await _context
+                .Prizes
+                .Where(p => p.Name.Contains(name))
+                .ToArrayAsync();
 
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.Prizes.AnyAsync(p => p.Id == id);

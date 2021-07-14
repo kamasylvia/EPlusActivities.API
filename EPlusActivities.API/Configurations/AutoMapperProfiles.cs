@@ -12,13 +12,9 @@ namespace EPlusActivities.API.Configuration
         {
             CreateMap<SmsDto, ApplicationUser>()
                 .ForMember(dest => dest.UserName,
-                    opt => opt.MapFrom(
-                        src => src.PhoneNumber
-                    ))
+                opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.NormalizedUserName,
-                    opt => opt.MapFrom(
-                        src => src.PhoneNumber
-                    ));
+                opt => opt.MapFrom(src => src.PhoneNumber));
             CreateMap<ApplicationUser, UserDetailsDto>();
             CreateMap<UserDetailsDto, ApplicationUser>();
             CreateMap<Address, AddressDto>();
@@ -31,13 +27,9 @@ namespace EPlusActivities.API.Configuration
             CreateMap<ActivityDto, Activity>();
             CreateMap<Prize, PrizeDto>()
                 .ForMember(dest => dest.BrandName,
-                    opt => opt.MapFrom(
-                        src => src.Brand.Name
-                    ))
+                opt => opt.MapFrom(src => src.Brand.Name))
                 .ForMember(dest => dest.CategoryName,
-                    opt => opt.MapFrom(
-                        src => src.Category.Name
-                    ));
+                opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<PrizeDto, Prize>();
             CreateMap<BrandDto, Brand>();
             CreateMap<Brand, BrandDto>();

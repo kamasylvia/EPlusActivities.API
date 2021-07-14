@@ -7,6 +7,5 @@ namespace EPlusActivities.API.Entities
     public class ApplicationRole : IdentityRole<Guid>
     {
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
-
     }
 }

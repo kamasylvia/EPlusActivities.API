@@ -9,22 +9,30 @@ namespace EPlusActivities.API.Entities
         public Guid Id { get; set; }
 
         [Required]
+        public bool IsLucky { get; set; }
+
+        [Required]
         public string Channel { get; set; }
+
+        [Required]
+        public int UsedCredit { get; set; }
 
         [Required]
         public DateTime Date { get; set; }
 
         [Required]
-        public Guid? WinnerId { get; set; }
+        public Guid UserId { get; set; }
 
-        public ApplicationUser Winner { get; set; }
+        public ApplicationUser User { get; set; }
 
         [Required]
         public Guid? PrizeId { get; set; }
+
         public Prize Prize { get; set; }
 
         [Required]
         public Guid? ActivityId { get; set; }
+
         public Activity Activity { get; set; }
     }
 }

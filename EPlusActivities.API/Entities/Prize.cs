@@ -20,7 +20,7 @@ namespace EPlusActivities.API.Entities
 
         // 奖品数量
         public int Quantity { get; set; }
-        
+
         // 奖品种类
         public Category Category { get; set; }
 

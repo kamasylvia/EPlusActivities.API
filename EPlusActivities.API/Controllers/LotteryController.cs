@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -42,27 +43,50 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteries([FromBody] LotteryDto lotteryDto)
         {
-            var user = await _userManager.FindByIdAsync(lotteryDto.WinnerId.ToString());
+            #region 参数验证
+            var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
             {
-                return BadRequest("用户不存在");
+                return Conflict("Could not find the user.");
             }
-            var lotterys = await _lotteryRepository.FindByUserIdAsync(lotteryDto.WinnerId);
-            return Ok(_mapper.Map<LotteryDto>(lotterys));
+            #endregion
+
+            var lotteries = await _lotteryRepository.FindByUserIdAsync(lotteryDto.UserId);
+            return lotteries is null
+                ? NotFound("Could not find the lottery results.")
+                : Ok(_mapper.Map<IEnumerable<LotteryDto>>(lotteries));
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> AddLottery([FromBody] LotteryDto lotteryDto)
+        public async Task<ActionResult<LotteryDto>> AddLotteryAsync([FromBody] LotteryDto lotteryDto)
         {
-            return Ok();
-        }
+            #region 参数验证
+            if (await _lotteryRepository.ExistsAsync(lotteryDto.Id))
+            {
+                return Conflict("This lottery result is already existed.");
+            }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
+            var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
+            if (user is null)
+            {
+                return NotFound("Could not find the user.");
+            }
+            #endregion
+
+            #region 消耗积分
+            if (user.Credit < lotteryDto.UsedCredit)
+            {
+                return BadRequest("The user does not have enough credit.");
+            }
+            user.Credit -= lotteryDto.UsedCredit;
+            var updateUserResult = await _userManager.UpdateAsync(user);
+            if (!updateUserResult.Succeeded)
+            {
+                return new InternalServerErrorObjectResult(updateUserResult.Errors);
+            }
+            #endregion
+            return Ok();
         }
     }
 }
