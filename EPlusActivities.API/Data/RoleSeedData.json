@@ -1,0 +1,14 @@
+[
+    {
+        "Name": "seed"
+    },
+    {
+        "Name": "admin"
+    },
+    {
+        "Name": "customer"
+    },
+    {
+        "Name": "manager"
+    }
+]
