@@ -29,7 +29,15 @@ namespace EPlusActivities.API.Configuration
             CreateMap<Attendance, AttendanceDto>();
             CreateMap<Activity, ActivityDto>();
             CreateMap<ActivityDto, Activity>();
-            CreateMap<Prize, PrizeDto>();
+            CreateMap<Prize, PrizeDto>()
+                .ForMember(dest => dest.BrandName,
+                    opt => opt.MapFrom(
+                        src => src.Brand.Name
+                    ))
+                .ForMember(dest => dest.CategoryName,
+                    opt => opt.MapFrom(
+                        src => src.Category.Name
+                    ));
             CreateMap<PrizeDto, Prize>();
             CreateMap<BrandDto, Brand>();
             CreateMap<Brand, BrandDto>();

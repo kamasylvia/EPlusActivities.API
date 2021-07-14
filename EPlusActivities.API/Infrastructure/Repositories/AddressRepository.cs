@@ -18,8 +18,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task AddAsync(Address address) =>
             await _context.Addresses.AddAsync(address);
 
-        public async Task<Address> FindByIdAsync(params object[] keyValues) =>
-            await _context.Addresses.FindAsync(keyValues);
+        public async Task<Address> FindByIdAsync(Guid id) =>
+            await _context.Addresses.FindAsync(id);
 
         public async Task<IEnumerable<Address>> FindAllAsync() =>
             await _context.Addresses.ToListAsync();

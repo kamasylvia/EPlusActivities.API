@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -22,19 +23,27 @@ namespace EPlusActivities.API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFindByNameRepository<Prize> _prizeRepository;
+        private readonly INameExistsRepository<Brand> _brandRepository;
         private readonly IMapper _mapper;
+        private readonly INameExistsRepository<Category> _categoryRepository;
 
         public PrizeController(
             UserManager<ApplicationUser> userManager,
             IFindByNameRepository<Prize> prizeRepository,
+            INameExistsRepository<Brand> brandRepository,
+            INameExistsRepository<Category> categoryRepository,
             IMapper mapper)
         {
             _userManager = userManager
                 ?? throw new ArgumentNullException(nameof(userManager));
             _prizeRepository = prizeRepository
                 ?? throw new ArgumentNullException(nameof(prizeRepository));
+            _brandRepository = brandRepository
+                ?? throw new ArgumentNullException(nameof(brandRepository));
             _mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
+            _categoryRepository = categoryRepository
+                ?? throw new ArgumentNullException(nameof(categoryRepository));
         }
 
         [HttpGet("name")]
@@ -47,32 +56,130 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<PrizeDto>> GetByIdAsync([FromBody] PrizeDto prizeDto)
         {
+            #region 参数验证
             if (prizeDto.Id == Guid.Empty)
             {
-                return BadRequest("奖品 ID 不得为空");
+                return BadRequest("The prize ID could not be null");
             }
+            #endregion
 
             var prize = await _prizeRepository.FindByIdAsync(prizeDto.Id);
 
-            return prize is null ? NotFound("未找到奖品信息") : Ok(prize);
+            return prize is null ? NotFound("Could not find the prize.") : Ok(_mapper.Map<PrizeDto>(prize));
         }
 
         [HttpPost]
+        [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<PrizeDto>> AddPrizeAsync([FromBody] PrizeDto prizeDto)
         {
-            return Ok();
+            #region 参数验证
+            if (string.IsNullOrEmpty(prizeDto.Name))
+            {
+                return BadRequest("The prize name could not be null or empty.");
+            }
+            #endregion
+
+            var prize = await GetPrizeAsync(prizeDto);
+
+            #region 数据库操作
+            await _prizeRepository.AddAsync(prize);
+            var succeeded = await _prizeRepository.SaveAsync();
+            #endregion
+
+            return succeeded
+                ? Ok(_mapper.Map<PrizeDto>(prize))
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> UpdatePrizeAsync([FromBody] PrizeDto prizeDto)
         {
+            #region 参数验证
+            if (prizeDto.Id == Guid.Empty)
+            {
+                return BadRequest("The prize Id could not be null");
+            }
+
+            if (!await _prizeRepository.ExistsAsync(prizeDto.Id))
+            {
+                return BadRequest("The prize is not existed");
+            };
+            #endregion
+
+            var prize = await GetPrizeAsync(prizeDto);
+
+            #region 数据库操作
+            _prizeRepository.Update(prize);
+            var succeeded = await _prizeRepository.SaveAsync();
+            #endregion
+
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> DeletePrizeAsync([FromBody] PrizeDto prizeDto)
         {
+            #region 参数验证
+            if (prizeDto.Id == Guid.Empty)
+            {
+                return BadRequest("The prize Id could not be null");
+            }
+
+            if (!await _prizeRepository.ExistsAsync(prizeDto.Id))
+            {
+                return BadRequest("The prize is not existed");
+            };
+            #endregion
+
+            #region 数据库操作
+            var prize = _mapper.Map<Prize>(prizeDto);
+            _prizeRepository.Remove(prize);
+            var succeeded = await _prizeRepository.SaveAsync();
+
+            #endregion
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
+        }
+
+        private async Task<Prize> GetPrizeAsync(PrizeDto prizeDto)
+        {
+            #region 新建奖品
+            var prize = _mapper.Map<Prize>(prizeDto);
+            prize.Brand = await GetBrandAsync(prizeDto);
+            prize.Category = await GetCategoryAsync(prizeDto);
+            #endregion
+            return prize;
+        }
+
+        private async Task<Brand> GetBrandAsync(PrizeDto prizeDto)
+        {
+            #region Get brand
+            var brand = await _brandRepository.FindByNameAsync(prizeDto.BrandName);
+            if (brand is null)
+            {
+                brand = new Brand(prizeDto.BrandName);
+                await _brandRepository.AddAsync(brand);
+            }
+            #endregion
+            return brand;
+        }
+
+        private async Task<Category> GetCategoryAsync(PrizeDto prizeDto)
+        {
+            #region Get Category
+            var category = await _categoryRepository.FindByNameAsync(prizeDto.CategoryName);
+            if (category is null)
+            {
+                category = new Category(prizeDto.CategoryName);
+                await _categoryRepository.AddAsync(category);
+            }
+            #endregion
+            return category;
         }
     }
 }

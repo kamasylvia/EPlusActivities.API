@@ -23,8 +23,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Lottery>> FindAllAsync() =>
             await _context.LotteryResults.ToListAsync();
 
-        public async Task<Lottery> FindByIdAsync(params object[] keyValues) =>
-            await _context.LotteryResults.FindAsync(keyValues);
+        public async Task<Lottery> FindByIdAsync(Guid id) =>
+            await _context.LotteryResults.FindAsync(id);
 
         public async Task<IEnumerable<Lottery>> FindByUserIdAsync(Guid userId) =>
             await _context.LotteryResults.Where(a => a.WinnerId == userId).ToListAsync();

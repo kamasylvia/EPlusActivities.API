@@ -22,8 +22,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Activity>> FindAllAsync() =>
             await _context.Activities.ToListAsync();
 
-        public async Task<Activity> FindByIdAsync(params object[] keyValues) =>
-            await _context.Activities.FindAsync(keyValues);
+        public async Task<Activity> FindByIdAsync(Guid id) =>
+            await _context.Activities.FindAsync(id);
 
         public void Remove(Activity item) => _context.Activities.Remove(item);
 

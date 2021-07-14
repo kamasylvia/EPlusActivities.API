@@ -25,8 +25,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Prize>> FindAllAsync() =>
             await _context.Prizes.ToListAsync();
 
-        public async Task<Prize> FindByIdAsync(params object[] keyValues) =>
-            await _context.Prizes.FindAsync(keyValues);
+        public async Task<Prize> FindByIdAsync(Guid id) =>
+            await _context.Prizes.Include(prize => prize.Brand)
+                                 .Include(prize => prize.Category)
+                                 .SingleOrDefaultAsync(prize => prize.Id == id);
 
         public async Task<IEnumerable<Prize>> FindByNameAsync(string name) =>
             await _context.Prizes.Where(p => p.Name.Contains(name))

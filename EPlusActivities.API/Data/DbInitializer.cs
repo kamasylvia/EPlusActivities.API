@@ -27,7 +27,7 @@ namespace EPlusActivities.API.Data
                 var created = context.Database.EnsureCreated();
                 System.Console.WriteLine($"The new database is created: {created}");
             }
-            
+
             if (environment.IsProduction())
             {
                 context.Database.Migrate();
@@ -100,7 +100,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Prizes
-            var prize = new Prize
+            var prize = new Prize("Seed")
             {
                 Brand = brand,
                 Category = category,

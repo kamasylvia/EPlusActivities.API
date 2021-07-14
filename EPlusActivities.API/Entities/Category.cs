@@ -13,7 +13,7 @@ namespace EPlusActivities.API.Entities
         public string Name { get; set; }
 
         public IEnumerable<Prize> Prizes { get; set; }
-        
+
         public Category(string name)
         {
             Name = name;

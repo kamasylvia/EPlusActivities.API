@@ -24,8 +24,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public async Task<IEnumerable<Brand>> FindAllAsync() => await _context.Brands.ToListAsync();
 
-        public async Task<Brand> FindByIdAsync(params object[] keyValues) =>
-            await _context.Brands.FindAsync(keyValues);
+        public async Task<Brand> FindByIdAsync(Guid id) =>
+            await _context.Brands.FindAsync(id);
 
         public async Task<Brand> FindByNameAsync(string name) =>
             await _context.Brands.Where(p => p.Name == name)

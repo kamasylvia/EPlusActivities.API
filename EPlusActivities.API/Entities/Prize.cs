@@ -6,10 +6,16 @@ namespace EPlusActivities.API.Entities
 {
     public class Prize
     {
+        public Prize(string name)
+        {
+            Name = name;
+        }
+
         [Key]
         public Guid Id { get; set; }
 
         // 奖品名称
+        [Required]
         public string Name { get; set; }
 
         // 奖品数量
@@ -22,7 +28,7 @@ namespace EPlusActivities.API.Entities
         public Brand Brand { get; set; }
 
         // 奖品单价
-        public decimal UnitPrice { get; set; }
+        public decimal? UnitPrice { get; set; }
 
         // 奖品所需积分
         public int RequiredCredit { get; set; }

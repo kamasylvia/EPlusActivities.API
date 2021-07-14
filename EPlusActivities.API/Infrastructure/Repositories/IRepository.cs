@@ -11,7 +11,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         void Remove(T item);
         void Update(T item);
         Task<IEnumerable<T>> FindAllAsync();
-        Task<T> FindByIdAsync(params object[] keyValues);
+        Task<T> FindByIdAsync(Guid id);
         Task<bool> SaveAsync();
         Task<bool> ExistsAsync(Guid id);
     }

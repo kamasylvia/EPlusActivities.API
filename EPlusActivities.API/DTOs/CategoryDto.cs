@@ -11,6 +11,5 @@ namespace EPlusActivities.API.DTOs
 
         [Required]
         public string Name { get; set; }
-        public IEnumerable<Prize> Prizes { get; set; }
     }
 }
