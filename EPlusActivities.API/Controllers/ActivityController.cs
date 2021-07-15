@@ -36,10 +36,10 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<ActivityDto>> GetByIdAsync([FromBody] ActivityDto activityDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (activityDto.Id == Guid.Empty)
             {
-                return BadRequest("The activity ID could not be null");
+                return BadRequest("The ID could not be null");
             }
             #endregion
 
@@ -51,16 +51,16 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<ActivityDto>> AddActivityAsync([FromBody] ActivityDto activityDto)
+        public async Task<ActionResult<ActivityDto>> CreateAsync([FromBody] ActivityDto activityDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (await _activityRepository.ExistsAsync(activityDto.Id))
             {
                 return Conflict("This activity is already existed");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var activity = _mapper.Map<Activity>(activityDto);
             await _activityRepository.AddAsync(activity);
             var succeeded = await _activityRepository.SaveAsync();
@@ -73,16 +73,16 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPut]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateActivityAsync([FromBody] ActivityDto activityDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] ActivityDto activityDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (!await _activityRepository.ExistsAsync(activityDto.Id))
             {
                 return NotFound("Could not find the activity.");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var activity = _mapper.Map<Activity>(activityDto);
             _activityRepository.Update(activity);
             var succeeded = await _activityRepository.SaveAsync();
@@ -94,16 +94,16 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeleteActivityAsync([FromBody] ActivityDto activityDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] ActivityDto activityDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (!await _activityRepository.ExistsAsync(activityDto.Id))
             {
                 return NotFound("Could not find the activity.");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id);
             _activityRepository.Remove(activity);
             var succeeded = await _activityRepository.SaveAsync();

@@ -41,11 +41,11 @@ namespace EPlusActivities.API.Controllers
         [HttpGet]
         // [Authorize(Roles = "customer")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<UserDetailsDto>> GetUserAsync([FromBody] UserLoginDto loginDto)
+        public async Task<ActionResult<UserDetailsDto>> GetAsync([FromBody] UserLoginDto loginDto)
         {
             var user = await _userManager.FindByIdAsync(loginDto.UserId.ToString());
             return user is null
-                ? NotFound("用户不存在")
+                ? NotFound("Could not find the user.")
                 : Ok(_mapper.Map<UserDetailsDto>(user));
         }
 
@@ -53,11 +53,11 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdateLoginChannelAsync([FromBody] UserLoginDto loginDto)
         {
-            #region 参数验证
+            #region Parameter validation
             var user = await _userManager.FindByIdAsync(loginDto.UserId.ToString());
             if (user is null)
             {
-                return NotFound("用户不存在");
+                return NotFound("Could not find the user.");
             }
             #endregion
 
@@ -69,23 +69,23 @@ namespace EPlusActivities.API.Controllers
         [HttpPatch("phonenumber")]
         // [Authorize(Roles = "test")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> ChangePhoneNumberAsync([FromBody] UserLoginDto loginDto)
+        public async Task<IActionResult> UpdatePhoneNumberAsync([FromBody] UserLoginDto loginDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (loginDto.PhoneNumber is null)
             {
-                return BadRequest("手机号不能为空");
+                return BadRequest("The phone number could not be null.");
             }
 
             var user = await _userManager.FindByIdAsync(loginDto.UserId.ToString());
             if (user is null)
             {
-                return NotFound("用户不存在");
+                return NotFound("Could not find the user.");
             }
 
             if (user.PhoneNumber == loginDto.PhoneNumber)
             {
-                return Conflict("新手机号与旧手机号相同");
+                return Conflict("The new phone number is the same as the old one.");
             }
             #endregion
 
@@ -107,16 +107,16 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserDetailsDto userDetailsDto)
+        public async Task<IActionResult> CreateAsync([FromBody] UserDetailsDto userDetailsDto)
         {
-            #region 参数验证
+            #region Parameter validation
             var user = await _userManager.FindByIdAsync(userDetailsDto.Id.ToString());
             if (user is not null)
             {
-                return BadRequest("用户已存在");
+                return BadRequest("The user is already existed.");
             }
             #endregion
-            
+
             // Not Completed
             user = _mapper.Map<ApplicationUser>(userDetailsDto);
             var result = await _userManager.CreateAsync(user);
@@ -126,13 +126,13 @@ namespace EPlusActivities.API.Controllers
         [HttpPut]
         [Authorize(Policy = "TestPolicy")]
         // [Authorize(Roles = "customer, admin, manager")]
-        public async Task<IActionResult> UpdateUserAsync([FromBody] UserDetailsDto userDetailsDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UserDetailsDto userDetailsDto)
         {
-            #region 参数验证
+            #region Parameter validation
             var user = await _userManager.FindByIdAsync(userDetailsDto.Id.ToString());
             if (user is null)
             {
-                return NotFound("用户不存在");
+                return NotFound("Could not find the user.");
             }
             #endregion
 
@@ -145,13 +145,13 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         // [Authorize(Roles = "admin")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeleteUserAsync([FromBody] UserLoginDto userLoginDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] UserLoginDto userLoginDto)
         {
-            #region 参数验证
+            #region Parameter validation
             var user = await _userManager.FindByIdAsync(userLoginDto.UserId.ToString());
             if (user is null)
             {
-                return NotFound("用户不存在");
+                return NotFound("Could not find the user.");
             }
             #endregion
 

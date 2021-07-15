@@ -30,7 +30,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context
                 .LotteryResults
                 .Include(lottery => lottery.Activity)
-                .Include(lottery => lottery.Prize)
+                .Include(lottery => lottery.PrizeItem)
                 .SingleOrDefaultAsync(lottery => lottery.Id == id);
 
         public async Task<IEnumerable<Lottery>>

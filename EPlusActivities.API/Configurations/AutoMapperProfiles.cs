@@ -15,26 +15,20 @@ namespace EPlusActivities.API.Configuration
                 opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.NormalizedUserName,
                 opt => opt.MapFrom(src => src.PhoneNumber));
-            CreateMap<ApplicationUser, UserDetailsDto>();
-            CreateMap<UserDetailsDto, ApplicationUser>();
-            CreateMap<Address, AddressDto>();
-            CreateMap<AddressDto, Address>();
-            CreateMap<LotteryDto, Lottery>();
-            CreateMap<Lottery, LotteryDto>();
-            CreateMap<AttendanceDto, Attendance>();
-            CreateMap<Attendance, AttendanceDto>();
-            CreateMap<Activity, ActivityDto>();
-            CreateMap<ActivityDto, Activity>();
-            CreateMap<Prize, PrizeDto>()
+            CreateMap<ApplicationUser, UserDetailsDto>().ReverseMap();
+            CreateMap<Address, AddressDto>().ReverseMap();
+            CreateMap<Lottery, LotteryDto>().ReverseMap();
+            CreateMap<Attendance, AttendanceDto>().ReverseMap();
+            CreateMap<Activity, ActivityDto>().ReverseMap();
+            CreateMap<PrizeItem, PrizeItemDto>()
                 .ForMember(dest => dest.BrandName,
                 opt => opt.MapFrom(src => src.Brand.Name))
                 .ForMember(dest => dest.CategoryName,
                 opt => opt.MapFrom(src => src.Category.Name));
-            CreateMap<PrizeDto, Prize>();
-            CreateMap<BrandDto, Brand>();
-            CreateMap<Brand, BrandDto>();
-            CreateMap<CategoryDto, Category>();
-            CreateMap<Category, CategoryDto>();
+            CreateMap<PrizeItemDto, PrizeItem>();
+            CreateMap<PrizeType, PrizeTypeDto>().ReverseMap();
+            CreateMap<Brand, BrandDto>().ReverseMap();
+            CreateMap<Category, CategoryDto>().ReverseMap();
         }
     }
 }

@@ -43,11 +43,11 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync([FromBody] AddressDto addressDto)
         {
-            #region 参数验证
+            #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
             {
-                return BadRequest("用户不存在");
+                return BadRequest("Could not find the user.");
             }
             #endregion
 
@@ -59,42 +59,42 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<AddressDto>> GetByIdAsync([FromBody] AddressDto addressDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (addressDto.Id == Guid.Empty)
             {
-                return BadRequest("地址 ID 不得为空");
+                return BadRequest("The ID could not be null.");
             }
             #endregion
 
             var address = await _addressRepository.FindByIdAsync(addressDto.Id);
-            return address is null ? NotFound($"{addressDto.Id} 地址不存在") : Ok(address);
+            return address is null ? NotFound($"Could not find the address with ID '{addressDto.Id}'.") : Ok(address);
         }
 
         [HttpPost]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AddressDto>> AddAddressAsync([FromBody] AddressDto addressDto)
+        public async Task<ActionResult<AddressDto>> CreateAsync([FromBody] AddressDto addressDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (await _addressRepository.ExistsAsync(addressDto.Id))
             {
-                return Conflict("地址已存在");
+                return Conflict("This address is already existed.");
             }
 
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
             {
-                return NotFound("用户不存在");
+                return NotFound("Could not find the user.");
             }
 
             var oldAddresses = await _addressRepository.FindByUserIdAsync(user.Id);
             if (oldAddresses?.Count() >= 5)
             {
-                return BadRequest("用户不可添加超过 5 个地址");
+                return BadRequest("Could not add more than 5 addresses.");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var address = _mapper.Map<Address>(addressDto);
             address.Id = Guid.NewGuid();
             await _addressRepository.AddAsync(address);
@@ -103,65 +103,69 @@ namespace EPlusActivities.API.Controllers
 
             return succeeded
                 ? Ok(_mapper.Map<AddressDto>(address))
-                : new InternalServerErrorObjectResult("保存到数据库时发生错误");
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         [HttpPut]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateAddressAsync([FromBody] AddressDto addressDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] AddressDto addressDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (addressDto.Id == Guid.Empty)
             {
-                return BadRequest("地址 ID 不得为空");
+                return BadRequest("The ID could not be null.");
             }
 
             if (!await _addressRepository.ExistsAsync(addressDto.Id))
             {
-                return NotFound("地址不存在");
+                return NotFound("Could not find the address.");
             }
 
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
             {
-                return NotFound("用户不存在");
+                return NotFound("Could not find the user.");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var address = _mapper.Map<Address>(addressDto);
             _addressRepository.Update(address);
             var succeeded = await _addressRepository.SaveAsync();
             #endregion
 
-            return succeeded ? Ok() : new InternalServerErrorObjectResult("保存到数据库时遇到错误");
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception.");
         }
 
         [HttpDelete]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeleteAddressAsync([FromBody] AddressDto addressDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] AddressDto addressDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (addressDto.Id == Guid.Empty)
             {
-                return BadRequest("地址 ID 不得为空");
+                return BadRequest("The ID could not be null.");
             }
 
             var address = await _addressRepository.FindByIdAsync(addressDto.Id);
             if (address is null)
             {
-                return NotFound("地址不存在");
+                return NotFound("Could not find the address.");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             _addressRepository.Remove(address);
             var succeeded = await _addressRepository.SaveAsync();
             #endregion
 
-            return succeeded ? Ok() : new InternalServerErrorObjectResult("保存到数据库时遇到错误");
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception.");
         }
     }
 }

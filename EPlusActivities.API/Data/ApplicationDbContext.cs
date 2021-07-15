@@ -8,15 +8,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
-       <ApplicationUser,
+    public class
+    ApplicationDbContext
+    :
+    IdentityDbContext<ApplicationUser,
         ApplicationRole,
         Guid,
         IdentityUserClaim<Guid>,
         ApplicationUserRole,
         IdentityUserLogin<Guid>,
         IdentityRoleClaim<Guid>,
-        IdentityUserToken<Guid>>
+        IdentityUserToken<Guid>
+    >
     {
         public virtual DbSet<Address> Addresses { get; set; }
 
@@ -28,7 +31,9 @@ namespace EPlusActivities.API.Data
 
         public virtual DbSet<Category> Categories { get; set; }
 
-        public virtual DbSet<Prize> Prizes { get; set; }
+        public virtual DbSet<PrizeItem> PrizeItems { get; set; }
+
+        public virtual DbSet<PrizeType> PrizeTypes { get; set; }
 
         public virtual DbSet<Lottery> LotteryResults { get; set; }
 
@@ -47,7 +52,7 @@ namespace EPlusActivities.API.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            #region Set unique properties
+#region Set unique properties
             builder
                 .Entity<ApplicationUser>()
                 .HasIndex(u => u.PhoneNumber)
@@ -55,7 +60,8 @@ namespace EPlusActivities.API.Data
 
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
-            #endregion
+            builder.Entity<PrizeType>().HasIndex(pt => pt.Name).IsUnique();
+#endregion
 
             /*
             #region 构建外键关系
@@ -95,10 +101,10 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region one-to-one
-            builder.Entity<Prize>()
-                   .HasOne(prize => prize.Lottery)
-                   .WithOne(lottery => lottery.PrizeItem)
-                   .HasForeignKey<Lottery>(lottery => lottery.PrizeId)
+            builder.Entity<PrizeItem>()
+                   .HasOne(prizeItem => prizeItem.Lottery)
+                   .WithOne(lottery => lottery.PrizeItemItem)
+                   .HasForeignKey<Lottery>(lottery => lottery.PrizeItemId)
                    .IsRequired();
             builder.Entity<Activity>()
                    .HasOne(activity => activity.Lottery)

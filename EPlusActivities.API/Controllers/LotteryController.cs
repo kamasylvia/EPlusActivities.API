@@ -41,9 +41,9 @@ namespace EPlusActivities.API.Controllers
         // GET: api/values
         [HttpGet("list")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteries([FromBody] LotteryDto lotteryDto)
+        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetListAsync([FromBody] LotteryDto lotteryDto)
         {
-            #region 参数验证
+            #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
             {
@@ -59,9 +59,9 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<LotteryDto>> AddLotteryAsync([FromBody] LotteryDto lotteryDto)
+        public async Task<ActionResult<LotteryDto>> CreateAsync([FromBody] LotteryDto lotteryDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (await _lotteryRepository.ExistsAsync(lotteryDto.Id))
             {
                 return Conflict("This lottery result is already existed.");
@@ -74,7 +74,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            #region 消耗积分
+            #region Consume the credits
             if (user.Credit < lotteryDto.UsedCredit)
             {
                 return BadRequest("The user does not have enough credit.");

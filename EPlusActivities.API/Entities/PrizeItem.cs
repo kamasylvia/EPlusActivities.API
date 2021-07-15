@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EPlusActivities.API.Entities
 {
-    public class Prize
+    public class PrizeItem
     {
-        public Prize(string name)
+        public PrizeItem(string name)
         {
             Name = name;
         }

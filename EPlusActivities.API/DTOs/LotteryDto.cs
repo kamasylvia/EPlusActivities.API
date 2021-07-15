@@ -16,6 +16,6 @@ namespace EPlusActivities.API.DTOs
 
         public Guid ActivityId { get; set; }
 
-        public Guid PrizeId { get; set; }
+        public Guid PrizeItemId { get; set; }
     }
 }

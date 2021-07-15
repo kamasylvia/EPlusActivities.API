@@ -35,8 +35,15 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<BrandDto>> GetByIdAsync([FromBody] BrandDto brandDto)
+        public async Task<ActionResult<BrandDto>> GetAsync([FromBody] BrandDto brandDto)
         {
+            #region Parameter validation
+            if (brandDto.Id == Guid.Empty)
+            {
+                return BadRequest("The ID could not be null.");
+            }
+            #endregion
+
             var brand = await _brandRepository.FindByIdAsync(brandDto.Id)
                         ?? await _brandRepository.FindByNameAsync(brandDto.Name);
             return brand is null
@@ -46,22 +53,23 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<BrandDto>> AddBrandAsync([FromBody] BrandDto brandDto)
+        public async Task<ActionResult<BrandDto>> CreateAsync([FromBody] BrandDto brandDto)
         {
 
-            #region 参数验证
-            if (await _brandRepository.ExistsAsync(brandDto.Name))
+            #region Parameter validation
+            if (await _brandRepository.ExistsAsync(brandDto.Id)
+                || await _brandRepository.ExistsAsync(brandDto.Name))
             {
-                return Conflict($"The brand '${brandDto.Name}' is already existed");
+                return Conflict($"The brand is already existed");
             }
             #endregion
 
-            #region 新建品牌
+            #region New an entity
             var brand = _mapper.Map<Brand>(brandDto);
             brand.Id = Guid.NewGuid();
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             await _brandRepository.AddAsync(brand);
             var succeeded = await _brandRepository.SaveAsync();
             #endregion
@@ -73,16 +81,16 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPut]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateBrandAsync([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] BrandDto brandDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (!await _brandRepository.ExistsAsync(brandDto.Id))
             {
-                return NotFound($"Could not find the brand with ID '{brandDto.Id}'");
+                return NotFound($"Could not find the brand.");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var brand = _mapper.Map<Brand>(brandDto);
             _brandRepository.Update(brand);
             var succeeded = await _brandRepository.SaveAsync();
@@ -95,12 +103,12 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeletePrizeAsync([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] BrandDto brandDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (brandDto.Id == Guid.Empty)
             {
-                return BadRequest("The brand ID is required");
+                return BadRequest("The ID is required");
             }
 
             if (!await _brandRepository.ExistsAsync(brandDto.Id)
@@ -110,7 +118,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var brand = _mapper.Map<Brand>(brandDto);
             _brandRepository.Remove(brand);
             var succeeded = await _brandRepository.SaveAsync();

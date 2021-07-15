@@ -4,7 +4,7 @@ using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.DTOs
 {
-    public class PrizeDto
+    public class PrizeItemDto
     {
         public Guid Id { get; set; }
 

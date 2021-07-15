@@ -99,20 +99,20 @@ namespace EPlusActivities.API.Data
             context.Categories.Add(category);
             #endregion
 
-            #region Seed Prizes
-            var prize = new Prize("Seed")
+            #region Seed PrizeItems
+            var prizeItem = new PrizeItem("Seed")
             {
                 Brand = brand,
                 Category = category,
             };
-            context.Prizes.Add(prize);
+            context.PrizeItems.Add(prizeItem);
             #endregion
 
             #region Seed LotteryResults
             var lottery = new Lottery
             {
                 User = user,
-                Prize = prize,
+                PrizeItem = prizeItem,
                 Activity = activity,
                 Channel = "Seed Data"
             };

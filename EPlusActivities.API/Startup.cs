@@ -91,16 +91,19 @@ namespace EPlusActivities.API
 
             // 启用数据库仓库
             services
+                .AddTransient<IRepository<Activity>, ActivityRepository>()
+                .AddTransient<IAttendanceRepository, AttendanceRepository>()
                 .AddTransient
                 <IFindByUserIdRepository<Address>, AddressRepository>()
                 .AddTransient
                 <IFindByUserIdRepository<Lottery>, LotteryRepository>()
-                .AddTransient<IRepository<Activity>, ActivityRepository>()
-                .AddTransient<IFindByNameRepository<Prize>, PrizeRepository>()
-                .AddTransient<IAttendanceRepository, AttendanceRepository>()
+                .AddTransient
+                <IFindByNameRepository<PrizeItem>, PrizeItemRepository>()
                 .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
                 .AddTransient
-                <INameExistsRepository<Category>, CategoryRepository>();
+                <INameExistsRepository<Category>, CategoryRepository>()
+                .AddTransient
+                <INameExistsRepository<PrizeType>, PrizeTypeRepository>();
 
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
@@ -116,14 +119,10 @@ namespace EPlusActivities.API
 
                         // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                         options.EmitStaticAudienceClaim = true;
-                    })
-                    .// .AddTestUsers(TestUsers.Users)
-                    AddAspNetIdentity<ApplicationUser>()
-                    .// .AddProfileService<ProfileService>()
-                    // SMS Validator
-                    AddExtensionGrantValidator<SmsGrantValidator>()
-                    .// this adds the config data from memory (clients, resources, CORS)
-                    AddInMemoryIdentityResources(Config.IdentityResources)
+                    }) // .AddTestUsers(TestUsers.Users)
+                    .AddAspNetIdentity<ApplicationUser>() // .AddProfileService<ProfileService>() // SMS Validator
+                    .AddExtensionGrantValidator<SmsGrantValidator>() // this adds the config data from memory (clients, resources, CORS)
+                    .AddInMemoryIdentityResources(Config.IdentityResources)
                     .AddInMemoryApiScopes(Config.ApiScopes)
                     .AddInMemoryApiResources(Config.ApiResources)
                     .AddInMemoryClients(Config.Clients);
