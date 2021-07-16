@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.API.DTOs
+namespace EPlusActivities.API.DTOs.AddressDtos
 {
     public class AddressDto
     {
-        public Guid Id { get; set; }
+        [Required]
+        public Guid? Id { get; set; }
 
         // 收件人
         public string Recipient { get; set; }
@@ -36,6 +37,6 @@ namespace EPlusActivities.API.DTOs
         public string Postcode { get; set; }
 
         [Required]
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
     }
 }

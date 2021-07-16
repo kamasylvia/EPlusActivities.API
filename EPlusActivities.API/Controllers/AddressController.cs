@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.AddressDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -38,10 +38,10 @@ namespace EPlusActivities.API.Controllers
                 ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        [HttpGet("list")]
+        [HttpGet("user")]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync([FromBody] AddressDto addressDto)
+        public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync([FromBody] AddressForGetByUserIdDto addressDto)
         {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
@@ -51,23 +51,18 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var addresses = await _addressRepository.FindByUserIdAsync(addressDto.UserId);
+            var addresses = await _addressRepository.FindByUserIdAsync(addressDto.UserId.Value);
             return Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses));
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AddressDto>> GetByIdAsync([FromBody] AddressDto addressDto)
+        public async Task<ActionResult<AddressDto>> GetByIdAsync([FromBody] AddressForGetByIdDto addressDto)
         {
-            #region Parameter validation
-            if (addressDto.Id == Guid.Empty)
-            {
-                return BadRequest("The ID could not be null.");
-            }
-            #endregion
-
-            var address = await _addressRepository.FindByIdAsync(addressDto.Id);
-            return address is null ? NotFound($"Could not find the address with ID '{addressDto.Id}'.") : Ok(address);
+            var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
+            return address is null
+                ? NotFound($"Could not find the address with ID '{addressDto.Id}'.")
+                : Ok(address);
         }
 
         [HttpPost]
@@ -76,7 +71,7 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<AddressDto>> CreateAsync([FromBody] AddressDto addressDto)
         {
             #region Parameter validation
-            if (await _addressRepository.ExistsAsync(addressDto.Id))
+            if (await _addressRepository.ExistsAsync(addressDto.Id.Value))
             {
                 return Conflict("This address is already existed.");
             }
@@ -96,7 +91,7 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             var address = _mapper.Map<Address>(addressDto);
-            address.Id = Guid.NewGuid();
+            // address.Id = Guid.NewGuid();
             await _addressRepository.AddAsync(address);
             var succeeded = await _addressRepository.SaveAsync();
             #endregion 
@@ -109,15 +104,10 @@ namespace EPlusActivities.API.Controllers
         [HttpPut]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateAsync([FromBody] AddressDto addressDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] AddressForUpdateDto addressDto)
         {
             #region Parameter validation
-            if (addressDto.Id == Guid.Empty)
-            {
-                return BadRequest("The ID could not be null.");
-            }
-
-            if (!await _addressRepository.ExistsAsync(addressDto.Id))
+            if (!await _addressRepository.ExistsAsync(addressDto.Id.Value))
             {
                 return NotFound("Could not find the address.");
             }
@@ -143,15 +133,10 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeleteAsync([FromBody] AddressDto addressDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] AddressForGetByIdDto addressDto)
         {
             #region Parameter validation
-            if (addressDto.Id == Guid.Empty)
-            {
-                return BadRequest("The ID could not be null.");
-            }
-
-            var address = await _addressRepository.FindByIdAsync(addressDto.Id);
+            var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
             if (address is null)
             {
                 return NotFound("Could not find the address.");

@@ -2,21 +2,19 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.API.DTOs
+namespace EPlusActivities.API.DTOs.PrizeItemDtos
 {
-    public class PrizeItemDto
+    public class PrizeItemForUpdateDto
     {
-        public Guid Id { get; set; }
-
         [Required]
+        public Guid? Id { get; set; }
+
         public string Name { get; set; }
 
         public int Quantity { get; set; }
 
-        [Required]
         public string CategoryName { get; set; }
 
-        [Required]
         public string BrandName { get; set; }
 
         public decimal? UnitPrice { get; set; }
@@ -25,6 +23,6 @@ namespace EPlusActivities.API.DTOs
 
         public string PictureUrl { get; set; }
 
-        public Guid LotteryId { get; set; }
+        public Guid? LotteryId { get; set; }
     }
 }

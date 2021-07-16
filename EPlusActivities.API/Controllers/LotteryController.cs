@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.LotteryDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -39,19 +39,19 @@ namespace EPlusActivities.API.Controllers
         }
 
         // GET: api/values
-        [HttpGet("list")]
+        [HttpGet("user")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetListAsync([FromBody] LotteryDto lotteryDto)
+        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetByUserIdAsync([FromBody] LotteryForGetByUserIdDto lotteryDto)
         {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
             {
-                return Conflict("Could not find the user.");
+                return NotFound("Could not find the user.");
             }
             #endregion
 
-            var lotteries = await _lotteryRepository.FindByUserIdAsync(lotteryDto.UserId);
+            var lotteries = await _lotteryRepository.FindByUserIdAsync(lotteryDto.UserId.Value);
             return lotteries is null
                 ? NotFound("Could not find the lottery results.")
                 : Ok(_mapper.Map<IEnumerable<LotteryDto>>(lotteries));
@@ -59,14 +59,9 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<LotteryDto>> CreateAsync([FromBody] LotteryDto lotteryDto)
+        public async Task<ActionResult<LotteryDto>> CreateAsync([FromBody] LotteryForCreateDto lotteryDto)
         {
             #region Parameter validation
-            if (await _lotteryRepository.ExistsAsync(lotteryDto.Id))
-            {
-                return Conflict("This lottery result is already existed.");
-            }
-
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
             {
@@ -86,7 +81,62 @@ namespace EPlusActivities.API.Controllers
                 return new InternalServerErrorObjectResult(updateUserResult.Errors);
             }
             #endregion
-            return Ok();
+
+            #region Database operations
+            var lottery = _mapper.Map<Lottery>(lotteryDto);
+            await _lotteryRepository.AddAsync(lottery);
+            var succeeded = await _lotteryRepository.SaveAsync();
+            #endregion
+
+            return succeeded
+                ? Ok(_mapper.Map<LotteryDto>(lottery))
+                : new InternalServerErrorObjectResult("Update database exception");
+        }
+
+        [HttpPut]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> UpdateAsync([FromBody] LotteryForUpdateDto lotteryDto)
+        {
+            #region Parameter validation
+            if (await _lotteryRepository.ExistsAsync(lotteryDto.Id.Value))
+            {
+                return NotFound("Could not find the lottery.");
+            }
+            #endregion
+
+            #region Database operations
+            var lottery = _mapper.Map<LotteryForUpdateDto, Lottery>(
+                lotteryDto,
+                await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value));
+            _lotteryRepository.Update(lottery);
+            var succeeded = await _lotteryRepository.SaveAsync();
+            #endregion
+
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
+        }
+
+        [HttpDelete]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> DeleteAsync([FromBody] LotteryForGetByIdDto lotteryDto)
+        {
+            #region Parameter validation
+            if (await _lotteryRepository.ExistsAsync(lotteryDto.Id.Value))
+            {
+                return NotFound("Could not find the the lottery.");
+            }
+            #endregion
+
+            #region Database operations
+            var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);
+            _lotteryRepository.Remove(lottery);
+            var succeeded = await _lotteryRepository.SaveAsync();
+            #endregion
+
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
     }
 }

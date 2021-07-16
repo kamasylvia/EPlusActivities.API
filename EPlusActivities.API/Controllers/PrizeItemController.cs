@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.PrizeItemDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -48,39 +48,30 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet("name")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync([FromBody] PrizeItemDto prizeItemDto) =>
+        public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync([FromBody] PrizeItemForGetByNameDto prizeItemDto) =>
             Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(
                 await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)));
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<PrizeItemDto>> GetAsync([FromBody] PrizeItemDto prizeItemDto)
+        public async Task<ActionResult<PrizeItemDto>> GetGetByIdAsync([FromBody] PrizeItemForGetByIdDto prizeItemDto)
         {
-            #region Parameter validation
-            if (prizeItemDto.Id == Guid.Empty)
-            {
-                return BadRequest("The prize item ID could not be null");
-            }
-            #endregion
-
-            var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id);
+            var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
 
             return prizeItem is null ? NotFound("Could not find the prizeItem.") : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<PrizeItemDto>> CreateAsync([FromBody] PrizeItemDto prizeItemDto)
+        public async Task<ActionResult<PrizeItemDto>> CreateAsync([FromBody] PrizeItemForCreateDto prizeItemDto)
         {
-            #region Parameter validation
-            if (await _prizeItemRepository.ExistsAsync(prizeItemDto.Id))
-            {
-                return Conflict("This prize item is already existed");
-            }
+            #region New an entity
+            var prizeItem = _mapper.Map<PrizeItem>(prizeItemDto);
+            prizeItem.Brand = await GetBrandAsync(prizeItemDto.BrandName);
+            prizeItem.Category = await GetCategoryAsync(prizeItemDto.CategoryName);
             #endregion
 
             #region Database operations
-            var prizeItem = await GetPrizeItemAsync(prizeItemDto);
             await _prizeItemRepository.AddAsync(prizeItem);
             var succeeded = await _prizeItemRepository.SaveAsync();
             #endregion
@@ -92,21 +83,22 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPut]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateAsync([FromBody] PrizeItemDto prizeItemDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] PrizeItemForUpdateDto prizeItemDto)
         {
             #region Parameter validation
-            if (prizeItemDto.Id == Guid.Empty)
-            {
-                return BadRequest("The prize item Id could not be null");
-            }
-
-            if (!await _prizeItemRepository.ExistsAsync(prizeItemDto.Id))
+            if (!await _prizeItemRepository.ExistsAsync(prizeItemDto.Id.Value))
             {
                 return BadRequest("The prize item is not existed");
             };
             #endregion
 
-            var prizeItem = await GetPrizeItemAsync(prizeItemDto);
+            #region New an entity
+            var prizeItem = _mapper.Map<PrizeItemForUpdateDto, PrizeItem>(
+                prizeItemDto,
+                await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value));
+            prizeItem.Brand = await GetBrandAsync(prizeItemDto.BrandName);
+            prizeItem.Category = await GetCategoryAsync(prizeItemDto.CategoryName);
+            #endregion
 
             #region Database operations
             _prizeItemRepository.Update(prizeItem);
@@ -120,22 +112,17 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeleteAsync([FromBody] PrizeItemDto prizeItemDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] PrizeItemForGetByIdDto prizeItemDto)
         {
             #region Parameter validation
-            if (prizeItemDto.Id == Guid.Empty)
-            {
-                return BadRequest("The prize item Id could not be null");
-            }
-
-            if (!await _prizeItemRepository.ExistsAsync(prizeItemDto.Id))
+            if (!await _prizeItemRepository.ExistsAsync(prizeItemDto.Id.Value))
             {
                 return BadRequest("The prize item is not existed");
             };
             #endregion
 
             #region Database operations
-            var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id);
+            var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
             _prizeItemRepository.Remove(prizeItem);
             var succeeded = await _prizeItemRepository.SaveAsync();
 
@@ -145,39 +132,25 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
-        private async Task<PrizeItem> GetPrizeItemAsync(PrizeItemDto prizeItemDto)
+        private async Task<Brand> GetBrandAsync(string brandName)
         {
-            #region New an entity
-            var prizeItem = _mapper.Map<PrizeItem>(prizeItemDto);
-            prizeItem.Brand = await GetBrandAsync(prizeItemDto);
-            prizeItem.Category = await GetCategoryAsync(prizeItemDto);
-            #endregion
-            return prizeItem;
-        }
-
-        private async Task<Brand> GetBrandAsync(PrizeItemDto prizeItemDto)
-        {
-            #region Get brand
-            var brand = await _brandRepository.FindByNameAsync(prizeItemDto.BrandName);
+            var brand = await _brandRepository.FindByNameAsync(brandName);
             if (brand is null)
             {
-                brand = new Brand(prizeItemDto.BrandName);
+                brand = new Brand(brandName);
                 await _brandRepository.AddAsync(brand);
             }
-            #endregion
             return brand;
         }
 
-        private async Task<Category> GetCategoryAsync(PrizeItemDto prizeItemDto)
+        private async Task<Category> GetCategoryAsync(string categoryName)
         {
-            #region Get Category
-            var category = await _categoryRepository.FindByNameAsync(prizeItemDto.CategoryName);
+            var category = await _categoryRepository.FindByNameAsync(categoryName);
             if (category is null)
             {
-                category = new Category(prizeItemDto.CategoryName);
+                category = new Category(categoryName);
                 await _categoryRepository.AddAsync(category);
             }
-            #endregion
             return category;
         }
     }

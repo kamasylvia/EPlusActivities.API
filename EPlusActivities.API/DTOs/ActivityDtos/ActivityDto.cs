@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.Entities
+namespace EPlusActivities.API.DTOs.ActivityDtos
 {
-    public class Activity
+    public class ActivityDto
     {
-        public Activity(string name)
-        {
-            Name = name;
-        }
-
-        [Key]
+        [Required]
         public Guid? Id { get; set; }
 
         [Required]
@@ -21,7 +15,5 @@ namespace EPlusActivities.API.Entities
         public DateTime StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }
-
-        public IEnumerable<Lottery> LotteryResults { get; set; }
     }
 }

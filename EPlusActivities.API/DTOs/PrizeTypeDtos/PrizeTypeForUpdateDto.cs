@@ -1,11 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.Entities
+namespace EPlusActivities.API.DTOs.PrizeTypeDtos
 {
-    public class PrizeType
+    public class PrizeTypeForUpdateDto
     {
-        [Key]
+        [Required]
         public Guid? Id { get; set; }
 
         public string Name { get; set; }

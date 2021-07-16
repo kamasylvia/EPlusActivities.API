@@ -1,15 +1,17 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs
+namespace EPlusActivities.API.DTOs.AttendanceDtos
 {
     public class AttendanceDto
     {
-        public Guid Id { get; set; }
+        [Required]
+        public Guid? Id { get; set; }
 
+        [Required]
         public DateTime? Date { get; set; }
 
         [Required]
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
     }
 }

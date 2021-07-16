@@ -1,12 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.API.Entities
+namespace EPlusActivities.API.DTOs.AddressDtos
 {
-    public class Address
+    public class AddressForUpdateDto
     {
-        [Key]
+        [Required]
         public Guid? Id { get; set; }
 
         // 收件人
@@ -37,7 +38,5 @@ namespace EPlusActivities.API.Entities
 
         [Required]
         public Guid? UserId { get; set; }
-
-        public ApplicationUser User { get; set; }
     }
 }

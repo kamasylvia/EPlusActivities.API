@@ -91,7 +91,7 @@ namespace EPlusActivities.API
 
             // 启用数据库仓库
             services
-                .AddTransient<IRepository<Activity>, ActivityRepository>()
+                .AddTransient<IActivityRepository, ActivityRepository>()
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
                 .AddTransient
                 <IFindByUserIdRepository<Address>, AddressRepository>()

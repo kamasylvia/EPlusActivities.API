@@ -1,23 +1,21 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs
+namespace EPlusActivities.API.DTOs.UserDtos
 {
-    public class UserLoginDto
+    public class UserForUpdatePhoneDto
     {
         [Required]
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
+        [Required]
         [Phone]
         [
             StringLength(
                 11,
                 MinimumLength = 11,
-                ErrorMessage = "手机号必须为 11 位数字。")
+                ErrorMessage = "A valid phone number must be 11 digits.")
         ]
         public string PhoneNumber { get; set; }
-
-        [Required]
-        public string LoginChannel { get; set; }
     }
 }

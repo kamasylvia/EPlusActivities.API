@@ -6,7 +6,7 @@ namespace EPlusActivities.API.Entities
     public class Lottery
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         public bool IsLucky { get; set; }
@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Entities
         public DateTime Date { get; set; }
 
         [Required]
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
         public ApplicationUser User { get; set; }
 

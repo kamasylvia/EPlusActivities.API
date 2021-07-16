@@ -7,7 +7,7 @@ namespace EPlusActivities.API.Entities
     public class Category
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         public string Name { get; set; }

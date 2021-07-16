@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.AttendanceDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -38,16 +38,11 @@ namespace EPlusActivities.API.Controllers
                 ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        [HttpGet("list")]
+        [HttpGet("user")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetByUserIdAsync([FromBody] AttendanceDto attendanceDto)
+        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetByUserIdAsync([FromBody] AttendanceForGetByUserIdDto attendanceDto)
         {
             #region Parameter validation
-            if (!attendanceDto.Date.HasValue)
-            {
-                return BadRequest("Could not find the start time.");
-            }
-
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
             {
@@ -55,16 +50,23 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var attendanceRecord = await _attendanceRepository.FindByUserIdAsync(attendanceDto.UserId, attendanceDto.Date.Value);
-            return Ok(attendanceRecord);
+            var attendanceRecord = await _attendanceRepository.FindByUserIdAsync(
+                attendanceDto.UserId.Value,
+                attendanceDto.Date.Value);
+
+            return attendanceRecord.Count() > 0
+                ? Ok(attendanceRecord)
+                : NotFound("Could not find any attendances.");
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AttendanceDto>> GetByIdAsync([FromBody] AttendanceDto attendanceDto)
+        public async Task<ActionResult<AttendanceDto>> GetByIdAsync([FromBody] AttendanceForGetByIdDto attendanceDto)
         {
-            var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id);
-            return attendance is null ? BadRequest("Could not find the attendance.") : Ok(attendance);
+            var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id.Value);
+            return attendance is null
+                ? BadRequest("Could not find the attendance.")
+                : Ok(attendance);
         }
 
         [HttpPost]
@@ -72,7 +74,7 @@ namespace EPlusActivities.API.Controllers
         public async Task<IActionResult> AttendAsync([FromBody] AttendanceDto attendanceDto)
         {
             #region Parameter validation
-            if (await _attendanceRepository.ExistsAsync(attendanceDto.Id))
+            if (await _attendanceRepository.ExistsAsync(attendanceDto.Id.Value))
             {
                 return BadRequest("This attendance is already existed.");
             }
@@ -82,7 +84,6 @@ namespace EPlusActivities.API.Controllers
             {
                 return BadRequest("Could not find the user.");
             }
-
             #endregion
 
             #region Update the user's LastAttendanceDate and SequentialAttendanceDays
@@ -91,6 +92,7 @@ namespace EPlusActivities.API.Controllers
             {
                 return Conflict("Duplicate attendance.");
             }
+
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
@@ -100,7 +102,6 @@ namespace EPlusActivities.API.Controllers
 
             #region New an entity
             var attendance = _mapper.Map<Attendance>(attendanceDto);
-            attendance.Id = Guid.NewGuid();
             attendance.Date = DateTime.Now.Date;
             #endregion
 
@@ -127,14 +128,14 @@ namespace EPlusActivities.API.Controllers
             }
 
             #region Update the user's LastAttendanceDate and SequentialAttendanceDays
-            user.SequentialAttendanceDays = 
+            user.SequentialAttendanceDays =
                 IsSequential(user.LastAttendanceDate, now)
                 ? user.SequentialAttendanceDays + 1
                 : 1;
             #endregion
 
             #region Update credit
-            user.Credit += 
+            user.Credit +=
                 user.SequentialAttendanceDays < 7
                 ? user.SequentialAttendanceDays * 10
                 : 70;
@@ -143,6 +144,6 @@ namespace EPlusActivities.API.Controllers
             user.LastAttendanceDate = now;
             return true;
         }
-    
+
     }
 }

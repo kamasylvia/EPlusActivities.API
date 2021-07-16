@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
@@ -51,7 +52,7 @@ namespace EPlusActivities.API.Infrastructure.Identity
         {
             try
             {
-                #region 参数获取
+#region 参数获取
                 // 未来版本的 AutoMapper 可以自动获取参数。
                 var phoneNumber = context.Request.Raw["phone_number"];
                 var token = context.Request.Raw["token"];
@@ -60,11 +61,11 @@ namespace EPlusActivities.API.Infrastructure.Identity
                 var requireRegister = false;
                 var secret =
                     new Secret(_configuration["Secrets:DefaultSecret"]).Value;
-                #endregion
+#endregion
 
 
 
-                #region 获取用户
+#region 获取用户
                 // 这是 EF Core 内置的查询方法，速度很慢，所以用下面的 LINQ 替代。
                 // var user = await _userManager.FindByNameAsync(phoneNumber);
                 var user =
@@ -76,8 +77,7 @@ namespace EPlusActivities.API.Infrastructure.Identity
                 if (user == null)
                 {
                     user =
-                        new ApplicationUser
-                        {
+                        new ApplicationUser {
                             UserName = phoneNumber,
                             NormalizedUserName = phoneNumber,
                             PhoneNumber = phoneNumber,
@@ -85,11 +85,11 @@ namespace EPlusActivities.API.Infrastructure.Identity
                         };
                     requireRegister = true;
                 }
-                #endregion
+#endregion
 
 
 
-                #region 验证
+#region 验证
                 var validationResult =
                     await _phoneNumberTokenProvider
                         .ValidateAsync(OidcConstants
@@ -104,19 +104,19 @@ namespace EPlusActivities.API.Infrastructure.Identity
                     context.Result =
                         new GrantValidationResult(TokenRequestErrors
                                 .InvalidGrant,
-                            "短信验证失败");
+                            "Failed to validate SMS token.");
                     return;
                 }
-                #endregion
+#endregion
 
 
 
-                #region 注册
+#region 注册
                 if (requireRegister)
                 {
                     user.PhoneNumberConfirmed = true;
-                    user.RegisterChannel = loginChannel;
-                    user.LoginChannel = loginChannel;
+                    user.RegisterChannel = Enum.Parse<Channel>(loginChannel);
+                    user.LoginChannel = Enum.Parse<Channel>(loginChannel);
                     user.RegisterDate = DateTime.Now;
                     var creationResult = await _userManager.CreateAsync(user);
                     if (!creationResult.Succeeded)
@@ -124,7 +124,7 @@ namespace EPlusActivities.API.Infrastructure.Identity
                         context.Result =
                             new GrantValidationResult(TokenRequestErrors
                                     .InvalidGrant,
-                                "用户注册失败}");
+                                "Failed to register.");
                         return;
                     }
 
@@ -133,18 +133,18 @@ namespace EPlusActivities.API.Infrastructure.Identity
                         .AddToRolesAsync(user,
                         new string[] { "Customer".ToUpper() });
                 }
-                #endregion
+#endregion
 
 
 
-                #region 登录
+#region 登录
                 /*
                     非常重要！
                     验证方法中 IdentityUser 直接登录才能使得 API 的授权认证成功执行。
                     否则访问受保护的 API 将返回 404。
                 */
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                #endregion
+#endregion
 
 
                 context.Result =

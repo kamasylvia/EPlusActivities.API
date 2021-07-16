@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 
-namespace EPlusActivities.API.DTOs
+namespace EPlusActivities.API.DTOs.UserDtos
 {
-    public class UserDetailsDto
+    public class UserDto
     {
         [Required]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         [Phone]
@@ -25,11 +26,11 @@ namespace EPlusActivities.API.DTOs
         public int Credit { get; set; }
 
         // 注册渠道
-        public string RegisterChannel { get; set; }
+        public Channel RegisterChannel { get; set; }
 
         // 登录渠道
         [Required]
-        public string LoginChannel { get; set; }
+        public Channel LoginChannel { get; set; }
 
         // 注册日期
         public DateTime RegisterDate { get; set; }

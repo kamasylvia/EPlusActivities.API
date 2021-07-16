@@ -1,15 +1,14 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.Entities
+namespace EPlusActivities.API.DTOs.BrandDtos
 {
-    public class PrizeType
+    public class BrandDto
     {
-        [Key]
+        [Required]
         public Guid? Id { get; set; }
 
+        [Required]
         public string Name { get; set; }
-
-        public int Percentage { get; set; }
     }
 }

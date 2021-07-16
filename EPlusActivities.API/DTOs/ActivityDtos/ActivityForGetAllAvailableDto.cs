@@ -1,15 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs
+namespace EPlusActivities.API.DTOs.ActivityDtos
 {
-    public class ActivityDto
+    public class ActivityForGetAllAvailableDto
     {
-        public Guid Id { get; set; }
-
-        [Required]
-        public string Name { get; set; }
-
         [Required]
         public DateTime StartTime { get; set; }
 

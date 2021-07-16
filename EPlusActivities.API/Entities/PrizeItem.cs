@@ -12,7 +12,7 @@ namespace EPlusActivities.API.Entities
         }
 
         [Key]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         // 奖品名称
         [Required]

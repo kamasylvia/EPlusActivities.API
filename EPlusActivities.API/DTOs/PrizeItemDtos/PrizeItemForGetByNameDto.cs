@@ -1,12 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs
+namespace EPlusActivities.API.DTOs.PrizeItemDtos
 {
-    public class BrandDto
+    public class PrizeItemForGetByNameDto
     {
-        public Guid Id { get; set; }
-
         [Required]
         public string Name { get; set; }
     }

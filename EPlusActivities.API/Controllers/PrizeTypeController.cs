@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.PrizeTypeDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -36,17 +36,21 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<PrizeTypeDto>> GetAsync([FromBody] PrizeTypeDto prizeTypeDto)
+        public async Task<ActionResult<PrizeTypeDto>> GetByIdAsync([FromBody] PrizeTypeForGetByIdDto prizeTypeDto)
         {
-            #region Parameter validation
-            if (prizeTypeDto.Id == Guid.Empty)
-            {
-                return BadRequest("The prize type ID could not be null.");
-            }
-            #endregion
+            var prizeType = await _prizeTypeRepository.FindByIdAsync(prizeTypeDto.Id.Value);
+            // ?? await _prizeTypeRepository.FindByNameAsync(prizeTypeDto.Name);
 
-            var prizeType = await _prizeTypeRepository.FindByIdAsync(prizeTypeDto.Id)
-                            ?? await _prizeTypeRepository.FindByNameAsync(prizeTypeDto.Name);
+            return prizeType is null
+                ? NotFound("Could not find the prize type.")
+                : Ok(_mapper.Map<PrizeTypeDto>(prizeType));
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<PrizeTypeDto>> GetByNameAsync([FromBody] PrizeTypeForGetByNameDto prizeTypeDto)
+        {
+            var prizeType = await _prizeTypeRepository.FindByNameAsync(prizeTypeDto.Name);
 
             return prizeType is null
                 ? NotFound("Could not find the prize type.")
@@ -82,10 +86,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPut]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateAsync([FromBody] PrizeTypeDto prizeTypeDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] PrizeTypeForUpdateDto prizeTypeDto)
         {
             #region Parameter validation
-            if (!await _prizeTypeRepository.ExistsAsync(prizeTypeDto.Id))
+            if (!await _prizeTypeRepository.ExistsAsync(prizeTypeDto.Id.Value))
             {
                 return BadRequest("Could not find the prize type.");
             }
@@ -97,9 +101,39 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            #region New an entity
+            #region Database operations
+            var prizeType = _mapper.Map<PrizeTypeForUpdateDto, PrizeType>(
+                prizeTypeDto,
+                await _prizeTypeRepository.FindByIdAsync(prizeTypeDto.Id.Value));
+            _prizeTypeRepository.Update(prizeType);
+            var succeeded = await _prizeTypeRepository.SaveAsync();
             #endregion
-            return Ok();
+
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
+        }
+
+        [HttpDelete]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> DeleteAsync([FromBody] PrizeTypeForGetByIdDto prizeTypeDto)
+        {
+            #region Parameter validation
+            if (await _prizeTypeRepository.ExistsAsync(prizeTypeDto.Id.Value))
+            {
+                return BadRequest("Could not find the prize type.");
+            }
+            #endregion
+
+            #region Database operations
+            var prizeType = await _prizeTypeRepository.FindByIdAsync(prizeTypeDto.Id.Value);
+            _prizeTypeRepository.Remove(prizeType);
+            var succeeded = await _prizeTypeRepository.SaveAsync();
+            #endregion
+
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
     }
 }
