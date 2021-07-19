@@ -20,7 +20,8 @@ namespace EPlusActivities.API.Configuration
         public AutoMapperProfiles()
         {
             #region Global configurations.
-            CreateMap<string, string>().ConvertUsing(s => s.Trim());
+            CreateMap<string, string>()
+                .ConvertUsing(s => string.IsNullOrEmpty(s) ? null : s.Trim());
             CreateMap<DateTime, DateTime>().ConvertUsing(d => d.Date);
             #endregion
 
@@ -48,6 +49,7 @@ namespace EPlusActivities.API.Configuration
 
             #region Address
             CreateMap<Address, AddressDto>();
+            CreateMap<AddressForCreateDto, Address>();
             CreateMap<AddressForUpdateDto, Address>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
@@ -98,6 +100,9 @@ namespace EPlusActivities.API.Configuration
                 opt => opt.MapFrom(src => src.Brand.Name))
                 .ForMember(dest => dest.CategoryName,
                 opt => opt.MapFrom(src => src.Category.Name));
+            CreateMap<PrizeItemForCreateDto, PrizeItem>()
+                .ForMember(dest => dest.Brand, opt => opt.Ignore())
+                .ForMember(dest => dest.Category, opt => opt.Ignore());
             CreateMap<PrizeItemForUpdateDto, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());

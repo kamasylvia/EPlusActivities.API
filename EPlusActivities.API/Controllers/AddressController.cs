@@ -52,7 +52,10 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             var addresses = await _addressRepository.FindByUserIdAsync(addressDto.UserId.Value);
-            return Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses));
+            return addresses.Count() > 0
+                ? Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses))
+                : NotFound(
+                    $"Could not find any addresses with the specified user '{addressDto.UserId.Value}'");
         }
 
         [HttpGet]
@@ -68,14 +71,9 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AddressDto>> CreateAsync([FromBody] AddressDto addressDto)
+        public async Task<ActionResult<AddressDto>> CreateAsync([FromBody] AddressForCreateDto addressDto)
         {
             #region Parameter validation
-            if (await _addressRepository.ExistsAsync(addressDto.Id.Value))
-            {
-                return Conflict("This address is already existed.");
-            }
-
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
             {
@@ -91,7 +89,6 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             var address = _mapper.Map<Address>(addressDto);
-            // address.Id = Guid.NewGuid();
             await _addressRepository.AddAsync(address);
             var succeeded = await _addressRepository.SaveAsync();
             #endregion 
@@ -106,8 +103,10 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdateAsync([FromBody] AddressForUpdateDto addressDto)
         {
+            var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
+
             #region Parameter validation
-            if (!await _addressRepository.ExistsAsync(addressDto.Id.Value))
+            if (address is null)
             {
                 return NotFound("Could not find the address.");
             }
@@ -120,8 +119,9 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
-            var address = _mapper.Map<Address>(addressDto);
-            _addressRepository.Update(address);
+            _addressRepository.Update(_mapper.Map<AddressForUpdateDto, Address>(
+                addressDto,
+                address));
             var succeeded = await _addressRepository.SaveAsync();
             #endregion
 
@@ -135,8 +135,9 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> DeleteAsync([FromBody] AddressForGetByIdDto addressDto)
         {
-            #region Parameter validation
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
+
+            #region Parameter validation
             if (address is null)
             {
                 return NotFound("Could not find the address.");

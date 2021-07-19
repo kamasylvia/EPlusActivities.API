@@ -6,7 +6,7 @@ namespace EPlusActivities.API.DTOs.UserDtos
     public class UserForUpdatePhoneDto
     {
         [Required]
-        public Guid? UserId { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         [Phone]

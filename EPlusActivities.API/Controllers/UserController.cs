@@ -73,7 +73,7 @@ namespace EPlusActivities.API.Controllers
         public async Task<IActionResult> UpdatePhoneNumberAsync([FromBody] UserForUpdatePhoneDto userDto)
         {
             #region Parameter validation
-            var user = await _userManager.FindByIdAsync(userDto.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
             {
                 return NotFound("Could not find the user.");

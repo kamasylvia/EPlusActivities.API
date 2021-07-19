@@ -49,12 +49,12 @@ namespace EPlusActivities.API.Controllers
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
-                return BadRequest("The EndTime must be later or equal to the StartTime.");
+                return BadRequest("The EndTime could not be less than the StartTime.");
             }
             #endregion
 
-            var activitiesAtStartTime = await _activityRepository.FindAllAvailableAsync(activityDto.StartTime);
-            var endTime = activityDto.EndTime?? DateTime.Now.Date;
+            var activitiesAtStartTime = await _activityRepository.FindAllAvailableAsync(activityDto.StartTime.Value);
+            var endTime = activityDto.EndTime ?? DateTime.Now.Date;
             var activitiesAtEndTime = await _activityRepository.FindAllAvailableAsync(endTime);
             var result = activitiesAtStartTime.Union(activitiesAtEndTime);
             return Ok(result);
@@ -67,10 +67,10 @@ namespace EPlusActivities.API.Controllers
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
-                return BadRequest("The EndTime must be later or equal to the StartTime.");
+                return BadRequest("The EndTime could not be less than the StartTime.");
             }
             #endregion
-            
+
             #region Database operations
             var activity = _mapper.Map<Activity>(activityDto);
             await _activityRepository.AddAsync(activity);
@@ -86,23 +86,25 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdateAsync([FromBody] ActivityForUpdateDto activityDto)
         {
+            var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
+            
             #region Parameter validation
-            if (!await _activityRepository.ExistsAsync(activityDto.Id.Value))
+            // if (!await _activityRepository.ExistsAsync(activityDto.Id.Value))
+            if (activity is null)
             {
                 return NotFound("Could not find the activity.");
             }
 
             if (activityDto.StartTime > activityDto.EndTime)
             {
-                return BadRequest("The EndTime must be later or equal to the StartTime.");
+                return BadRequest("The EndTime could not be less than the StartTime.");
             }
             #endregion
 
             #region Database operations
-            var activity = _mapper.Map<ActivityForUpdateDto, Activity>(
+            _activityRepository.Update(_mapper.Map<ActivityForUpdateDto, Activity>(
                 activityDto,
-                await _activityRepository.FindByIdAsync(activityDto.Id.Value));
-            _activityRepository.Update(activity);
+                activity));
             var succeeded = await _activityRepository.SaveAsync();
             #endregion
 
@@ -115,15 +117,16 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> DeleteAsync([FromBody] ActivityForGetDto activityDto)
         {
+            var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
+
             #region Parameter validation
-            if (!await _activityRepository.ExistsAsync(activityDto.Id.Value))
+            if (activity is null)
             {
                 return NotFound("Could not find the activity.");
             }
             #endregion
 
             #region Database operations
-            var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             _activityRepository.Remove(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion

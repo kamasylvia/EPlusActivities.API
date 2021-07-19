@@ -23,5 +23,7 @@ namespace EPlusActivities.API.Entities
         public DateTime? EndTime { get; set; }
 
         public IEnumerable<Lottery> LotteryResults { get; set; }
+
+        public IEnumerable<PrizeType> PrizeTypes { get; set; }
     }
 }

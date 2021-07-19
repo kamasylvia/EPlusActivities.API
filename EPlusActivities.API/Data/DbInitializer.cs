@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -85,7 +86,10 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Activities
-            var activity = new Activity("Seed");
+            var activity = new Activity("Seed")
+            {
+                EndTime = DateTime.MinValue
+            };
             context.Activities.Add(activity);
             #endregion
 
@@ -106,6 +110,14 @@ namespace EPlusActivities.API.Data
                 Category = category,
             };
             context.PrizeItems.Add(prizeItem);
+            #endregion
+
+            #region Seed PrizeTypes
+            var prizeType = new PrizeType("Seed")
+            {
+                Activity = activity
+            };
+            context.PrizeTypes.Add(prizeType);
             #endregion
 
             #region Seed LotteryResults

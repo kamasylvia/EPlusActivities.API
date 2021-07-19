@@ -22,5 +22,7 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
         public Guid? ActivityId { get; set; }
 
         public Guid? PrizeItemId { get; set; }
+
+        public Guid? PrizeTypeId { get; set; }
     }
 }

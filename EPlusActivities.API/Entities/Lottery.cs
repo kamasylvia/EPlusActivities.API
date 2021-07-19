@@ -25,7 +25,6 @@ namespace EPlusActivities.API.Entities
 
         public ApplicationUser User { get; set; }
 
-        [Required]
         public Guid? PrizeItemId { get; set; }
 
         public PrizeItem PrizeItem { get; set; }
@@ -34,5 +33,9 @@ namespace EPlusActivities.API.Entities
         public Guid? ActivityId { get; set; }
 
         public Activity Activity { get; set; }
+
+        public Guid? PrizeTypeId { get; set; }
+
+        public PrizeType PrizeType { get; set; }
     }
 }

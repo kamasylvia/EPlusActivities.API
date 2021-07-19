@@ -46,7 +46,7 @@ namespace EPlusActivities.API.Controllers
                 : Ok(_mapper.Map<PrizeTypeDto>(prizeType));
         }
 
-        [HttpGet]
+        [HttpGet("name")]
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<PrizeTypeDto>> GetByNameAsync([FromBody] PrizeTypeForGetByNameDto prizeTypeDto)
         {
@@ -55,6 +55,17 @@ namespace EPlusActivities.API.Controllers
             return prizeType is null
                 ? NotFound("Could not find the prize type.")
                 : Ok(_mapper.Map<PrizeTypeDto>(prizeType));
+        }
+
+        [HttpGet("search")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<PrizeTypeDto>>> GetByContainedNameAsync([FromBody] PrizeTypeForGetByNameDto prizeTypeDto)
+        {
+            var prizeTypes = await _prizeTypeRepository.FindByContainedNameAsync(prizeTypeDto.Name);
+
+            return prizeTypes.Count() > 0
+                ? Ok(_mapper.Map<PrizeTypeDto>(prizeTypes))
+                : NotFound("Could not find any prize type.");
         }
 
         [HttpPost]

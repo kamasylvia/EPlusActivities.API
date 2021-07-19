@@ -48,16 +48,20 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet("name")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync([FromBody] PrizeItemForGetByNameDto prizeItemDto) =>
-            Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(
-                await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)));
+        public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync([FromBody] PrizeItemForGetByNameDto prizeItemDto)
+        {
+            var prizeItems = await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name);
+            return prizeItems.Count() > 0
+                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(
+                    await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)))
+                : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
+        }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<PrizeItemDto>> GetGetByIdAsync([FromBody] PrizeItemForGetByIdDto prizeItemDto)
         {
             var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
-
             return prizeItem is null ? NotFound("Could not find the prizeItem.") : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
         }
 
@@ -85,17 +89,19 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdateAsync([FromBody] PrizeItemForUpdateDto prizeItemDto)
         {
+            var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
+
             #region Parameter validation
-            if (!await _prizeItemRepository.ExistsAsync(prizeItemDto.Id.Value))
+            if (prizeItem is null)
             {
                 return BadRequest("The prize item is not existed");
             };
             #endregion
 
             #region New an entity
-            var prizeItem = _mapper.Map<PrizeItemForUpdateDto, PrizeItem>(
+            prizeItem = _mapper.Map<PrizeItemForUpdateDto, PrizeItem>(
                 prizeItemDto,
-                await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value));
+                prizeItem);
             prizeItem.Brand = await GetBrandAsync(prizeItemDto.BrandName);
             prizeItem.Category = await GetCategoryAsync(prizeItemDto.CategoryName);
             #endregion
@@ -114,15 +120,16 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> DeleteAsync([FromBody] PrizeItemForGetByIdDto prizeItemDto)
         {
+            var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
+
             #region Parameter validation
-            if (!await _prizeItemRepository.ExistsAsync(prizeItemDto.Id.Value))
+            if (prizeItem is null)
             {
                 return BadRequest("The prize item is not existed");
             };
             #endregion
 
             #region Database operations
-            var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
             _prizeItemRepository.Remove(prizeItem);
             var succeeded = await _prizeItemRepository.SaveAsync();
 

@@ -29,6 +29,13 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Category>> FindAllAsync() =>
             await _context.Categories.ToArrayAsync();
 
+        public async Task<IEnumerable<Category>>
+        FindByContainedNameAsync(string name) =>
+            await _context
+                .Categories
+                .Where(c => c.Name.Contains(name))
+                .ToListAsync();
+
         public async Task<Category> FindByIdAsync(Guid id) =>
             await _context.Categories.FindAsync(id);
 

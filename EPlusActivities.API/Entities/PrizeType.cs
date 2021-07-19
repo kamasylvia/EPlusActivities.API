@@ -11,5 +11,13 @@ namespace EPlusActivities.API.Entities
         public string Name { get; set; }
 
         public int Percentage { get; set; }
+
+        [Required]
+        public Activity Activity { get; set; }
+
+        public PrizeType(string name)
+        {
+            this.Name = name;
+        }
     }
 }

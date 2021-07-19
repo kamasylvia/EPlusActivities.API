@@ -53,6 +53,26 @@ namespace EPlusActivities.API.Controllers
                 : Ok(_mapper.Map<BrandDto>(brand));
         }
 
+        [HttpGet("all")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<BrandDto>>> GetAllBrand()
+        {
+            var brands = await _brandRepository.FindAllAsync();
+            return brands.Count() > 0
+             ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
+             : NotFound($"Could not find any brand.");
+        }
+
+        [HttpGet("search")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync([FromBody] BrandForGetByNameDto brandDto)
+        {
+            var brands = await _brandRepository.FindByContainedNameAsync(brandDto.Name);
+            return brands.Count() > 0
+                ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
+                : NotFound($"Could not find any brand with name '{brandDto.Name}'");
+        }
+
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<BrandDto>> CreateAsync([FromBody] BrandForGetByNameDto brandDto)
@@ -61,13 +81,12 @@ namespace EPlusActivities.API.Controllers
             #region Parameter validation
             if (await _brandRepository.ExistsAsync(brandDto.Name))
             {
-                return Conflict($"The brand is already existed");
+                return Conflict($"The brand {brandDto.Name} is already existed");
             }
             #endregion
 
             #region New an entity
             var brand = _mapper.Map<Brand>(brandDto);
-            // brand.Id = Guid.NewGuid();
             #endregion
 
             #region Database operations
@@ -94,7 +113,6 @@ namespace EPlusActivities.API.Controllers
             #region Database operations
             var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
             brand = _mapper.Map<BrandDto, Brand>(brandDto, brand);
-            // var brand = _mapper.Map<Brand>(brandDto);
             _brandRepository.Update(brand);
             var succeeded = await _brandRepository.SaveAsync();
             #endregion
@@ -118,7 +136,6 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
-            brand = _mapper.Map<BrandDto, Brand>(brandDto, brand);
             _brandRepository.Remove(brand);
             var succeeded = await _brandRepository.SaveAsync();
             #endregion

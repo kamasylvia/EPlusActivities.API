@@ -8,5 +8,8 @@ namespace EPlusActivities.API.DTOs.PrizeTypeDtos
     {
         [Required]
         public string Name { get; set; }
+
+        [Required]
+        public Guid? ActivityId { get; set; }
     }
 }

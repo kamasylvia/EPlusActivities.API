@@ -39,8 +39,6 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<CategoryDto>> GetByIdAsync([FromBody] CategoryForGetByIdDto categoryDto)
         {
             var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
-            //    ?? await _categoryRepository.FindByNameAsync(categoryGetByIdDto.Name);
-
             return category is null
                 ? NotFound($"Could not find the category.")
                 : Ok(category);
@@ -51,10 +49,19 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<CategoryDto>> GetByNameAsync([FromBody] CategoryForGetByNameDto categoryDto)
         {
             var category = await _categoryRepository.FindByNameAsync(categoryDto.Name);
-
             return category is null
                 ? NotFound($"Could not find the category.")
-                : Ok(category);
+                : Ok(_mapper.Map<CategoryDto>(category));
+        }
+
+        [HttpGet("search")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedAsync([FromBody] CategoryForGetByNameDto categoryDto)
+        {
+            var categories = await _categoryRepository.FindByContainedNameAsync(categoryDto.Name);
+            return categories.Count() > 0
+                ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(categories))
+                : NotFound($"Could not find any category.");
         }
 
         [HttpPost]
@@ -70,7 +77,6 @@ namespace EPlusActivities.API.Controllers
 
             #region New an entity
             var category = _mapper.Map<Category>(categoryDto);
-            // category.Id = Guid.NewGuid();
             #endregion
 
             #region Database operations
@@ -87,17 +93,24 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdateNameAsync([FromBody] CategoryDto categoryDto)
         {
+            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
+
             #region Parameter validation
-            if (!await _categoryRepository.ExistsAsync(categoryDto.Id.Value))
+            if (category is null)
             {
                 return NotFound($"Could not find the category with ID '{categoryDto.Id}'");
+            }
+
+            if (await _categoryRepository.ExistsAsync(categoryDto.Name))
+            {
+                return Conflict($"The category '{categoryDto.Name}' is already existed.");
             }
             #endregion
 
             #region Database operations
-            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
-            category = _mapper.Map<CategoryDto, Category>(categoryDto, category);
-            _categoryRepository.Update(category);
+            _categoryRepository.Update(_mapper.Map<CategoryDto, Category>(
+                categoryDto,
+                category));
             var succeeded = await _categoryRepository.SaveAsync();
             #endregion
 
