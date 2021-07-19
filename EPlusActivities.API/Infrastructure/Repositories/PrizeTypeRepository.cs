@@ -10,7 +10,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class
     PrizeTypeRepository
-    : RepositoryBase, INameExistsRepository<PrizeType>
+    : RepositoryBase, IFindByUserIdRepository<PrizeType>
     {
         public PrizeTypeRepository(ApplicationDbContext context) :
             base(context)
@@ -23,27 +23,21 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.PrizeTypes.AnyAsync(pt => pt.Id == id);
 
-        public async Task<bool> ExistsAsync(string name) =>
-            await _context.PrizeTypes.AnyAsync(pt => pt.Name == name);
-
         public async Task<IEnumerable<PrizeType>> FindAllAsync() =>
             await _context.PrizeTypes.ToListAsync();
 
-        public async Task<IEnumerable<PrizeType>>
-        FindByContainedNameAsync(string name) =>
-            await _context
-                .PrizeTypes
-                .Where(p => p.Name.Contains(name))
-                .ToListAsync();
-
         public async Task<PrizeType> FindByIdAsync(Guid id) =>
-            await _context.PrizeTypes.FindAsync(id);
-
-        public async Task<PrizeType> FindByNameAsync(string name) =>
             await _context
                 .PrizeTypes
-                .Where(p => p.Name == name)
-                .SingleOrDefaultAsync();
+                .Include(pt => pt.Activity)
+                .SingleOrDefaultAsync(pt => pt.Id == id);
+
+        public async Task<IEnumerable<PrizeType>>
+        FindByUserIdAsync(Guid userId) =>
+            await _context
+                .PrizeTypes
+                .Where(a => a.Activity.Id == userId)
+                .ToListAsync();
 
         public void Remove(PrizeType item) => _context.Remove(item);
 

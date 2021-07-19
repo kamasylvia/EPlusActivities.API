@@ -111,9 +111,12 @@ namespace EPlusActivities.API.Configuration
 
 
             #region PrizeType
-            CreateMap<PrizeType, PrizeTypeDto>().ReverseMap();
-            CreateMap<PrizeTypeForCreateDto, PrizeType>();
-            CreateMap<PrizeTypeForUpdateDto, PrizeType>();
+            CreateMap<PrizeType, PrizeTypeDto>();
+            CreateMap<PrizeTypeForCreateDto, PrizeType>()
+                .ForMember(dest => dest.Activity, opt => opt.Ignore());
+            CreateMap<PrizeTypeForUpdateDto, PrizeType>()
+                .ForMember(dest => dest.Activity, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
             #endregion
 
 

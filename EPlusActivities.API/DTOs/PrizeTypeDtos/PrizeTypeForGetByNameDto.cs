@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.DTOs.PrizeTypeDtos
 {
-    public class PrizeTypeForGetByNameDto
+    public class PrizeTypeForGetByActivityIdDto
     {
-        [Required]
-        public string Name { get; set; }
-
         [Required]
         public Guid? ActivityId { get; set; }
     }

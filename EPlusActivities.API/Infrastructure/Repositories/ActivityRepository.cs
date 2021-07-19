@@ -35,7 +35,11 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .ToListAsync();
 
         public async Task<Activity> FindByIdAsync(Guid id) =>
-            await _context.Activities.FindAsync(id);
+            await _context
+                .Activities
+                .Include(a => a.LotteryResults)
+                .Include(a => a.PrizeTypes)
+                .SingleOrDefaultAsync(a => a.Id == id);
 
         public void Remove(Activity item) => _context.Activities.Remove(item);
 

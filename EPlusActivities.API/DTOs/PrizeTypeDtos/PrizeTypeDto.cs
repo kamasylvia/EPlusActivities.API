@@ -6,6 +6,7 @@ namespace EPlusActivities.API.DTOs.PrizeTypeDtos
 {
     public class PrizeTypeDto
     {
+        [Required]
         public Guid Id { get; set; }
 
         [Required]

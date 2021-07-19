@@ -103,7 +103,7 @@ namespace EPlusActivities.API
                 .AddTransient
                 <INameExistsRepository<Category>, CategoryRepository>()
                 .AddTransient
-                <INameExistsRepository<PrizeType>, PrizeTypeRepository>();
+                <IFindByUserIdRepository<PrizeType>, PrizeTypeRepository>();
 
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
