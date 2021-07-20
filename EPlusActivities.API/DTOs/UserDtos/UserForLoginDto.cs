@@ -10,6 +10,6 @@ namespace EPlusActivities.API.DTOs.UserDtos
         public Guid? Id { get; set; }
 
         [Required]
-        public Channel LoginChannel { get; set; }
+        public ChannelCode LoginChannel { get; set; }
     }
 }

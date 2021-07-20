@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.DTOs.PrizeItemDtos
 {
@@ -21,8 +19,8 @@ namespace EPlusActivities.API.DTOs.PrizeItemDtos
 
         public int RequiredCredit { get; set; }
 
-        public string PictureUrl { get; set; }
+        public string PhotoUrl { get; set; }
 
-        public Guid? LotteryId { get; set; }
+        public int Stock { get; set; }
     }
 }

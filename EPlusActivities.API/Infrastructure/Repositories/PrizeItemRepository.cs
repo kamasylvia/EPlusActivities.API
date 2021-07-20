@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class PrizeItemRepository : RepositoryBase, IFindByNameRepository<PrizeItem>
+    public class PrizeItemRepository : RepositoryBase, IPrizeItemRepository
     {
         public PrizeItemRepository(ApplicationDbContext context) :
             base(context)
@@ -20,9 +20,11 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task AddAsync(PrizeItem prizeItem) =>
             await _context.PrizeItems.AddAsync(prizeItem);
 
-        public void Remove(PrizeItem prizeItem) => _context.PrizeItems.Remove(prizeItem);
+        public void Remove(PrizeItem prizeItem) =>
+            _context.PrizeItems.Remove(prizeItem);
 
-        public void Update(PrizeItem prizeItem) => _context.PrizeItems.Update(prizeItem);
+        public void Update(PrizeItem prizeItem) =>
+            _context.PrizeItems.Update(prizeItem);
 
         public async Task<IEnumerable<PrizeItem>> FindAllAsync() =>
             await _context.PrizeItems.ToListAsync();
@@ -34,11 +36,22 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(prizeItem => prizeItem.Category)
                 .SingleOrDefaultAsync(prizeItem => prizeItem.Id == id);
 
-        public async Task<IEnumerable<PrizeItem>> FindByNameAsync(string name) =>
+        public async Task<IEnumerable<PrizeItem>>
+        FindByNameAsync(string name) =>
             await _context
                 .PrizeItems
                 .Where(p => p.Name.Contains(name))
                 .ToArrayAsync();
+
+        public async Task<IEnumerable<PrizeItem>>
+        FindByPrizeTypeIdAsync(Guid id) =>
+            await _context
+                .PrizeItems
+                .Include(pi => pi.PrizeTypePrizeItems)
+                .ThenInclude(ptpi => ptpi.PrizeType)
+                .Where(pt =>
+                    pt.PrizeTypePrizeItems.Any(ptpi => ptpi.PrizeType.Id == id))
+                .ToListAsync();
 
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.PrizeItems.AnyAsync(p => p.Id == id);

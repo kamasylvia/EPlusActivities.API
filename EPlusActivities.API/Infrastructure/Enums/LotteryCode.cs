@@ -1,6 +1,6 @@
 namespace EPlusActivities.API.Infrastructure.Enums
 {
-    public enum Lottery
+    public enum LotteryCode
     {
         Roulette,
         Digging,

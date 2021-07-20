@@ -7,8 +7,5 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
     {
         [Required]
         public Guid? Id { get; set; }
-
-        [Required]
-        public Guid? UserId { get; set; }
     }
 }

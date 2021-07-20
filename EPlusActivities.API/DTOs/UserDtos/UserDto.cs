@@ -26,11 +26,11 @@ namespace EPlusActivities.API.DTOs.UserDtos
         public int Credit { get; set; }
 
         // 注册渠道
-        public Channel RegisterChannel { get; set; }
+        public ChannelCode RegisterChannel { get; set; }
 
         // 登录渠道
         [Required]
-        public Channel LoginChannel { get; set; }
+        public ChannelCode LoginChannel { get; set; }
 
         // 注册日期
         public DateTime RegisterDate { get; set; }

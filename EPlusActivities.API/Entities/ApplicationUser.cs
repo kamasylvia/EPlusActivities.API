@@ -10,10 +10,10 @@ namespace EPlusActivities.API.Entities
     public class ApplicationUser : IdentityUser<Guid>
     {
         // 注册渠道
-        public Channel RegisterChannel { get; set; }
+        public ChannelCode RegisterChannel { get; set; }
 
         // 登录渠道
-        public Channel LoginChannel { get; set; }
+        public ChannelCode LoginChannel { get; set; }
 
         // 注册日期
         [Required]

@@ -23,11 +23,11 @@ namespace EPlusActivities.API.Controllers
     public class AddressController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IFindByUserIdRepository<Address> _addressRepository;
+        private readonly IFindByParentIdRepository<Address> _addressRepository;
         private readonly IMapper _mapper;
         public AddressController(
             UserManager<ApplicationUser> userManager,
-            IFindByUserIdRepository<Address> addressRepository,
+            IFindByParentIdRepository<Address> addressRepository,
             IMapper mapper)
         {
             _addressRepository = addressRepository
@@ -51,7 +51,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var addresses = await _addressRepository.FindByUserIdAsync(addressDto.UserId.Value);
+            var addresses = await _addressRepository.FindByParentIdAsync(addressDto.UserId.Value);
             return addresses.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses))
                 : NotFound(
@@ -80,7 +80,7 @@ namespace EPlusActivities.API.Controllers
                 return NotFound("Could not find the user.");
             }
 
-            var oldAddresses = await _addressRepository.FindByUserIdAsync(user.Id);
+            var oldAddresses = await _addressRepository.FindByParentIdAsync(user.Id);
             if (oldAddresses?.Count() >= 5)
             {
                 return BadRequest("Could not add more than 5 addresses.");

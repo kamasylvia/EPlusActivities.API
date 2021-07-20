@@ -1,5 +1,6 @@
 # custom
 Migrations/
+.VSCodeCounter
 
 # globs
 Makefile.in

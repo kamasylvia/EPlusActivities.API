@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EPlusActivities.API.Entities
 {
@@ -18,9 +18,6 @@ namespace EPlusActivities.API.Entities
         [Required]
         public string Name { get; set; }
 
-        // 奖品数量
-        public int Quantity { get; set; }
-
         // 奖品种类
         public Category Category { get; set; }
 
@@ -30,13 +27,17 @@ namespace EPlusActivities.API.Entities
         // 奖品单价
         public decimal? UnitPrice { get; set; }
 
-        // 奖品所需积分
-        public int RequiredCredit { get; set; }
+        // 奖品数量
+        public int Quantity { get; set; }
 
-        // 奖品图片 URL
-        public string PictureUrl { get; set; }
+        // 奖品图片
+        public PrizePhoto Photo { get; set; }
 
-        // 所处的中奖结果
-        public Lottery Lottery { get; set; }
+        // 奖品库存
+        public int Stock { get; set; }
+
+        public IEnumerable<Lottery> LotteryResults { get; set; }
+
+        public IEnumerable<PrizeTypePrizeItem> PrizeTypePrizeItems { get; set; }
     }
 }

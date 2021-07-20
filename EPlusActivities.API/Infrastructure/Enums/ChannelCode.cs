@@ -1,6 +1,6 @@
 namespace EPlusActivities.API.Infrastructure.Enums
 {
-    public enum Channel
+    public enum ChannelCode
     {
         Default,
         MiniProgram

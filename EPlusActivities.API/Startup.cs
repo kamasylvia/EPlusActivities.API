@@ -1,30 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure;
-using EPlusActivities.API.Infrastructure.Identity;
 using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services;
-using IdentityServer4.AspNetIdentity;
+using EPlusActivities.API.Services.IdentityServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace EPlusActivities.API
@@ -94,16 +84,15 @@ namespace EPlusActivities.API
                 .AddTransient<IActivityRepository, ActivityRepository>()
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
                 .AddTransient
-                <IFindByUserIdRepository<Address>, AddressRepository>()
+                <IFindByParentIdRepository<Address>, AddressRepository>()
                 .AddTransient
-                <IFindByUserIdRepository<Lottery>, LotteryRepository>()
-                .AddTransient
-                <IFindByNameRepository<PrizeItem>, PrizeItemRepository>()
+                <IFindByParentIdRepository<Lottery>, LotteryRepository>()
+                .AddTransient<IPrizeItemRepository, PrizeItemRepository>()
                 .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
                 .AddTransient
                 <INameExistsRepository<Category>, CategoryRepository>()
                 .AddTransient
-                <IFindByUserIdRepository<PrizeType>, PrizeTypeRepository>();
+                <IFindByParentIdRepository<PrizeType>, PrizeTypeRepository>();
 
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();

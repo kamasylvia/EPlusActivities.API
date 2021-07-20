@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace EPlusActivities.API.Services
+namespace EPlusActivities.API.Services.IdentityServer
 {
     public class SmsService : ISmsService
     {

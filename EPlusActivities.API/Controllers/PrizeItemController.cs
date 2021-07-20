@@ -22,14 +22,14 @@ namespace EPlusActivities.API.Controllers
     public class PrizeItemController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IFindByNameRepository<PrizeItem> _prizeItemRepository;
+        private readonly IPrizeItemRepository _prizeItemRepository;
         private readonly INameExistsRepository<Brand> _brandRepository;
         private readonly IMapper _mapper;
         private readonly INameExistsRepository<Category> _categoryRepository;
 
         public PrizeItemController(
             UserManager<ApplicationUser> userManager,
-            IFindByNameRepository<PrizeItem> prizeItemRepository,
+            IPrizeItemRepository prizeItemRepository,
             INameExistsRepository<Brand> brandRepository,
             INameExistsRepository<Category> categoryRepository,
             IMapper mapper)
@@ -69,6 +69,14 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<PrizeItemDto>> CreateAsync([FromBody] PrizeItemForCreateDto prizeItemDto)
         {
+            #region Parameter validation
+            var allPrizeItems = await _prizeItemRepository.FindAllAsync();
+            if (allPrizeItems.Count() >= 10)
+            {
+                return BadRequest("Could not add more than 10 prize items.");
+            }
+            #endregion
+
             #region New an entity
             var prizeItem = _mapper.Map<PrizeItem>(prizeItemDto);
             prizeItem.Brand = await GetBrandAsync(prizeItemDto.BrandName);

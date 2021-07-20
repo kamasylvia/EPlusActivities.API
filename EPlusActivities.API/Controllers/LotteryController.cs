@@ -22,12 +22,18 @@ namespace EPlusActivities.API.Controllers
     public class LotteryController : Controller
     {
         private readonly IMapper _mapper;
-        private readonly LotteryRepository _lotteryRepository;
+        private readonly IFindByParentIdRepository<Lottery> _lotteryRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IActivityRepository _activityRepository;
+        private readonly IPrizeItemRepository _prizeItemRepository;
+        private readonly IFindByParentIdRepository<PrizeType> _prizeTypeRepository;
 
         public LotteryController(
-            LotteryRepository lotteryRepository,
+            IFindByParentIdRepository<Lottery> lotteryRepository,
             UserManager<ApplicationUser> userManager,
+            IActivityRepository activityRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IFindByParentIdRepository<PrizeType> prizeTypeRepository,
             IMapper mapper)
         {
             _mapper = mapper
@@ -36,6 +42,12 @@ namespace EPlusActivities.API.Controllers
                 ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _userManager = userManager
                 ?? throw new ArgumentNullException(nameof(userManager));
+            _activityRepository = activityRepository
+                ?? throw new ArgumentNullException(nameof(activityRepository));
+            _prizeItemRepository = prizeItemRepository
+                ?? throw new ArgumentNullException(nameof(prizeItemRepository));
+            _prizeTypeRepository = prizeTypeRepository
+                ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
         }
 
         // GET: api/values
@@ -51,7 +63,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var lotteries = await _lotteryRepository.FindByUserIdAsync(lotteryDto.UserId.Value);
+            var lotteries = await _lotteryRepository.FindByParentIdAsync(lotteryDto.UserId.Value);
             return lotteries is null
                 ? NotFound("Could not find the lottery results.")
                 : Ok(_mapper.Map<IEnumerable<LotteryDto>>(lotteries));
@@ -66,6 +78,17 @@ namespace EPlusActivities.API.Controllers
             if (user is null)
             {
                 return NotFound("Could not find the user.");
+            }
+
+            var activity = await _activityRepository.FindByIdAsync(lotteryDto.ActivityId.Value);
+            if (activity is null)
+            {
+                return NotFound("Could not find the activity.");
+            }
+
+            if (lotteryDto.Date < activity.StartTime || lotteryDto.Date > activity.EndTime)
+            {
+                return BadRequest("This activity is expired.");
             }
             #endregion
 
@@ -82,8 +105,14 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            #region Database operations
+            #region Generate the lottery result
             var lottery = _mapper.Map<Lottery>(lotteryDto);
+            lottery.User = user;
+            lottery.Activity = activity;
+            (lottery.PrizeType, lottery.PrizeItem) = await RandomizeAsync(activity);
+            #endregion
+
+            #region Database operations
             await _lotteryRepository.AddAsync(lottery);
             var succeeded = await _lotteryRepository.SaveAsync();
             #endregion
@@ -91,6 +120,38 @@ namespace EPlusActivities.API.Controllers
             return succeeded
                 ? Ok(_mapper.Map<LotteryDto>(lottery))
                 : new InternalServerErrorObjectResult("Update database exception");
+        }
+
+        /// <summary>
+        /// 抽奖方法：
+        ///     PrizeType：几等奖。这里是按一档多奖品来写的，一档一奖也可以用，档内随机概率自动上升至 100%。
+        ///     PrizeItem：奖品。
+        /// </summary>
+        /// <param name="activity">抽奖活动</param>
+        /// <returns>(几等奖, 奖品)</returns>
+        private async Task<(PrizeType, PrizeItem)> RandomizeAsync(Activity activity)
+        {
+            var total = 0;
+            var random = new Random();
+            var flag = random.Next(100);
+            var prizeTypes = activity.PrizeTypes;
+            var prizeType = prizeTypes.FirstOrDefault();
+
+            foreach (var item in prizeTypes)
+            {
+                if (total < flag)
+                {
+                    total += item.Percentage;
+                }
+                else
+                {
+                    prizeType = item;
+                    break;
+                }
+            }
+
+            var prizeItems = await _prizeItemRepository.FindByPrizeTypeIdAsync(prizeType.Id.Value);
+            return (prizeType, prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count())));
         }
 
         [HttpPut]

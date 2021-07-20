@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Lottery = EPlusActivities.API.Entities.Lottery;
 
 namespace EPlusActivities.API.Data
 {
@@ -120,13 +122,22 @@ namespace EPlusActivities.API.Data
             context.PrizeTypes.Add(prizeType);
             #endregion
 
+            #region Seed PrizeTypePrizeItem
+            var prizeTypePrizeItem = new PrizeTypePrizeItem
+            {
+                PrizeItem = prizeItem,
+                PrizeType = prizeType
+            };
+            context.PrizeTypePrizeItems.Add(prizeTypePrizeItem);
+            #endregion
+
             #region Seed LotteryResults
             var lottery = new Lottery
             {
                 User = user,
-                PrizeItem = prizeItem,
                 Activity = activity,
-                Channel = "Seed Data"
+                ChannelCode = ChannelCode.Default,
+                Date = DateTime.MinValue
             };
             context.LotteryResults.Add(lottery);
             #endregion

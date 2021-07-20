@@ -19,12 +19,12 @@ namespace EPlusActivities.API.Controllers
     [Route("api/[controller]")]
     public class PrizeTypeController : Controller
     {
-        private readonly IFindByUserIdRepository<PrizeType> _prizeTypeRepository;
+        private readonly IFindByParentIdRepository<PrizeType> _prizeTypeRepository;
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
 
         public PrizeTypeController(
-            IFindByUserIdRepository<PrizeType> prizeTypeRepository,
+            IFindByParentIdRepository<PrizeType> prizeTypeRepository,
             IActivityRepository activityRepository,
             IMapper mapper
         )
@@ -57,7 +57,7 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("Could not find the activity.");
             }
 
-            var prizeTypes = await _prizeTypeRepository.FindByUserIdAsync(prizeTypeDto.ActivityId.Value);
+            var prizeTypes = await _prizeTypeRepository.FindByParentIdAsync(prizeTypeDto.ActivityId.Value);
 
             return prizeTypes.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<PrizeTypeDto>>(prizeTypes))
@@ -76,7 +76,7 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("Could not find the activity.");
             }
 
-            var prizeTypes = await _prizeTypeRepository.FindByUserIdAsync(prizeTypeDto.ActivityId.Value);
+            var prizeTypes = await _prizeTypeRepository.FindByParentIdAsync(prizeTypeDto.ActivityId.Value);
             if (prizeTypes.Select(pt => pt.Percentage).Sum() + prizeTypeDto.Percentage >= 100)
             {
                 return BadRequest("The sum of percentages could not be greater than 100.");
@@ -110,7 +110,7 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("Could not find the prize type.");
             }
 
-            var prizeTypes = await _prizeTypeRepository.FindByUserIdAsync(prizeTypeDto.ActivityId.Value);
+            var prizeTypes = await _prizeTypeRepository.FindByParentIdAsync(prizeTypeDto.ActivityId.Value);
             if (prizeTypes.Where(pt => pt.Id != prizeTypeDto.Id.Value)
                           .Select(pt => pt.Percentage)
                           .Sum() + prizeTypeDto.Percentage >= 100)

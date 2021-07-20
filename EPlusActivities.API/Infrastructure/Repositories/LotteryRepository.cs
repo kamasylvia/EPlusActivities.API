@@ -10,7 +10,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class
     LotteryRepository
-    : RepositoryBase, IFindByUserIdRepository<Lottery>
+    : RepositoryBase, IFindByParentIdRepository<Lottery>
     {
         public LotteryRepository(ApplicationDbContext context) :
             base(context)
@@ -34,7 +34,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .SingleOrDefaultAsync(lottery => lottery.Id == id);
 
         public async Task<IEnumerable<Lottery>>
-        FindByUserIdAsync(Guid userId) =>
+        FindByParentIdAsync(Guid userId) =>
             await _context
                 .LotteryResults
                 .Where(a => a.UserId == userId)

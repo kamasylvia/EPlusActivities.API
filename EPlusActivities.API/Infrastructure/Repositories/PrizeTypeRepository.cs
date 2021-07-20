@@ -10,7 +10,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class
     PrizeTypeRepository
-    : RepositoryBase, IFindByUserIdRepository<PrizeType>
+    : RepositoryBase, IFindByParentIdRepository<PrizeType>
     {
         public PrizeTypeRepository(ApplicationDbContext context) :
             base(context)
@@ -33,7 +33,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .SingleOrDefaultAsync(pt => pt.Id == id);
 
         public async Task<IEnumerable<PrizeType>>
-        FindByUserIdAsync(Guid userId) =>
+        FindByParentIdAsync(Guid userId) =>
             await _context
                 .PrizeTypes
                 .Where(a => a.Activity.Id == userId)

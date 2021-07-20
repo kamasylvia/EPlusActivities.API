@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.API.Services
+namespace EPlusActivities.API.Services.IdentityServer
 {
     public interface ISmsService
     {
