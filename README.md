@@ -9,8 +9,8 @@
 1. [安装 WSL2](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10)
 2. [安装 docker](https://www.docker.com/)
 3. [PowerShell/CMD 安装 MySql for docker](https://hub.docker.com/_/mysql/)
-   1. 获取最新镜像：`docker pull mysql`
-   2. 后端开发使用的是 8.0.25 版，这里获取同一版本：`docker pull mysql:8.0.25`
+   1. 后端开发使用的是 8.0.25 版，这里获取同一版本：`docker pull mysql:8.0.25`
+   2. 或者获取最新镜像：`docker pull mysql`
 4. 运行 mysql for docker
 
 ```sh
@@ -39,7 +39,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 }
 ```
 
-2. 获得验证码后发送验证请求： POST `http://localhost:52537 /connect/token` with `x-www-form-urlencoded` parameters
+2. 获得验证码后发送验证请求： POST `http://localhost:52537/connect/token` with `x-www-form-urlencoded` parameters
 
 | Key           | Value                   |
 | ------------- | ----------------------- |
@@ -50,3 +50,8 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 | phone_number  | 11 位手机号             |
 | token         | 验证码                  |
 | login_channel | 1                       |
+
+
+3. 在上一步返回到 json 中提取 `access_token` 作为 JWT。
+4. 带着 JWT 访问 GET `http://localhost:52537/connect/userinfo` 获取 `sub` 字段，该字段的值就是用户的 `id`。
+5. 后续步骤可以参考 webapi 打开的 Swagger 页面。
