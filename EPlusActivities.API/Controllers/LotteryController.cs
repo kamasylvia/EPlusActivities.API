@@ -73,6 +73,7 @@ namespace EPlusActivities.API.Controllers
             foreach (var item in lotteries)
             {
                 var temp = _mapper.Map<LotteryDto>(item);
+                temp.Date = item.Date;
                 temp.PickedTime = item.PickedUpTime;
                 result.Add(temp);
             }
