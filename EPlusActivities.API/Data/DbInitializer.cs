@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Lottery = EPlusActivities.API.Entities.Lottery;
 
 namespace EPlusActivities.API.Data
 {
@@ -85,7 +88,10 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Activities
-            var activity = new Activity("Seed");
+            var activity = new Activity("Seed")
+            {
+                EndTime = DateTime.MinValue
+            };
             context.Activities.Add(activity);
             #endregion
 
@@ -99,22 +105,39 @@ namespace EPlusActivities.API.Data
             context.Categories.Add(category);
             #endregion
 
-            #region Seed Prizes
-            var prize = new Prize("Seed")
+            #region Seed PrizeItems
+            var prizeItem = new PrizeItem("Seed")
             {
                 Brand = brand,
                 Category = category,
             };
-            context.Prizes.Add(prize);
+            context.PrizeItems.Add(prizeItem);
+            #endregion
+
+            #region Seed PrizeTypes
+            var prizeType = new PrizeType("Seed")
+            {
+                Activity = activity
+            };
+            context.PrizeTypes.Add(prizeType);
+            #endregion
+
+            #region Seed PrizeTypePrizeItem
+            var prizeTypePrizeItem = new PrizeTypePrizeItem
+            {
+                PrizeItem = prizeItem,
+                PrizeType = prizeType
+            };
+            context.PrizeTypePrizeItems.Add(prizeTypePrizeItem);
             #endregion
 
             #region Seed LotteryResults
             var lottery = new Lottery
             {
                 User = user,
-                Prize = prize,
                 Activity = activity,
-                Channel = "Seed Data"
+                ChannelCode = ChannelCode.Default,
+                Date = DateTime.MinValue
             };
             context.LotteryResults.Add(lottery);
             #endregion

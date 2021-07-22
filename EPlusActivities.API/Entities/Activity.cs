@@ -12,7 +12,7 @@ namespace EPlusActivities.API.Entities
         }
 
         [Key]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -23,5 +23,7 @@ namespace EPlusActivities.API.Entities
         public DateTime? EndTime { get; set; }
 
         public IEnumerable<Lottery> LotteryResults { get; set; }
+
+        public IEnumerable<PrizeType> PrizeTypes { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.BrandDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -35,33 +35,61 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<BrandDto>> GetByIdAsync([FromBody] BrandDto brandDto)
+        public async Task<ActionResult<BrandDto>> GetByIdAsync([FromBody] BrandForGetByIdDto brandDto)
         {
-            var brand = await _brandRepository.FindByIdAsync(brandDto.Id)
-                        ?? await _brandRepository.FindByNameAsync(brandDto.Name);
+            var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
             return brand is null
-                ? NotFound($"Could not find the brand '{brandDto.Name}'")
+                ? NotFound($"Could not find the brand.")
                 : Ok(_mapper.Map<BrandDto>(brand));
+        }
+
+        [HttpGet("name")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<BrandDto>> GetByNameAsync([FromBody] BrandForGetByNameDto brandDto)
+        {
+            var brand = await _brandRepository.FindByNameAsync(brandDto.Name);
+            return brand is null
+                ? NotFound($"Could not find the brand.")
+                : Ok(_mapper.Map<BrandDto>(brand));
+        }
+
+        [HttpGet("all")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<BrandDto>>> GetAllBrand()
+        {
+            var brands = await _brandRepository.FindAllAsync();
+            return brands.Count() > 0
+             ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
+             : NotFound($"Could not find any brand.");
+        }
+
+        [HttpGet("search")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync([FromBody] BrandForGetByNameDto brandDto)
+        {
+            var brands = await _brandRepository.FindByContainedNameAsync(brandDto.Name);
+            return brands.Count() > 0
+                ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
+                : NotFound($"Could not find any brand with name '{brandDto.Name}'");
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<BrandDto>> AddBrandAsync([FromBody] BrandDto brandDto)
+        public async Task<ActionResult<BrandDto>> CreateAsync([FromBody] BrandForGetByNameDto brandDto)
         {
 
-            #region 参数验证
+            #region Parameter validation
             if (await _brandRepository.ExistsAsync(brandDto.Name))
             {
-                return Conflict($"The brand '${brandDto.Name}' is already existed");
+                return Conflict($"The brand {brandDto.Name} is already existed");
             }
             #endregion
 
-            #region 新建品牌
+            #region New an entity
             var brand = _mapper.Map<Brand>(brandDto);
-            brand.Id = Guid.NewGuid();
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             await _brandRepository.AddAsync(brand);
             var succeeded = await _brandRepository.SaveAsync();
             #endregion
@@ -71,19 +99,20 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
-        [HttpPut]
+        [HttpPatch("name")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateBrandAsync([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> UpdateNameAsync([FromBody] BrandDto brandDto)
         {
-            #region 参数验证
-            if (!await _brandRepository.ExistsAsync(brandDto.Id))
+            #region Parameter validation
+            if (!await _brandRepository.ExistsAsync(brandDto.Id.Value))
             {
-                return NotFound($"Could not find the brand with ID '{brandDto.Id}'");
+                return NotFound($"Could not find the brand.");
             }
             #endregion
 
-            #region 数据库操作
-            var brand = _mapper.Map<Brand>(brandDto);
+            #region Database operations
+            var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
+            brand = _mapper.Map<BrandDto, Brand>(brandDto, brand);
             _brandRepository.Update(brand);
             var succeeded = await _brandRepository.SaveAsync();
             #endregion
@@ -95,23 +124,18 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeletePrizeAsync([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] BrandDto brandDto)
         {
-            #region 参数验证
-            if (brandDto.Id == Guid.Empty)
-            {
-                return BadRequest("The brand ID is required");
-            }
-
-            if (!await _brandRepository.ExistsAsync(brandDto.Id)
+            #region Parameter validation
+            if (!await _brandRepository.ExistsAsync(brandDto.Id.Value)
                 || !await _brandRepository.ExistsAsync(brandDto.Name))
             {
                 return NotFound($"Could not find the brand '{brandDto.Name}'");
             }
             #endregion
 
-            #region 数据库操作
-            var brand = _mapper.Map<Brand>(brandDto);
+            #region Database operations
+            var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
             _brandRepository.Remove(brand);
             var succeeded = await _brandRepository.SaveAsync();
             #endregion

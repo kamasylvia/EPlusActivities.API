@@ -1,30 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure;
-using EPlusActivities.API.Infrastructure.Identity;
 using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services;
-using IdentityServer4.AspNetIdentity;
+using EPlusActivities.API.Services.IdentityServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace EPlusActivities.API
@@ -52,7 +42,7 @@ namespace EPlusActivities.API
 
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
             var migrationsAssembly =
-                typeof (Startup).GetTypeInfo().Assembly.GetName().Name;
+                typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             services
                 .AddControllers()
@@ -67,8 +57,9 @@ namespace EPlusActivities.API
                 {
                     c
                         .SwaggerDoc("v1",
-                        new OpenApiInfo {
-                            Title = "IdentityServer",
+                        new OpenApiInfo
+                        {
+                            Title = "EPlusActivities.API",
                             Version = "v1"
                         });
                 });
@@ -91,16 +82,18 @@ namespace EPlusActivities.API
 
             // 启用数据库仓库
             services
-                .AddTransient
-                <IFindByUserIdRepository<Address>, AddressRepository>()
-                .AddTransient
-                <IFindByUserIdRepository<Lottery>, LotteryRepository>()
-                .AddTransient<IRepository<Activity>, ActivityRepository>()
-                .AddTransient<IFindByNameRepository<Prize>, PrizeRepository>()
+                .AddTransient<IActivityRepository, ActivityRepository>()
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
+                .AddTransient
+                <IFindByParentIdRepository<Address>, AddressRepository>()
+                .AddTransient
+                <IFindByParentIdRepository<Lottery>, LotteryRepository>()
+                .AddTransient<IPrizeItemRepository, PrizeItemRepository>()
                 .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
                 .AddTransient
-                <INameExistsRepository<Category>, CategoryRepository>();
+                <INameExistsRepository<Category>, CategoryRepository>()
+                .AddTransient
+                <IFindByParentIdRepository<PrizeType>, PrizeTypeRepository>();
 
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
@@ -116,14 +109,10 @@ namespace EPlusActivities.API
 
                         // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                         options.EmitStaticAudienceClaim = true;
-                    })
-                    .// .AddTestUsers(TestUsers.Users)
-                    AddAspNetIdentity<ApplicationUser>()
-                    .// .AddProfileService<ProfileService>()
-                    // SMS Validator
-                    AddExtensionGrantValidator<SmsGrantValidator>()
-                    .// this adds the config data from memory (clients, resources, CORS)
-                    AddInMemoryIdentityResources(Config.IdentityResources)
+                    }) // .AddTestUsers(TestUsers.Users)
+                    .AddAspNetIdentity<ApplicationUser>() // .AddProfileService<ProfileService>() // SMS Validator
+                    .AddExtensionGrantValidator<SmsGrantValidator>() // this adds the config data from memory (clients, resources, CORS)
+                    .AddInMemoryIdentityResources(Config.IdentityResources)
                     .AddInMemoryApiScopes(Config.ApiScopes)
                     .AddInMemoryApiResources(Config.ApiResources)
                     .AddInMemoryClients(Config.Clients);
@@ -209,7 +198,7 @@ namespace EPlusActivities.API
                     .UseSwaggerUI(c =>
                         c
                             .SwaggerEndpoint("/swagger/v1/swagger.json",
-                            "IdentityServer v1"));
+                            "EPlusActivities.API"));
             }
 
             app.UseHttpsRedirection();
@@ -222,7 +211,7 @@ namespace EPlusActivities.API
 
             app.UseAuthorization();
 
-            DbInitializer.Initialize (env, context, userManager, roleManager);
+            DbInitializer.Initialize(env, context, userManager, roleManager);
 
             app
                 .UseEndpoints(endpoints =>

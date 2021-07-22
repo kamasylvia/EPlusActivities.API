@@ -11,7 +11,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class
     AddressRepository
-    : RepositoryBase, IFindByUserIdRepository<Address>
+    : RepositoryBase, IFindByParentIdRepository<Address>
     {
         public AddressRepository(ApplicationDbContext context) :
             base(context)
@@ -34,7 +34,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             _context.Addresses.Update(address);
 
         public async Task<IEnumerable<Address>>
-        FindByUserIdAsync(Guid userId) =>
+        FindByParentIdAsync(Guid userId) =>
             await _context
                 .Addresses
                 .Where(a => a.UserId == userId)

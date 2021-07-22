@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.CategoryDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -36,33 +36,50 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<CategoryDto>> GetByIdOrNameAsync([FromBody] CategoryDto categoryDto)
+        public async Task<ActionResult<CategoryDto>> GetByIdAsync([FromBody] CategoryForGetByIdDto categoryDto)
         {
-            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id)
-                           ?? await _categoryRepository.FindByNameAsync(categoryDto.Name);
-
+            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
             return category is null
-                ? NotFound($"Could not find the category '{categoryDto.Name}'")
+                ? NotFound($"Could not find the category.")
                 : Ok(category);
+        }
+
+        [HttpGet("name")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<CategoryDto>> GetByNameAsync([FromBody] CategoryForGetByNameDto categoryDto)
+        {
+            var category = await _categoryRepository.FindByNameAsync(categoryDto.Name);
+            return category is null
+                ? NotFound($"Could not find the category.")
+                : Ok(_mapper.Map<CategoryDto>(category));
+        }
+
+        [HttpGet("search")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedAsync([FromBody] CategoryForGetByNameDto categoryDto)
+        {
+            var categories = await _categoryRepository.FindByContainedNameAsync(categoryDto.Name);
+            return categories.Count() > 0
+                ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(categories))
+                : NotFound($"Could not find any category.");
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<CategoryDto>> AddCategoryAsync([FromBody] CategoryDto categoryDto)
+        public async Task<ActionResult<CategoryDto>> CreateAsync([FromBody] CategoryForGetByNameDto categoryDto)
         {
-            #region 参数验证
+            #region Parameter validation
             if (await _categoryRepository.ExistsAsync(categoryDto.Name))
             {
                 return Conflict($"The category '{categoryDto.Name}' is already existed.");
             }
             #endregion
 
-            #region 新建种类
+            #region New an entity
             var category = _mapper.Map<Category>(categoryDto);
-            category.Id = Guid.NewGuid();
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             await _categoryRepository.AddAsync(category);
             var succeeded = await _categoryRepository.SaveAsync();
             #endregion
@@ -72,20 +89,28 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
-        [HttpPut]
+        [HttpPatch("name")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateCategoryAsync([FromBody] CategoryDto categoryDto)
+        public async Task<IActionResult> UpdateNameAsync([FromBody] CategoryDto categoryDto)
         {
-            #region 参数验证
-            if (!await _categoryRepository.ExistsAsync(categoryDto.Id))
+            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
+
+            #region Parameter validation
+            if (category is null)
             {
                 return NotFound($"Could not find the category with ID '{categoryDto.Id}'");
             }
+
+            if (await _categoryRepository.ExistsAsync(categoryDto.Name))
+            {
+                return Conflict($"The category '{categoryDto.Name}' is already existed.");
+            }
             #endregion
 
-            #region 数据库操作
-            var category = _mapper.Map<Category>(categoryDto);
-            _categoryRepository.Update(category);
+            #region Database operations
+            _categoryRepository.Update(_mapper.Map<CategoryDto, Category>(
+                categoryDto,
+                category));
             var succeeded = await _categoryRepository.SaveAsync();
             #endregion
 
@@ -96,23 +121,18 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeleteCategoryAsync([FromBody] CategoryDto categoryDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] CategoryDto categoryDto)
         {
-            #region 参数验证
-            if (categoryDto.Id == Guid.Empty)
-            {
-                return BadRequest("The category ID is required");
-            }
-
-            if (!await _categoryRepository.ExistsAsync(categoryDto.Id)
+            #region Parameter validation
+            if (!await _categoryRepository.ExistsAsync(categoryDto.Id.Value)
                 || !await _categoryRepository.ExistsAsync(categoryDto.Name))
             {
-                return BadRequest($"Could not find the category '{categoryDto.Name}'");
+                return BadRequest($"Could not find the category.");
             }
             #endregion
 
-            #region 数据库操作
-            var category = _mapper.Map<Category>(categoryDto);
+            #region Database operations
+            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
             _categoryRepository.Remove(category);
             var succeeded = await _categoryRepository.SaveAsync();
             #endregion

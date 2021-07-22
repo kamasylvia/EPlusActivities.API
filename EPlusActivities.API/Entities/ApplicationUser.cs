@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using EPlusActivities.API.Infrastructure.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Entities
@@ -9,10 +10,10 @@ namespace EPlusActivities.API.Entities
     public class ApplicationUser : IdentityUser<Guid>
     {
         // 注册渠道
-        public string RegisterChannel { get; set; }
+        public ChannelCode RegisterChannel { get; set; }
 
         // 登录渠道
-        public string LoginChannel { get; set; }
+        public ChannelCode LoginChannel { get; set; }
 
         // 注册日期
         [Required]

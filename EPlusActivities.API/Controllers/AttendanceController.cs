@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.AttendanceDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -39,59 +38,61 @@ namespace EPlusActivities.API.Controllers
                 ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        [HttpGet("list")]
+        [HttpGet("user")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetByUserIdAsync([FromBody] AttendanceDto attendanceDto)
+        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetByUserIdAsync([FromBody] AttendanceForGetByUserIdDto attendanceDto)
         {
-            #region 参数验证
-            if (!attendanceDto.Date.HasValue)
-            {
-                return BadRequest("缺少起始日期");
-            }
-
+            #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
             {
-                return BadRequest("用户不存在");
+                return BadRequest("Could not find the user.");
             }
             #endregion
 
-            var attendanceRecord = await _attendanceRepository.FindByUserIdAsync(attendanceDto.UserId, attendanceDto.Date.Value);
-            return Ok(attendanceRecord);
+            var attendanceRecord = await _attendanceRepository.FindByUserIdAsync(
+                attendanceDto.UserId.Value,
+                attendanceDto.Date.Value);
+
+            return attendanceRecord.Count() > 0
+                ? Ok(attendanceRecord)
+                : NotFound("Could not find any attendances.");
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AttendanceDto>> GetByIdAsync([FromBody] AttendanceDto attendanceDto)
+        public async Task<ActionResult<AttendanceDto>> GetByIdAsync([FromBody] AttendanceForGetByIdDto attendanceDto)
         {
-            var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id);
-            return attendance is null ? BadRequest("签到记录不存在") : Ok(attendance);
+            var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id.Value);
+            return attendance is null
+                ? BadRequest("Could not find the attendance.")
+                : Ok(attendance);
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> Attend([FromBody] AttendanceDto attendanceDto)
+        public async Task<IActionResult> AttendAsync([FromBody] AttendanceDto attendanceDto)
         {
-            #region 参数验证
-            if (await _attendanceRepository.ExistsAsync(attendanceDto.Id))
+            #region Parameter validation
+            if (await _attendanceRepository.ExistsAsync(attendanceDto.Id.Value))
             {
-                return BadRequest("签到记录已存在");
+                return BadRequest("This attendance is already existed.");
             }
 
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
             {
-                return BadRequest("用户不存在");
+                return BadRequest("Could not find the user.");
             }
-
             #endregion
 
-            #region 更新用户数据中最近签到日期和连续签到天数
-            var attended = AttendanceUtil.AttendHelper(user);
+            #region Update the user's LastAttendanceDate and SequentialAttendanceDays
+            var attended = AttendHelper(user);
             if (!attended)
             {
-                return Conflict("重复签到");
+                return Conflict("Duplicate attendance.");
             }
+
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
@@ -99,20 +100,50 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            #region 新建签到记录
+            #region New an entity
             var attendance = _mapper.Map<Attendance>(attendanceDto);
-            attendance.Id = Guid.NewGuid();
             attendance.Date = DateTime.Now.Date;
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             await _attendanceRepository.AddAsync(attendance);
             var succeeded = await _attendanceRepository.SaveAsync();
             #endregion
 
             return succeeded
                 ? Ok(_mapper.Map<AttendanceDto>(attendance))
-                : new InternalServerErrorObjectResult("保存到数据库时遇到错误");
+                : new InternalServerErrorObjectResult("Update database exception.");
         }
+
+        private bool IsSequential(DateTime? dateTime1, DateTime dateTime2) =>
+            dateTime1.HasValue ? dateTime1.Value.AddDays(1).Date == dateTime2.Date : false;
+
+        private bool AttendHelper(ApplicationUser user)
+        {
+            var now = DateTime.Now.Date;
+
+            if (user.LastAttendanceDate == now)
+            {
+                return false;
+            }
+
+            #region Update the user's LastAttendanceDate and SequentialAttendanceDays
+            user.SequentialAttendanceDays =
+                IsSequential(user.LastAttendanceDate, now)
+                ? user.SequentialAttendanceDays + 1
+                : 1;
+            #endregion
+
+            #region Update credit
+            user.Credit +=
+                user.SequentialAttendanceDays < 7
+                ? user.SequentialAttendanceDays * 10
+                : 70;
+            #endregion
+
+            user.LastAttendanceDate = now;
+            return true;
+        }
+
     }
 }

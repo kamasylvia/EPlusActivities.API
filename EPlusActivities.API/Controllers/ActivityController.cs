@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.DTOs.ActivityDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -20,10 +20,10 @@ namespace EPlusActivities.API.Controllers
     [Route("api/[controller]")]
     public class ActivityController : Controller
     {
-        private readonly IRepository<Activity> _activityRepository;
+        private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
         public ActivityController(
-            IRepository<Activity> activityRepository,
+            IActivityRepository activityRepository,
             IMapper mapper)
         {
             _mapper = mapper
@@ -34,33 +34,44 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<ActivityDto>> GetByIdAsync([FromBody] ActivityDto activityDto)
+        public async Task<ActionResult<ActivityDto>> GetAsync([FromBody] ActivityForGetDto activityDto)
         {
-            #region 参数验证
-            if (activityDto.Id == Guid.Empty)
+            var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
+            return activity is null
+                ? NotFound("Could not find the activity.")
+                : Ok(_mapper.Map<ActivityDto>(activity));
+        }
+
+        [HttpGet("available")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAllAvailableAsync([FromBody] ActivityForGetAllAvailableDto activityDto)
+        {
+            #region Parameter validation
+            if (activityDto.StartTime > activityDto.EndTime)
             {
-                return BadRequest("The activity ID could not be null");
+                return BadRequest("The EndTime could not be less than the StartTime.");
             }
             #endregion
 
-            var activity = await _activityRepository.FindByIdAsync(activityDto.Id);
-            return activity is null
-                ? NotFound("Could not find the activity")
-                : Ok(_mapper.Map<ActivityDto>(activity));
+            var activitiesAtStartTime = await _activityRepository.FindAllAvailableAsync(activityDto.StartTime.Value);
+            var endTime = activityDto.EndTime ?? DateTime.Now.Date;
+            var activitiesAtEndTime = await _activityRepository.FindAllAvailableAsync(endTime);
+            var result = activitiesAtStartTime.Union(activitiesAtEndTime);
+            return Ok(result);
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<ActivityDto>> AddActivityAsync([FromBody] ActivityDto activityDto)
+        public async Task<ActionResult<ActivityDto>> CreateAsync([FromBody] ActivityForCreateDto activityDto)
         {
-            #region 参数验证
-            if (await _activityRepository.ExistsAsync(activityDto.Id))
+            #region Parameter validation
+            if (activityDto.StartTime > activityDto.EndTime)
             {
-                return Conflict("This activity is already existed");
+                return BadRequest("The EndTime could not be less than the StartTime.");
             }
             #endregion
 
-            #region 数据库操作
+            #region Database operations
             var activity = _mapper.Map<Activity>(activityDto);
             await _activityRepository.AddAsync(activity);
             var succeeded = await _activityRepository.SaveAsync();
@@ -73,20 +84,30 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPut]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> UpdateActivityAsync([FromBody] ActivityDto activityDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] ActivityForUpdateDto activityDto)
         {
-            #region 参数验证
-            if (!await _activityRepository.ExistsAsync(activityDto.Id))
+            var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
+            
+            #region Parameter validation
+            // if (!await _activityRepository.ExistsAsync(activityDto.Id.Value))
+            if (activity is null)
             {
                 return NotFound("Could not find the activity.");
             }
+
+            if (activityDto.StartTime > activityDto.EndTime)
+            {
+                return BadRequest("The EndTime could not be less than the StartTime.");
+            }
             #endregion
 
-            #region 数据库操作
-            var activity = _mapper.Map<Activity>(activityDto);
-            _activityRepository.Update(activity);
+            #region Database operations
+            _activityRepository.Update(_mapper.Map<ActivityForUpdateDto, Activity>(
+                activityDto,
+                activity));
             var succeeded = await _activityRepository.SaveAsync();
             #endregion
+
             return succeeded
                 ? Ok()
                 : new InternalServerErrorObjectResult("Update database exception");
@@ -94,17 +115,18 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> DeleteActivityAsync([FromBody] ActivityDto activityDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] ActivityForGetDto activityDto)
         {
-            #region 参数验证
-            if (!await _activityRepository.ExistsAsync(activityDto.Id))
+            var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
+
+            #region Parameter validation
+            if (activity is null)
             {
                 return NotFound("Could not find the activity.");
             }
             #endregion
 
-            #region 数据库操作
-            var activity = await _activityRepository.FindByIdAsync(activityDto.Id);
+            #region Database operations
             _activityRepository.Remove(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion
