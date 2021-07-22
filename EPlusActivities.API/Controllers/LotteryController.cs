@@ -64,9 +64,22 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             var lotteries = await _lotteryRepository.FindByParentIdAsync(lotteryDto.UserId.Value);
+
+            // 因为进行了全剧配置，AutoMapper 在此执行 
+            // _mapper.Map<IEnumerable<LotteryDto>>(lotteries)
+            // 时会自动转换 DateTime 导致精确时间丢失，
+            // 所以这里手动添加精确时间。
+            var result = new List<LotteryDto>();
+            foreach (var item in lotteries)
+            {
+                var temp = _mapper.Map<LotteryDto>(item);
+                temp.PickedTime = item.PickedUpTime;
+                result.Add(temp);
+            }
+
             return lotteries is null
                 ? NotFound("Could not find the lottery results.")
-                : Ok(_mapper.Map<IEnumerable<LotteryDto>>(lotteries));
+                : Ok(result);
         }
 
         [HttpPost]
@@ -86,7 +99,7 @@ namespace EPlusActivities.API.Controllers
                 return NotFound("Could not find the activity.");
             }
 
-            if (lotteryDto.Date < activity.StartTime || lotteryDto.Date > activity.EndTime)
+            if (DateTime.Today < activity.StartTime || DateTime.Today > activity.EndTime)
             {
                 return BadRequest("This activity is expired.");
             }
@@ -109,7 +122,12 @@ namespace EPlusActivities.API.Controllers
             var lottery = _mapper.Map<Lottery>(lotteryDto);
             lottery.User = user;
             lottery.Activity = activity;
+            lottery.Date = DateTime.Now;
             (lottery.PrizeType, lottery.PrizeItem) = await RandomizeAsync(activity);
+            if (lottery.PrizeType is not null)
+            {
+                lottery.IsLucky = true;
+            }
             #endregion
 
             #region Database operations
@@ -117,8 +135,11 @@ namespace EPlusActivities.API.Controllers
             var succeeded = await _lotteryRepository.SaveAsync();
             #endregion
 
+            var result = _mapper.Map<LotteryDto>(lottery);
+            result.Date = lottery.Date;
+
             return succeeded
-                ? Ok(_mapper.Map<LotteryDto>(lottery))
+                ? Ok(result)
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
@@ -135,19 +156,21 @@ namespace EPlusActivities.API.Controllers
             var random = new Random();
             var flag = random.Next(100);
             var prizeTypes = activity.PrizeTypes;
-            var prizeType = prizeTypes.FirstOrDefault();
 
+            PrizeType prizeType = null;
             foreach (var item in prizeTypes)
             {
-                if (total < flag)
-                {
-                    total += item.Percentage;
-                }
-                else
+                total += item.Percentage;
+                if (total > flag)
                 {
                     prizeType = item;
                     break;
                 }
+            }
+
+            if (prizeType is null)
+            {
+                return (null, null);
             }
 
             var prizeItems = await _prizeItemRepository.FindByPrizeTypeIdAsync(prizeType.Id.Value);
@@ -158,17 +181,18 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdateAsync([FromBody] LotteryForUpdateDto lotteryDto)
         {
+            var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);
+
             #region Parameter validation
-            if (await _lotteryRepository.ExistsAsync(lotteryDto.Id.Value))
+            if (lottery is null)
             {
                 return NotFound("Could not find the lottery.");
             }
             #endregion
 
             #region Database operations
-            var lottery = _mapper.Map<LotteryForUpdateDto, Lottery>(
-                lotteryDto,
-                await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value));
+            lottery = _mapper.Map<LotteryForUpdateDto, Lottery>(lotteryDto, lottery);
+            lottery.PickedUpTime = lotteryDto.PickedUpTime; // Skip auto mapper.
             _lotteryRepository.Update(lottery);
             var succeeded = await _lotteryRepository.SaveAsync();
             #endregion
@@ -182,15 +206,16 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> DeleteAsync([FromBody] LotteryForGetByIdDto lotteryDto)
         {
+            var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);
+
             #region Parameter validation
-            if (await _lotteryRepository.ExistsAsync(lotteryDto.Id.Value))
+            if (lottery is null)
             {
                 return NotFound("Could not find the the lottery.");
             }
             #endregion
 
             #region Database operations
-            var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);
             _lotteryRepository.Remove(lottery);
             var succeeded = await _lotteryRepository.SaveAsync();
             #endregion

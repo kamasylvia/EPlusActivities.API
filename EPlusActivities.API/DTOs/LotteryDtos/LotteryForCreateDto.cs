@@ -17,9 +17,6 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
         public int UsedCredit { get; set; }
 
         [Required]
-        public DateTime? Date { get; set; }
-
-        [Required]
         public Guid? UserId { get; set; }
 
         [Required]

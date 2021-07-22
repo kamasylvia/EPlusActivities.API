@@ -15,6 +15,12 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
 
         public bool IsLucky { get; set; }
 
+        public bool PickedUp { get; set; }
+
+        public DateTime? PickedTime { get; set; }
+
+        public DateTime? Date { get; set; }
+
         public int UsedCredit { get; set; }
 
         [Required]

@@ -11,6 +11,11 @@ namespace EPlusActivities.API.Entities
 
         public bool IsLucky { get; set; }
 
+        public bool PickedUp { get; set; }
+
+        public DateTime? PickedUpTime { get; set; }
+
+
         [Required]
         public ChannelCode? ChannelCode { get; set; }
 

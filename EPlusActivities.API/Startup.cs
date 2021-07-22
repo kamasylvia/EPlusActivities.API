@@ -42,7 +42,7 @@ namespace EPlusActivities.API
 
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
             var migrationsAssembly =
-                typeof (Startup).GetTypeInfo().Assembly.GetName().Name;
+                typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             services
                 .AddControllers()
@@ -57,8 +57,9 @@ namespace EPlusActivities.API
                 {
                     c
                         .SwaggerDoc("v1",
-                        new OpenApiInfo {
-                            Title = "IdentityServer",
+                        new OpenApiInfo
+                        {
+                            Title = "EPlusActivities.API",
                             Version = "v1"
                         });
                 });
@@ -197,7 +198,7 @@ namespace EPlusActivities.API
                     .UseSwaggerUI(c =>
                         c
                             .SwaggerEndpoint("/swagger/v1/swagger.json",
-                            "IdentityServer v1"));
+                            "EPlusActivities.API"));
             }
 
             app.UseHttpsRedirection();
@@ -210,7 +211,7 @@ namespace EPlusActivities.API
 
             app.UseAuthorization();
 
-            DbInitializer.Initialize (env, context, userManager, roleManager);
+            DbInitializer.Initialize(env, context, userManager, roleManager);
 
             app
                 .UseEndpoints(endpoints =>

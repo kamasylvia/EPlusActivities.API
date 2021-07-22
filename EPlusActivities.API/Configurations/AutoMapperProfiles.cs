@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AutoMapper;
 using AutoMapper.Extensions.EnumMapping;
 using EPlusActivities.API.DTOs;
@@ -111,7 +112,14 @@ namespace EPlusActivities.API.Configuration
 
 
             #region PrizeType
-            CreateMap<PrizeType, PrizeTypeDto>();
+            CreateMap<PrizeType, PrizeTypeDto>()
+                .ForMember(dest => dest.PrizeItemIds,
+                opt =>
+                    opt
+                        .MapFrom(src =>
+                            src
+                                .PrizeTypePrizeItems
+                                .Select(x => x.PrizeItem.Id)));
             CreateMap<PrizeTypeForCreateDto, PrizeType>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore());
             CreateMap<PrizeTypeForUpdateDto, PrizeType>()

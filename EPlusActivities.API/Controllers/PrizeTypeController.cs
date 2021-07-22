@@ -8,6 +8,7 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +21,13 @@ namespace EPlusActivities.API.Controllers
     public class PrizeTypeController : Controller
     {
         private readonly IFindByParentIdRepository<PrizeType> _prizeTypeRepository;
+        private readonly IPrizeItemRepository _prizeItemRepository;
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
 
         public PrizeTypeController(
             IFindByParentIdRepository<PrizeType> prizeTypeRepository,
+            IPrizeItemRepository prizeItemRepository,
             IActivityRepository activityRepository,
             IMapper mapper
         )
@@ -33,6 +36,8 @@ namespace EPlusActivities.API.Controllers
                 ?? throw new ArgumentNullException(nameof(mapper));
             _prizeTypeRepository = prizeTypeRepository
                 ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
+            _prizeItemRepository = prizeItemRepository
+                ?? throw new ArgumentNullException(nameof(prizeItemRepository));
             _activityRepository = activityRepository
                 ?? throw new ArgumentNullException(nameof(activityRepository));
         }
@@ -77,7 +82,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             var prizeTypes = await _prizeTypeRepository.FindByParentIdAsync(prizeTypeDto.ActivityId.Value);
-            if (prizeTypes.Select(pt => pt.Percentage).Sum() + prizeTypeDto.Percentage >= 100)
+            if (prizeTypes.Select(pt => pt.Percentage).Sum() + prizeTypeDto.Percentage > 100)
             {
                 return BadRequest("The sum of percentages could not be greater than 100.");
             }
@@ -86,6 +91,20 @@ namespace EPlusActivities.API.Controllers
             #region New an entity
             var prizeType = _mapper.Map<PrizeType>(prizeTypeDto);
             prizeType.Activity = activity;
+
+            if (prizeTypeDto.PrizeItemIds.Count() > 0)
+            {
+                var prizeItems = prizeTypeDto.PrizeItemIds.Select(async id =>
+                    await _prizeItemRepository.FindByIdAsync(id)).Where(x => x is not null);
+                var prizeTypePrizeItems = new HashSet<PrizeTypePrizeItem>(new HashSetReferenceEqualityComparer<PrizeTypePrizeItem>());
+                prizeTypePrizeItems.UnionWith(prizeItems.Select(pi =>
+                    new PrizeTypePrizeItem
+                    {
+                        PrizeType = prizeType,
+                        PrizeItem = pi.Result
+                    }));
+                prizeType.PrizeTypePrizeItems = prizeTypePrizeItems;
+            }
             #endregion
 
             #region Database operations

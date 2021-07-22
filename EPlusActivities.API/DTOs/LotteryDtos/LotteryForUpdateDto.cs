@@ -11,16 +11,10 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
 
         public ChannelCode ChannelCode { get; set; }
 
-        public bool IsLucky { get; set; }
+        public bool PickedUp { get; set; }
 
-        public int UsedCredit { get; set; }
+        public DateTime? PickedUpTime { get; set; }
 
         public Guid? UserId { get; set; }
-
-        public Guid? ActivityId { get; set; }
-
-        public Guid? PrizeItemId { get; set; }
-
-        public Guid? PrizeTypeId { get; set; }
     }
 }
