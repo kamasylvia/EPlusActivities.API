@@ -3,6 +3,7 @@
 农工商 E+ 小程序签到抽奖 API
 
 # 如何对接
+
 ### Windows 系统
 
 1. [安装 WSL2](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10)
@@ -29,21 +30,23 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 8. 浏览器会自动打开 Swagger，如果没打开或关掉了，请尝试点击[这里](https://localhost:52538/swagger/index.html)打开。
 
 # 测试流程
+
 1. 发送短信至手机号： POST `http://localhost:52537/api/sms`
+
 ```json
 {
-    "PhoneNumber" : "11位手机号"
+  "PhoneNumber": "11位手机号"
 }
-````
-2. 获得验证码后发送验证请求： POST `http://localhost:52537
-/connect/token` with `x-www-form-urlencoded` parameters
+```
 
-Key | Value 
-- | -
-client_id | sms.client
-client_secret | secret
-grant_type | sms
-scope | eplus.test.scope openid
-phone_number | 11位手机号
-token | 验证码
-login_channel | 1
+2. 获得验证码后发送验证请求： POST `http://localhost:52537 /connect/token` with `x-www-form-urlencoded` parameters
+
+| Key           | Value                   |
+| ------------- | ----------------------- |
+| client_id     | sms.client              |
+| client_secret | secret                  |
+| grant_type    | sms                     |
+| scope         | eplus.test.scope openid |
+| phone_number  | 11 位手机号             |
+| token         | 验证码                  |
+| login_channel | 1                       |
