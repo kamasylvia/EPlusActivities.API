@@ -1,0 +1,32 @@
+
+Date：2021-07-23 09:56:14.276
+LogLevel：Information
+Message：启动主机
+
+Date：2021-07-23 09:56:16.318
+LogLevel：Information
+Message：Starting IdentityServer4 version "4.1.2+997a6cdd643e46cd5762b710c4ddc43574cbec2e"
+
+Date：2021-07-23 09:56:16.329
+LogLevel：Information
+Message：You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+
+Date：2021-07-23 09:56:16.334
+LogLevel：Information
+Message：Using the default authentication scheme "Identity.Application" for IdentityServer
+
+Date：2021-07-23 09:58:27.245
+LogLevel：Information
+Message：启动主机
+
+Date：2021-07-23 09:58:29.064
+LogLevel：Information
+Message：Starting IdentityServer4 version "4.1.2+997a6cdd643e46cd5762b710c4ddc43574cbec2e"
+
+Date：2021-07-23 09:58:29.076
+LogLevel：Information
+Message：You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+
+Date：2021-07-23 09:58:29.080
+LogLevel：Information
+Message：Using the default authentication scheme "Identity.Application" for IdentityServer
