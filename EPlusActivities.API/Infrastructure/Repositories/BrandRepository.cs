@@ -14,8 +14,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public async Task AddAsync(Brand item) => await _context.Brands.AddAsync(item);
 
-        public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.Brands.AnyAsync(b => b.Id == id);
+        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+            await _context.Brands.AnyAsync(b => b.Id == keyValues.FirstOrDefault());
 
         public async Task<bool> ExistsAsync(string name) =>
             await _context.Brands.AnyAsync(b => b.Name == name);
@@ -25,7 +25,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Brand>> FindByContainedNameAsync(string name) =>
             await _context.Brands.Where(p => p.Name.Contains(name)).ToListAsync();
 
-        public async Task<Brand> FindByIdAsync(Guid id) => await _context.Brands.FindAsync(id);
+        public async Task<Brand> FindByIdAsync(params Guid[] keyValues) =>
+            await _context.Brands.FindAsync(keyValues.FirstOrDefault());
 
         public async Task<Brand> FindByNameAsync(string name) =>
             await _context.Brands.Where(p => p.Name == name).SingleOrDefaultAsync();

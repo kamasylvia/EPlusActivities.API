@@ -15,14 +15,14 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task AddAsync(Attendance item) =>
             await _context.AttendanceRecord.AddAsync(item);
 
-        public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.AttendanceRecord.AnyAsync(a => a.Id == id);
+        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+            await _context.AttendanceRecord.AnyAsync(a => a.Id == keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Attendance>> FindAllAsync() =>
             await _context.AttendanceRecord.ToListAsync();
 
-        public async Task<Attendance> FindByIdAsync(Guid id) =>
-            await _context.AttendanceRecord.FindAsync(id);
+        public async Task<Attendance> FindByIdAsync(params Guid[] keyValues) =>
+            await _context.AttendanceRecord.FindAsync(keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Attendance>> FindByUserIdAsync(
             Guid userId,

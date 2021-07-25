@@ -15,7 +15,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public async Task AddAsync(Address address) => await _context.Addresses.AddAsync(address);
 
-        public async Task<Address> FindByIdAsync(Guid id) => await _context.Addresses.FindAsync(id);
+        public async Task<Address> FindByIdAsync(params Guid[] keyValues) =>
+            await _context.Addresses.FindAsync(keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Address>> FindAllAsync() =>
             await _context.Addresses.ToListAsync();
@@ -27,7 +28,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Address>> FindByParentIdAsync(Guid userId) =>
             await _context.Addresses.Where(a => a.UserId == userId).ToListAsync();
 
-        public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.Addresses.AnyAsync(a => a.Id == id);
+        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+            await _context.Addresses.AnyAsync(a => a.Id == keyValues.FirstOrDefault());
     }
 }

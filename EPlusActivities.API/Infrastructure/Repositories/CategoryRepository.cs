@@ -14,8 +14,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public async Task AddAsync(Category item) => await _context.Categories.AddAsync(item);
 
-        public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.Categories.AnyAsync(c => c.Id == id);
+        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+            await _context.Categories.AnyAsync(c => c.Id == keyValues.FirstOrDefault());
 
         public async Task<bool> ExistsAsync(string name) =>
             await _context.Categories.AnyAsync(c => c.Name == name);
@@ -26,8 +26,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Category>> FindByContainedNameAsync(string name) =>
             await _context.Categories.Where(c => c.Name.Contains(name)).ToListAsync();
 
-        public async Task<Category> FindByIdAsync(Guid id) =>
-            await _context.Categories.FindAsync(id);
+        public async Task<Category> FindByIdAsync(params Guid[] keyValues) =>
+            await _context.Categories.FindAsync(keyValues.FirstOrDefault());
 
         public async Task<Category> FindByNameAsync(string name) =>
             await _context.Categories.Where(c => c.Name == name).SingleOrDefaultAsync();

@@ -73,7 +73,7 @@ namespace EPlusActivities.API
             // 启用数据库仓库
             services.AddTransient<IActivityRepository, ActivityRepository>()
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
-                .AddTransient<IManyToManyRepository<LotteryOrRedeemCount>, LotteryOrRedeemCountRepository>()
+                .AddTransient<IRepository<LotteryOrRedeemCount>, LotteryOrRedeemCountRepository>()
                 .AddTransient<IFindByParentIdRepository<Address>, AddressRepository>()
                 .AddTransient<IFindByParentIdRepository<Lottery>, LotteryRepository>()
                 .AddTransient<IPrizeItemRepository, PrizeItemRepository>()
@@ -178,8 +178,7 @@ namespace EPlusActivities.API
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager
-        )
-        {
+        ) {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

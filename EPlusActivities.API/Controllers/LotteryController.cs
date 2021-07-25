@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityRepository _activityRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
-        private readonly ILotteryOrRedeemCountRepository _lotteryOrRedeemLimitRepository;
+        private readonly IRepository<LotteryOrRedeemCount> _lotteryOrRedeemLimitRepository;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
 
         public LotteryController(
@@ -36,11 +36,11 @@ namespace EPlusActivities.API.Controllers
             IPrizeItemRepository prizeItemRepository,
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IMapper mapper,
-            ILotteryOrRedeemCountRepository lotteryOrRedeemLimitRepository
-        )
-        {
+            IRepository<LotteryOrRedeemCount> lotteryOrRedeemLimitRepository
+        ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _lotteryOrRedeemLimitRepository = lotteryOrRedeemLimitRepository
+            _lotteryOrRedeemLimitRepository =
+                lotteryOrRedeemLimitRepository
                 ?? throw new ArgumentNullException(nameof(lotteryOrRedeemLimitRepository));
             _lotteryRepository =
                 lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
@@ -58,8 +58,7 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetByUserIdAsync(
             [FromBody] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -90,8 +89,7 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<LotteryDto>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -110,7 +108,19 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("This activity is expired.");
             }
 
-            var limit = await _lotteryOrRedeemLimitRepository.FindByIdAsync(userId: lotteryDto.UserId.Value, activityId: lotteryDto.ActivityId.Value);
+            var count = await _lotteryOrRedeemLimitRepository.FindByIdAsync(
+                lotteryDto.ActivityId.Value,
+                lotteryDto.UserId.Value
+            );
+
+            if (count is null)
+            {
+                count = new LotteryOrRedeemCount { Activity = activity, User = user };
+            }
+            else if (count.Count >= activity.Limit)
+            {
+                return BadRequest("The user could not draw more than the limit of the activity.");
+            }
             #endregion
 
             #region Consume the credits
@@ -123,6 +133,12 @@ namespace EPlusActivities.API.Controllers
             if (!updateUserResult.Succeeded)
             {
                 return new InternalServerErrorObjectResult(updateUserResult.Errors);
+            }
+
+            count.Count++;
+            if (!await _lotteryOrRedeemLimitRepository.SaveAsync())
+            {
+                return new InternalServerErrorObjectResult("Update database exception");
             }
             #endregion
 

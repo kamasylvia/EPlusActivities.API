@@ -15,10 +15,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         Task<IEnumerable<T>> FindAllAsync();
 
-        Task<T> FindByIdAsync(Guid id);
+        Task<T> FindByIdAsync(params Guid[] keyValues);
 
         Task<bool> SaveAsync();
 
-        Task<bool> ExistsAsync(Guid id);
+        Task<bool> ExistsAsync(params Guid[] keyValues);
     }
 }

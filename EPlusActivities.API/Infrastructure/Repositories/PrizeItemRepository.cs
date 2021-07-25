@@ -24,10 +24,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<PrizeItem>> FindAllAsync() =>
             await _context.PrizeItems.ToListAsync();
 
-        public async Task<PrizeItem> FindByIdAsync(Guid id) =>
+        public async Task<PrizeItem> FindByIdAsync(params Guid[] keyValues) =>
             await _context.PrizeItems.Include(prizeItem => prizeItem.Brand)
                 .Include(prizeItem => prizeItem.Category)
-                .SingleOrDefaultAsync(prizeItem => prizeItem.Id == id);
+                .SingleOrDefaultAsync(prizeItem => prizeItem.Id == keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<PrizeItem>> FindByNameAsync(string name) =>
             await _context.PrizeItems.Where(p => p.Name.Contains(name)).ToArrayAsync();
@@ -38,7 +38,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Where(pt => pt.PrizeTierPrizeItems.Any(ptpi => ptpi.PrizeTier.Id == id))
                 .ToListAsync();
 
-        public async Task<bool> ExistsAsync(Guid id) =>
-            await _context.PrizeItems.AnyAsync(p => p.Id == id);
+        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+            await _context.PrizeItems.AnyAsync(p => p.Id == keyValues.FirstOrDefault());
     }
 }

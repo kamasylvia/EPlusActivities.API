@@ -8,22 +8,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class LotteryOrRedeemCountRepository : RepositoryBase, IManyToManyRepository<LotteryOrRedeemCount>
+    public class LotteryOrRedeemCountRepository : RepositoryBase, IRepository<LotteryOrRedeemCount>
     {
         public LotteryOrRedeemCountRepository(ApplicationDbContext context) : base(context) { }
 
         public async Task AddAsync(LotteryOrRedeemCount item) =>
             await _context.LotteryOrRedeemLimits.AddAsync(item);
 
+        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+            await _context.LotteryOrRedeemLimits.AnyAsync(
+                lorl => lorl.ActivityId.Value == keyValues[0] && lorl.UserId == keyValues[1]
+            );
+
         public async Task<IEnumerable<LotteryOrRedeemCount>> FindAllAsync() =>
             await _context.LotteryOrRedeemLimits.ToListAsync();
 
-        public async Task<LotteryOrRedeemCount> FindByIdAsync(Guid userId, Guid activityId)
-        {
-            return await _context.LotteryOrRedeemLimits.SingleOrDefaultAsync(
-                lorl => lorl.UserId.Value == userId && lorl.ActivityId.Value == activityId
+        public async Task<LotteryOrRedeemCount> FindByIdAsync(params Guid[] keyValues) =>
+            await _context.LotteryOrRedeemLimits.SingleOrDefaultAsync(
+                lorl => lorl.ActivityId.Value == keyValues[0] && lorl.UserId.Value == keyValues[1]
             );
-        }
 
         public void Remove(LotteryOrRedeemCount item) =>
             _context.LotteryOrRedeemLimits.Remove(item);

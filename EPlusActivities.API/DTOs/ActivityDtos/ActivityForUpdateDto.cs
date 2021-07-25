@@ -10,6 +10,8 @@ namespace EPlusActivities.API.DTOs.ActivityDtos
 
         public string Name { get; set; }
 
+        public int Limit { get; set; }
+
         public DateTime? StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }

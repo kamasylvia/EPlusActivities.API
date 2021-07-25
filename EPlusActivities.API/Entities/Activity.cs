@@ -15,8 +15,8 @@ namespace EPlusActivities.API.Entities
         [Key]
         public Guid? Id { get; set; }
 
-        // 抽奖/积分兑换 次数限制，null 表示无限制
-        public int? Limit { get; set; }
+        // 抽奖/积分兑换 次数限制，0 表示无限制
+        public int Limit { get; set; }
 
         [Required]
         public string Name { get; set; }
