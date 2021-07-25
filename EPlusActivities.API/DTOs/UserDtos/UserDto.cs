@@ -13,15 +13,12 @@ namespace EPlusActivities.API.DTOs.UserDtos
 
         [Required]
         [Phone]
-        [
-            StringLength(
-                11,
-                MinimumLength = 11,
-                ErrorMessage = "手机号必须为 11 位数字。")
-        ]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "手机号必须为 11 位数字。")]
         public string PhoneNumber { get; set; }
 
         public bool IsMember { get; set; }
+
+        public string MemberId { get; set; }
 
         public int Credit { get; set; }
 

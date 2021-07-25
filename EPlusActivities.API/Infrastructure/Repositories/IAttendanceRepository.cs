@@ -7,9 +7,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public interface IAttendanceRepository : IRepository<Attendance>
     {
-        Task<IEnumerable<Attendance>>
-        FindByUserIdAsync(
-            Guid userId, DateTime startTime
-        );
+        Task<IEnumerable<Attendance>> FindByUserIdAsync(Guid userId, DateTime startTime);
     }
 }

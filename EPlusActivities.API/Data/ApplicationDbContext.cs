@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using EPlusActivities.API.Entities;
@@ -8,18 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Data
 {
-    public class
-    ApplicationDbContext
-    :
-    IdentityDbContext<ApplicationUser,
-        ApplicationRole,
-        Guid,
-        IdentityUserClaim<Guid>,
-        ApplicationUserRole,
-        IdentityUserLogin<Guid>,
-        IdentityRoleClaim<Guid>,
-        IdentityUserToken<Guid>
-    >
+    public class ApplicationDbContext
+        : IdentityDbContext<
+              ApplicationUser,
+              ApplicationRole,
+              Guid,
+              IdentityUserClaim<Guid>,
+              ApplicationUserRole,
+              IdentityUserLogin<Guid>,
+              IdentityRoleClaim<Guid>,
+              IdentityUserToken<Guid>
+          >
     {
         public virtual DbSet<Address> Addresses { get; set; }
 
@@ -33,20 +32,16 @@ namespace EPlusActivities.API.Data
 
         public virtual DbSet<PrizeItem> PrizeItems { get; set; }
 
-        public virtual DbSet<PrizeType> PrizeTypes { get; set; }
+        public virtual DbSet<PrizeTier> PrizeTiers { get; set; }
 
-        public virtual DbSet<PrizeTypePrizeItem> PrizeTypePrizeItems
-        { get; set;
-        }
+        public virtual DbSet<LotteryOrRedeemCount> LotteryOrRedeemLimits { get; set; }
+
+        public virtual DbSet<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
 
         public virtual DbSet<Lottery> LotteryResults { get; set; }
 
-        public ApplicationDbContext(
-            DbContextOptions<ApplicationDbContext> options
-        ) :
-            base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -56,15 +51,18 @@ namespace EPlusActivities.API.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-#region Set unique properties
-            builder
-                .Entity<ApplicationUser>()
-                .HasIndex(u => u.PhoneNumber)
-                .IsUnique();
+            #region Set unique properties
+            builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
 
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
-#endregion
+
+            builder.Entity<PrizeTierPrizeItem>()
+                .HasKey(ptpi => new { ptpi.PrizeTierId, ptpi.PrizeItemId });
+
+            builder.Entity<LotteryOrRedeemCount>()
+                .HasKey(lorl => new { lorl.UserId, lorl.ActivityId });
+            #endregion
 
             /*
             #region 构建外键关系

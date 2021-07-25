@@ -13,7 +13,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<bool> SaveAsync() =>
-            await _context.SaveChangesAsync() >= 0;
+        public async Task<bool> SaveAsync() => await _context.SaveChangesAsync() >= 0;
     }
 }

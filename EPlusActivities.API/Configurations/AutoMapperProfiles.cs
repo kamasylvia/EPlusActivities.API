@@ -10,7 +10,7 @@ using EPlusActivities.API.DTOs.BrandDtos;
 using EPlusActivities.API.DTOs.CategoryDtos;
 using EPlusActivities.API.DTOs.LotteryDtos;
 using EPlusActivities.API.DTOs.PrizeItemDtos;
-using EPlusActivities.API.DTOs.PrizeTypeDtos;
+using EPlusActivities.API.DTOs.PrizeTierDtos;
 using EPlusActivities.API.DTOs.UserDtos;
 using EPlusActivities.API.Entities;
 
@@ -29,12 +29,15 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Dtos to Entities and vice versa.
-            CreateMap<SmsDto, ApplicationUser>()
-                .ForMember(dest => dest.UserName,
-                opt => opt.MapFrom(src => src.PhoneNumber))
-                .ForMember(dest => dest.NormalizedUserName,
-                opt => opt.MapFrom(src => src.PhoneNumber));
-
+            CreateMap<
+                SmsDto,
+                ApplicationUser
+            >()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(
+                    dest => dest.NormalizedUserName,
+                    opt => opt.MapFrom(src => src.PhoneNumber)
+                );
 
             #region ApplicationUser
             CreateMap<ApplicationUser, UserDto>();
@@ -68,7 +71,10 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Attendance
-            CreateMap<Attendance, AttendanceDto>().ReverseMap();
+            CreateMap<
+                Attendance,
+                AttendanceDto
+            >().ReverseMap();
             #endregion
 
 
@@ -97,10 +103,8 @@ namespace EPlusActivities.API.Configuration
 
             #region PrizeItem
             CreateMap<PrizeItem, PrizeItemDto>()
-                .ForMember(dest => dest.BrandName,
-                opt => opt.MapFrom(src => src.Brand.Name))
-                .ForMember(dest => dest.CategoryName,
-                opt => opt.MapFrom(src => src.Category.Name));
+                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<PrizeItemForCreateDto, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());
@@ -111,18 +115,15 @@ namespace EPlusActivities.API.Configuration
 
 
 
-            #region PrizeType
-            CreateMap<PrizeType, PrizeTypeDto>()
-                .ForMember(dest => dest.PrizeItemIds,
-                opt =>
-                    opt
-                        .MapFrom(src =>
-                            src
-                                .PrizeTypePrizeItems
-                                .Select(x => x.PrizeItem.Id)));
-            CreateMap<PrizeTypeForCreateDto, PrizeType>()
+            #region PrizeTier
+            CreateMap<PrizeTier, PrizeTierDto>()
+                .ForMember(
+                    dest => dest.PrizeItemIds,
+                    opt => opt.MapFrom(src => src.PrizeTierPrizeItems.Select(x => x.PrizeItem.Id))
+                );
+            CreateMap<PrizeTierForCreateDto, PrizeTier>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore());
-            CreateMap<PrizeTypeForUpdateDto, PrizeType>()
+            CreateMap<PrizeTierForUpdateDto, PrizeTier>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore())
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
             #endregion

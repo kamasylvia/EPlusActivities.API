@@ -9,36 +9,23 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class
-    AddressRepository
-    : RepositoryBase, IFindByParentIdRepository<Address>
+    public class AddressRepository : RepositoryBase, IFindByParentIdRepository<Address>
     {
-        public AddressRepository(ApplicationDbContext context) :
-            base(context)
-        {
-        }
+        public AddressRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task AddAsync(Address address) =>
-            await _context.Addresses.AddAsync(address);
+        public async Task AddAsync(Address address) => await _context.Addresses.AddAsync(address);
 
-        public async Task<Address> FindByIdAsync(Guid id) =>
-            await _context.Addresses.FindAsync(id);
+        public async Task<Address> FindByIdAsync(Guid id) => await _context.Addresses.FindAsync(id);
 
         public async Task<IEnumerable<Address>> FindAllAsync() =>
             await _context.Addresses.ToListAsync();
 
-        public void Remove(Address address) =>
-            _context.Addresses.Remove(address);
+        public void Remove(Address address) => _context.Addresses.Remove(address);
 
-        public void Update(Address address) =>
-            _context.Addresses.Update(address);
+        public void Update(Address address) => _context.Addresses.Update(address);
 
-        public async Task<IEnumerable<Address>>
-        FindByParentIdAsync(Guid userId) =>
-            await _context
-                .Addresses
-                .Where(a => a.UserId == userId)
-                .ToListAsync();
+        public async Task<IEnumerable<Address>> FindByParentIdAsync(Guid userId) =>
+            await _context.Addresses.Where(a => a.UserId == userId).ToListAsync();
 
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.Addresses.AnyAsync(a => a.Id == id);

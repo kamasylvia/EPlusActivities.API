@@ -9,6 +9,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
     {
         Task<IEnumerable<PrizeItem>> FindByNameAsync(string name);
 
-        Task<IEnumerable<PrizeItem>> FindByPrizeTypeIdAsync(Guid id);
+        Task<IEnumerable<PrizeItem>> FindByPrizeTierIdAsync(Guid id);
     }
 }

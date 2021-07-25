@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.DTOs.AttendanceDtos
 {
@@ -10,6 +11,8 @@ namespace EPlusActivities.API.DTOs.AttendanceDtos
 
         [Required]
         public DateTime? Date { get; set; }
+
+        public ChannelCode ChannelCode { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

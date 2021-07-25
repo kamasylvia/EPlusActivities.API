@@ -12,45 +12,30 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class PrizeItemRepository : RepositoryBase, IPrizeItemRepository
     {
-        public PrizeItemRepository(ApplicationDbContext context) :
-            base(context)
-        {
-        }
+        public PrizeItemRepository(ApplicationDbContext context) : base(context) { }
 
         public async Task AddAsync(PrizeItem prizeItem) =>
             await _context.PrizeItems.AddAsync(prizeItem);
 
-        public void Remove(PrizeItem prizeItem) =>
-            _context.PrizeItems.Remove(prizeItem);
+        public void Remove(PrizeItem prizeItem) => _context.PrizeItems.Remove(prizeItem);
 
-        public void Update(PrizeItem prizeItem) =>
-            _context.PrizeItems.Update(prizeItem);
+        public void Update(PrizeItem prizeItem) => _context.PrizeItems.Update(prizeItem);
 
         public async Task<IEnumerable<PrizeItem>> FindAllAsync() =>
             await _context.PrizeItems.ToListAsync();
 
         public async Task<PrizeItem> FindByIdAsync(Guid id) =>
-            await _context
-                .PrizeItems
-                .Include(prizeItem => prizeItem.Brand)
+            await _context.PrizeItems.Include(prizeItem => prizeItem.Brand)
                 .Include(prizeItem => prizeItem.Category)
                 .SingleOrDefaultAsync(prizeItem => prizeItem.Id == id);
 
-        public async Task<IEnumerable<PrizeItem>>
-        FindByNameAsync(string name) =>
-            await _context
-                .PrizeItems
-                .Where(p => p.Name.Contains(name))
-                .ToArrayAsync();
+        public async Task<IEnumerable<PrizeItem>> FindByNameAsync(string name) =>
+            await _context.PrizeItems.Where(p => p.Name.Contains(name)).ToArrayAsync();
 
-        public async Task<IEnumerable<PrizeItem>>
-        FindByPrizeTypeIdAsync(Guid id) =>
-            await _context
-                .PrizeItems
-                .Include(pi => pi.PrizeTypePrizeItems)
-                .ThenInclude(ptpi => ptpi.PrizeType)
-                .Where(pt =>
-                    pt.PrizeTypePrizeItems.Any(ptpi => ptpi.PrizeType.Id == id))
+        public async Task<IEnumerable<PrizeItem>> FindByPrizeTierIdAsync(Guid id) =>
+            await _context.PrizeItems.Include(pi => pi.PrizeTierPrizeItems)
+                .ThenInclude(ptpi => ptpi.PrizeTier)
+                .Where(pt => pt.PrizeTierPrizeItems.Any(ptpi => ptpi.PrizeTier.Id == id))
                 .ToListAsync();
 
         public async Task<bool> ExistsAsync(Guid id) =>

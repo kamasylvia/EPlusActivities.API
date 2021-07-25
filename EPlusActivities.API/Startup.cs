@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using EPlusActivities.API.Data;
@@ -25,10 +25,7 @@ namespace EPlusActivities.API
 
         public IConfiguration Configuration { get; }
 
-        public Startup(
-            IWebHostEnvironment environment,
-            IConfiguration configuration
-        )
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Environment = environment;
             Configuration = configuration;
@@ -37,70 +34,58 @@ namespace EPlusActivities.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString =
-                Configuration.GetConnectionString("DefaultConnection");
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
-            var migrationsAssembly =
-                typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services
-                .AddControllers()
-                .AddJsonOptions(x =>
-                    x.JsonSerializerOptions.ReferenceHandler =
-                        ReferenceHandler.Preserve);
+            services.AddControllers()
+                .AddJsonOptions(
+                    x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
+                );
 
             services.AddHttpClient();
 
-            services
-                .AddSwaggerGen(c =>
+            services.AddSwaggerGen(
+                c =>
                 {
-                    c
-                        .SwaggerDoc("v1",
-                        new OpenApiInfo
-                        {
-                            Title = "EPlusActivities.API",
-                            Version = "v1"
-                        });
-                });
+                    c.SwaggerDoc(
+                        "v1",
+                        new OpenApiInfo { Title = "EPlusActivities.API", Version = "v1" }
+                    );
+                }
+            );
 
             // 数据库配置系统应用用户数据上下文
-            services
-                .AddDbContext<ApplicationDbContext>(options =>
-                    options
-                        .UseMySql(connectionString,
-                        o =>
-                            o
-                                .ServerVersion(new Version(8, 0, 25),
-                                ServerType.MySql)));
+            services.AddDbContext<ApplicationDbContext>(
+                options =>
+                    options.UseMySql(
+                        connectionString,
+                        o => o.ServerVersion(new Version(8, 0, 25), ServerType.MySql)
+                    )
+            );
 
             // 启用 Identity 服务 添加指定的用户和角色类型的默认标识系统配置
-            services
-                .AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             // 启用数据库仓库
-            services
-                .AddTransient<IActivityRepository, ActivityRepository>()
+            services.AddTransient<IActivityRepository, ActivityRepository>()
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
-                .AddTransient
-                <IFindByParentIdRepository<Address>, AddressRepository>()
-                .AddTransient
-                <IFindByParentIdRepository<Lottery>, LotteryRepository>()
+                .AddTransient<IManyToManyRepository<LotteryOrRedeemCount>, LotteryOrRedeemCountRepository>()
+                .AddTransient<IFindByParentIdRepository<Address>, AddressRepository>()
+                .AddTransient<IFindByParentIdRepository<Lottery>, LotteryRepository>()
                 .AddTransient<IPrizeItemRepository, PrizeItemRepository>()
                 .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
-                .AddTransient
-                <INameExistsRepository<Category>, CategoryRepository>()
-                .AddTransient
-                <IFindByParentIdRepository<PrizeType>, PrizeTypeRepository>();
+                .AddTransient<INameExistsRepository<Category>, CategoryRepository>()
+                .AddTransient<IFindByParentIdRepository<PrizeTier>, PrizeTierRepository>();
 
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
 
-            var builder =
-                services
-                    .AddIdentityServer(options =>
+            var builder = services.AddIdentityServer(
+                    options =>
                     {
                         options.Events.RaiseErrorEvents = true;
                         options.Events.RaiseInformationEvents = true;
@@ -109,13 +94,14 @@ namespace EPlusActivities.API
 
                         // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                         options.EmitStaticAudienceClaim = true;
-                    }) // .AddTestUsers(TestUsers.Users)
-                    .AddAspNetIdentity<ApplicationUser>() // .AddProfileService<ProfileService>() // SMS Validator
-                    .AddExtensionGrantValidator<SmsGrantValidator>() // this adds the config data from memory (clients, resources, CORS)
-                    .AddInMemoryIdentityResources(Config.IdentityResources)
-                    .AddInMemoryApiScopes(Config.ApiScopes)
-                    .AddInMemoryApiResources(Config.ApiResources)
-                    .AddInMemoryClients(Config.Clients);
+                    }
+                ) // .AddTestUsers(TestUsers.Users)
+                .AddAspNetIdentity<ApplicationUser>() // .AddProfileService<ProfileService>() // SMS Validator
+                .AddExtensionGrantValidator<SmsGrantValidator>() // this adds the config data from memory (clients, resources, CORS)
+                .AddInMemoryIdentityResources(Config.IdentityResources)
+                .AddInMemoryApiScopes(Config.ApiScopes)
+                .AddInMemoryApiResources(Config.ApiResources)
+                .AddInMemoryClients(Config.Clients);
 
             // this adds the config data from DB (clients, resources, CORS)
             /*
@@ -143,39 +129,43 @@ namespace EPlusActivities.API
             }
 
             // 受保护的 API 设置
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    //IdentityServer地址
-                    options.Authority = "http://localhost:52537";
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(
+                    options =>
+                    {
+                        //IdentityServer地址
+                        options.Authority = "http://localhost:52537";
 
-                    //对应Idp中ApiResource的Name
-                    options.Audience = "eplus.api";
+                        //对应Idp中ApiResource的Name
+                        options.Audience = "eplus.api";
 
-                    //不使用https
-                    options.RequireHttpsMetadata = false;
-                });
+                        //不使用https
+                        options.RequireHttpsMetadata = false;
+                    }
+                );
 
             //基于策略授权
-            services
-                .AddAuthorization(options =>
+            services.AddAuthorization(
+                options =>
                 {
-                    options
-                        .AddPolicy("EPlusPolicy",
+                    options.AddPolicy(
+                        "EPlusPolicy",
                         builder =>
                         {
                             builder.RequireRole("admin", "manager", "customer");
                             builder.RequireScope("eplus.scope");
-                        });
-                    options
-                        .AddPolicy("TestPolicy",
+                        }
+                    );
+                    options.AddPolicy(
+                        "TestPolicy",
                         builder =>
                         {
                             builder.RequireRole("admin", "manager", "customer");
                             builder.RequireClaim("phone_number");
-                        });
-                });
+                        }
+                    );
+                }
+            );
 
             // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -194,11 +184,9 @@ namespace EPlusActivities.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app
-                    .UseSwaggerUI(c =>
-                        c
-                            .SwaggerEndpoint("/swagger/v1/swagger.json",
-                            "EPlusActivities.API"));
+                app.UseSwaggerUI(
+                    c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EPlusActivities.API")
+                );
             }
 
             app.UseHttpsRedirection();
@@ -213,11 +201,12 @@ namespace EPlusActivities.API
 
             DbInitializer.Initialize(env, context, userManager, roleManager);
 
-            app
-                .UseEndpoints(endpoints =>
+            app.UseEndpoints(
+                endpoints =>
                 {
                     endpoints.MapControllers();
-                });
+                }
+            );
         }
     }
 }

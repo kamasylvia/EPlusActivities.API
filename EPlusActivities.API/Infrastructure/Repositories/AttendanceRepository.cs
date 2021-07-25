@@ -10,10 +10,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class AttendanceRepository : RepositoryBase, IAttendanceRepository
     {
-        public AttendanceRepository(ApplicationDbContext context) :
-            base(context)
-        {
-        }
+        public AttendanceRepository(ApplicationDbContext context) : base(context) { }
 
         public async Task AddAsync(Attendance item) =>
             await _context.AttendanceRecord.AddAsync(item);
@@ -27,17 +24,17 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<Attendance> FindByIdAsync(Guid id) =>
             await _context.AttendanceRecord.FindAsync(id);
 
-        public async Task<IEnumerable<Attendance>>
-        FindByUserIdAsync(Guid userId, DateTime startTime) =>
-            await _context
-                .AttendanceRecord
-                .Where(a => a.UserId == userId && a.Date >= startTime.Date)
+        public async Task<IEnumerable<Attendance>> FindByUserIdAsync(
+            Guid userId,
+            DateTime startTime
+        ) =>
+            await _context.AttendanceRecord.Where(
+                    a => a.UserId == userId && a.Date >= startTime.Date
+                )
                 .ToListAsync();
 
-        public void Remove(Attendance item) =>
-            _context.AttendanceRecord.Remove(item);
+        public void Remove(Attendance item) => _context.AttendanceRecord.Remove(item);
 
-        public void Update(Attendance item) =>
-            _context.AttendanceRecord.Update(item);
+        public void Update(Attendance item) => _context.AttendanceRecord.Update(item);
     }
 }

@@ -23,16 +23,14 @@ namespace EPlusActivities.API.Controllers
         public SmsController(
             ISmsService smsService,
             UserManager<ApplicationUser> userManager,
-            PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider)
-        {
-            _smsService = smsService
-                ?? throw new ArgumentNullException(nameof(smsService));
-            _userManager = userManager
-                ?? throw new ArgumentNullException(nameof(userManager));
-            _phoneNumberTokenProvider = phoneNumberTokenProvider
+            PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider
+        ) {
+            _smsService = smsService ?? throw new ArgumentNullException(nameof(smsService));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _phoneNumberTokenProvider =
+                phoneNumberTokenProvider
                 ?? throw new ArgumentNullException(nameof(phoneNumberTokenProvider));
         }
-
 
         [AllowAnonymous]
         [HttpPost]
@@ -46,7 +44,8 @@ namespace EPlusActivities.API.Controllers
             var token = await _phoneNumberTokenProvider.GenerateAsync(
                 OidcConstants.AuthenticationMethods.ConfirmationBySms,
                 _userManager,
-                user);
+                user
+            );
 
             var response = await _smsService.SendAsync(phoneNumber, token);
             return Ok(response);

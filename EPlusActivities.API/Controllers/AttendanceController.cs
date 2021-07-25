@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,20 +28,20 @@ namespace EPlusActivities.API.Controllers
         public AttendanceController(
             AttendanceRepository attendanceRepository,
             UserManager<ApplicationUser> userManager,
-            IMapper mapper)
-        {
-            _mapper = mapper
-                ?? throw new ArgumentNullException(nameof(mapper));
-            _attendanceRepository = attendanceRepository
+            IMapper mapper
+        ) {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _attendanceRepository =
+                attendanceRepository
                 ?? throw new ArgumentNullException(nameof(attendanceRepository));
-            _userManager = userManager
-                ?? throw new ArgumentNullException(nameof(userManager));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
         [HttpGet("user")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetByUserIdAsync([FromBody] AttendanceForGetByUserIdDto attendanceDto)
-        {
+        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetByUserIdAsync(
+            [FromBody] AttendanceForGetByUserIdDto attendanceDto
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
@@ -52,7 +52,8 @@ namespace EPlusActivities.API.Controllers
 
             var attendanceRecord = await _attendanceRepository.FindByUserIdAsync(
                 attendanceDto.UserId.Value,
-                attendanceDto.Date.Value);
+                attendanceDto.Date.Value
+            );
 
             return attendanceRecord.Count() > 0
                 ? Ok(attendanceRecord)
@@ -61,8 +62,9 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AttendanceDto>> GetByIdAsync([FromBody] AttendanceForGetByIdDto attendanceDto)
-        {
+        public async Task<ActionResult<AttendanceDto>> GetByIdAsync(
+            [FromBody] AttendanceForGetByIdDto attendanceDto
+        ) {
             var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id.Value);
             return attendance is null
                 ? BadRequest("Could not find the attendance.")
@@ -128,15 +130,13 @@ namespace EPlusActivities.API.Controllers
             }
 
             #region Update the user's LastAttendanceDate and SequentialAttendanceDays
-            user.SequentialAttendanceDays =
-                IsSequential(user.LastAttendanceDate, now)
+            user.SequentialAttendanceDays = IsSequential(user.LastAttendanceDate, now)
                 ? user.SequentialAttendanceDays + 1
                 : 1;
             #endregion
 
             #region Update credit
-            user.Credit +=
-                user.SequentialAttendanceDays < 7
+            user.Credit += user.SequentialAttendanceDays < 7
                 ? user.SequentialAttendanceDays * 10
                 : 70;
             #endregion
@@ -144,6 +144,5 @@ namespace EPlusActivities.API.Controllers
             user.LastAttendanceDate = now;
             return true;
         }
-
     }
 }

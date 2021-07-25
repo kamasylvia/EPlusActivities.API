@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Entities
 {
@@ -14,8 +15,13 @@ namespace EPlusActivities.API.Entities
         [Key]
         public Guid? Id { get; set; }
 
+        // 抽奖/积分兑换 次数限制，null 表示无限制
+        public int? Limit { get; set; }
+
         [Required]
         public string Name { get; set; }
+
+        public ChannelCode ChannelCode { get; set; }
 
         [Required]
         public DateTime StartTime { get; set; }
@@ -24,6 +30,6 @@ namespace EPlusActivities.API.Entities
 
         public IEnumerable<Lottery> LotteryResults { get; set; }
 
-        public IEnumerable<PrizeType> PrizeTypes { get; set; }
+        public IEnumerable<PrizeTier> PrizeTiers { get; set; }
     }
 }

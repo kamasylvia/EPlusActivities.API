@@ -1,0 +1,127 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+charset = utf-8
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+[*.cs]
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_new_line_before_open_brace
+csharp_new_line_before_open_brace = all
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_new_line_before_else
+csharp_new_line_before_else = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_new_line_before_catch
+csharp_new_line_before_catch = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_new_line_before_finally
+csharp_new_line_before_finally = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_new_line_before_members_in_object_initializers
+csharp_new_line_before_members_in_object_initializers = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_new_line_before_members_in_anonymous_types
+csharp_new_line_before_members_in_anonymous_types = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_new_line_between_query_expression_clauses
+csharp_new_line_between_query_expression_clauses = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_indent_case_contents
+csharp_indent_case_contents = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_indent_switch_labels
+csharp_indent_switch_labels = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_indent_labels
+csharp_indent_labels = no_change
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_indent_block_contents
+csharp_indent_block_contents = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_indent_braces
+csharp_indent_braces = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_indent_case_contents_when_block
+csharp_indent_case_contents_when_block = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_after_cast
+csharp_space_after_cast = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_after_keywords_in_control_flow_statements
+csharp_space_after_keywords_in_control_flow_statements = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_parentheses
+# csharp_space_between_parentheses = control_flow_statements
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_before_colon_in_inheritance_clause
+csharp_space_before_colon_in_inheritance_clause = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_after_colon_in_inheritance_clause
+csharp_space_after_colon_in_inheritance_clause = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_around_binary_operators
+csharp_space_around_binary_operators = before_and_after
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_method_declaration_parameter_list_parentheses
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_method_declaration_empty_parameter_list_parentheses
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_method_declaration_name_and_open_parenthesis
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_method_call_parameter_list_parentheses
+csharp_space_between_method_call_parameter_list_parentheses = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_method_call_empty_parameter_list_parentheses
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_method_call_name_and_opening_parenthesis
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_after_comma
+csharp_space_after_comma = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_before_comma
+csharp_space_before_comma = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_after_dot
+csharp_space_after_dot = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_before_dot
+csharp_space_before_dot = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_after_semicolon_in_for_statement
+csharp_space_after_semicolon_in_for_statement = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_before_semicolon_in_for_statement
+csharp_space_before_semicolon_in_for_statement = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_around_declaration_statements
+csharp_space_around_declaration_statements = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_before_open_square_brackets
+csharp_space_before_open_square_brackets = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_empty_square_brackets
+csharp_space_between_empty_square_brackets = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_space_between_square_brackets
+csharp_space_between_square_brackets = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_preserve_single_line_statements
+csharp_preserve_single_line_statements = false
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_preserve_single_line_blocks
+csharp_preserve_single_line_blocks = true
+
+# https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#csharp_using_directive_placement
+csharp_using_directive_placement = outside_namespace

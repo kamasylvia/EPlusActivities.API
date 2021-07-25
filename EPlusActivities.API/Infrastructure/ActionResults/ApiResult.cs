@@ -13,9 +13,7 @@ namespace EPlusActivities.API.Infrastructure.ActionResults
 
         public bool Succeeded { get; set; }
 
-        public ApiResult()
-        {
-        }
+        public ApiResult() { }
 
         public ApiResult(ObjectResult objectResult)
         {

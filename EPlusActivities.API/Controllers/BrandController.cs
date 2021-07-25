@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,20 +23,18 @@ namespace EPlusActivities.API.Controllers
         private readonly INameExistsRepository<Brand> _brandRepository;
         private readonly IMapper _mapper;
 
-        public BrandController(
-            INameExistsRepository<Brand> brandRepository,
-            IMapper mapper)
+        public BrandController(INameExistsRepository<Brand> brandRepository, IMapper mapper)
         {
-            _brandRepository = brandRepository
-                ?? throw new ArgumentNullException(nameof(brandRepository));
-            _mapper = mapper
-                ?? throw new ArgumentNullException(nameof(mapper));
+            _brandRepository =
+                brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<BrandDto>> GetByIdAsync([FromBody] BrandForGetByIdDto brandDto)
-        {
+        public async Task<ActionResult<BrandDto>> GetByIdAsync(
+            [FromBody] BrandForGetByIdDto brandDto
+        ) {
             var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
             return brand is null
                 ? NotFound($"Could not find the brand.")
@@ -45,8 +43,9 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet("name")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<BrandDto>> GetByNameAsync([FromBody] BrandForGetByNameDto brandDto)
-        {
+        public async Task<ActionResult<BrandDto>> GetByNameAsync(
+            [FromBody] BrandForGetByNameDto brandDto
+        ) {
             var brand = await _brandRepository.FindByNameAsync(brandDto.Name);
             return brand is null
                 ? NotFound($"Could not find the brand.")
@@ -59,14 +58,15 @@ namespace EPlusActivities.API.Controllers
         {
             var brands = await _brandRepository.FindAllAsync();
             return brands.Count() > 0
-             ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
-             : NotFound($"Could not find any brand.");
+                ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
+                : NotFound($"Could not find any brand.");
         }
 
         [HttpGet("search")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync([FromBody] BrandForGetByNameDto brandDto)
-        {
+        public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync(
+            [FromBody] BrandForGetByNameDto brandDto
+        ) {
             var brands = await _brandRepository.FindByContainedNameAsync(brandDto.Name);
             return brands.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
@@ -75,9 +75,9 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<BrandDto>> CreateAsync([FromBody] BrandForGetByNameDto brandDto)
-        {
-
+        public async Task<ActionResult<BrandDto>> CreateAsync(
+            [FromBody] BrandForGetByNameDto brandDto
+        ) {
             #region Parameter validation
             if (await _brandRepository.ExistsAsync(brandDto.Name))
             {
@@ -127,9 +127,10 @@ namespace EPlusActivities.API.Controllers
         public async Task<IActionResult> DeleteAsync([FromBody] BrandDto brandDto)
         {
             #region Parameter validation
-            if (!await _brandRepository.ExistsAsync(brandDto.Id.Value)
-                || !await _brandRepository.ExistsAsync(brandDto.Name))
-            {
+            if (
+                !await _brandRepository.ExistsAsync(brandDto.Id.Value)
+                || !await _brandRepository.ExistsAsync(brandDto.Name)
+            ) {
                 return NotFound($"Could not find the brand '{brandDto.Name}'");
             }
             #endregion

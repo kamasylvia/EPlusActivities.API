@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,21 +28,20 @@ namespace EPlusActivities.API.Controllers
         public AddressController(
             UserManager<ApplicationUser> userManager,
             IFindByParentIdRepository<Address> addressRepository,
-            IMapper mapper)
-        {
-            _addressRepository = addressRepository
-                ?? throw new ArgumentNullException(nameof(addressRepository));
-            _mapper = mapper
-                ?? throw new ArgumentNullException(nameof(mapper));
-            _userManager = userManager
-                ?? throw new ArgumentNullException(nameof(userManager));
+            IMapper mapper
+        ) {
+            _addressRepository =
+                addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
         [HttpGet("user")]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync([FromBody] AddressForGetByUserIdDto addressDto)
-        {
+        public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
+            [FromBody] AddressForGetByUserIdDto addressDto
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -55,13 +54,15 @@ namespace EPlusActivities.API.Controllers
             return addresses.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses))
                 : NotFound(
-                    $"Could not find any addresses with the specified user '{addressDto.UserId.Value}'");
+                        $"Could not find any addresses with the specified user '{addressDto.UserId.Value}'"
+                    );
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AddressDto>> GetByIdAsync([FromBody] AddressForGetByIdDto addressDto)
-        {
+        public async Task<ActionResult<AddressDto>> GetByIdAsync(
+            [FromBody] AddressForGetByIdDto addressDto
+        ) {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
             return address is null
                 ? NotFound($"Could not find the address with ID '{addressDto.Id}'.")
@@ -71,8 +72,9 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AddressDto>> CreateAsync([FromBody] AddressForCreateDto addressDto)
-        {
+        public async Task<ActionResult<AddressDto>> CreateAsync(
+            [FromBody] AddressForCreateDto addressDto
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -91,7 +93,7 @@ namespace EPlusActivities.API.Controllers
             var address = _mapper.Map<Address>(addressDto);
             await _addressRepository.AddAsync(address);
             var succeeded = await _addressRepository.SaveAsync();
-            #endregion 
+            #endregion
 
             return succeeded
                 ? Ok(_mapper.Map<AddressDto>(address))
@@ -119,9 +121,9 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
-            _addressRepository.Update(_mapper.Map<AddressForUpdateDto, Address>(
-                addressDto,
-                address));
+            _addressRepository.Update(
+                _mapper.Map<AddressForUpdateDto, Address>(addressDto, address)
+            );
             var succeeded = await _addressRepository.SaveAsync();
             #endregion
 

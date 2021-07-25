@@ -8,17 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class
-    LotteryRepository
-    : RepositoryBase, IFindByParentIdRepository<Lottery>
+    public class LotteryRepository : RepositoryBase, IFindByParentIdRepository<Lottery>
     {
-        public LotteryRepository(ApplicationDbContext context) :
-            base(context)
-        {
-        }
+        public LotteryRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task AddAsync(Lottery item) =>
-            await _context.LotteryResults.AddAsync(item);
+        public async Task AddAsync(Lottery item) => await _context.LotteryResults.AddAsync(item);
 
         public async Task<bool> ExistsAsync(Guid id) =>
             await _context.LotteryResults.AnyAsync(lr => lr.Id == id);
@@ -27,23 +21,15 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.LotteryResults.ToListAsync();
 
         public async Task<Lottery> FindByIdAsync(Guid id) =>
-            await _context
-                .LotteryResults
-                .Include(lottery => lottery.Activity)
+            await _context.LotteryResults.Include(lottery => lottery.Activity)
                 .Include(lottery => lottery.PrizeItem)
                 .SingleOrDefaultAsync(lottery => lottery.Id == id);
 
-        public async Task<IEnumerable<Lottery>>
-        FindByParentIdAsync(Guid userId) =>
-            await _context
-                .LotteryResults
-                .Where(a => a.UserId == userId)
-                .ToListAsync();
+        public async Task<IEnumerable<Lottery>> FindByParentIdAsync(Guid userId) =>
+            await _context.LotteryResults.Where(a => a.User.Id == userId).ToListAsync();
 
-        public void Remove(Lottery item) =>
-            _context.LotteryResults.Remove(item);
+        public void Remove(Lottery item) => _context.LotteryResults.Remove(item);
 
-        public void Update(Lottery item) =>
-            _context.LotteryResults.Update(item);
+        public void Update(Lottery item) => _context.LotteryResults.Update(item);
     }
 }

@@ -9,12 +9,10 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
         [Required]
         public Guid? Id { get; set; }
 
-        public ChannelCode ChannelCode { get; set; }
-
         public bool PickedUp { get; set; }
 
-        public DateTime? PickedUpTime { get; set; }
+        public bool Delivered { get; set; }
 
-        public Guid? UserId { get; set; }
+        public DateTime? PickedUpTime { get; set; }
     }
 }

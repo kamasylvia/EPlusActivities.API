@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -19,13 +19,11 @@ namespace EPlusActivities.API.Services.IdentityServer
 
         private readonly IConfiguration _configuration;
 
-        private readonly PhoneNumberTokenProvider<ApplicationUser>
-            _phoneNumberTokenProvider;
+        private readonly PhoneNumberTokenProvider<ApplicationUser> _phoneNumberTokenProvider;
 
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public string GrantType =>
-            OidcConstants.AuthenticationMethods.ConfirmationBySms;
+        public string GrantType => OidcConstants.AuthenticationMethods.ConfirmationBySms;
 
         public SmsGrantValidator(
             IConfiguration configuration,
@@ -33,8 +31,7 @@ namespace EPlusActivities.API.Services.IdentityServer
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
             SignInManager<ApplicationUser> signInManager
-        )
-        {
+        ) {
             _configuration = configuration;
             _phoneNumberTokenProvider = phoneNumberTokenProvider;
             _signInManager = signInManager;
@@ -53,8 +50,7 @@ namespace EPlusActivities.API.Services.IdentityServer
                 var loginChannel = context.Request.Raw["login_channel"];
 
                 var requireRegister = false;
-                var secret =
-                    new Secret(_configuration["Secrets:DefaultSecret"]).Value;
+                var secret = new Secret(_configuration["Secrets:DefaultSecret"]).Value;
                 #endregion
 
 
@@ -62,22 +58,19 @@ namespace EPlusActivities.API.Services.IdentityServer
                 #region 获取用户
                 // 这是 EF Core 内置的查询方法，速度很慢，所以用下面的 LINQ 替代。
                 // var user = await _userManager.FindByNameAsync(phoneNumber);
-                var user =
-                    await _userManager
-                        .Users
-                        .SingleOrDefaultAsync(x =>
-                            x.PhoneNumber == phoneNumber);
+                var user = await _userManager.Users.SingleOrDefaultAsync(
+                    x => x.PhoneNumber == phoneNumber
+                );
 
                 if (user == null)
                 {
-                    user =
-                        new ApplicationUser
-                        {
-                            UserName = phoneNumber,
-                            NormalizedUserName = phoneNumber,
-                            PhoneNumber = phoneNumber,
-                            SecurityStamp = secret + phoneNumber.Sha256()
-                        };
+                    user = new ApplicationUser
+                    {
+                        UserName = phoneNumber,
+                        NormalizedUserName = phoneNumber,
+                        PhoneNumber = phoneNumber,
+                        SecurityStamp = secret + phoneNumber.Sha256()
+                    };
                     requireRegister = true;
                 }
                 #endregion
@@ -85,21 +78,19 @@ namespace EPlusActivities.API.Services.IdentityServer
 
 
                 #region 验证
-                var validationResult =
-                    await _phoneNumberTokenProvider
-                        .ValidateAsync(OidcConstants
-                            .AuthenticationMethods
-                            .ConfirmationBySms,
-                        token,
-                        _userManager,
-                        user);
+                var validationResult = await _phoneNumberTokenProvider.ValidateAsync(
+                    OidcConstants.AuthenticationMethods.ConfirmationBySms,
+                    token,
+                    _userManager,
+                    user
+                );
 
                 if (!validationResult)
                 {
-                    context.Result =
-                        new GrantValidationResult(TokenRequestErrors
-                                .InvalidGrant,
-                            "Failed to validate SMS token.");
+                    context.Result = new GrantValidationResult(
+                        TokenRequestErrors.InvalidGrant,
+                        "Failed to validate SMS token."
+                    );
                     return;
                 }
                 #endregion
@@ -116,17 +107,15 @@ namespace EPlusActivities.API.Services.IdentityServer
                     var creationResult = await _userManager.CreateAsync(user);
                     if (!creationResult.Succeeded)
                     {
-                        context.Result =
-                            new GrantValidationResult(TokenRequestErrors
-                                    .InvalidGrant,
-                                "Failed to register.");
+                        context.Result = new GrantValidationResult(
+                            TokenRequestErrors.InvalidGrant,
+                            "Failed to register."
+                        );
                         return;
                     }
 
                     // await _userManager.AddToRoleAsync(user, "Customer".ToUpper());
-                    await _userManager
-                        .AddToRolesAsync(user,
-                        new string[] { "Customer".ToUpper() });
+                    await _userManager.AddToRolesAsync(user, new string[] { "Customer".ToUpper() });
                 }
                 #endregion
 
@@ -142,17 +131,17 @@ namespace EPlusActivities.API.Services.IdentityServer
                 #endregion
 
 
-                context.Result =
-                    new GrantValidationResult(subject: user.Id.ToString(),
-                        authenticationMethod: OidcConstants
-                            .AuthenticationMethods
-                            .ConfirmationBySms);
+                context.Result = new GrantValidationResult(
+                    subject: user.Id.ToString(),
+                    authenticationMethod: OidcConstants.AuthenticationMethods.ConfirmationBySms
+                );
             }
             catch (Exception ex)
             {
-                context.Result =
-                    new GrantValidationResult(TokenRequestErrors.InvalidGrant,
-                        ex.Message);
+                context.Result = new GrantValidationResult(
+                    TokenRequestErrors.InvalidGrant,
+                    ex.Message
+                );
             }
         }
     }

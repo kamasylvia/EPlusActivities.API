@@ -17,6 +17,8 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
 
         public bool PickedUp { get; set; }
 
+        public bool Delivered { get; set; }
+
         public DateTime? PickedTime { get; set; }
 
         public DateTime? Date { get; set; }
@@ -31,6 +33,6 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
 
         public Guid? PrizeItemId { get; set; }
 
-        public Guid? PrizeTypeId { get; set; }
+        public Guid? PrizeTierId { get; set; }
     }
 }

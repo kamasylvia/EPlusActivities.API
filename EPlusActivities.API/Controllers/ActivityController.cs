@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,20 +22,18 @@ namespace EPlusActivities.API.Controllers
     {
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
-        public ActivityController(
-            IActivityRepository activityRepository,
-            IMapper mapper)
+        public ActivityController(IActivityRepository activityRepository, IMapper mapper)
         {
-            _mapper = mapper
-                ?? throw new ArgumentNullException(nameof(mapper));
-            _activityRepository = activityRepository
-                ?? throw new ArgumentNullException(nameof(activityRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _activityRepository =
+                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<ActivityDto>> GetAsync([FromBody] ActivityForGetDto activityDto)
-        {
+        public async Task<ActionResult<ActivityDto>> GetAsync(
+            [FromBody] ActivityForGetDto activityDto
+        ) {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             return activity is null
                 ? NotFound("Could not find the activity.")
@@ -44,8 +42,9 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet("available")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAllAvailableAsync([FromBody] ActivityForGetAllAvailableDto activityDto)
-        {
+        public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAllAvailableAsync(
+            [FromBody] ActivityForGetAllAvailableDto activityDto
+        ) {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -53,7 +52,9 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var activitiesAtStartTime = await _activityRepository.FindAllAvailableAsync(activityDto.StartTime.Value);
+            var activitiesAtStartTime = await _activityRepository.FindAllAvailableAsync(
+                activityDto.StartTime.Value
+            );
             var endTime = activityDto.EndTime ?? DateTime.Now.Date;
             var activitiesAtEndTime = await _activityRepository.FindAllAvailableAsync(endTime);
             var result = activitiesAtStartTime.Union(activitiesAtEndTime);
@@ -62,8 +63,9 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<ActivityDto>> CreateAsync([FromBody] ActivityForCreateDto activityDto)
-        {
+        public async Task<ActionResult<ActivityDto>> CreateAsync(
+            [FromBody] ActivityForCreateDto activityDto
+        ) {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -87,7 +89,7 @@ namespace EPlusActivities.API.Controllers
         public async Task<IActionResult> UpdateAsync([FromBody] ActivityForUpdateDto activityDto)
         {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
-            
+
             #region Parameter validation
             // if (!await _activityRepository.ExistsAsync(activityDto.Id.Value))
             if (activity is null)
@@ -102,9 +104,9 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
-            _activityRepository.Update(_mapper.Map<ActivityForUpdateDto, Activity>(
-                activityDto,
-                activity));
+            _activityRepository.Update(
+                _mapper.Map<ActivityForUpdateDto, Activity>(activityDto, activity)
+            );
             var succeeded = await _activityRepository.SaveAsync();
             #endregion
 

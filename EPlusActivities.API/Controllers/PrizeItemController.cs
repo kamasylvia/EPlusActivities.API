@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,43 +32,49 @@ namespace EPlusActivities.API.Controllers
             IPrizeItemRepository prizeItemRepository,
             INameExistsRepository<Brand> brandRepository,
             INameExistsRepository<Category> categoryRepository,
-            IMapper mapper)
-        {
-            _userManager = userManager
-                ?? throw new ArgumentNullException(nameof(userManager));
-            _prizeItemRepository = prizeItemRepository
-                ?? throw new ArgumentNullException(nameof(prizeItemRepository));
-            _brandRepository = brandRepository
-                ?? throw new ArgumentNullException(nameof(brandRepository));
-            _mapper = mapper
-                ?? throw new ArgumentNullException(nameof(mapper));
-            _categoryRepository = categoryRepository
-                ?? throw new ArgumentNullException(nameof(categoryRepository));
+            IMapper mapper
+        ) {
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _prizeItemRepository =
+                prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
+            _brandRepository =
+                brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _categoryRepository =
+                categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
         }
 
         [HttpGet("name")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync([FromBody] PrizeItemForGetByNameDto prizeItemDto)
-        {
+        public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync(
+            [FromBody] PrizeItemForGetByNameDto prizeItemDto
+        ) {
             var prizeItems = await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name);
             return prizeItems.Count() > 0
-                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(
-                    await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)))
+                ? Ok(
+                        _mapper.Map<IEnumerable<PrizeItemDto>>(
+                            await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)
+                        )
+                    )
                 : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<PrizeItemDto>> GetGetByIdAsync([FromBody] PrizeItemForGetByIdDto prizeItemDto)
-        {
+        public async Task<ActionResult<PrizeItemDto>> GetGetByIdAsync(
+            [FromBody] PrizeItemForGetByIdDto prizeItemDto
+        ) {
             var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
-            return prizeItem is null ? NotFound("Could not find the prizeItem.") : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
+            return prizeItem is null
+                ? NotFound("Could not find the prizeItem.")
+                : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
         }
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<PrizeItemDto>> CreateAsync([FromBody] PrizeItemForCreateDto prizeItemDto)
-        {
+        public async Task<ActionResult<PrizeItemDto>> CreateAsync(
+            [FromBody] PrizeItemForCreateDto prizeItemDto
+        ) {
             #region Parameter validation
             var allPrizeItems = await _prizeItemRepository.FindAllAsync();
             if (allPrizeItems.Count() >= 10)
@@ -103,13 +109,12 @@ namespace EPlusActivities.API.Controllers
             if (prizeItem is null)
             {
                 return BadRequest("The prize item is not existed");
-            };
+            }
+            ;
             #endregion
 
             #region New an entity
-            prizeItem = _mapper.Map<PrizeItemForUpdateDto, PrizeItem>(
-                prizeItemDto,
-                prizeItem);
+            prizeItem = _mapper.Map<PrizeItemForUpdateDto, PrizeItem>(prizeItemDto, prizeItem);
             prizeItem.Brand = await GetBrandAsync(prizeItemDto.BrandName);
             prizeItem.Category = await GetCategoryAsync(prizeItemDto.CategoryName);
             #endregion
@@ -134,7 +139,8 @@ namespace EPlusActivities.API.Controllers
             if (prizeItem is null)
             {
                 return BadRequest("The prize item is not existed");
-            };
+            }
+            ;
             #endregion
 
             #region Database operations

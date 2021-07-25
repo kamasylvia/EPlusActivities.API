@@ -10,12 +10,11 @@ namespace EPlusActivities.API.DTOs.UserDtos
 
         [Required]
         [Phone]
-        [
-            StringLength(
-                11,
-                MinimumLength = 11,
-                ErrorMessage = "A valid phone number must be 11 digits.")
-        ]
+        [StringLength(
+            11,
+            MinimumLength = 11,
+            ErrorMessage = "A valid phone number must be 11 digits."
+        )]
         public string PhoneNumber { get; set; }
     }
 }

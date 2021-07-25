@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Entities
 {
@@ -9,8 +10,10 @@ namespace EPlusActivities.API.Entities
         [Key]
         public Guid? Id { get; set; }
 
+        public ChannelCode ChannelCode { get; set; }
+
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

@@ -14,15 +14,21 @@ namespace EPlusActivities.API.Data
 {
     public class DbInitializer
     {
-        private static List<ApplicationRole> _roles = JsonSerializer.Deserialize<List<ApplicationRole>>(System.IO.File.ReadAllText("Data/RoleSeedData.json"));
-        private static List<ApplicationUser> _users = JsonSerializer.Deserialize<List<ApplicationUser>>(System.IO.File.ReadAllText("Data/UserSeedData.json"));
+        private static List<ApplicationRole> _roles =
+            JsonSerializer.Deserialize<List<ApplicationRole>>(
+                System.IO.File.ReadAllText("Data/RoleSeedData.json")
+            );
+        private static List<ApplicationUser> _users =
+            JsonSerializer.Deserialize<List<ApplicationUser>>(
+                System.IO.File.ReadAllText("Data/UserSeedData.json")
+            );
 
         public static void Initialize(
             IWebHostEnvironment environment,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager)
-        {
+            RoleManager<ApplicationRole> roleManager
+        ) {
             if (environment.IsDevelopment())
             {
                 var deleted = context.Database.EnsureDeleted();
@@ -39,7 +45,7 @@ namespace EPlusActivities.API.Data
             // Look for any Data.
             if (context.Users.Any())
             {
-                return;   // DB has been seeded
+                return; // DB has been seeded
             }
 
             SeedRoles(roleManager);
@@ -54,27 +60,30 @@ namespace EPlusActivities.API.Data
                     if (userManager.FindByNameAsync(user.UserName).Result is null)
                     {
                         var result = userManager.CreateAsync(user).Result;
-                        result = userManager.AddToRoleAsync(user, _roles.SingleOrDefault(r =>
-                            r.Name.ToLower() == "seed").Name).Result;
+                        result =
+                            userManager.AddToRoleAsync(
+                                user,
+                                _roles.SingleOrDefault(r => r.Name.ToLower() == "seed").Name
+                            ).Result;
                     }
                 }
             );
 
         private static void SeedRoles(RoleManager<ApplicationRole> roleManager) =>
-        _roles.ForEach(
-            role =>
-            {
-                if (!roleManager.RoleExistsAsync(role.Name).Result)
+            _roles.ForEach(
+                role =>
                 {
-                    var result = roleManager.CreateAsync(role).Result;
+                    if (!roleManager.RoleExistsAsync(role.Name).Result)
+                    {
+                        var result = roleManager.CreateAsync(role).Result;
+                    }
                 }
-            }
-        );
+            );
 
         private static void SeedData(
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
-        {
+            UserManager<ApplicationUser> userManager
+        ) {
             var user = userManager.FindByNameAsync("seed").Result;
 
             #region Seed Addresses
@@ -88,10 +97,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Activities
-            var activity = new Activity("Seed")
-            {
-                EndTime = DateTime.MinValue
-            };
+            var activity = new Activity("Seed") { EndTime = DateTime.MinValue };
             context.Activities.Add(activity);
             #endregion
 
@@ -106,29 +112,22 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed PrizeItems
-            var prizeItem = new PrizeItem("Seed")
-            {
-                Brand = brand,
-                Category = category,
-            };
+            var prizeItem = new PrizeItem("Seed") { Brand = brand, Category = category, };
             context.PrizeItems.Add(prizeItem);
             #endregion
 
-            #region Seed PrizeTypes
-            var prizeType = new PrizeType("Seed")
-            {
-                Activity = activity
-            };
-            context.PrizeTypes.Add(prizeType);
+            #region Seed PrizeTiers
+            var prizeTier = new PrizeTier("Seed") { Activity = activity };
+            context.PrizeTiers.Add(prizeTier);
             #endregion
 
-            #region Seed PrizeTypePrizeItem
-            var prizeTypePrizeItem = new PrizeTypePrizeItem
+            #region Seed PrizeTierPrizeItem
+            var prizeTypePrizeItem = new PrizeTierPrizeItem
             {
                 PrizeItem = prizeItem,
-                PrizeType = prizeType
+                PrizeTier = prizeTier
             };
-            context.PrizeTypePrizeItems.Add(prizeTypePrizeItem);
+            context.PrizeTierPrizeItems.Add(prizeTypePrizeItem);
             #endregion
 
             #region Seed LotteryResults
@@ -136,10 +135,19 @@ namespace EPlusActivities.API.Data
             {
                 User = user,
                 Activity = activity,
-                ChannelCode = ChannelCode.Default,
+                ChannelCode = ChannelCode.MiniProgram,
                 Date = DateTime.MinValue
             };
             context.LotteryResults.Add(lottery);
+            #endregion
+
+            #region Seed LotteryOrRedeemCount
+            var lotteryOrRedeemLimit = new LotteryOrRedeemCount
+            {
+                Activity = activity,
+                User = user,
+            };
+            context.LotteryOrRedeemLimits.Add(lotteryOrRedeemLimit);
             #endregion
 
             context.SaveChanges();

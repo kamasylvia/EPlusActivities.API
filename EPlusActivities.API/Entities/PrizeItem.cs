@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Entities
 {
@@ -17,6 +18,8 @@ namespace EPlusActivities.API.Entities
         // 奖品名称
         [Required]
         public string Name { get; set; }
+
+        public PrizeType PrizeType { get; set; }
 
         // 奖品种类
         public Category Category { get; set; }
@@ -38,6 +41,6 @@ namespace EPlusActivities.API.Entities
 
         public IEnumerable<Lottery> LotteryResults { get; set; }
 
-        public IEnumerable<PrizeTypePrizeItem> PrizeTypePrizeItems { get; set; }
+        public IEnumerable<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
     }
 }

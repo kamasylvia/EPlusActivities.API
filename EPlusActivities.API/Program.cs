@@ -9,27 +9,21 @@ namespace EPlusActivities.API
 {
     public class Program
     {
-        public static IConfiguration Configuration
-        {
-            get;
-        } =
-            new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json",
-                             optional: false,
-                             reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
-                             optional: true)
+        public static IConfiguration Configuration { get; } =
+            new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
+                    optional: true
+                )
                 .AddEnvironmentVariables()
                 .Build();
 
         public static void Main(string[] args)
         {
-            Log.Logger =
-                new LoggerConfiguration()
-                    .ReadFrom.Configuration(Configuration)
-                    .Enrich.FromLogContext()
-                    .CreateLogger();
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
+                .Enrich.FromLogContext()
+                .CreateLogger();
 
             try
             {
@@ -49,12 +43,13 @@ namespace EPlusActivities.API
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host
-                .CreateDefaultBuilder(args)
+            Host.CreateDefaultBuilder(args)
                 .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureWebHostDefaults(
+                    webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>();
+                    }
+                );
     }
 }

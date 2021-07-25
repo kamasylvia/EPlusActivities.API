@@ -25,6 +25,8 @@ namespace EPlusActivities.API.Entities
         // 是否会员
         public bool IsMember { get; set; }
 
+        public string MemberId { get; set; }
+
         // 上次签到日期
         public DateTime? LastAttendanceDate { get; set; }
 
@@ -41,8 +43,6 @@ namespace EPlusActivities.API.Entities
         public virtual ICollection<Lottery> LotteryResults { get; set; }
 
         public override string ToString() =>
-            JsonSerializer
-                .Serialize(this,
-                new JsonSerializerOptions { WriteIndented = true });
+            JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
     }
 }
