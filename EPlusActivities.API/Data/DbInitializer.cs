@@ -92,7 +92,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed AttendanceRecord
-            var attendance = new Attendance { User = user };
+            var attendance = new Attendance { User = user, Date = DateTime.MinValue };
             context.AttendanceRecord.Add(attendance);
             #endregion
 
@@ -135,19 +135,14 @@ namespace EPlusActivities.API.Data
             {
                 User = user,
                 Activity = activity,
-                ChannelCode = ChannelCode.MiniProgram,
                 Date = DateTime.MinValue
             };
             context.LotteryResults.Add(lottery);
             #endregion
 
-            #region Seed LotteryOrRedeemCount
-            var lotteryOrRedeemLimit = new LotteryOrRedeemCount
-            {
-                Activity = activity,
-                User = user,
-            };
-            context.LotteryOrRedeemLimits.Add(lotteryOrRedeemLimit);
+            #region Seed ActivityUser
+            var activityUser = new ActivityUser { Activity = activity, User = user, };
+            context.ActivityUserLinks.Add(activityUser);
             #endregion
 
             context.SaveChanges();

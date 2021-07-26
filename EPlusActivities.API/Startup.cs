@@ -5,6 +5,7 @@ using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.IdentityServer;
+using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -73,7 +74,7 @@ namespace EPlusActivities.API
             // 启用数据库仓库
             services.AddTransient<IActivityRepository, ActivityRepository>()
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
-                .AddTransient<IRepository<LotteryOrRedeemCount>, LotteryOrRedeemCountRepository>()
+                .AddTransient<IRepository<ActivityUser>, ActivityUserRepository>()
                 .AddTransient<IFindByParentIdRepository<Address>, AddressRepository>()
                 .AddTransient<IFindByParentIdRepository<Lottery>, LotteryRepository>()
                 .AddTransient<IPrizeItemRepository, PrizeItemRepository>()
@@ -83,6 +84,9 @@ namespace EPlusActivities.API
 
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
+
+            // 启用会员服务
+            services.AddScoped<IMemberService, MemberService>();
 
             var builder = services.AddIdentityServer(
                     options =>

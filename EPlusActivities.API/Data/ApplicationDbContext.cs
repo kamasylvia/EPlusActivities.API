@@ -34,7 +34,7 @@ namespace EPlusActivities.API.Data
 
         public virtual DbSet<PrizeTier> PrizeTiers { get; set; }
 
-        public virtual DbSet<LotteryOrRedeemCount> LotteryOrRedeemLimits { get; set; }
+        public virtual DbSet<ActivityUser> ActivityUserLinks { get; set; }
 
         public virtual DbSet<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
 
@@ -60,8 +60,7 @@ namespace EPlusActivities.API.Data
             builder.Entity<PrizeTierPrizeItem>()
                 .HasKey(ptpi => new { ptpi.PrizeTierId, ptpi.PrizeItemId });
 
-            builder.Entity<LotteryOrRedeemCount>()
-                .HasKey(lorl => new { lorl.UserId, lorl.ActivityId });
+            builder.Entity<ActivityUser>().HasKey(lad => new { lad.ActivityId, lad.UserId });
             #endregion
 
             /*

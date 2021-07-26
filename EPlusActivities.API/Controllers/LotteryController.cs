@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityRepository _activityRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
-        private readonly IRepository<LotteryOrRedeemCount> _lotteryOrRedeemLimitRepository;
+        private readonly IRepository<ActivityUser> _activityUserRepository;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
 
         public LotteryController(
@@ -36,12 +36,12 @@ namespace EPlusActivities.API.Controllers
             IPrizeItemRepository prizeItemRepository,
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IMapper mapper,
-            IRepository<LotteryOrRedeemCount> lotteryOrRedeemLimitRepository
+            IRepository<ActivityUser> activityUserRepository
         ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _lotteryOrRedeemLimitRepository =
-                lotteryOrRedeemLimitRepository
-                ?? throw new ArgumentNullException(nameof(lotteryOrRedeemLimitRepository));
+            _activityUserRepository =
+                activityUserRepository
+                ?? throw new ArgumentNullException(nameof(activityUserRepository));
             _lotteryRepository =
                 lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -108,22 +108,24 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("This activity is expired.");
             }
 
-            var count = await _lotteryOrRedeemLimitRepository.FindByIdAsync(
+            var count = await _activityUserRepository.FindByIdAsync(
                 lotteryDto.ActivityId.Value,
                 lotteryDto.UserId.Value
             );
 
             if (count is null)
             {
-                count = new LotteryOrRedeemCount { Activity = activity, User = user };
+                count = new ActivityUser { Activity = activity, User = user };
             }
-            else if (count.Count >= activity.Limit)
+            else if (count.RemainingDraws <= 0)
             {
-                return BadRequest("The user could not draw more than the limit of the activity.");
+                return BadRequest("The remaining draws of the user must be greater than 0.");
             }
             #endregion
 
+            /*
             #region Consume the credits
+
             if (user.Credit < lotteryDto.UsedCredit)
             {
                 return BadRequest("The user does not have enough credit.");
@@ -135,12 +137,13 @@ namespace EPlusActivities.API.Controllers
                 return new InternalServerErrorObjectResult(updateUserResult.Errors);
             }
 
-            count.Count++;
-            if (!await _lotteryOrRedeemLimitRepository.SaveAsync())
+            count.RemainingDraws--;
+            if (!await _lotteryAvailableDrawsRepository.SaveAsync())
             {
                 return new InternalServerErrorObjectResult("Update database exception");
             }
             #endregion
+            */
 
             #region Generate the lottery result
             var lottery = _mapper.Map<Lottery>(lotteryDto);

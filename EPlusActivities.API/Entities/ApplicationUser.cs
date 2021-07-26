@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
@@ -22,16 +22,9 @@ namespace EPlusActivities.API.Entities
         // 积分
         public int Credit { get; set; }
 
-        // 是否会员
         public bool IsMember { get; set; }
 
         public string MemberId { get; set; }
-
-        // 上次签到日期
-        public DateTime? LastAttendanceDate { get; set; }
-
-        // 连续签到天数
-        public int SequentialAttendanceDays { get; set; }
 
         // 外键
         public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
@@ -41,6 +34,8 @@ namespace EPlusActivities.API.Entities
         public virtual ICollection<Attendance> AttendanceRecord { get; set; }
 
         public virtual ICollection<Lottery> LotteryResults { get; set; }
+
+        public virtual ICollection<ActivityUser> ActivityUserLinks { get; set; }
 
         public override string ToString() =>
             JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });

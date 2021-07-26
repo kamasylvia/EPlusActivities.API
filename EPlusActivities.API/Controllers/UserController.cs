@@ -11,6 +11,7 @@ using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services;
+using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,15 +31,19 @@ namespace EPlusActivities.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<UserController> _logger;
         private readonly IMapper _mapper;
+        private readonly IMemberService _memberService;
         private readonly IHttpClientFactory _httpClientFactory;
 
         public UserController(
             UserManager<ApplicationUser> userManager,
             IHttpClientFactory httpClientFactory,
             ILogger<UserController> logger,
-            IMapper mapper
+            IMapper mapper,
+            IMemberService memberService
         ) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _memberService =
+                memberService ?? throw new ArgumentNullException(nameof(memberService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory =
                 httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
@@ -58,23 +63,13 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            #region Get member id
-            var channelCode = "test";
-            var requestUri = $"http://10.10.34.218:9080/apis/member/eroc/{channelCode}/get/1.0.0";
-            var contentObject = new { mobile = user.PhoneNumber };
-            var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.PostAsJsonAsync(requestUri, contentObject);
-            var responseObject = JObject.Parse(await response.Content.ReadAsStringAsync());
-
-            try
+            #region Get member info
+            var memberDto = await _memberService.GetMemberAsync(user.PhoneNumber);
+            if (memberDto.Header.Code == "0000")
             {
-                var memberId = responseObject["body"]["content"]["memberId"].ToString();
                 user.IsMember = true;
-                user.MemberId = memberId;
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, ex.Message, "获取会员信息失败");
+                user.MemberId = memberDto.Body.Content.MemberId;
+                user.Credit = memberDto.Body.Content.Points;
             }
             #endregion
 
@@ -93,7 +88,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            user.LoginChannel = userDto.LoginChannel;
+            user.LoginChannel = userDto.LoginChannel.Value;
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded ? Ok() : new InternalServerErrorObjectResult(result.Errors);
         }

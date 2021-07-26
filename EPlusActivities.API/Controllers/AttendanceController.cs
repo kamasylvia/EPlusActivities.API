@@ -24,13 +24,22 @@ namespace EPlusActivities.API.Controllers
         private readonly IMapper _mapper;
         private readonly AttendanceRepository _attendanceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly IActivityRepository _activityRepository;
 
         public AttendanceController(
             AttendanceRepository attendanceRepository,
             UserManager<ApplicationUser> userManager,
-            IMapper mapper
+            IMapper mapper,
+            IActivityRepository activityRepository,
+            IRepository<ActivityUser> activityUserRepository
         ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _activityRepository =
+                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
+            _activityUserRepository =
+                activityUserRepository
+                ?? throw new ArgumentNullException(nameof(activityUserRepository));
             _attendanceRepository =
                 attendanceRepository
                 ?? throw new ArgumentNullException(nameof(attendanceRepository));
@@ -48,11 +57,18 @@ namespace EPlusActivities.API.Controllers
             {
                 return BadRequest("Could not find the user.");
             }
+
+            if (!await _activityRepository.ExistsAsync(attendanceDto.ActivityId.Value))
+            {
+                return BadRequest("Could not find the activity.");
+            }
             #endregion
 
             var attendanceRecord = await _attendanceRepository.FindByUserIdAsync(
-                attendanceDto.UserId.Value,
-                attendanceDto.Date.Value
+                userId: attendanceDto.UserId.Value,
+                activityId: attendanceDto.ActivityId.Value,
+                startDate: attendanceDto.StartDate.Value,
+                endDate: attendanceDto.EndDate
             );
 
             return attendanceRecord.Count() > 0
@@ -78,7 +94,7 @@ namespace EPlusActivities.API.Controllers
             #region Parameter validation
             if (await _attendanceRepository.ExistsAsync(attendanceDto.Id.Value))
             {
-                return BadRequest("This attendance is already existed.");
+                return Conflict("This attendance is already existed.");
             }
 
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
@@ -86,10 +102,19 @@ namespace EPlusActivities.API.Controllers
             {
                 return BadRequest("Could not find the user.");
             }
+
+            if (!await _activityRepository.ExistsAsync(attendanceDto.ActivityId.Value))
+            {
+                return BadRequest("Could not find the activity.");
+            }
             #endregion
 
+            var activityUser = await _activityUserRepository.FindByIdAsync(
+                attendanceDto.ActivityId.Value,
+                attendanceDto.UserId.Value
+            );
             #region Update the user's LastAttendanceDate and SequentialAttendanceDays
-            var attended = AttendHelper(user);
+            var attended = AttendHelper(activityUser);
             if (!attended)
             {
                 return Conflict("Duplicate attendance.");
@@ -120,28 +145,32 @@ namespace EPlusActivities.API.Controllers
         private bool IsSequential(DateTime? dateTime1, DateTime dateTime2) =>
             dateTime1.HasValue ? dateTime1.Value.AddDays(1).Date == dateTime2.Date : false;
 
-        private bool AttendHelper(ApplicationUser user)
+        private bool AttendHelper(ActivityUser activityUser)
         {
             var now = DateTime.Now.Date;
+            var attendanceDays = activityUser.AttendanceDays ?? 0;
+            var sequentialAttendanceDays = activityUser.SequentialAttendanceDays ?? 0;
 
-            if (user.LastAttendanceDate == now)
+            if (activityUser.LastAttendanceDate == now)
             {
                 return false;
             }
 
             #region Update the user's LastAttendanceDate and SequentialAttendanceDays
-            user.SequentialAttendanceDays = IsSequential(user.LastAttendanceDate, now)
-                ? user.SequentialAttendanceDays + 1
-                : 1;
+            activityUser.SequentialAttendanceDays = IsSequential(
+                activityUser.LastAttendanceDate,
+                now
+            ) ? sequentialAttendanceDays + 1 : 1;
+            activityUser.LastAttendanceDate = now;
+            activityUser.AttendanceDays = ++attendanceDays;
             #endregion
 
             #region Update credit
-            user.Credit += user.SequentialAttendanceDays < 7
-                ? user.SequentialAttendanceDays * 10
+            activityUser.User.Credit += sequentialAttendanceDays < 7
+                ? sequentialAttendanceDays * 10
                 : 70;
             #endregion
 
-            user.LastAttendanceDate = now;
             return true;
         }
     }

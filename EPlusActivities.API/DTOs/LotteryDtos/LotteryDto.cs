@@ -11,7 +11,7 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
 
         public ChannelCode ChannelCode { get; set; }
 
-        public LotteryCode LotteryCode { get; set; }
+        public LotteryDisplay LotteryDisplay { get; set; }
 
         public bool IsLucky { get; set; }
 
@@ -22,8 +22,6 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
         public DateTime? PickedTime { get; set; }
 
         public DateTime? Date { get; set; }
-
-        public int UsedCredit { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

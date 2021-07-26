@@ -12,9 +12,7 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
         public ChannelCode? ChannelCode { get; set; }
 
         [Required]
-        public LotteryCode? LotteryCode { get; set; }
-
-        public int UsedCredit { get; set; }
+        public LotteryDisplay? LotteryDisplay { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

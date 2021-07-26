@@ -15,9 +15,8 @@ namespace EPlusActivities.API.Entities
         [Required]
         public DateTime? Date { get; set; }
 
-        [Required]
-        public Guid? UserId { get; set; }
-
         public ApplicationUser User { get; set; }
+
+        public Activity Activity { get; set; }
     }
 }

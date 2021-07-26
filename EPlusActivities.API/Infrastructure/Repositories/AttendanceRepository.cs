@@ -26,10 +26,16 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public async Task<IEnumerable<Attendance>> FindByUserIdAsync(
             Guid userId,
-            DateTime startTime
+            Guid activityId,
+            DateTime startDate,
+            DateTime? endDate
         ) =>
             await _context.AttendanceRecord.Where(
-                    a => a.UserId == userId && a.Date >= startTime.Date
+                    a =>
+                        a.User.Id == userId
+                        && a.Activity.Id == activityId
+                        && a.Date >= startDate.Date
+                        && !(a.Date > endDate)
                 )
                 .ToListAsync();
 

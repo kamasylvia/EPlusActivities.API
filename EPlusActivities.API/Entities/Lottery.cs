@@ -22,15 +22,10 @@ namespace EPlusActivities.API.Entities
         public DateTime? PickedUpTime { get; set; }
 
         // 抽奖渠道
-        [Required]
-        public ChannelCode? ChannelCode { get; set; }
+        public ChannelCode ChannelCode { get; set; }
 
         // 抽奖方法
-        [Required]
-        public LotteryCode? LotteryCode { get; set; }
-
-        // 单次抽奖所需积分
-        public int UsedCredit { get; set; }
+        public LotteryDisplay LotteryDisplay { get; set; }
 
         // 抽奖日期
         [Required]
@@ -43,7 +38,5 @@ namespace EPlusActivities.API.Entities
         public PrizeItem PrizeItem { get; set; }
 
         public PrizeTier PrizeTier { get; set; }
-
-        public LotteryOrRedeemCount Count { get; set; }
     }
 }

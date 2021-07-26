@@ -9,6 +9,11 @@ namespace EPlusActivities.API.DTOs.AttendanceDtos
         public Guid? UserId { get; set; }
 
         [Required]
-        public DateTime? Date { get; set; }
+        public Guid? ActivityId { get; set; }
+
+        [Required]
+        public DateTime? StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
     }
 }

@@ -16,5 +16,8 @@ namespace EPlusActivities.API.DTOs.AttendanceDtos
 
         [Required]
         public Guid? UserId { get; set; }
+
+        [Required]
+        public Guid? ActivityId { get; set; }
     }
 }
