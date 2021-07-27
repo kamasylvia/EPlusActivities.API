@@ -8,32 +8,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class CategoryRepository : RepositoryBase, INameExistsRepository<Category>
+    public class CategoryRepository : RepositoryBase<Category>, INameExistsRepository<Category>
     {
         public CategoryRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task AddAsync(Category item) => await _context.Categories.AddAsync(item);
-
-        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
             await _context.Categories.AnyAsync(c => c.Id == keyValues.FirstOrDefault());
 
         public async Task<bool> ExistsAsync(string name) =>
             await _context.Categories.AnyAsync(c => c.Name == name);
 
-        public async Task<IEnumerable<Category>> FindAllAsync() =>
-            await _context.Categories.ToArrayAsync();
-
         public async Task<IEnumerable<Category>> FindByContainedNameAsync(string name) =>
             await _context.Categories.Where(c => c.Name.Contains(name)).ToListAsync();
 
-        public async Task<Category> FindByIdAsync(params Guid[] keyValues) =>
-            await _context.Categories.FindAsync(keyValues.FirstOrDefault());
-
         public async Task<Category> FindByNameAsync(string name) =>
             await _context.Categories.Where(c => c.Name == name).SingleOrDefaultAsync();
-
-        public void Remove(Category item) => _context.Categories.Remove(item);
-
-        public void Update(Category item) => _context.Categories.Update(item);
     }
 }

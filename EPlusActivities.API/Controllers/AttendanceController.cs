@@ -103,7 +103,8 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("Could not find the user.");
             }
 
-            if (!await _activityRepository.ExistsAsync(attendanceDto.ActivityId.Value))
+            var activity = await _activityRepository.FindByIdAsync(attendanceDto.ActivityId.Value);
+            if (activity is null)
             {
                 return BadRequest("Could not find the activity.");
             }

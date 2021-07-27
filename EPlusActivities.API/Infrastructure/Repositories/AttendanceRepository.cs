@@ -8,21 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class AttendanceRepository : RepositoryBase, IAttendanceRepository
+    public class AttendanceRepository : RepositoryBase<Attendance>, IAttendanceRepository
     {
         public AttendanceRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task AddAsync(Attendance item) =>
-            await _context.AttendanceRecord.AddAsync(item);
-
-        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
             await _context.AttendanceRecord.AnyAsync(a => a.Id == keyValues.FirstOrDefault());
-
-        public async Task<IEnumerable<Attendance>> FindAllAsync() =>
-            await _context.AttendanceRecord.ToListAsync();
-
-        public async Task<Attendance> FindByIdAsync(params Guid[] keyValues) =>
-            await _context.AttendanceRecord.FindAsync(keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Attendance>> FindByUserIdAsync(
             Guid userId,
@@ -38,9 +29,5 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                         && !(a.Date > endDate)
                 )
                 .ToListAsync();
-
-        public void Remove(Attendance item) => _context.AttendanceRecord.Remove(item);
-
-        public void Update(Attendance item) => _context.AttendanceRecord.Update(item);
     }
 }

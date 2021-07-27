@@ -2,7 +2,7 @@ using System;
 
 namespace EPlusActivities.API.Infrastructure.Enums
 {
-    public enum ActivityCode
+    public enum ActivityType
     {
         Default,
         SingleAttendance,

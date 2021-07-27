@@ -31,7 +31,7 @@ namespace EPlusActivities.API.Entities
         public ChannelCode ChannelCode { get; set; }
 
         // 活动类型：签到、连续签到、抽奖
-        public ActivityCode ActivityCode { get; set; }
+        public ActivityType ActivityType { get; set; }
 
         // 抽奖展示类型
         public LotteryDisplay LotteryDisplay { get; set; }
@@ -40,6 +40,8 @@ namespace EPlusActivities.API.Entities
         public DateTime StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }
+
+        public string BackgroundPhotoUrl { get; set; }
 
         public IEnumerable<Lottery> LotteryResults { get; set; }
 

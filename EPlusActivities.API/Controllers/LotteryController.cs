@@ -8,6 +8,7 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.DeliveryService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IPrizeItemRepository _prizeItemRepository;
         private readonly IRepository<ActivityUser> _activityUserRepository;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
+        private readonly ILotteryDrawService _lotteryDrawService;
 
         public LotteryController(
             IFindByParentIdRepository<Lottery> lotteryRepository,
@@ -36,9 +38,12 @@ namespace EPlusActivities.API.Controllers
             IPrizeItemRepository prizeItemRepository,
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IMapper mapper,
-            IRepository<ActivityUser> activityUserRepository
+            IRepository<ActivityUser> activityUserRepository,
+            ILotteryDrawService lotteryDrawService
         ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _lotteryDrawService =
+                lotteryDrawService ?? throw new ArgumentNullException(nameof(lotteryDrawService));
             _activityUserRepository =
                 activityUserRepository
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
@@ -108,49 +113,44 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("This activity is expired.");
             }
 
-            var count = await _activityUserRepository.FindByIdAsync(
+            var activityUser = await _activityUserRepository.FindByIdAsync(
                 lotteryDto.ActivityId.Value,
                 lotteryDto.UserId.Value
             );
 
-            if (count is null)
+            if (activityUser is null)
             {
-                count = new ActivityUser { Activity = activity, User = user };
+                activityUser = new ActivityUser { Activity = activity, User = user };
             }
-            else if (count.RemainingDraws <= 0)
+            else if (activityUser.RemainingDraws <= 0)
             {
-                return BadRequest("The remaining draws of the user must be greater than 0.");
+                return BadRequest("The user did not have enough chance to a lottery draw.");
             }
             #endregion
 
-            /*
-            #region Consume the credits
-
-            if (user.Credit < lotteryDto.UsedCredit)
+            #region Consume the draws
+            activityUser.RemainingDraws--;
+            if (!await _activityUserRepository.SaveAsync())
             {
-                return BadRequest("The user does not have enough credit.");
+                return new InternalServerErrorObjectResult("Update database exception");
             }
-            user.Credit -= lotteryDto.UsedCredit;
+
             var updateUserResult = await _userManager.UpdateAsync(user);
             if (!updateUserResult.Succeeded)
             {
                 return new InternalServerErrorObjectResult(updateUserResult.Errors);
             }
 
-            count.RemainingDraws--;
-            if (!await _lotteryAvailableDrawsRepository.SaveAsync())
-            {
-                return new InternalServerErrorObjectResult("Update database exception");
-            }
             #endregion
-            */
 
             #region Generate the lottery result
             var lottery = _mapper.Map<Lottery>(lotteryDto);
             lottery.User = user;
             lottery.Activity = activity;
             lottery.Date = DateTime.Now;
-            (lottery.PrizeTier, lottery.PrizeItem) = await RandomizeAsync(activity);
+            (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryDrawService.DrawPrizeAsync(
+                activity
+            );
             if (lottery.PrizeTier is not null)
             {
                 lottery.IsLucky = true;
@@ -168,40 +168,6 @@ namespace EPlusActivities.API.Controllers
             return succeeded
                 ? Ok(result)
                 : new InternalServerErrorObjectResult("Update database exception");
-        }
-
-        /// <summary>
-        /// 抽奖方法：
-        ///     PrizeTier：几等奖。这里是按一档多奖品来写的，一档一奖也可以用，档内随机概率自动上升至 100%。
-        ///     PrizeItem：奖品。
-        /// </summary>
-        /// <param name="activity">抽奖活动</param>
-        /// <returns>(几等奖, 奖品)</returns>
-        private async Task<(PrizeTier, PrizeItem)> RandomizeAsync(Activity activity)
-        {
-            var total = 0;
-            var random = new Random();
-            var flag = random.Next(100);
-            var prizeTypes = activity.PrizeTiers;
-
-            PrizeTier prizeTier = null;
-            foreach (var item in prizeTypes)
-            {
-                total += item.Percentage;
-                if (total > flag)
-                {
-                    prizeTier = item;
-                    break;
-                }
-            }
-
-            if (prizeTier is null)
-            {
-                return (null, null);
-            }
-
-            var prizeItems = await _prizeItemRepository.FindByPrizeTierIdAsync(prizeTier.Id.Value);
-            return (prizeTier, prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count())));
         }
 
         [HttpPut]

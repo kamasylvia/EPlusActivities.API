@@ -10,21 +10,11 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class PrizeItemRepository : RepositoryBase, IPrizeItemRepository
+    public class PrizeItemRepository : RepositoryBase<PrizeItem>, IPrizeItemRepository
     {
         public PrizeItemRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task AddAsync(PrizeItem prizeItem) =>
-            await _context.PrizeItems.AddAsync(prizeItem);
-
-        public void Remove(PrizeItem prizeItem) => _context.PrizeItems.Remove(prizeItem);
-
-        public void Update(PrizeItem prizeItem) => _context.PrizeItems.Update(prizeItem);
-
-        public async Task<IEnumerable<PrizeItem>> FindAllAsync() =>
-            await _context.PrizeItems.ToListAsync();
-
-        public async Task<PrizeItem> FindByIdAsync(params Guid[] keyValues) =>
+        public override async Task<PrizeItem> FindByIdAsync(params Guid[] keyValues) =>
             await _context.PrizeItems.Include(prizeItem => prizeItem.Brand)
                 .Include(prizeItem => prizeItem.Category)
                 .SingleOrDefaultAsync(prizeItem => prizeItem.Id == keyValues.FirstOrDefault());
@@ -38,7 +28,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Where(pt => pt.PrizeTierPrizeItems.Any(ptpi => ptpi.PrizeTier.Id == id))
                 .ToListAsync();
 
-        public async Task<bool> ExistsAsync(params Guid[] keyValues) =>
+        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
             await _context.PrizeItems.AnyAsync(p => p.Id == keyValues.FirstOrDefault());
     }
 }

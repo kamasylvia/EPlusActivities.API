@@ -17,7 +17,7 @@ namespace EPlusActivities.API.Entities
         // 几等奖
         public string Name { get; set; }
 
-        // 奖品权重/中奖概率
+        // 奖品权重/中奖概率，签到活动的概率为 100%
         public int Percentage { get; set; }
 
         // 所处活动

@@ -6,6 +6,7 @@ using AutoMapper;
 using EPlusActivities.API.DTOs.ActivityDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
+using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -75,6 +76,16 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             var activity = _mapper.Map<Activity>(activityDto);
+            if (
+                activity.ActivityType
+                    is ActivityType.SingleAttendance
+                        or ActivityType.SequentialAttendance
+            ) {
+                activity.PrizeTiers = new List<PrizeTier>()
+                {
+                    new PrizeTier("Attendance") { Percentage = 100 }
+                };
+            }
             await _activityRepository.AddAsync(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion

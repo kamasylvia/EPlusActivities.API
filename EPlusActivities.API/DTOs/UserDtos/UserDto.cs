@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Entities;
@@ -31,14 +31,5 @@ namespace EPlusActivities.API.DTOs.UserDtos
 
         // 注册日期
         public DateTime RegisterDate { get; set; }
-
-        // 上次登录日期
-        public DateTime? LastActiveDate { get; set; }
-
-        // 签到天数
-        public int AttendanceDays { get; set; }
-
-        // 连续签到天数
-        public int SequentialAttendanceDays { get; set; }
     }
 }
