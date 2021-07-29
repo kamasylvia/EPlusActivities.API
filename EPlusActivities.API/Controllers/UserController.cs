@@ -5,9 +5,11 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.DTOs.MemberDtos;
 using EPlusActivities.API.DTOs.UserDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
+using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using Yitter.IdGenerator;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -40,7 +43,8 @@ namespace EPlusActivities.API.Controllers
             ILogger<UserController> logger,
             IMapper mapper,
             IMemberService memberService
-        ) {
+        )
+        {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _memberService =
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
@@ -64,8 +68,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Get member info
-            var memberDto = await _memberService.GetMemberAsync(user.PhoneNumber);
-            if (memberDto.Header.Code == "0000")
+            var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(user.PhoneNumber);
+            if (getMemberSucceed)
             {
                 user.IsMember = true;
                 user.MemberId = memberDto.Body.Content.MemberId;
@@ -73,7 +77,18 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            return Ok(_mapper.Map<UserDto>(user));
+            #region Update the user
+            user.LoginChannel = userDto.LoginChannel;
+            var result = await _userManager.UpdateAsync(user);
+            #endregion
+
+            if (result.Succeeded)
+            {
+                return Ok(_mapper.Map<UserDto>(user));
+            }
+
+            _logger.LogError("Failed to update the user.");
+            return new InternalServerErrorObjectResult(result.Errors);
         }
 
         [HttpPatch("channel")]
@@ -88,9 +103,15 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            user.LoginChannel = userDto.LoginChannel.Value;
+            user.LoginChannel = userDto.LoginChannel;
             var result = await _userManager.UpdateAsync(user);
-            return result.Succeeded ? Ok() : new InternalServerErrorObjectResult(result.Errors);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+
+            _logger.LogError("Failed to update the login channel.");
+            return new InternalServerErrorObjectResult(result.Errors);
         }
 
         [HttpPatch("phonenumber")]
@@ -98,7 +119,8 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdatePhoneNumberAsync(
             [FromBody] UserForUpdatePhoneDto userDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
@@ -123,11 +145,73 @@ namespace EPlusActivities.API.Controllers
             );
             if (!result.Succeeded)
             {
+                _logger.LogError("Failed to change phone number.");
                 return new InternalServerErrorObjectResult(result.Errors);
             }
 
             result = await _userManager.SetUserNameAsync(user, userDto.PhoneNumber);
-            return result.Succeeded ? Ok() : new InternalServerErrorObjectResult(result.Errors);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+
+            _logger.LogError("Failed to set UserName.");
+            return new InternalServerErrorObjectResult(result.Errors);
+        }
+
+        [HttpPatch("redeeming")]
+        // [Authorize(Roles = "test")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> RedeemDrawsAsync(
+            [FromBody] UserForRedeemDraws userDto
+        )
+        {
+            #region Parameter validation
+            var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
+            if (user is null)
+            {
+                return NotFound("Could not find the user.");
+            }
+
+            var cost = userDto.UnitPrice * userDto.Count;
+            if (cost > user.Credit)
+            {
+                return BadRequest("The user did not have enough credits.");
+            }
+            #endregion
+
+
+            #region Update credit
+            user.Credit -= cost;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                _logger.LogError("Failed to update the user.");
+                return new InternalServerErrorObjectResult(result.Errors);
+            }
+            #endregion
+
+            #region Connect member server
+            var (getMemberSucceed, member) = await _memberService.GetMemberAsync(user.PhoneNumber);
+            var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
+            {
+                memberId = member.Body.Content.MemberId,
+                points = user.Credit,
+                reason = userDto.Reason,
+                sheetId = YitIdHelper.NextId().ToString(),
+                updateType = CreditUpdateType.Subtraction
+            };
+            var updateResult = await _memberService.UpdateCreditAsync(memberForUpdateCreditRequestDto);
+            #endregion
+
+            if (updateResult.Item1)
+            {
+                return Ok();
+            }
+
+            var error = "Failed to update the credit.";
+            _logger.LogError(error);
+            return new InternalServerErrorObjectResult(error);
         }
 
         /*      
@@ -182,7 +266,12 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             var result = await _userManager.DeleteAsync(user);
-            return result.Succeeded ? Ok() : new InternalServerErrorObjectResult(result.Errors);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            _logger.LogError("Failed to delete the user.");
+            return new InternalServerErrorObjectResult(result.Errors);
         }
     }
 }

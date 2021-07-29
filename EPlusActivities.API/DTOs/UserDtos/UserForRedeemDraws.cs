@@ -1,15 +1,17 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.DTOs.UserDtos
 {
-    public class UserForLoginDto
+    public class UserForRedeemDraws
     {
         [Required]
         public Guid? Id { get; set; }
 
-        [Required]
-        public ChannelCode LoginChannel { get; set; }
+        public int Count { get; set; }
+
+        public int UnitPrice { get; set; }
+
+        public string Reason { get; set; }
     }
 }

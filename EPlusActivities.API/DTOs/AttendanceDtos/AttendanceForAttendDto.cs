@@ -4,7 +4,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.DTOs.AttendanceDtos
 {
-    public class AttendanceDto
+    public class AttendanceForAttendDto
     {
         [Required]
         public Guid? Id { get; set; }
@@ -15,6 +15,8 @@ namespace EPlusActivities.API.DTOs.AttendanceDtos
         public ChannelCode ChannelCode { get; set; }
 
         public int EarnedCredits { get; set; }
+
+        public string Reason { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

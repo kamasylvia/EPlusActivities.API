@@ -6,6 +6,7 @@ namespace EPlusActivities.API.Services.MemberService
 {
     public interface IMemberService
     {
-        Task<MemberForGetDto> GetMemberAsync(string phone);
+        Task<(bool, MemberForGetDto)> GetMemberAsync(string phone);
+        Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(MemberForUpdateCreditRequestDto requestDto);
     }
 }

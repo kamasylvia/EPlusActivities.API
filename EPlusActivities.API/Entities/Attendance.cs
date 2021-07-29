@@ -12,6 +12,8 @@ namespace EPlusActivities.API.Entities
 
         public ChannelCode ChannelCode { get; set; }
 
+        public int EarnedCredits { get; set; }
+
         [Required]
         public DateTime? Date { get; set; }
 

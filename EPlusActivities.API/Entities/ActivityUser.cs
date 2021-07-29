@@ -5,9 +5,6 @@ namespace EPlusActivities.API.Entities
 {
     public class ActivityUser
     {
-        // 剩余抽奖次数，null 表示无限
-        public int? RemainingDraws { get; set; }
-
         // 当天剩余抽奖次数
         public int? TodayRemainingDraws { get; set; }
 

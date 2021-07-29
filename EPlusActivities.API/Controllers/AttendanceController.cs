@@ -4,13 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs.AttendanceDtos;
+using EPlusActivities.API.DTOs.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
+using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Yitter.IdGenerator;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,21 +30,28 @@ namespace EPlusActivities.API.Controllers
         private readonly AttendanceRepository _attendanceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly ILogger<AttendanceController> _logger;
         private readonly IActivityRepository _activityRepository;
+        private readonly IMemberService _memberService;
 
         public AttendanceController(
             AttendanceRepository attendanceRepository,
             UserManager<ApplicationUser> userManager,
             IMapper mapper,
             IActivityRepository activityRepository,
-            IRepository<ActivityUser> activityUserRepository
-        ) {
+            IRepository<ActivityUser> activityUserRepository,
+            ILogger<AttendanceController> logger,
+            IMemberService memberService
+        )
+        {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
             _activityRepository =
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
             _activityUserRepository =
                 activityUserRepository
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _attendanceRepository =
                 attendanceRepository
                 ?? throw new ArgumentNullException(nameof(attendanceRepository));
@@ -48,9 +60,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet("user")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetByUserIdAsync(
+        public async Task<ActionResult<IEnumerable<AttendanceForAttendDto>>> GetByUserIdAsync(
             [FromBody] AttendanceForGetByUserIdDto attendanceDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
@@ -78,9 +91,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<AttendanceDto>> GetByIdAsync(
+        public async Task<ActionResult<AttendanceForAttendDto>> GetByIdAsync(
             [FromBody] AttendanceForGetByIdDto attendanceDto
-        ) {
+        )
+        {
             var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id.Value);
             return attendance is null
                 ? BadRequest("Could not find the attendance.")
@@ -89,7 +103,7 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> AttendAsync([FromBody] AttendanceDto attendanceDto)
+        public async Task<ActionResult<AttendanceDto>> AttendAsync([FromBody] AttendanceForAttendDto attendanceDto)
         {
             #region Parameter validation
             if (await _attendanceRepository.ExistsAsync(attendanceDto.Id.Value))
@@ -110,21 +124,61 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
+            #region Update user and member
             var activityUser = await _activityUserRepository.FindByIdAsync(
                 attendanceDto.ActivityId.Value,
                 attendanceDto.UserId.Value
             );
-            #region Update the user's LastAttendanceDate and SequentialAttendanceDays
-            var attended = AttendHelper(activityUser);
-            if (!attended)
+
+            var now = DateTime.Now.Date;
+            var attendanceDays = activityUser.AttendanceDays ?? 0;
+            var sequentialAttendanceDays = activityUser.SequentialAttendanceDays ?? 0;
+
+            if (activityUser.LastAttendanceDate == now)
             {
                 return Conflict("Duplicate attendance.");
             }
 
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
+            #region Update LastAttendanceDate and SequentialAttendanceDays
+            activityUser.SequentialAttendanceDays = IsSequential(
+                activityUser.LastAttendanceDate,
+                now
+            ) ? sequentialAttendanceDays + 1 : 1;
+            activityUser.LastAttendanceDate = now;
+            activityUser.AttendanceDays = ++attendanceDays;
+            #endregion
+
+            #region Update credits
+            var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
             {
-                return new InternalServerErrorObjectResult(updateResult.Errors);
+                memberId = user.MemberId,
+                points = attendanceDto.EarnedCredits,
+                reason = attendanceDto.Reason,
+                sheetId = YitIdHelper.NextId().ToString(),
+                updateType = CreditUpdateType.Addition
+            };
+
+            var (memberUpdateSucceed, memberForUpdateCreditResponseDto) =
+                 await _memberService.UpdateCreditAsync(memberForUpdateCreditRequestDto);
+            if (!memberUpdateSucceed)
+            {
+                _logger.LogError("Failed to update the member.");
+                return new InternalServerErrorObjectResult("Failed to update member.");
+            }
+
+            activityUser.User.Credit += attendanceDto.EarnedCredits;
+            if (activityUser.User.Credit != memberForUpdateCreditResponseDto.Body.Content.NewPoints)
+            {
+                _logger.LogError("Local credits did not equal to the member's new points.");
+                return new InternalServerErrorObjectResult("Local credits did not equal to the member's new points.");
+            }
+            #endregion
+
+            var updateUserResult = await _userManager.UpdateAsync(user);
+            if (!updateUserResult.Succeeded)
+            {
+                _logger.LogError("Failed to update the user.");
+                return new InternalServerErrorObjectResult(updateUserResult.Errors);
             }
             #endregion
 
@@ -134,45 +188,22 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
+            await _activityUserRepository.AddAsync(activityUser);
             await _attendanceRepository.AddAsync(attendance);
             var succeeded = await _attendanceRepository.SaveAsync();
             #endregion
 
-            return succeeded
-                ? Ok(_mapper.Map<AttendanceDto>(attendance))
-                : new InternalServerErrorObjectResult("Update database exception.");
+            if (succeeded)
+            {
+                return Ok(_mapper.Map<AttendanceForAttendDto>(attendance));
+            }
+
+            var error = "Update database exception.";
+            _logger.LogError(error);
+            return new InternalServerErrorObjectResult(error);
         }
 
         private bool IsSequential(DateTime? dateTime1, DateTime dateTime2) =>
             dateTime1.HasValue ? dateTime1.Value.AddDays(1).Date == dateTime2.Date : false;
-
-        private bool AttendHelper(ActivityUser activityUser)
-        {
-            var now = DateTime.Now.Date;
-            var attendanceDays = activityUser.AttendanceDays ?? 0;
-            var sequentialAttendanceDays = activityUser.SequentialAttendanceDays ?? 0;
-
-            if (activityUser.LastAttendanceDate == now)
-            {
-                return false;
-            }
-
-            #region Update the user's LastAttendanceDate and SequentialAttendanceDays
-            activityUser.SequentialAttendanceDays = IsSequential(
-                activityUser.LastAttendanceDate,
-                now
-            ) ? sequentialAttendanceDays + 1 : 1;
-            activityUser.LastAttendanceDate = now;
-            activityUser.AttendanceDays = ++attendanceDays;
-            #endregion
-
-            #region Update credit
-            activityUser.User.Credit += sequentialAttendanceDays < 7
-                ? sequentialAttendanceDays * 10
-                : 70;
-            #endregion
-
-            return true;
-        }
     }
 }

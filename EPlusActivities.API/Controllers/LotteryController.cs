@@ -122,14 +122,14 @@ namespace EPlusActivities.API.Controllers
             {
                 activityUser = new ActivityUser { Activity = activity, User = user };
             }
-            else if (activityUser.RemainingDraws <= 0)
+            else if (user.RemainingDraws <= 0)
             {
                 return BadRequest("The user did not have enough chance to a lottery draw.");
             }
             #endregion
 
             #region Consume the draws
-            activityUser.RemainingDraws--;
+            user.RemainingDraws--;
             if (!await _activityUserRepository.SaveAsync())
             {
                 return new InternalServerErrorObjectResult("Update database exception");

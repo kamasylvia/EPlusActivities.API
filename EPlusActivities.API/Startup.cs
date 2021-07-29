@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Yitter.IdGenerator;
 
 namespace EPlusActivities.API
 {
@@ -76,6 +77,7 @@ namespace EPlusActivities.API
             services.AddTransient<IActivityRepository, ActivityRepository>()
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
                 .AddTransient<IRepository<ActivityUser>, ActivityUserRepository>()
+                .AddTransient<IRepository<Credit>, CreditRepository>()
                 .AddTransient<IFindByParentIdRepository<Address>, AddressRepository>()
                 .AddTransient<IFindByParentIdRepository<Lottery>, LotteryRepository>()
                 .AddTransient<IPrizeItemRepository, PrizeItemRepository>()
@@ -185,8 +187,10 @@ namespace EPlusActivities.API
             IWebHostEnvironment env,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager
-        ) {
+            RoleManager<ApplicationRole> roleManager,
+            IIdGenerator idGenerator
+        )
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -206,7 +210,16 @@ namespace EPlusActivities.API
 
             app.UseAuthorization();
 
+            #region Seed data
             DbInitializer.Initialize(env, context, userManager, roleManager);
+            #endregion
+
+            #region Config ShortIdGenerator
+            var options = new IdGeneratorOptions(1);
+            options.WorkerIdBitLength = 2;
+            options.SeqBitLength = 8;
+            YitIdHelper.SetIdGenerator(options);
+            #endregion
 
             app.UseEndpoints(
                 endpoints =>

@@ -22,6 +22,9 @@ namespace EPlusActivities.API.Entities
         // 积分
         public int Credit { get; set; }
 
+        // 剩余抽奖次数，null 表示无限
+        public int? RemainingDraws { get; set; }
+
         public bool IsMember { get; set; }
 
         public string MemberId { get; set; }
@@ -38,6 +41,8 @@ namespace EPlusActivities.API.Entities
         public virtual ICollection<ActivityUser> ActivityUserLinks { get; set; }
 
         public override string ToString() =>
-            JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+            JsonSerializer
+                .Serialize(this,
+                new JsonSerializerOptions { WriteIndented = true });
     }
 }
