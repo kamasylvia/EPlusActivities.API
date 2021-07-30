@@ -1,12 +1,15 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs.UserDtos
+namespace EPlusActivities.API.DTOs.ActivityUserDtos
 {
-    public class UserForRedeemDraws
+    public class ActivityUserForRedeemDrawsRequestDto
     {
         [Required]
-        public Guid? Id { get; set; }
+        public Guid? ActivityId { get; set; }
+
+        [Required]
+        public Guid? UserId { get; set; }
 
         public int Count { get; set; }
 

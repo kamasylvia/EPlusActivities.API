@@ -4,6 +4,7 @@ using AutoMapper;
 using AutoMapper.Extensions.EnumMapping;
 using EPlusActivities.API.DTOs;
 using EPlusActivities.API.DTOs.ActivityDtos;
+using EPlusActivities.API.DTOs.ActivityUserDtos;
 using EPlusActivities.API.DTOs.AddressDtos;
 using EPlusActivities.API.DTOs.AttendanceDtos;
 using EPlusActivities.API.DTOs.BrandDtos;
@@ -78,6 +79,10 @@ namespace EPlusActivities.API.Configuration
             CreateMap<Activity, ActivityDto>();
             CreateMap<ActivityForCreateDto, Activity>();
             CreateMap<ActivityForUpdateDto, Activity>();
+            #endregion
+
+            #region ActivityUser
+            CreateMap<ActivityUser, ActivityUserDto>();
             #endregion
 
 

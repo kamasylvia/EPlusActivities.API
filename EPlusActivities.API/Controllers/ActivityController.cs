@@ -4,13 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs.ActivityDtos;
+using EPlusActivities.API.DTOs.ActivityUserDtos;
+using EPlusActivities.API.DTOs.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Yitter.IdGenerator;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,19 +28,39 @@ namespace EPlusActivities.API.Controllers
     public class ActivityController : Controller
     {
         private readonly IActivityRepository _activityRepository;
+        private readonly IMemberService _memberService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly ILogger<ActivityController> _logger;
         private readonly IMapper _mapper;
-        public ActivityController(IActivityRepository activityRepository, IMapper mapper)
+        public ActivityController(
+            IMemberService memberService,
+            IActivityRepository activityRepository,
+            UserManager<ApplicationUser> userManager,
+            IRepository<ActivityUser> activityUserRepository,
+            ILogger<ActivityController> logger,
+            IMapper mapper)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _activityRepository =
-                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
+            _userManager = userManager
+                ?? throw new ArgumentNullException(nameof(userManager));
+            _memberService = memberService
+                ?? throw new ArgumentNullException(nameof(memberService));
+            _activityUserRepository = activityUserRepository
+                ?? throw new ArgumentNullException(nameof(activityUserRepository));
+            _logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper
+                ?? throw new ArgumentNullException(nameof(mapper));
+            _activityRepository = activityRepository
+                ?? throw new ArgumentNullException(nameof(activityRepository));
         }
 
         [HttpGet]
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<ActivityDto>> GetAsync(
             [FromBody] ActivityForGetDto activityDto
-        ) {
+        )
+        {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             return activity is null
                 ? NotFound("Could not find the activity.")
@@ -45,7 +71,8 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAllAvailableAsync(
             [FromBody] ActivityForGetAllAvailableDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -66,7 +93,8 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<ActivityDto>> CreateAsync(
             [FromBody] ActivityForCreateDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -80,7 +108,8 @@ namespace EPlusActivities.API.Controllers
                 activity.ActivityType
                     is ActivityType.SingleAttendance
                         or ActivityType.SequentialAttendance
-            ) {
+            )
+            {
                 activity.PrizeTiers = new List<PrizeTier>()
                 {
                     new PrizeTier("Attendance") { Percentage = 100 }
@@ -93,6 +122,122 @@ namespace EPlusActivities.API.Controllers
             return succeeded
                 ? Ok(_mapper.Map<ActivityDto>(activity))
                 : new InternalServerErrorObjectResult("Update database exception");
+        }
+
+        [HttpPost("user")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<ActionResult<ActivityUserDto>> JoinAsync([FromBody] ActivityUserForJoinDto activityUserDto)
+        {
+            #region Parameter validation
+            var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
+            if (user is null)
+            {
+                return BadRequest("Could not find the user.");
+            }
+
+            var activity = await _activityRepository.FindByIdAsync(activityUserDto.ActivityId.Value);
+            if (activity is null)
+            {
+                return BadRequest("Could not find the activity.");
+            }
+
+            var activityUser = await _activityUserRepository.FindByIdAsync(
+                activityUserDto.ActivityId.Value,
+                activityUserDto.UserId.Value);
+            if (activityUser is not null)
+            {
+                return Conflict("The user had already joined the activity.");
+            }
+            #endregion
+
+            #region Create an ActivityUser link
+            activityUser = new ActivityUser
+            {
+                Activity = activity,
+                User = user,
+            };
+            #endregion
+
+            #region Database operations
+            await _activityUserRepository.AddAsync(activityUser);
+            var result = await _activityUserRepository.SaveAsync();
+            if (result)
+            {
+                return Ok();
+            }
+            #endregion
+
+            _logger.LogError("Failed to create an ActivityUser link.");
+            return new InternalServerErrorObjectResult("Update database exception.");
+        }
+
+        [HttpPatch("redeeming")]
+        // [Authorize(Roles = "test")]
+        [Authorize(Policy = "TestPolicy")]
+        public async Task<IActionResult> RedeemDrawsAsync(
+            [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto
+        )
+        {
+            #region Parameter validation
+            var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
+            if (user is null)
+            {
+                return NotFound("Could not find the user.");
+            }
+
+            var activity = await _activityRepository.FindByIdAsync(activityUserDto.ActivityId.Value);
+            if (activity is null)
+            {
+                return NotFound("Could not find the activity.");
+            }
+
+            var activityUser = await _activityUserRepository.FindByIdAsync(
+                activityUserDto.ActivityId.Value,
+                activityUserDto.UserId.Value);
+            if (activityUser is null)
+            {
+                return NotFound("Could not find the ActivityUser link.");
+            }
+
+            var cost = activityUserDto.UnitPrice * activityUserDto.Count;
+            if (cost > user.Credit)
+            {
+                return BadRequest("The user did not have enough credits.");
+            }
+
+            #endregion
+
+            #region Connect member server
+            var (getMemberSucceed, member) = await _memberService.GetMemberAsync(user.PhoneNumber);
+            var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
+            {
+                memberId = member.Body.Content.MemberId,
+                points = user.Credit,
+                reason = activityUserDto.Reason,
+                sheetId = YitIdHelper.NextId().ToString(),
+                updateType = CreditUpdateType.Subtraction
+            };
+            var (updateMemberSucceed, memberForUpdateCreditResponseDto) = await _memberService.UpdateCreditAsync(memberForUpdateCreditRequestDto);
+            #endregion
+
+            #region Update credit
+            if (!updateMemberSucceed)
+            {
+                var error = "Failed to update the credit.";
+                _logger.LogError(error);
+                return new InternalServerErrorObjectResult(error);
+            }
+
+            user.Credit = memberForUpdateCreditResponseDto.Body.Content.OldPoints;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                _logger.LogError("Failed to update the user.");
+                return new InternalServerErrorObjectResult(result.Errors);
+            }
+            #endregion
+
+            return Ok();
         }
 
         [HttpPut]

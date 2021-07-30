@@ -8,5 +8,7 @@ namespace EPlusActivities.API.Services.MemberService
     {
         Task<(bool, MemberForGetDto)> GetMemberAsync(string phone);
         Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(MemberForUpdateCreditRequestDto requestDto);
+
+        Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(MemberForReleaseCouponRequestDto requestDto);
     }
 }

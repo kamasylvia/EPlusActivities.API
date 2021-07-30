@@ -19,11 +19,11 @@ namespace EPlusActivities.API.Entities
         [Required]
         public DateTime RegisterDate { get; set; }
 
+        // 上次登陆日期
+        public DateTime? LastLoginDate { get; set; }
+
         // 积分
         public int Credit { get; set; }
-
-        // 剩余抽奖次数，null 表示无限
-        public int? RemainingDraws { get; set; }
 
         public bool IsMember { get; set; }
 

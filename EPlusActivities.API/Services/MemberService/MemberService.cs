@@ -54,15 +54,21 @@ namespace EPlusActivities.API.Services.MemberService
             return (true, result);
         }
 
-        /// <summary>
-        /// 更新会员积分
-        /// </summary>
-        /// <param name="memberId">农工商会员 ID</param>
-        /// <param name="points">更新积分值</param>
-        /// <param name="reason">更新积分理由</param>
-        /// <param name="sheetId">交易流水</param>
-        /// <param name="updateType">更新积分类型，1-加，2-减</param>
-        /// <returns></returns>
+        public async Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(MemberForReleaseCouponRequestDto requestDto)
+        {
+            var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/couponIssue/1.0.0";
+            var response = await _httpClientFactory.CreateClient().PostAsJsonAsync(requestUri, requestDto);
+            var responseDto = await response.Content.ReadFromJsonAsync<MemberForReleaseCouponResponseDto>();
+
+            if (responseDto.Header.Code != "0000")
+            {
+                _logger.LogError("发放优惠券失败：", responseDto.Header.Message);
+                return (false, responseDto);
+            }
+
+            return (true, responseDto);
+        }
+
         public async Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(MemberForUpdateCreditRequestDto requestDto)
         {
             var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/updatePoints/1.0.0";

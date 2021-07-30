@@ -12,6 +12,7 @@ using EPlusActivities.API.Services.DeliveryService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,6 +24,7 @@ namespace EPlusActivities.API.Controllers
     public class LotteryController : Controller
     {
         private readonly IMapper _mapper;
+        private readonly ILogger<LotteryController> _logger;
         private readonly IFindByParentIdRepository<Lottery> _lotteryRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityRepository _activityRepository;
@@ -38,10 +40,13 @@ namespace EPlusActivities.API.Controllers
             IPrizeItemRepository prizeItemRepository,
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IMapper mapper,
+            ILogger<LotteryController> logger,
             IRepository<ActivityUser> activityUserRepository,
             ILotteryDrawService lotteryDrawService
-        ) {
+        )
+        {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger;
             _lotteryDrawService =
                 lotteryDrawService ?? throw new ArgumentNullException(nameof(lotteryDrawService));
             _activityUserRepository =
@@ -63,7 +68,8 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetByUserIdAsync(
             [FromBody] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -94,7 +100,8 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<LotteryDto>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -120,16 +127,29 @@ namespace EPlusActivities.API.Controllers
 
             if (activityUser is null)
             {
-                activityUser = new ActivityUser { Activity = activity, User = user };
+                return BadRequest("The user had to join the activity first.");
             }
-            else if (user.RemainingDraws <= 0)
+
+            if (activityUser.RemainingDraws <= 0)
             {
-                return BadRequest("The user did not have enough chance to a lottery draw.");
+                return BadRequest("The user did not have enough chance to draw a lottery .");
+            }
+
+            if (activityUser.UsedDraws >= activity.Limit)
+            {
+                return BadRequest("Sorry, the user had already achieved the maximum number of draws of this activity.");
+            }
+
+            if (activityUser.TodayUsedDraws >= activity.DailyLimit)
+            {
+                return BadRequest("Sorry, the user had already achieved the daily maximum number of draws of this activity.");
             }
             #endregion
 
             #region Consume the draws
-            user.RemainingDraws--;
+            activityUser.RemainingDraws--;
+            activityUser.TodayUsedDraws++;
+            activityUser.UsedDraws++;
             if (!await _activityUserRepository.SaveAsync())
             {
                 return new InternalServerErrorObjectResult("Update database exception");
@@ -138,6 +158,7 @@ namespace EPlusActivities.API.Controllers
             var updateUserResult = await _userManager.UpdateAsync(user);
             if (!updateUserResult.Succeeded)
             {
+                _logger.LogError("Failed to create the lottery", updateUserResult.Errors);
                 return new InternalServerErrorObjectResult(updateUserResult.Errors);
             }
 
@@ -148,9 +169,10 @@ namespace EPlusActivities.API.Controllers
             lottery.User = user;
             lottery.Activity = activity;
             lottery.Date = DateTime.Now;
-            (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryDrawService.DrawPrizeAsync(
-                activity
-            );
+
+            (lottery.PrizeTier, lottery.PrizeItem) =
+                await _lotteryDrawService.DrawPrizeAsync(activity);
+
             if (lottery.PrizeTier is not null)
             {
                 lottery.IsLucky = true;
@@ -163,11 +185,15 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             var result = _mapper.Map<LotteryDto>(lottery);
-            result.Date = lottery.Date;
+            result.Date = lottery.Date; // Skip auto mapper.
 
-            return succeeded
-                ? Ok(result)
-                : new InternalServerErrorObjectResult("Update database exception");
+            if (!succeeded)
+            {
+                _logger.LogError("Failed to create the lottery");
+                return new InternalServerErrorObjectResult("Update database exception");
+            }
+            
+            return Ok(result);
         }
 
         [HttpPut]
@@ -190,9 +216,13 @@ namespace EPlusActivities.API.Controllers
             var succeeded = await _lotteryRepository.SaveAsync();
             #endregion
 
-            return succeeded
-                ? Ok()
-                : new InternalServerErrorObjectResult("Update database exception");
+            if (succeeded)
+            {
+                return Ok();
+            }
+
+            _logger.LogError("Failed to update the lottery");
+            return new InternalServerErrorObjectResult("Update database exception");
         }
 
         [HttpDelete]
@@ -213,9 +243,12 @@ namespace EPlusActivities.API.Controllers
             var succeeded = await _lotteryRepository.SaveAsync();
             #endregion
 
-            return succeeded
-                ? Ok()
-                : new InternalServerErrorObjectResult("Update database exception");
+            if (succeeded)
+            {
+                return Ok();
+            }
+            _logger.LogError("Failed to delete the lottery");
+            return new InternalServerErrorObjectResult("Update database exception");
         }
     }
 }

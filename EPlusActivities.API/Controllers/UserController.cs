@@ -33,8 +33,8 @@ namespace EPlusActivities.API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<UserController> _logger;
-        private readonly IMapper _mapper;
         private readonly IMemberService _memberService;
+        private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
 
         public UserController(
@@ -45,13 +45,16 @@ namespace EPlusActivities.API.Controllers
             IMemberService memberService
         )
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _memberService =
-                memberService ?? throw new ArgumentNullException(nameof(memberService));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _httpClientFactory =
-                httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
+            _memberService = memberService
+                ?? throw new ArgumentNullException(nameof(memberService));
+            _mapper = mapper
+                ?? throw new ArgumentNullException(nameof(mapper));
+            _httpClientFactory = httpClientFactory
+                ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _userManager = userManager
+                ?? throw new ArgumentNullException(nameof(userManager));
         }
 
         [HttpGet]
@@ -159,60 +162,6 @@ namespace EPlusActivities.API.Controllers
             return new InternalServerErrorObjectResult(result.Errors);
         }
 
-        [HttpPatch("redeeming")]
-        // [Authorize(Roles = "test")]
-        [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> RedeemDrawsAsync(
-            [FromBody] UserForRedeemDraws userDto
-        )
-        {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
-            if (user is null)
-            {
-                return NotFound("Could not find the user.");
-            }
-
-            var cost = userDto.UnitPrice * userDto.Count;
-            if (cost > user.Credit)
-            {
-                return BadRequest("The user did not have enough credits.");
-            }
-            #endregion
-
-
-            #region Update credit
-            user.Credit -= cost;
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                _logger.LogError("Failed to update the user.");
-                return new InternalServerErrorObjectResult(result.Errors);
-            }
-            #endregion
-
-            #region Connect member server
-            var (getMemberSucceed, member) = await _memberService.GetMemberAsync(user.PhoneNumber);
-            var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
-            {
-                memberId = member.Body.Content.MemberId,
-                points = user.Credit,
-                reason = userDto.Reason,
-                sheetId = YitIdHelper.NextId().ToString(),
-                updateType = CreditUpdateType.Subtraction
-            };
-            var updateResult = await _memberService.UpdateCreditAsync(memberForUpdateCreditRequestDto);
-            #endregion
-
-            if (updateResult.Item1)
-            {
-                return Ok();
-            }
-
-            var error = "Failed to update the credit.";
-            _logger.LogError(error);
-            return new InternalServerErrorObjectResult(error);
-        }
 
         /*      
         [HttpPost]
