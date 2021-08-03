@@ -174,7 +174,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPatch("redeeming")]
         // [Authorize(Roles = "test")]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<IActionResult> RedeemDrawsAsync(
+        public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto
         )
         {
@@ -204,7 +204,6 @@ namespace EPlusActivities.API.Controllers
             {
                 return BadRequest("The user did not have enough credits.");
             }
-
             #endregion
 
             #region Connect member server
@@ -228,7 +227,7 @@ namespace EPlusActivities.API.Controllers
                 return new InternalServerErrorObjectResult(error);
             }
 
-            user.Credit = memberForUpdateCreditResponseDto.Body.Content.OldPoints;
+            user.Credit = memberForUpdateCreditResponseDto.Body.Content.NewPoints;
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -237,7 +236,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            return Ok();
+            return Ok(_mapper.Map<ActivityUserForRedeemDrawsResponseDto>(activityUser));
         }
 
         [HttpPut]

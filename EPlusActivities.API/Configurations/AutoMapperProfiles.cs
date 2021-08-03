@@ -83,6 +83,7 @@ namespace EPlusActivities.API.Configuration
 
             #region ActivityUser
             CreateMap<ActivityUser, ActivityUserDto>();
+            CreateMap<ActivityUser, ActivityUserForRedeemDrawsResponseDto>();
             #endregion
 
 

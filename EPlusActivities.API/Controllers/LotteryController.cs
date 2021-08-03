@@ -130,21 +130,25 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("The user had to join the activity first.");
             }
 
+            // 剩余抽奖次数不足
             if (activityUser.RemainingDraws <= 0)
             {
                 return BadRequest("The user did not have enough chance to draw a lottery .");
             }
 
+            // 超过全活动周期抽奖次数限制
             if (activityUser.UsedDraws > activity.Limit)
             {
                 return BadRequest("Sorry, the user had already achieved the maximum number of draws of this activity.");
             }
 
+            // 今天没登陆过的用户，每日已用抽奖次数清零
             if (user.LastLoginDate < DateTime.Today )
             {
                 activityUser.TodayUsedDraws = 0;
             }
 
+            // 超过每日抽奖次数限制
             if (activityUser.TodayUsedDraws > activity.DailyLimit)
             {
                 return BadRequest("Sorry, the user had already achieved the daily maximum number of draws of this activity.");
@@ -157,16 +161,9 @@ namespace EPlusActivities.API.Controllers
             activityUser.UsedDraws++;
             if (!await _activityUserRepository.SaveAsync())
             {
+                _logger.LogError("Failed to create the lottery");
                 return new InternalServerErrorObjectResult("Update database exception");
             }
-
-            var updateUserResult = await _userManager.UpdateAsync(user);
-            if (!updateUserResult.Succeeded)
-            {
-                _logger.LogError("Failed to create the lottery", updateUserResult.Errors);
-                return new InternalServerErrorObjectResult(updateUserResult.Errors);
-            }
-
             #endregion
 
             #region Generate the lottery result
