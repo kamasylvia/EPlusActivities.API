@@ -4,11 +4,14 @@ namespace EPlusActivities.API.DTOs.ActivityUserDtos
 {
     public class ActivityUserDto
     {
-        // 全活动周期剩余抽奖次数
-        public int? EntireRemainingDraws { get; set; }
+        // 全活动周期已抽奖次数
+        public int UsedDraws { get; set; }
 
-        // 当天剩余抽奖次数
-        public int? TodayRemainingDraws { get; set; }
+        // 当天已抽奖次数
+        public int TodayUsedDraws { get; set; }
+
+        // 剩余抽奖次数
+        public int? RemainingDraws { get; set; }
 
         // 签到天数
         public int? AttendanceDays { get; set; }

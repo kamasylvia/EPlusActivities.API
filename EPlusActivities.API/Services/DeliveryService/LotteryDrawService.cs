@@ -12,8 +12,8 @@ namespace EPlusActivities.API.Services.DeliveryService
 
         public LotteryDrawService(IPrizeItemRepository prizeItemRepository)
         {
-            _prizeItemRepository =
-                prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
+            _prizeItemRepository = prizeItemRepository
+                ?? throw new ArgumentNullException(nameof(prizeItemRepository));
         }
 
         /// <summary>

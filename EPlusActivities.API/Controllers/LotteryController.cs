@@ -135,12 +135,17 @@ namespace EPlusActivities.API.Controllers
                 return BadRequest("The user did not have enough chance to draw a lottery .");
             }
 
-            if (activityUser.UsedDraws >= activity.Limit)
+            if (activityUser.UsedDraws > activity.Limit)
             {
                 return BadRequest("Sorry, the user had already achieved the maximum number of draws of this activity.");
             }
 
-            if (activityUser.TodayUsedDraws >= activity.DailyLimit)
+            if (user.LastLoginDate < DateTime.Today )
+            {
+                activityUser.TodayUsedDraws = 0;
+            }
+
+            if (activityUser.TodayUsedDraws > activity.DailyLimit)
             {
                 return BadRequest("Sorry, the user had already achieved the daily maximum number of draws of this activity.");
             }
@@ -192,7 +197,7 @@ namespace EPlusActivities.API.Controllers
                 _logger.LogError("Failed to create the lottery");
                 return new InternalServerErrorObjectResult("Update database exception");
             }
-            
+
             return Ok(result);
         }
 
