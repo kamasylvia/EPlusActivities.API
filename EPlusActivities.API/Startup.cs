@@ -89,7 +89,7 @@ namespace EPlusActivities.API
             // 启用创建短 ID 服务
             services.AddSingleton<IIdGeneratorService>(
                 new IdGeneratorService(
-                    new IdGeneratorOptions(1) { WorkerIdBitLength = 2, SeqBitLength = 8 }
+                    new IdGeneratorOptions(1) { WorkerIdBitLength = 1, SeqBitLength = 3 }
                 )
             );
 
