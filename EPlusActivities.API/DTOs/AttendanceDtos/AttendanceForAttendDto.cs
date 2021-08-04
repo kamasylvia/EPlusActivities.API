@@ -6,16 +6,22 @@ namespace EPlusActivities.API.DTOs.AttendanceDtos
 {
     public class AttendanceForAttendDto
     {
-        [Required]
-        public Guid? Id { get; set; }
-
-        [Required]
-        public DateTime? Date { get; set; }
-
+        /// <summary>
+        /// 渠道号
+        /// </summary>
+        /// <value></value>
         public ChannelCode ChannelCode { get; set; }
 
+        /// <summary>
+        /// 签到获得积分
+        /// </summary>
+        /// <value></value>
         public int EarnedCredits { get; set; }
 
+        /// <summary>
+        /// 更新积分原因
+        /// </summary>
+        /// <value></value>
         public string Reason { get; set; }
 
         [Required]

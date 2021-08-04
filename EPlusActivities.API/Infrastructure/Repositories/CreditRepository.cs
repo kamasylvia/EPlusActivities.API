@@ -5,8 +5,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public class CreditRepository : RepositoryBase<Credit>
     {
-        public CreditRepository(ApplicationDbContext context) : base(context)
-        {
-        }
+        public CreditRepository(ApplicationDbContext context) : base(context) { }
     }
 }

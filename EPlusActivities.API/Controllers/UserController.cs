@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using Yitter.IdGenerator;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -43,18 +42,14 @@ namespace EPlusActivities.API.Controllers
             ILogger<UserController> logger,
             IMapper mapper,
             IMemberService memberService
-        )
-        {
-            _logger = logger
-                ?? throw new ArgumentNullException(nameof(logger));
-            _memberService = memberService
-                ?? throw new ArgumentNullException(nameof(memberService));
-            _mapper = mapper
-                ?? throw new ArgumentNullException(nameof(mapper));
-            _httpClientFactory = httpClientFactory
-                ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            _userManager = userManager
-                ?? throw new ArgumentNullException(nameof(userManager));
+        ) {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _memberService =
+                memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _httpClientFactory =
+                httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
         [HttpGet]
@@ -71,7 +66,9 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Get member info
-            var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(user.PhoneNumber);
+            var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(
+                user.PhoneNumber
+            );
             if (getMemberSucceed)
             {
                 user.IsMember = true;
@@ -122,8 +119,7 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<IActionResult> UpdatePhoneNumberAsync(
             [FromBody] UserForUpdatePhoneDto userDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
@@ -161,7 +157,6 @@ namespace EPlusActivities.API.Controllers
             _logger.LogError("Failed to set UserName.");
             return new InternalServerErrorObjectResult(result.Errors);
         }
-
 
         /*      
         [HttpPost]

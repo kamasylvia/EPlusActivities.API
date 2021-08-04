@@ -14,7 +14,7 @@ namespace EPlusActivities.API.Entities
 
         // 农工商会员ID
         [Required]
-        public Guid? MemberId { get; set; }
+        public string MemberId { get; set; }
 
         // 更新积分值
         public int Points { get; set; }

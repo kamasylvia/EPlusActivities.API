@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace EPlusActivities.API.DTOs.ActivityUserDtos
 {
@@ -25,7 +25,5 @@ namespace EPlusActivities.API.DTOs.ActivityUserDtos
         public Guid? UserId { get; set; }
 
         public Guid? ActivityId { get; set; }
-
-
     }
 }

@@ -14,8 +14,6 @@ namespace EPlusActivities.API.DTOs.AttendanceDtos
 
         public ChannelCode ChannelCode { get; set; }
 
-        public int EarnedCredits { get; set; }
-
         [Required]
         public Guid? UserId { get; set; }
 

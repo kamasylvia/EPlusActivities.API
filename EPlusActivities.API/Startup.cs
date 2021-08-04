@@ -6,6 +6,7 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.DeliveryService;
 using EPlusActivities.API.Services.IdentityServer;
+using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -84,6 +85,13 @@ namespace EPlusActivities.API
                 .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
                 .AddTransient<INameExistsRepository<Category>, CategoryRepository>()
                 .AddTransient<IFindByParentIdRepository<PrizeTier>, PrizeTierRepository>();
+
+            // 启用创建短 ID 服务
+            services.AddSingleton<IIdGeneratorService>(
+                new IdGeneratorService(
+                    new IdGeneratorOptions(1) { WorkerIdBitLength = 2, SeqBitLength = 8 }
+                )
+            );
 
             // 启用短信服务
             services.AddTransient<ISmsService, SmsService>();
@@ -187,10 +195,9 @@ namespace EPlusActivities.API
             IWebHostEnvironment env,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager,
-            IIdGenerator idGenerator
-        )
-        {
+            RoleManager<ApplicationRole> roleManager
+        // IIdGenerator idGenerator
+        ) {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -214,12 +221,14 @@ namespace EPlusActivities.API
             DbInitializer.Initialize(env, context, userManager, roleManager);
             #endregion
 
+            /*
             #region Config ShortIdGenerator
             var options = new IdGeneratorOptions(1);
             options.WorkerIdBitLength = 2;
             options.SeqBitLength = 8;
             YitIdHelper.SetIdGenerator(options);
             #endregion
+            */
 
             app.UseEndpoints(
                 endpoints =>

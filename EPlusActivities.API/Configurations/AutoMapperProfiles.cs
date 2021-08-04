@@ -31,12 +31,15 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Dtos to Entities and vice versa.
-            CreateMap<SmsDto, ApplicationUser>()
-                .ForMember(dest => dest.UserName,
-                opt => opt.MapFrom(src => src.PhoneNumber))
-                .ForMember(dest => dest.NormalizedUserName,
-                opt => opt.MapFrom(src => src.PhoneNumber));
-
+            CreateMap<
+                SmsDto,
+                ApplicationUser
+            >()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(
+                    dest => dest.NormalizedUserName,
+                    opt => opt.MapFrom(src => src.PhoneNumber)
+                );
 
             #region ApplicationUser
             CreateMap<ApplicationUser, UserDto>();
@@ -70,7 +73,11 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Attendance
-            CreateMap<AttendanceForAttendDto, Attendance>();
+            CreateMap<
+                AttendanceForAttendDto,
+                Attendance
+            >();
+            CreateMap<Attendance, AttendanceDto>();
             #endregion
 
 
@@ -82,7 +89,10 @@ namespace EPlusActivities.API.Configuration
             #endregion
 
             #region ActivityUser
-            CreateMap<ActivityUser, ActivityUserDto>();
+            CreateMap<
+                ActivityUser,
+                ActivityUserDto
+            >();
             CreateMap<ActivityUser, ActivityUserForRedeemDrawsResponseDto>();
             #endregion
 
@@ -104,10 +114,8 @@ namespace EPlusActivities.API.Configuration
 
             #region PrizeItem
             CreateMap<PrizeItem, PrizeItemDto>()
-                .ForMember(dest => dest.BrandName,
-                opt => opt.MapFrom(src => src.Brand.Name))
-                .ForMember(dest => dest.CategoryName,
-                opt => opt.MapFrom(src => src.Category.Name));
+                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<PrizeItemForCreateDto, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());
@@ -120,13 +128,10 @@ namespace EPlusActivities.API.Configuration
 
             #region PrizeTier
             CreateMap<PrizeTier, PrizeTierDto>()
-                .ForMember(dest => dest.PrizeItemIds,
-                opt =>
-                    opt
-                        .MapFrom(src =>
-                            src
-                                .PrizeTierPrizeItems
-                                .Select(x => x.PrizeItem.Id)));
+                .ForMember(
+                    dest => dest.PrizeItemIds,
+                    opt => opt.MapFrom(src => src.PrizeTierPrizeItems.Select(x => x.PrizeItem.Id))
+                );
             CreateMap<PrizeTierForCreateDto, PrizeTier>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore());
             CreateMap<PrizeTierForUpdateDto, PrizeTier>()
@@ -137,8 +142,27 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Credit
-            CreateMap<MemberForUpdateCreditRequestDto, Credit>();
-            CreateMap<MemberForUpdateCreditResponseDto, Credit>();
+            CreateMap<
+                MemberForUpdateCreditRequestDto,
+                Credit
+            >();
+            CreateMap<MemberForUpdateCreditResponseDto, Credit>()
+                .ForMember(
+                    dest => dest.MemberId,
+                    opt => opt.MapFrom(src => src.Body.Content.MemberId)
+                )
+                .ForMember(
+                    dest => dest.NewPoints,
+                    opt => opt.MapFrom(src => src.Body.Content.NewPoints)
+                )
+                .ForMember(
+                    dest => dest.OldPoints,
+                    opt => opt.MapFrom(src => src.Body.Content.OldPoints)
+                )
+                .ForMember(
+                    dest => dest.RecordId,
+                    opt => opt.MapFrom(src => src.Body.Content.RecordId)
+                );
             #endregion
 
 

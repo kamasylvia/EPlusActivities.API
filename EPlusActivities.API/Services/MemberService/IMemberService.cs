@@ -1,14 +1,19 @@
+using System;
 using System.Threading.Tasks;
 using EPlusActivities.API.DTOs.MemberDtos;
-using Newtonsoft.Json.Linq;
 
 namespace EPlusActivities.API.Services.MemberService
 {
     public interface IMemberService
     {
         Task<(bool, MemberForGetDto)> GetMemberAsync(string phone);
-        Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(MemberForUpdateCreditRequestDto requestDto);
+        Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(
+            Guid userId,
+            MemberForUpdateCreditRequestDto requestDto
+        );
 
-        Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(MemberForReleaseCouponRequestDto requestDto);
+        Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(
+            MemberForReleaseCouponRequestDto requestDto
+        );
     }
 }

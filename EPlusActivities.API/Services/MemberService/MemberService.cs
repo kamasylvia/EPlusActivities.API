@@ -7,7 +7,6 @@ using EPlusActivities.API.DTOs.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
-using Yitter.IdGenerator;
 
 namespace EPlusActivities.API.Services.MemberService
 {
@@ -25,12 +24,12 @@ namespace EPlusActivities.API.Services.MemberService
             ILogger<MemberService> logger,
             IRepository<Credit> creditRepository,
             IMapper mapper
-        )
-        {
+        ) {
             _httpClientFactory =
                 httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _creditRepository = creditRepository ?? throw new ArgumentNullException(nameof(creditRepository));
+            _creditRepository =
+                creditRepository ?? throw new ArgumentNullException(nameof(creditRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -42,7 +41,8 @@ namespace EPlusActivities.API.Services.MemberService
         public async Task<(bool, MemberForGetDto)> GetMemberAsync(string phone)
         {
             var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/get/1.0.0";
-            var response = await _httpClientFactory.CreateClient().PostAsJsonAsync(requestUri, new { mobile = phone });
+            var response = await _httpClientFactory.CreateClient()
+                .PostAsJsonAsync(requestUri, new { mobile = phone });
             var result = await response.Content.ReadFromJsonAsync<MemberForGetDto>();
 
             if (result.Header.Code != "0000")
@@ -54,11 +54,14 @@ namespace EPlusActivities.API.Services.MemberService
             return (true, result);
         }
 
-        public async Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(MemberForReleaseCouponRequestDto requestDto)
-        {
+        public async Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(
+            MemberForReleaseCouponRequestDto requestDto
+        ) {
             var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/couponIssue/1.0.0";
-            var response = await _httpClientFactory.CreateClient().PostAsJsonAsync(requestUri, requestDto);
-            var responseDto = await response.Content.ReadFromJsonAsync<MemberForReleaseCouponResponseDto>();
+            var response = await _httpClientFactory.CreateClient()
+                .PostAsJsonAsync(requestUri, requestDto);
+            var responseDto =
+                await response.Content.ReadFromJsonAsync<MemberForReleaseCouponResponseDto>();
 
             if (responseDto.Header.Code != "0000")
             {
@@ -69,12 +72,16 @@ namespace EPlusActivities.API.Services.MemberService
             return (true, responseDto);
         }
 
-        public async Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(MemberForUpdateCreditRequestDto requestDto)
-        {
+        public async Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(
+            Guid userId,
+            MemberForUpdateCreditRequestDto requestDto
+        ) {
             var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/updatePoints/1.0.0";
-            var response = await _httpClientFactory.CreateClient().PostAsJsonAsync(requestUri, requestDto);
+            var response = await _httpClientFactory.CreateClient()
+                .PostAsJsonAsync(requestUri, requestDto);
 
-            var responseDto = await response.Content.ReadFromJsonAsync<MemberForUpdateCreditResponseDto>();
+            var responseDto =
+                await response.Content.ReadFromJsonAsync<MemberForUpdateCreditResponseDto>();
 
             if (responseDto.Header.Code != "0000")
             {
@@ -85,13 +92,14 @@ namespace EPlusActivities.API.Services.MemberService
             #region Database operations
             var credit = _mapper.Map<Credit>(requestDto);
             credit = _mapper.Map<MemberForUpdateCreditResponseDto, Credit>(responseDto, credit);
+            credit.UserId = userId;
             await _creditRepository.AddAsync(credit);
             var result = await _creditRepository.SaveAsync();
             if (!result)
             {
                 _logger.LogError("Update database exception.");
             }
-            #endregion 
+            #endregion
 
             return (result, responseDto);
         }

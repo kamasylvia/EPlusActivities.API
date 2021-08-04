@@ -43,8 +43,7 @@ namespace EPlusActivities.API.Controllers
             ILogger<LotteryController> logger,
             IRepository<ActivityUser> activityUserRepository,
             ILotteryDrawService lotteryDrawService
-        )
-        {
+        ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger;
             _lotteryDrawService =
@@ -68,8 +67,7 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetByUserIdAsync(
             [FromBody] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -100,8 +98,7 @@ namespace EPlusActivities.API.Controllers
         [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<LotteryDto>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -139,11 +136,13 @@ namespace EPlusActivities.API.Controllers
             // 超过全活动周期抽奖次数限制
             if (activityUser.UsedDraws > activity.Limit)
             {
-                return BadRequest("Sorry, the user had already achieved the maximum number of draws of this activity.");
+                return BadRequest(
+                    "Sorry, the user had already achieved the maximum number of draws of this activity."
+                );
             }
 
             // 今天没登陆过的用户，每日已用抽奖次数清零
-            if (user.LastLoginDate < DateTime.Today )
+            if (user.LastLoginDate < DateTime.Today)
             {
                 activityUser.TodayUsedDraws = 0;
             }
@@ -151,7 +150,9 @@ namespace EPlusActivities.API.Controllers
             // 超过每日抽奖次数限制
             if (activityUser.TodayUsedDraws > activity.DailyLimit)
             {
-                return BadRequest("Sorry, the user had already achieved the daily maximum number of draws of this activity.");
+                return BadRequest(
+                    "Sorry, the user had already achieved the daily maximum number of draws of this activity."
+                );
             }
             #endregion
 
@@ -172,8 +173,9 @@ namespace EPlusActivities.API.Controllers
             lottery.Activity = activity;
             lottery.Date = DateTime.Now;
 
-            (lottery.PrizeTier, lottery.PrizeItem) =
-                await _lotteryDrawService.DrawPrizeAsync(activity);
+            (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryDrawService.DrawPrizeAsync(
+                activity
+            );
 
             if (lottery.PrizeTier is not null)
             {
