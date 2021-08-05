@@ -12,7 +12,9 @@ namespace EPlusActivities.API.DTOs.ActivityDtos
         [Required]
         public string Name { get; set; }
 
-        public int Limit { get; set; }
+        public int? Limit { get; set; }
+
+        public int? DailyLimit { get; set; }
 
         public ChannelCode ChannelCode { get; set; }
 

@@ -134,7 +134,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 超过全活动周期抽奖次数限制
-            if (activityUser.UsedDraws > activity.Limit)
+            if (activityUser.UsedDraws >= activity.Limit)
             {
                 return BadRequest(
                     "Sorry, the user had already achieved the maximum number of draws of this activity."
