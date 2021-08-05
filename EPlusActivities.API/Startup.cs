@@ -221,15 +221,6 @@ namespace EPlusActivities.API
             DbInitializer.Initialize(env, context, userManager, roleManager);
             #endregion
 
-            /*
-            #region Config ShortIdGenerator
-            var options = new IdGeneratorOptions(1);
-            options.WorkerIdBitLength = 2;
-            options.SeqBitLength = 8;
-            YitIdHelper.SetIdGenerator(options);
-            #endregion
-            */
-
             app.UseEndpoints(
                 endpoints =>
                 {

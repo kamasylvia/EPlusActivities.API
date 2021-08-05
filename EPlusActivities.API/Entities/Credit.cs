@@ -29,7 +29,6 @@ namespace EPlusActivities.API.Entities
         public string Reason { get; set; }
 
         // 交易流水，
-        [StringLength(12, MinimumLength = 12, ErrorMessage = "交易流水必须为 12 位数")]
         public string SheetId { get; set; }
 
         // 积分变更流水

@@ -11,7 +11,6 @@ namespace EPlusActivities.API.DTOs.MemberDtos
 
         public string reason { get; set; }
 
-        [StringLength(12, MinimumLength = 12, ErrorMessage = "交易流水必须为 10 位数")]
         public string sheetId { get; set; }
 
         public CreditUpdateType updateType { get; set; }

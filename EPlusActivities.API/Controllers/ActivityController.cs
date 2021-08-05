@@ -216,19 +216,19 @@ namespace EPlusActivities.API.Controllers
             var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
             {
                 memberId = member.Body.Content.MemberId,
-                points = user.Credit,
+                points = cost,
                 reason = activityUserDto.Reason,
                 sheetId = _idGeneratorService.NextId().ToString(),
                 updateType = CreditUpdateType.Subtraction
             };
             var (updateMemberSucceed, memberForUpdateCreditResponseDto) =
                 await _memberService.UpdateCreditAsync(
-                activityUserDto.UserId.Value,
-                memberForUpdateCreditRequestDto
+                userId: activityUserDto.UserId.Value,
+                requestDto: memberForUpdateCreditRequestDto
             );
             #endregion
 
-            #region Update credit
+            #region Update the user's credit
             if (!updateMemberSucceed)
             {
                 var error = "Failed to update the credit.";
@@ -237,11 +237,23 @@ namespace EPlusActivities.API.Controllers
             }
 
             user.Credit = memberForUpdateCreditResponseDto.Body.Content.NewPoints;
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
+            var updateUserResult = await _userManager.UpdateAsync(user);
+            if (!updateUserResult.Succeeded)
             {
                 _logger.LogError("Failed to update the user.");
-                return new InternalServerErrorObjectResult(result.Errors);
+                return new InternalServerErrorObjectResult(updateUserResult.Errors);
+            }
+            #endregion
+
+            #region Update ActivityUser link
+            activityUser.RemainingDraws =
+                activityUser.RemainingDraws + activityUserDto.Count ?? activityUserDto.Count;
+            _activityUserRepository.Update(activityUser);
+            var updateActivityUserResult = await _activityUserRepository.SaveAsync();
+            if (!updateActivityUserResult)
+            {
+                _logger.LogError("Failed to update the ActivityUser link");
+                return new InternalServerErrorObjectResult("Update database exception");
             }
             #endregion
 
