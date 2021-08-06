@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.DTOs.ActivityUserDtos
 {

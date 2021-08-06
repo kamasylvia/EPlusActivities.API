@@ -21,6 +21,9 @@ namespace EPlusActivities.API.Entities
 
         public PrizeType PrizeType { get; set; }
 
+        // 会员系统优惠券活动码
+        public string CouponActiveCode { get; set; }
+
         // 奖品种类
         public Category Category { get; set; }
 
@@ -29,6 +32,9 @@ namespace EPlusActivities.API.Entities
 
         // 奖品单价
         public decimal? UnitPrice { get; set; }
+
+        // 积分奖品
+        public int? Credit { get; set; }
 
         // 奖品数量
         public int Quantity { get; set; }
@@ -42,5 +48,7 @@ namespace EPlusActivities.API.Entities
         public IEnumerable<Lottery> LotteryResults { get; set; }
 
         public IEnumerable<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
+
+        public IEnumerable<Coupon> Coupons { get; set; }
     }
 }

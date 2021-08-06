@@ -6,6 +6,6 @@ namespace EPlusActivities.API.Entities
 {
     public class ApplicationRole : IdentityRole<Guid>
     {
-        public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
+        public virtual IEnumerable<ApplicationUserRole> UserRoles { get; set; }
     }
 }

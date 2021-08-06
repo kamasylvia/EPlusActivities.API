@@ -4,11 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs.LotteryDtos;
+using EPlusActivities.API.DTOs.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
+using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.DeliveryService;
+using EPlusActivities.API.Services.IdGeneratorService;
+using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,8 +34,11 @@ namespace EPlusActivities.API.Controllers
         private readonly IActivityRepository _activityRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
         private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly IRepository<Coupon> _couponResponseDto;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
         private readonly ILotteryDrawService _lotteryDrawService;
+        private readonly IIdGeneratorService _idGeneratorService;
+        private readonly IMemberService _memberService;
 
         public LotteryController(
             IFindByParentIdRepository<Lottery> lotteryRepository,
@@ -42,8 +49,15 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             ILogger<LotteryController> logger,
             IRepository<ActivityUser> activityUserRepository,
-            ILotteryDrawService lotteryDrawService
+            IRepository<Coupon> couponResponseDto,
+            ILotteryDrawService lotteryDrawService,
+            IMemberService memberService,
+            IIdGeneratorService idGeneratorService
         ) {
+            _idGeneratorService =
+                idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
+            _memberService =
+                memberService ?? throw new ArgumentNullException(nameof(memberService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger;
             _lotteryDrawService =
@@ -51,6 +65,8 @@ namespace EPlusActivities.API.Controllers
             _activityUserRepository =
                 activityUserRepository
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
+            _couponResponseDto =
+                couponResponseDto ?? throw new ArgumentNullException(nameof(couponResponseDto));
             _lotteryRepository =
                 lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -96,7 +112,7 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "TestPolicy")]
-        public async Task<ActionResult<LotteryDto>> CreateAsync(
+        public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
         ) {
             #region Parameter validation
@@ -128,13 +144,13 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 剩余抽奖次数不足
-            if (activityUser.RemainingDraws <= 0)
+            if (activityUser.RemainingDraws < lotteryDto.Count)
             {
                 return BadRequest("The user did not have enough chance to draw a lottery .");
             }
 
             // 超过全活动周期抽奖次数限制
-            if (activityUser.UsedDraws >= activity.Limit)
+            if (activityUser.UsedDraws + lotteryDto.Count > activity.Limit)
             {
                 return BadRequest(
                     "Sorry, the user had already achieved the maximum number of draws of this activity."
@@ -148,7 +164,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 超过每日抽奖次数限制
-            if (activityUser.TodayUsedDraws > activity.DailyLimit)
+            if (activityUser.TodayUsedDraws + lotteryDto.Count > activity.DailyLimit)
             {
                 return BadRequest(
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
@@ -157,47 +173,112 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Consume the draws
-            activityUser.RemainingDraws--;
-            activityUser.TodayUsedDraws++;
-            activityUser.UsedDraws++;
-            if (!await _activityUserRepository.SaveAsync())
-            {
-                _logger.LogError("Failed to create the lottery");
-                return new InternalServerErrorObjectResult("Update database exception");
-            }
+            activityUser.RemainingDraws -= lotteryDto.Count;
+            activityUser.TodayUsedDraws += lotteryDto.Count;
+            activityUser.UsedDraws += lotteryDto.Count;
             #endregion
 
             #region Generate the lottery result
-            var lottery = _mapper.Map<Lottery>(lotteryDto);
-            lottery.User = user;
-            lottery.Activity = activity;
-            lottery.Date = DateTime.Now;
+            var response = new List<LotteryDto>();
 
-            (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryDrawService.DrawPrizeAsync(
-                activity
-            );
-
-            if (lottery.PrizeTier is not null)
+            for (int i = 0; i < lotteryDto.Count; i++)
             {
-                lottery.IsLucky = true;
+                var lottery = _mapper.Map<Lottery>(lotteryDto);
+                lottery.User = user;
+                lottery.Activity = activity;
+                lottery.Date = DateTime.Now;
+
+                (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryDrawService.DrawPrizeAsync(
+                    activity
+                );
+
+                if (lottery.PrizeTier is not null)
+                {
+                    lottery.IsLucky = true;
+
+                    switch (lottery.PrizeItem.PrizeType)
+                    {
+                        case PrizeType.Credit:
+                            var (updateCreditResult, updateCreditResponseDto) =
+                                await _memberService.UpdateCreditAsync(
+                                user.Id,
+                                new MemberForUpdateCreditRequestDto
+                                {
+                                    memberId = user.MemberId,
+                                    points = lottery.PrizeItem.Credit.Value,
+                                    reason = "积分奖品",
+                                    sheetId = _idGeneratorService.NextId().ToString(),
+                                    updateType = CreditUpdateType.Addition
+                                }
+                            );
+                            if (updateCreditResult)
+                            {
+                                user.Credit += lottery.PrizeItem.Credit.Value;
+                                if (user.Credit != updateCreditResponseDto.Body.Content.NewPoints)
+                                {
+                                    _logger.LogError(
+                                        "Local credits did not equal to the member's new points."
+                                    );
+                                    return new InternalServerErrorObjectResult(
+                                        "Local credits did not equal to the member's new points."
+                                    );
+                                }
+                            }
+                            break;
+                        case PrizeType.Coupon:
+                            var (releaseCouponResult, couponResponseDto) =
+                                await _memberService.ReleaseCoouponAsync(
+                                new MemberForReleaseCouponRequestDto
+                                {
+                                    couponActiveCode = lottery.PrizeItem.CouponActiveCode,
+                                    memberId = user.MemberId,
+                                    qty = 1,
+                                    reason = "优惠券奖品"
+                                }
+                            );
+                            var coupons = couponResponseDto.Body.Content.HideCouponCode.Split(", ")
+                                .Select(
+                                    code =>
+                                        new Coupon
+                                        {
+                                            User = user,
+                                            PrizeItem = lottery.PrizeItem,
+                                            Code = code
+                                        }
+                                );
+                            var temp = user.Coupons.ToList();
+                            temp.AddRange(coupons);
+                            user.Coupons = temp;
+
+                            temp = lottery.PrizeItem.Coupons.ToList();
+                            temp.AddRange(coupons);
+                            lottery.PrizeItem.Coupons = temp;
+
+                            coupons.ToList()
+                                .ForEach(async item => await _couponResponseDto.AddAsync(item));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                await _lotteryRepository.AddAsync(lottery);
+                var result = _mapper.Map<LotteryDto>(lottery);
+                result.Date = lottery.Date; // Skip auto mapper.
+                response.Add(result);
             }
             #endregion
 
             #region Database operations
-            await _lotteryRepository.AddAsync(lottery);
             var succeeded = await _lotteryRepository.SaveAsync();
-            #endregion
-
-            var result = _mapper.Map<LotteryDto>(lottery);
-            result.Date = lottery.Date; // Skip auto mapper.
-
             if (!succeeded)
             {
                 _logger.LogError("Failed to create the lottery");
                 return new InternalServerErrorObjectResult("Update database exception");
             }
+            #endregion
 
-            return Ok(result);
+            return Ok(response);
         }
 
         [HttpPut]

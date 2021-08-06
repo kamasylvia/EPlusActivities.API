@@ -149,6 +149,11 @@ namespace EPlusActivities.API.Data
             context.ActivityUserLinks.Add(activityUser);
             #endregion
 
+            #region Seed Coupons
+            var coupon = new Coupon { User = user, PrizeItem = prizeItem, Code = "Seed" };
+            context.Coupons.Add(coupon);
+            #endregion
+
             context.SaveChanges();
         }
     }

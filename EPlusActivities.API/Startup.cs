@@ -79,6 +79,7 @@ namespace EPlusActivities.API
                 .AddTransient<IAttendanceRepository, AttendanceRepository>()
                 .AddTransient<IRepository<ActivityUser>, ActivityUserRepository>()
                 .AddTransient<IRepository<Credit>, CreditRepository>()
+                .AddTransient<IRepository<Coupon>, CouponRepository>()
                 .AddTransient<IFindByParentIdRepository<Address>, AddressRepository>()
                 .AddTransient<IFindByParentIdRepository<Lottery>, LotteryRepository>()
                 .AddTransient<IPrizeItemRepository, PrizeItemRepository>()

@@ -48,5 +48,7 @@ namespace EPlusActivities.API.Entities
         public IEnumerable<PrizeTier> PrizeTiers { get; set; }
 
         public IEnumerable<ActivityUser> ActivityUserLinks { get; set; }
+
+        public IEnumerable<Coupon> Coupons { get; set; }
     }
 }

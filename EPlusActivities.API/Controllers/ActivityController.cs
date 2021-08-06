@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.DTOs.ActivityDtos;
-using EPlusActivities.API.DTOs.ActivityUserDtos;
-using EPlusActivities.API.DTOs.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;

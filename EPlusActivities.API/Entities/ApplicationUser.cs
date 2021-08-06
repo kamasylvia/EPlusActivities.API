@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
@@ -30,15 +30,16 @@ namespace EPlusActivities.API.Entities
         public string MemberId { get; set; }
 
         // 外键
-        public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
+        public virtual IEnumerable<ApplicationUserRole> UserRoles { get; set; }
 
-        public virtual ICollection<Address> Addresses { get; set; }
+        public virtual IEnumerable<Address> Addresses { get; set; }
 
-        public virtual ICollection<Attendance> AttendanceRecord { get; set; }
+        public virtual IEnumerable<Attendance> AttendanceRecord { get; set; }
 
-        public virtual ICollection<Lottery> LotteryResults { get; set; }
+        public virtual IEnumerable<Lottery> LotteryResults { get; set; }
 
-        public virtual ICollection<ActivityUser> ActivityUserLinks { get; set; }
+        public virtual IEnumerable<ActivityUser> ActivityUserLinks { get; set; }
+        public virtual IEnumerable<Coupon> Coupons { get; set; }
 
         public override string ToString() =>
             JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });

@@ -6,8 +6,6 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
 {
     public class LotteryForCreateDto
     {
-        public bool IsLucky { get; set; }
-
         [Required]
         public ChannelCode? ChannelCode { get; set; }
 
@@ -19,5 +17,8 @@ namespace EPlusActivities.API.DTOs.LotteryDtos
 
         [Required]
         public Guid? ActivityId { get; set; }
+
+        [Range(1, int.MaxValue)]
+        public int Count { get; set; }
     }
 }

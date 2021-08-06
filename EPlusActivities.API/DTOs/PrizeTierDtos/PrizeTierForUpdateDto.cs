@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.DTOs.PrizeTierDtos
@@ -14,5 +15,7 @@ namespace EPlusActivities.API.DTOs.PrizeTierDtos
 
         [Required]
         public Guid? ActivityId { get; set; }
+
+        public IEnumerable<Guid> PrizeItemIds { get; set; }
     }
 }
