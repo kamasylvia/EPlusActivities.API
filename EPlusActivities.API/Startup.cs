@@ -48,6 +48,8 @@ namespace EPlusActivities.API
                     x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
                 );
 
+            services.AddCors();
+
             services.AddHttpClient();
 
             services.AddSwaggerGen(
@@ -197,8 +199,8 @@ namespace EPlusActivities.API
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager
-        // IIdGenerator idGenerator
-        ) {
+        ) // IIdGenerator idGenerator
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -212,6 +214,14 @@ namespace EPlusActivities.API
 
             app.UseRouting();
 
+            app.UseCors(
+                x =>
+                    x.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:8080")
+            );
+
             app.UseIdentityServer();
 
             app.UseAuthentication();
@@ -221,6 +231,7 @@ namespace EPlusActivities.API
             #region Seed data
             DbInitializer.Initialize(env, context, userManager, roleManager);
             #endregion
+
 
             app.UseEndpoints(
                 endpoints =>
