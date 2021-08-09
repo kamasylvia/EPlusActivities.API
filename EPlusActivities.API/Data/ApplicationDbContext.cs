@@ -57,6 +57,8 @@ namespace EPlusActivities.API.Data
 
             #region Set unique properties
             builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
+            builder.Entity<Activity>().HasIndex(a => a.ActivityCode).IsUnique();
+            // builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
 
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
@@ -66,62 +68,8 @@ namespace EPlusActivities.API.Data
 
             builder.Entity<ActivityUser>().HasKey(lad => new { lad.ActivityId, lad.UserId });
 
-            builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
             builder.Entity<Credit>().HasAlternateKey(c => c.SheetId);
             #endregion
-
-            /*
-            #region 构建外键关系
-            #region many-to-many
-            builder.Entity<ApplicationUserRole>(userRole =>
-            {
-                userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
-
-                userRole.HasOne(ur => ur.Role)
-                        .WithMany(r => r.UserRoles)
-                        .HasForeignKey(ur => ur.RoleId)
-                        .IsRequired();
-
-                userRole.HasOne(ur => ur.User)
-                        .WithMany(u => u.UserRoles)
-                        .HasForeignKey(ur => ur.UserId)
-                        .IsRequired();
-            });
-            #endregion
-
-            #region one-to-many
-            builder.Entity<ApplicationUser>()
-                   .HasMany(u => u.Addresses)
-                   .WithOne(a => a.User)
-                   .HasForeignKey(a => a.UserId)
-                   .IsRequired();
-            builder.Entity<ApplicationUser>()
-                   .HasMany(u => u.Lotteries)
-                   .WithOne(a => a.User)
-                   .HasForeignKey(a => a.UserId)
-                   .IsRequired();
-            builder.Entity<ApplicationUser>()
-                   .HasMany(u => u.AttendanceRecord)
-                   .WithOne(a => a.User)
-                   .HasForeignKey(a => a.UserId)
-                   .IsRequired();
-            #endregion
-
-            #region one-to-one
-            builder.Entity<PrizeItem>()
-                   .HasOne(prizeItem => prizeItem.Lottery)
-                   .WithOne(lottery => lottery.PrizeItemItem)
-                   .HasForeignKey<Lottery>(lottery => lottery.PrizeItemId)
-                   .IsRequired();
-            builder.Entity<Activity>()
-                   .HasOne(activity => activity.Lottery)
-                   .WithOne(lottery => lottery.ActivityItem)
-                   .HasForeignKey<Lottery>(lottery => lottery.ActivityId)
-                   .IsRequired();
-            #endregion
-
-            #endregion
-            */
         }
     }
 }

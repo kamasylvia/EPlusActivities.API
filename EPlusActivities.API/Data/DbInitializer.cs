@@ -155,6 +155,16 @@ namespace EPlusActivities.API.Data
             context.Coupons.Add(coupon);
             #endregion
 
+            #region Seed Administrator
+            var admin = new ApplicationUser { UserName = "admin" };
+            var result = userManager.CreateAsync(admin, "Pa$$w0rd").Result;
+            result =
+                userManager.AddToRoleAsync(
+                    admin,
+                    _roles.SingleOrDefault(r => r.Name.ToLower() == "seed").Name
+                ).Result;
+            #endregion
+
             context.SaveChanges();
         }
     }

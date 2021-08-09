@@ -57,8 +57,14 @@ namespace EPlusActivities.API.Services.IdentityServer
                     ClientId = "password",
                     ClientName = "Resource Owner Password Client",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    ClientSecrets = { new Secret("password".Sha256()) },
-                    AllowedScopes = { "eplus.test.scope" }
+                    ClientSecrets = { new Secret("Pa$$w0rd".Sha256()) },
+                    AllowedScopes = new List<string>
+                    {
+                        "eplus.test.scope",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess
+                    }
                 },
                 // interactive client using code flow + pkce
                 new Client
