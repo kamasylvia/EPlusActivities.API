@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs.BrandDtos
+namespace EPlusActivities.API.Dtos.BrandDtos
 {
     public class BrandDto
     {

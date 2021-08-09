@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs.PrizeTierDtos;
+using EPlusActivities.API.Dtos.PrizeTierDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;

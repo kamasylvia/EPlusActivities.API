@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
 
-namespace EPlusActivities.API.DTOs.LotteryDtos
+namespace EPlusActivities.API.Dtos.LotteryDtos
 {
     public class LotteryForCreateDto
     {

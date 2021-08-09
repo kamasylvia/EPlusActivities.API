@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs.PrizeTierDtos
+namespace EPlusActivities.API.Dtos.PrizeTierDtos
 {
     public class PrizeTierForUpdateDto
     {

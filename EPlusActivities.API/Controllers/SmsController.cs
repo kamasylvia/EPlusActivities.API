@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Services.IdentityServer;
 using IdentityModel;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EPlusActivities.API.DTOs.ActivityUserDtos
+namespace EPlusActivities.API.Dtos.ActivityUserDtos
 {
     public class ActivityUserDto
     {

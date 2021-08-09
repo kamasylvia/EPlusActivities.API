@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.API.DTOs.PrizeTierDtos
+namespace EPlusActivities.API.Dtos.PrizeTierDtos
 {
     public class PrizeTierForCreateDto
     {

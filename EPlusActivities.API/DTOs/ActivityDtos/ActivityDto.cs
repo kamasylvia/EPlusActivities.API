@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
 
-namespace EPlusActivities.API.DTOs.ActivityDtos
+namespace EPlusActivities.API.Dtos.ActivityDtos
 {
     public class ActivityDto
     {

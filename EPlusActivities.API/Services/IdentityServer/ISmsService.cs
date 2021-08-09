@@ -1,6 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Services.IdentityServer

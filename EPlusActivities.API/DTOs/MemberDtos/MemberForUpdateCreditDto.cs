@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
 
-namespace EPlusActivities.API.DTOs.MemberDtos
+namespace EPlusActivities.API.Dtos.MemberDtos
 {
     public class MemberForUpdateCreditRequestDto
     {

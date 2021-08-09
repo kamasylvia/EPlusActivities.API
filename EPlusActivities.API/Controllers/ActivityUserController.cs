@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs.ActivityUserDtos;
-using EPlusActivities.API.DTOs.MemberDtos;
+using EPlusActivities.API.Dtos.ActivityUserDtos;
+using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;

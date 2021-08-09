@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs.AttendanceDtos
+namespace EPlusActivities.API.Dtos.AttendanceDtos
 {
     public class AttendanceForGetByUserIdDto
     {

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs.ActivityDtos
+namespace EPlusActivities.API.Dtos.ActivityDtos
 {
     public class ActivityForGetAllAvailableDto
     {

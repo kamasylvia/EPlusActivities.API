@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs.LotteryDtos
+namespace EPlusActivities.API.Dtos.LotteryDtos
 {
     public class LotteryForGetByUserIdDto
     {

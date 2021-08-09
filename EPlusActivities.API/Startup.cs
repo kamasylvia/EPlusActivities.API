@@ -38,6 +38,18 @@ namespace EPlusActivities.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(
+                options =>
+                {
+                    options.AddDefaultPolicy(
+                        builder =>
+                        {
+                            builder.WithOrigins("http://localhost:8080");
+                        }
+                    );
+                }
+            );
+
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
@@ -214,13 +226,7 @@ namespace EPlusActivities.API
 
             app.UseRouting();
 
-            app.UseCors(
-                x =>
-                    x.AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()
-                        .WithOrigins("http://localhost:8080")
-            );
+            app.UseCors();
 
             app.UseIdentityServer();
 

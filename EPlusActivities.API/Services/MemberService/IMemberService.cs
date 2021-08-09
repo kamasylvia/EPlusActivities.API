@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using EPlusActivities.API.DTOs.MemberDtos;
+using EPlusActivities.API.Dtos.MemberDtos;
 
 namespace EPlusActivities.API.Services.MemberService
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Entities;
 
-namespace EPlusActivities.API.DTOs.AddressDtos
+namespace EPlusActivities.API.Dtos.AddressDtos
 {
     public class AddressForUpdateDto
     {

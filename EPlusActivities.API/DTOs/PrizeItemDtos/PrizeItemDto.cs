@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
 
-namespace EPlusActivities.API.DTOs.PrizeItemDtos
+namespace EPlusActivities.API.Dtos.PrizeItemDtos
 {
     public class PrizeItemDto
     {

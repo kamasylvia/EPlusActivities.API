@@ -1,4 +1,4 @@
-namespace EPlusActivities.API.DTOs.MemberDtos
+namespace EPlusActivities.API.Dtos.MemberDtos
 {
     public class MemberForGetDto
     {

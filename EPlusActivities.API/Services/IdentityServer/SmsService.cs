@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.DTOs;
+using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Entities;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;

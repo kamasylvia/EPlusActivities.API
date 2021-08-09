@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EPlusActivities.API.DTOs.UserDtos
+namespace EPlusActivities.API.Dtos.UserDtos
 {
     public class UserForDeleteDto
     {
