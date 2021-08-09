@@ -111,6 +111,14 @@ namespace EPlusActivities.API.Controllers
                     new PrizeTier("Attendance") { Percentage = 100 }
                 };
             }
+
+            var activityCode = _idGeneratorService.NextId().ToString().ToCharArray();
+            var replacedChar = Convert.ToChar(
+                Convert.ToInt32('a' + char.GetNumericValue(activityCode.FirstOrDefault()))
+            );
+            activityCode[0] = replacedChar;
+            activity.ActivityCode = new string(activityCode);
+
             await _activityRepository.AddAsync(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion

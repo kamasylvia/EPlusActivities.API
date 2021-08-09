@@ -36,6 +36,9 @@ namespace EPlusActivities.API.Entities
         // 抽奖展示类型
         public LotteryDisplay LotteryDisplay { get; set; }
 
+        // 活动码
+        public string ActivityCode { get; set; }
+
         [Required]
         public DateTime? StartTime { get; set; }
 

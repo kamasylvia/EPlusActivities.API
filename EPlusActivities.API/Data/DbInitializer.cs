@@ -100,7 +100,8 @@ namespace EPlusActivities.API.Data
             var activity = new Activity("Seed")
             {
                 StartTime = DateTime.MinValue,
-                EndTime = DateTime.MinValue
+                EndTime = DateTime.MinValue,
+                ActivityCode = "a00000000000"
             };
             context.Activities.Add(activity);
             #endregion

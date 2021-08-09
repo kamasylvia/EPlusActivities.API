@@ -55,7 +55,7 @@ namespace EPlusActivities.API.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-#region Set unique properties
+            #region Set unique properties
             builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
 
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
@@ -66,8 +66,9 @@ namespace EPlusActivities.API.Data
 
             builder.Entity<ActivityUser>().HasKey(lad => new { lad.ActivityId, lad.UserId });
 
+            builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
             builder.Entity<Credit>().HasAlternateKey(c => c.SheetId);
-#endregion
+            #endregion
 
             /*
             #region 构建外键关系
