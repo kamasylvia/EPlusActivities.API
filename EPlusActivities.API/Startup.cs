@@ -44,7 +44,9 @@ namespace EPlusActivities.API
                     options.AddDefaultPolicy(
                         builder =>
                         {
-                            builder.WithOrigins("http://localhost:8080");
+                            builder.AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .WithOrigins("http://localhost:8080");
                         }
                     );
                 }

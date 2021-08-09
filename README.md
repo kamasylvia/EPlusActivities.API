@@ -87,7 +87,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 
 # 测试流程
 
-1. 发送短信至手机号： POST `http://localhost:52537/api/sms`
+1. 发送短信至手机号： POST `https://localhost:52538/api/sms`
 
 ```json
 {
@@ -95,7 +95,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 }
 ```
 
-2. 获得验证码后发送验证请求： POST `http://localhost:52537/connect/token` with `x-www-form-urlencoded` parameters
+2. 获得验证码后发送验证请求： POST `https://localhost:52538/connect/token` with `x-www-form-urlencoded` parameters
 
 | Key           | Value                   |
 | ------------- | ----------------------- |
@@ -108,5 +108,5 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 | login_channel | 1                       |
 
 3. 在上一步返回到 json 中提取 `access_token` 作为 JWT。
-4. 带着 JWT 访问 GET `http://localhost:52537/connect/userinfo` 获取 `sub` 字段，该字段的值就是用户的 `id`。
+4. 带着 JWT 访问 GET `https://localhost:52538/connect/userinfo` 获取 `sub` 字段，该字段的值就是用户的 `id`。
 5. 后续步骤可以参考 webapi 打开的 Swagger 页面。
