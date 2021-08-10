@@ -161,7 +161,7 @@ namespace EPlusActivities.API.Data
             result =
                 userManager.AddToRoleAsync(
                     admin,
-                    _roles.SingleOrDefault(r => r.Name.ToLower() == "seed").Name
+                    _roles.SingleOrDefault(r => r.Name.ToLower() == "admin").Name
                 ).Result;
             #endregion
 

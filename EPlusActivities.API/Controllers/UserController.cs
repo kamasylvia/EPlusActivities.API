@@ -53,8 +53,8 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        // [Authorize(Roles = "customer")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(Roles = "customer, admin")]
+        // [Authorize(Policy = "TestPolicy")]
         public async Task<ActionResult<UserDto>> GetAsync([FromBody] UserForLoginDto userDto)
         {
             #region Parameter validation
@@ -66,14 +66,17 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Get member info
-            var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(
-                user.PhoneNumber
-            );
-            if (getMemberSucceed)
+            if (userDto.LoginChannel is not ChannelCode.Admin)
             {
-                user.IsMember = true;
-                user.MemberId = memberDto.Body.Content.MemberId;
-                user.Credit = memberDto.Body.Content.Points;
+                var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(
+                    user.PhoneNumber
+                );
+                if (getMemberSucceed)
+                {
+                    user.IsMember = true;
+                    user.MemberId = memberDto.Body.Content.MemberId;
+                    user.Credit = memberDto.Body.Content.Points;
+                }
             }
             #endregion
 

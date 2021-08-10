@@ -131,8 +131,9 @@ namespace EPlusActivities.API
                         options.EmitStaticAudienceClaim = true;
                     }
                 ) // .AddTestUsers(TestUsers.Users)
-                .AddAspNetIdentity<ApplicationUser>() // .AddProfileService<ProfileService>() // SMS Validator
-                .AddExtensionGrantValidator<SmsGrantValidator>() // this adds the config data from memory (clients, resources, CORS)
+                .AddAspNetIdentity<ApplicationUser>()
+                // SMS Validator
+                .AddExtensionGrantValidator<SmsGrantValidator>()
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryApiResources(Config.ApiResources)
@@ -196,7 +197,7 @@ namespace EPlusActivities.API
                         builder =>
                         {
                             builder.RequireRole("admin", "manager", "customer");
-                            builder.RequireClaim("phone_number");
+                            // builder.RequireClaim("phone_number");
                         }
                     );
                 }

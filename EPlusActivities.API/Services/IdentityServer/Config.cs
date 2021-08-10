@@ -1,4 +1,4 @@
-// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -15,11 +15,6 @@ namespace EPlusActivities.API.Services.IdentityServer
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResource(
-                    name: "test.profile.name",
-                    displayName: "Test profile name",
-                    userClaims: new[] { "role", "policy" }
-                )
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -58,7 +53,9 @@ namespace EPlusActivities.API.Services.IdentityServer
                     ClientName = "Resource Owner Password Client",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     ClientSecrets = { new Secret("Pa$$w0rd".Sha256()) },
-                    AllowedScopes = new List<string>
+                    AllowOfflineAccess = true,
+                    RequireClientSecret = false,
+                    AllowedScopes =
                     {
                         "eplus.test.scope",
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -66,17 +63,34 @@ namespace EPlusActivities.API.Services.IdentityServer
                         IdentityServerConstants.StandardScopes.OfflineAccess
                     }
                 },
-                // interactive client using code flow + pkce
+                // mvc, hybrid flow
                 new Client
                 {
-                    ClientId = "interactive",
-                    ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RedirectUris = { "https://localhost:44300/signin-oidc" },
-                    FrontChannelLogoutUri = "https://localhost:44300/signout-oidc",
-                    PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
+                    ClientId = "hybrid client",
+                    ClientName = "Hybrid mode",
+                    ClientSecrets = { new Secret("hybrid secret".Sha256()) },
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    AccessTokenType = AccessTokenType.Reference,
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "client.test" }
+                    RequireClientSecret = false,
+                    RedirectUris =
+                    {
+                        "http://localhost:8080/signin-oidc" // 登陆后到跳转界面
+                    },
+                    PostLogoutRedirectUris =
+                    {
+                        "http://localhost:8080/signout-callback-oidc" // 登出后到跳转界面
+                    },
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowedScopes =
+                    {
+                        "eplus.test.scope",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Address,
+                        IdentityServerConstants.StandardScopes.Phone,
+                        IdentityServerConstants.StandardScopes.Profile,
+                    }
                 },
                 // interactive client using sms
                 new Client
@@ -92,7 +106,7 @@ namespace EPlusActivities.API.Services.IdentityServer
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedGrantTypes = { OidcConstants.AuthenticationMethods.ConfirmationBySms },
                     // AlwaysIncludeUserClaimsInIdToken = true,
-                    AllowedScopes = new List<string>
+                    AllowedScopes =
                     {
                         "eplus.test.scope",
                         IdentityServerConstants.StandardScopes.OpenId,
