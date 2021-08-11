@@ -33,6 +33,7 @@
     - 积分奖品，优惠券奖品，指定抽奖活动抽奖次数奖品。
 
 - 用户抽奖维护：管理端可以配置抽奖活动
+
   - [x] 抽奖活动周期
   - [x] 展示类型（转盘，挖宝，刮刮卡）
   - [ ] 抽奖界面背景更换
@@ -50,13 +51,14 @@
     - [x] 激活的渠道
 
 - 用户中奖记录查询
-    - [x] 查询用户抽奖记录
-    - [x] 更新中奖记录（实物查询）
+
+  - [x] 查询用户抽奖记录
+  - [x] 更新中奖记录（实物查询）
 
 - 会员渠道维护
-    - [x] 会员渠道维护
-    - [x] 会员渠道维护、会员奖励积分接口
-    - [x] 会员奖励积分接口
+  - [x] 会员渠道维护
+  - [x] 会员渠道维护、会员奖励积分接口
+  - [x] 会员奖励积分接口
 
 # 如何对接
 
@@ -87,6 +89,8 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 
 # 测试流程
 
+## 用户验证
+
 1. 发送短信至手机号： POST `https://localhost:52538/api/sms`
 
 ```json
@@ -100,13 +104,28 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 | Key           | Value                   |
 | ------------- | ----------------------- |
 | client_id     | sms.client              |
-| client_secret | secret                  |
 | grant_type    | sms                     |
 | scope         | eplus.test.scope openid |
+| login_channel | 1                       |
 | phone_number  | 11 位手机号             |
 | token         | 验证码                  |
-| login_channel | 1                       |
 
-3. 在上一步返回到 json 中提取 `access_token` 作为 JWT。
-4. 带着 JWT 访问 GET `https://localhost:52538/connect/userinfo` 获取 `sub` 字段，该字段的值就是用户的 `id`。
-5. 后续步骤可以参考 webapi 打开的 Swagger 页面。
+## 管理员验证
+
+POST `https://localhost:52538/connect/token` with `x-www-form-urlencoded` parameters
+
+| Key        | Value                   |
+| ---------- | ----------------------- |
+| client_id  | password                |
+| grant_type | password                |
+| scope      | eplus.test.scope openid |
+| username   | admin                   |
+| password   | Pa\$\$w0rd              |
+
+## 验证通过之后进行登陆
+
+1. 在上一步返回到 json 中提取 `access_token` 作为 JWT。
+2. 带着 JWT 访问 GET `https://localhost:52538/connect/userinfo` 获取 `sub` 字段，该字段的值就是用户的 `id`。
+3. 访问 Swagger 页面 https://localhost:52538/swagger/index.html。
+4. 获取用户信息：GET api/user
+5. 创建活动：POST api/activity

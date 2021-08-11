@@ -52,7 +52,6 @@ namespace EPlusActivities.API.Services.IdentityServer
                     ClientId = "password",
                     ClientName = "Resource Owner Password Client",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    ClientSecrets = { new Secret("Pa$$w0rd".Sha256()) },
                     AllowOfflineAccess = true,
                     RequireClientSecret = false,
                     AllowedScopes =
@@ -68,7 +67,6 @@ namespace EPlusActivities.API.Services.IdentityServer
                 {
                     ClientId = "hybrid client",
                     ClientName = "Hybrid mode",
-                    ClientSecrets = { new Secret("hybrid secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.Hybrid,
                     AccessTokenType = AccessTokenType.Reference,
                     AllowOfflineAccess = true,
@@ -97,7 +95,6 @@ namespace EPlusActivities.API.Services.IdentityServer
                 {
                     ClientId = "sms.client",
                     ClientName = "SMS Credentials Client",
-                    ClientSecrets = { new Secret("secret".Sha256()) },
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     AllowOfflineAccess = true,
                     RequireClientSecret = false,
