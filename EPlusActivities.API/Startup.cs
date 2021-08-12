@@ -38,6 +38,11 @@ namespace EPlusActivities.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers()
+                .AddJsonOptions(
+                    x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
+                );
+
             services.AddCors(
                 options =>
                 {
@@ -52,19 +57,8 @@ namespace EPlusActivities.API
                 }
             );
 
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            // var serverVersion = ServerVersion.AutoDetect(connectionString);
-            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-
-            services.AddControllers()
-                .AddJsonOptions(
-                    x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
-                );
-
-            services.AddCors();
-
             services.AddHttpClient();
+            services.AddHttpContextAccessor();
 
             services.AddSwaggerGen(
                 c =>
@@ -77,6 +71,11 @@ namespace EPlusActivities.API
             );
 
             // 数据库配置系统应用用户数据上下文
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+
+            // var serverVersion = ServerVersion.AutoDetect(connectionString);
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
             services.AddDbContext<ApplicationDbContext>(
                 options =>
                     options.UseMySql(
@@ -119,6 +118,7 @@ namespace EPlusActivities.API
             // 启用发送奖品服务
             services.AddScoped<ILotteryDrawService, LotteryDrawService>();
 
+            // IdentityServer 4
             var builder = services.AddIdentityServer(
                     options =>
                     {
@@ -131,8 +131,7 @@ namespace EPlusActivities.API
                         options.EmitStaticAudienceClaim = true;
                     }
                 ) // .AddTestUsers(TestUsers.Users)
-                .AddAspNetIdentity<ApplicationUser>()
-                // SMS Validator
+                .AddAspNetIdentity<ApplicationUser>() // SMS Validator
                 .AddExtensionGrantValidator<SmsGrantValidator>()
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
@@ -170,9 +169,10 @@ namespace EPlusActivities.API
                     options =>
                     {
                         //IdentityServer地址
-                        options.Authority = "http://localhost:52537";
+                        options.Authority = "https://localhost:52538";
 
                         //对应Idp中ApiResource的Name
+                        // options.Audience = "eplus.api.test";
                         options.Audience = "eplus.api";
 
                         //不使用https
@@ -185,19 +185,38 @@ namespace EPlusActivities.API
                 options =>
                 {
                     options.AddPolicy(
-                        "EPlusPolicy",
+                        "Customer",
                         builder =>
                         {
-                            builder.RequireRole("admin", "manager", "customer");
-                            builder.RequireScope("eplus.scope");
+                            builder.RequireRole("customer, tester");
+                        }
+                    );
+                    options.AddPolicy(
+                        "ManagerPolicy",
+                        builder =>
+                        {
+                            builder.RequireRole("manager", "admin", "tester");
+                        }
+                    );
+                    options.AddPolicy(
+                        "AdminPolicy",
+                        builder =>
+                        {
+                            builder.RequireRole("admin", "tester");
                         }
                     );
                     options.AddPolicy(
                         "TestPolicy",
                         builder =>
                         {
-                            builder.RequireRole("admin", "manager", "customer");
-                            // builder.RequireClaim("phone_number");
+                            builder.RequireRole("tester");
+                        }
+                    );
+                    options.AddPolicy(
+                        "AllRoles",
+                        builder =>
+                        {
+                            builder.RequireRole("admin", "manager", "customer", "tester");
                         }
                     );
                 }
@@ -216,6 +235,11 @@ namespace EPlusActivities.API
             RoleManager<ApplicationRole> roleManager
         ) // IIdGenerator idGenerator
         {
+            #region Seed data
+            DbInitializer.Initialize(env, context, userManager, roleManager);
+            #endregion
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -236,11 +260,6 @@ namespace EPlusActivities.API
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            #region Seed data
-            DbInitializer.Initialize(env, context, userManager, roleManager);
-            #endregion
-
 
             app.UseEndpoints(
                 endpoints =>

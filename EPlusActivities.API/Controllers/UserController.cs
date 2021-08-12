@@ -14,6 +14,7 @@ using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services;
 using EPlusActivities.API.Services.MemberService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -53,8 +54,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "customer, admin")]
-        // [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<UserDto>> GetAsync([FromBody] UserForLoginDto userDto)
         {
             #region Parameter validation

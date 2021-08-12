@@ -157,11 +157,18 @@ namespace EPlusActivities.API.Data
 
             #region Seed Administrator
             var admin = new ApplicationUser { UserName = "admin" };
+            var tester = new ApplicationUser { UserName = "tester" };
             var result = userManager.CreateAsync(admin, "Pa$$w0rd").Result;
             result =
                 userManager.AddToRoleAsync(
                     admin,
                     _roles.SingleOrDefault(r => r.Name.ToLower() == "admin").Name
+                ).Result;
+            result = userManager.CreateAsync(tester, "Pa$$w0rd").Result;
+            result =
+                userManager.AddToRoleAsync(
+                    tester,
+                    _roles.SingleOrDefault(r => r.Name.ToLower() == "tester").Name
                 ).Result;
             #endregion
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +12,10 @@ namespace EPlusActivities.API.Controllers
     {
         // GET: api/values
         [HttpGet]
-        // [Authorize(Roles = "test")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> Get()
         {
             var result = Json(from c in HttpContext.User.Claims select new { c.Type, c.Value });
