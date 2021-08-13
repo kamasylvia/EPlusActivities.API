@@ -8,6 +8,7 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpGet("user")]
         // [Authorize(Roles = "customer, admin, manager")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
             [FromBody] AddressForGetByUserIdDto addressDto
         ) {
@@ -59,7 +63,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<AddressDto>> GetByIdAsync(
             [FromBody] AddressForGetByIdDto addressDto
         ) {
@@ -71,7 +78,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPost]
         // [Authorize(Roles = "customer, admin, manager")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<AddressDto>> CreateAsync(
             [FromBody] AddressForCreateDto addressDto
         ) {
@@ -102,7 +112,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPut]
         // [Authorize(Roles = "customer, admin, manager")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdateAsync([FromBody] AddressForUpdateDto addressDto)
         {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
@@ -134,7 +147,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         // [Authorize(Roles = "customer, admin, manager")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> DeleteAsync([FromBody] AddressForGetByIdDto addressDto)
         {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);

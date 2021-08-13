@@ -23,10 +23,12 @@ namespace EPlusActivities.API.Entities
         // 上次签到日期
         public DateTime? LastAttendanceDate { get; set; }
 
+        [Required]
         public Guid? UserId { get; set; }
 
         public ApplicationUser User { get; set; }
 
+        [Required]
         public Guid? ActivityId { get; set; }
 
         public Activity Activity { get; set; }

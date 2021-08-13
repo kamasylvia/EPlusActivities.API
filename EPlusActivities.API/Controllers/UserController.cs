@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
-using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -69,7 +61,7 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Get member info
-            if (userDto.LoginChannel is not ChannelCode.Admin)
+            if (userDto.LoginChannel is ChannelCode.MiniProgram)
             {
                 var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(
                     user.PhoneNumber
@@ -98,7 +90,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPatch("channel")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdateLoginChannelAsync([FromBody] UserForLoginDto userDto)
         {
             #region Parameter validation
@@ -122,7 +117,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpPatch("phonenumber")]
         // [Authorize(Roles = "test")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdatePhoneNumberAsync(
             [FromBody] UserForUpdatePhoneDto userDto
         ) {
@@ -166,7 +164,10 @@ namespace EPlusActivities.API.Controllers
 
         /*      
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+                [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> CreateAsync([FromBody] UserDto userDto)
         {
             #region Parameter validation
@@ -184,7 +185,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = "TestPolicy")]
+                [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         // [Authorize(Roles = "customer, admin, manager")]
         public async Task<IActionResult> UpdateAsync([FromBody] UserDto userDto)
         {
@@ -204,7 +208,10 @@ namespace EPlusActivities.API.Controllers
 
         [HttpDelete]
         // [Authorize(Roles = "admin")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> DeleteAsync([FromBody] UserForDeleteDto userDto)
         {
             #region Parameter validation

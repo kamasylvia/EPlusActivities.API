@@ -8,6 +8,7 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +34,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<CategoryDto>> GetByIdAsync(
             [FromBody] CategoryForGetByIdDto categoryDto
         ) {
@@ -42,7 +46,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("name")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<CategoryDto>> GetByNameAsync(
             [FromBody] CategoryForGetByNameDto categoryDto
         ) {
@@ -53,7 +60,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedAsync(
             [FromBody] CategoryForGetByNameDto categoryDto
         ) {
@@ -64,7 +74,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<CategoryDto>> CreateAsync(
             [FromBody] CategoryForGetByNameDto categoryDto
         ) {
@@ -90,7 +103,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPatch("name")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdateNameAsync([FromBody] CategoryDto categoryDto)
         {
             var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
@@ -118,7 +134,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> DeleteAsync([FromBody] CategoryDto categoryDto)
         {
             #region Parameter validation

@@ -13,6 +13,7 @@ using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.DeliveryService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,7 @@ namespace EPlusActivities.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityRepository _activityRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
-        private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly IRepository<Coupon> _couponResponseDto;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
         private readonly ILotteryDrawService _lotteryDrawService;
@@ -48,7 +49,7 @@ namespace EPlusActivities.API.Controllers
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IMapper mapper,
             ILogger<LotteryController> logger,
-            IRepository<ActivityUser> activityUserRepository,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
             IRepository<Coupon> couponResponseDto,
             ILotteryDrawService lotteryDrawService,
             IMemberService memberService,
@@ -80,7 +81,10 @@ namespace EPlusActivities.API.Controllers
 
         // GET: api/values
         [HttpGet("user")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetByUserIdAsync(
             [FromBody] LotteryForGetByUserIdDto lotteryDto
         ) {
@@ -111,7 +115,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
         ) {
@@ -282,7 +289,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdateAsync([FromBody] LotteryForUpdateDto lotteryDto)
         {
             var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);
@@ -311,7 +321,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> DeleteAsync([FromBody] LotteryForGetByIdDto lotteryDto)
         {
             var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);

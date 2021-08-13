@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.Dtos.ActivityUserDtos
 {
-    public class ActivityUserForGetDto
+    public class ActivityUserForJoinAllAvailableActivitiesDto
     {
         [Required]
         public Guid? UserId { get; set; }
-
-        [Required]
-        public Guid? ActivityId { get; set; }
+        public IEnumerable<Guid> ActivityIds { get; set; }
     }
 }

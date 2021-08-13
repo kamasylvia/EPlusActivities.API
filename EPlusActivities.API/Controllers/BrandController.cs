@@ -8,6 +8,7 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<BrandDto>> GetByIdAsync(
             [FromBody] BrandForGetByIdDto brandDto
         ) {
@@ -42,7 +46,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("name")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<BrandDto>> GetByNameAsync(
             [FromBody] BrandForGetByNameDto brandDto
         ) {
@@ -53,7 +60,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetAllBrand()
         {
             var brands = await _brandRepository.FindAllAsync();
@@ -63,7 +73,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync(
             [FromBody] BrandForGetByNameDto brandDto
         ) {
@@ -74,7 +87,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<BrandDto>> CreateAsync(
             [FromBody] BrandForGetByNameDto brandDto
         ) {
@@ -100,7 +116,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPatch("name")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdateNameAsync([FromBody] BrandDto brandDto)
         {
             #region Parameter validation
@@ -123,7 +142,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> DeleteAsync([FromBody] BrandDto brandDto)
         {
             #region Parameter validation

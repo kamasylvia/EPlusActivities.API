@@ -11,6 +11,7 @@ using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IMemberService _memberService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IIdGeneratorService _idGeneratorService;
-        private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly ILogger<ActivityController> _logger;
         private readonly IMapper _mapper;
         public ActivityController(
@@ -37,7 +38,7 @@ namespace EPlusActivities.API.Controllers
             IActivityRepository activityRepository,
             UserManager<ApplicationUser> userManager,
             IIdGeneratorService idGeneratorService,
-            IRepository<ActivityUser> activityUserRepository,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityController> logger,
             IMapper mapper
         ) {
@@ -56,7 +57,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<ActivityDto>> GetAsync(
             [FromBody] ActivityForGetDto activityDto
         ) {
@@ -67,7 +71,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("available")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAllAvailableAsync(
             [FromBody] ActivityForGetAllAvailableDto activityDto
         ) {
@@ -88,7 +95,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<ActivityDto>> CreateAsync(
             [FromBody] ActivityForCreateDto activityDto
         ) {
@@ -129,7 +139,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdateAsync([FromBody] ActivityForUpdateDto activityDto)
         {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
@@ -160,7 +173,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> DeleteAsync([FromBody] ActivityForGetDto activityDto)
         {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);

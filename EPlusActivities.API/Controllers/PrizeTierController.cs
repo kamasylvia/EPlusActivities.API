@@ -9,6 +9,7 @@ using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Utils;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,7 +42,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<PrizeTierDto>> GetByIdAsync(
             [FromBody] PrizeTierForGetByIdDto prizeTierDto
         ) {
@@ -52,7 +56,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("activity")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<PrizeTierDto>> GetByActivityIdAsync(
             [FromBody] PrizeTierForGetByActivityIdDto prizeTierDto
         ) {
@@ -72,7 +79,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<PrizeTierDto>> CreateAsync(
             [FromBody] PrizeTierForCreateDto prizeTierDto
         ) {
@@ -126,7 +136,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> UpdateAsync([FromBody] PrizeTierForUpdateDto prizeTierDto)
         {
             var prizeTier = await _prizeTierRepository.FindByIdAsync(prizeTierDto.Id.Value);
@@ -164,7 +177,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<IActionResult> DeleteAsync([FromBody] PrizeTierForGetByIdDto prizeTierDto)
         {
             var prizeTier = await _prizeTierRepository.FindByIdAsync(prizeTierDto.Id.Value);

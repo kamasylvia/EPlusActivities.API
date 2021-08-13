@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
@@ -10,6 +12,7 @@ using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +29,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IMemberService _memberService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
-        private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly ILogger<ActivityUserController> _logger;
 
@@ -34,7 +37,7 @@ namespace EPlusActivities.API.Controllers
             IActivityRepository activityRepository,
             IMemberService memberService,
             UserManager<ApplicationUser> userManager,
-            IRepository<ActivityUser> activityUserRepository,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityUserController> logger,
             IMapper mapper,
             IIdGeneratorService idGeneratorService
@@ -54,7 +57,7 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(Policy = "AllRoles")]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
         ) {
@@ -84,13 +87,32 @@ namespace EPlusActivities.API.Controllers
                 : Ok(_mapper.Map<ActivityUserDto>(activityUser));
         }
 
+        [HttpGet("user")]
+        [Authorize(Policy = "AllRoles")]
+        public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
+            [FromBody] ActivityUserForGetByUserIdDto activityUserDto
+        ) {
+            #region Parameter validation
+            var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
+            if (user is null)
+            {
+                return NotFound("Could not find the user.");
+            }
+            #endregion
+            return Ok(
+                _mapper.Map<IEnumerable<ActivityUserDto>>(
+                    await _activityUserRepository.FindByParentIdAsync(activityUserDto.UserId.Value)
+                )
+            );
+        }
+
         /// <summary>
         /// 绑定活动和用户，该 API 必须在签到和抽奖 API 之前被调用，否则无法判断用户参与的是哪个活动。
         /// </summary>
         /// <param name="activityUserDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(Policy = "AllRoles")]
         public async Task<ActionResult<ActivityUserDto>> JoinAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
         ) {
@@ -126,19 +148,72 @@ namespace EPlusActivities.API.Controllers
             #region Database operations
             await _activityUserRepository.AddAsync(activityUser);
             var result = await _activityUserRepository.SaveAsync();
-            if (result)
+            if (!result)
             {
-                return Ok();
+                _logger.LogError("Failed to create an ActivityUser link.");
+                return new InternalServerErrorObjectResult("Update database exception.");
             }
             #endregion
 
-            _logger.LogError("Failed to create an ActivityUser link.");
-            return new InternalServerErrorObjectResult("Update database exception.");
+            return Ok(_mapper.Map<ActivityUserDto>(activityUser));
+        }
+
+        [HttpPost("activities")]
+        [Authorize(Policy = "AllRoles")]
+        public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAllAvailableActivities(
+            [FromBody] ActivityUserForJoinAllAvailableActivitiesDto activityUserDto
+        ) {
+            #region Parameter validation
+            var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
+            if (user is null)
+            {
+                return NotFound("Could not find the user.");
+            }
+
+            var existedLinks = await _activityUserRepository.FindByParentIdAsync(
+                activityUserDto.UserId.Value
+            );
+            var unBoundActivityIds = activityUserDto.ActivityIds.Except(
+                existedLinks.Select(activityUser => activityUser.ActivityId.Value)
+            );
+
+            if (unBoundActivityIds.Count() <= 0)
+            {
+                return BadRequest("All activities are already bound to the user.");
+            }
+            #endregion
+
+            #region Create new ActivityUser links
+            var unBoundActivities = new List<Activity>();
+            foreach (var id in unBoundActivityIds)
+            {
+                unBoundActivities.Add(await _activityRepository.FindByIdAsync(id));
+            }
+
+            var newCreatedLinks = unBoundActivities.Select(
+                activity => new ActivityUser { User = user, Activity = activity }
+            );
+            #endregion
+
+            #region Database operations
+            foreach (var link in newCreatedLinks)
+            {
+                await _activityUserRepository.AddAsync(link);
+            }
+
+            var result = await _activityUserRepository.SaveAsync();
+            if (!result)
+            {
+                _logger.LogError("Failed to create ActivityUser links.");
+                return new InternalServerErrorObjectResult("Update database exception.");
+            }
+            #endregion
+
+            return Ok(_mapper.Map<IEnumerable<ActivityUserDto>>(newCreatedLinks));
         }
 
         [HttpPatch("redeeming")]
-        // [Authorize(Roles = "test")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(Policy = "CustomerPolicy")]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto
         ) {

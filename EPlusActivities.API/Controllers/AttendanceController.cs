@@ -12,6 +12,7 @@ using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IMapper _mapper;
         private readonly IAttendanceRepository _attendanceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IRepository<ActivityUser> _activityUserRepository;
+        private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly ILogger<AttendanceController> _logger;
         private readonly IActivityRepository _activityRepository;
         private readonly IIdGeneratorService _idGeneratorService;
@@ -41,7 +42,7 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IActivityRepository activityRepository,
             IIdGeneratorService idGeneratorService,
-            IRepository<ActivityUser> activityUserRepository,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<AttendanceController> logger,
             IMemberService memberService
         ) {
@@ -63,7 +64,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("user")]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<AttendanceForAttendDto>>> GetByUserIdAsync(
             [FromBody] AttendanceForGetByUserIdDto attendanceDto
         ) {
@@ -93,7 +97,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<AttendanceDto>> GetByIdAsync(
             [FromBody] AttendanceForGetByIdDto attendanceDto
         ) {
@@ -104,7 +111,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "TestPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<AttendanceDto>> AttendAsync(
             [FromBody] AttendanceForAttendDto attendanceDto
         ) {
