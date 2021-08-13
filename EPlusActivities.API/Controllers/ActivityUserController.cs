@@ -10,6 +10,7 @@ using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,6 +33,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly ILogger<ActivityUserController> _logger;
+        private readonly IActivityService _activityService;
 
         public ActivityUserController(
             IActivityRepository activityRepository,
@@ -40,8 +42,11 @@ namespace EPlusActivities.API.Controllers
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityUserController> logger,
             IMapper mapper,
-            IIdGeneratorService idGeneratorService
+            IIdGeneratorService idGeneratorService,
+            IActivityService activityService
         ) {
+            _activityService =
+                activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -57,7 +62,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "AllRoles")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
         ) {
@@ -88,7 +96,10 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpGet("user")]
-        [Authorize(Policy = "AllRoles")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
             [FromBody] ActivityUserForGetByUserIdDto activityUserDto
         ) {
@@ -112,7 +123,10 @@ namespace EPlusActivities.API.Controllers
         /// <param name="activityUserDto"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Policy = "AllRoles")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<ActivityUserDto>> JoinAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
         ) {
@@ -155,13 +169,16 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            return Ok(_mapper.Map<ActivityUserDto>(activityUser));
+            return Ok();
         }
 
-        [HttpPost("activities")]
-        [Authorize(Policy = "AllRoles")]
+        [HttpPost("bindAll")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAllAvailableActivities(
-            [FromBody] ActivityUserForJoinAllAvailableActivitiesDto activityUserDto
+            [FromBody] ActivityUserForGetByUserIdDto activityUserDto
         ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
@@ -169,51 +186,20 @@ namespace EPlusActivities.API.Controllers
             {
                 return NotFound("Could not find the user.");
             }
+            #endregion
 
-            var existedLinks = await _activityUserRepository.FindByParentIdAsync(
+            var newCreatedLinks = await _activityService.BindUserWithAllAvailableActivities(
                 activityUserDto.UserId.Value
             );
-            var unBoundActivityIds = activityUserDto.ActivityIds.Except(
-                existedLinks.Select(activityUser => activityUser.ActivityId.Value)
-            );
 
-            if (unBoundActivityIds.Count() <= 0)
-            {
-                return BadRequest("All activities are already bound to the user.");
-            }
-            #endregion
-
-            #region Create new ActivityUser links
-            var unBoundActivities = new List<Activity>();
-            foreach (var id in unBoundActivityIds)
-            {
-                unBoundActivities.Add(await _activityRepository.FindByIdAsync(id));
-            }
-
-            var newCreatedLinks = unBoundActivities.Select(
-                activity => new ActivityUser { User = user, Activity = activity }
-            );
-            #endregion
-
-            #region Database operations
-            foreach (var link in newCreatedLinks)
-            {
-                await _activityUserRepository.AddAsync(link);
-            }
-
-            var result = await _activityUserRepository.SaveAsync();
-            if (!result)
-            {
-                _logger.LogError("Failed to create ActivityUser links.");
-                return new InternalServerErrorObjectResult("Update database exception.");
-            }
-            #endregion
-
-            return Ok(_mapper.Map<IEnumerable<ActivityUserDto>>(newCreatedLinks));
+            return Ok();
         }
 
         [HttpPatch("redeeming")]
-        [Authorize(Policy = "CustomerPolicy")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "CustomerPolicy"
+        )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto
         ) {

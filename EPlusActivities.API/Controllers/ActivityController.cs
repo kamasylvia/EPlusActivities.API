@@ -9,6 +9,7 @@ using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,6 +34,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly ILogger<ActivityController> _logger;
         private readonly IMapper _mapper;
+        private readonly IActivityService _activityService;
         public ActivityController(
             IMemberService memberService,
             IActivityRepository activityRepository,
@@ -40,9 +42,12 @@ namespace EPlusActivities.API.Controllers
             IIdGeneratorService idGeneratorService,
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityController> logger,
-            IMapper mapper
+            IMapper mapper,
+            IActivityService activityService
         ) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _activityService =
+                activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -85,13 +90,12 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var activitiesAtStartTime = await _activityRepository.FindAllAvailableAsync(
-                activityDto.StartTime.Value
+            return Ok(
+                await _activityService.GetAllAvailableActivitiesAsync(
+                    activityDto.StartTime.Value,
+                    activityDto.EndTime
+                )
             );
-            var endTime = activityDto.EndTime ?? DateTime.Now.Date;
-            var activitiesAtEndTime = await _activityRepository.FindAllAvailableAsync(endTime);
-            var result = activitiesAtStartTime.Union(activitiesAtEndTime);
-            return Ok(result);
         }
 
         [HttpPost]

@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.DeliveryService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
@@ -117,6 +118,9 @@ namespace EPlusActivities.API
 
             // 启用发送奖品服务
             services.AddScoped<ILotteryDrawService, LotteryDrawService>();
+
+            // 启用活动服务
+            services.AddTransient<IActivityService, ActivityService>();
 
             // IdentityServer 4
             var builder = services.AddIdentityServer(
