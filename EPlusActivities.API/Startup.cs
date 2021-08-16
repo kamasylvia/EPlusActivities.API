@@ -9,6 +9,7 @@ using EPlusActivities.API.Services.DeliveryService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
+using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -52,7 +53,7 @@ namespace EPlusActivities.API
                         {
                             builder.AllowAnyHeader()
                                 .AllowAnyMethod()
-                                .WithOrigins("http://localhost:8080");
+                                .WithOrigins("https://localhost:8080");
                         }
                     );
                 }
@@ -137,30 +138,39 @@ namespace EPlusActivities.API
                 ) // .AddTestUsers(TestUsers.Users)
                 .AddAspNetIdentity<ApplicationUser>() // SMS Validator
                 .AddExtensionGrantValidator<SmsGrantValidator>()
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryApiResources(Config.ApiResources)
-                .AddInMemoryClients(Config.Clients);
-
-            // this adds the config data from DB (clients, resources, CORS)
-            /*
-            .AddConfigurationStore(options =>
-            {
-                options.ConfigureDbContext = builder =>
-                    builder.UseMySql(connectionString,
-                        sql => sql.MigrationsAssembly(migrationsAssembly));
-            })
-            // this adds the operational data from DB (codes, tokens, consents)
-            .AddOperationalStore(options =>
-            {
-                options.ConfigureDbContext = builder =>
-                    builder.UseMySql(connectionString,
-                        sql => sql.MigrationsAssembly(migrationsAssembly));
-
-                // this enables automatic token cleanup. this is optional.
-                options.EnableTokenCleanup = true;
-            });
+                /*
+            .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryApiResources(Config.ApiResources)
+            .AddInMemoryClients(Config.Clients);
             */
+
+                // this adds the config data from DB (clients, resources, CORS)
+                .AddConfigurationStore(
+                    options =>
+                    {
+                        options.ConfigureDbContext = builder =>
+                            builder.UseMySql(
+                                connectionString,
+                                sql => sql.MigrationsAssembly(migrationsAssembly)
+                            );
+                    }
+                )
+                // this adds the operational data from DB (codes, tokens, consents)
+                .AddOperationalStore(
+                    options =>
+                    {
+                        options.ConfigureDbContext = builder =>
+                            builder.UseMySql(
+                                connectionString,
+                                sql => sql.MigrationsAssembly(migrationsAssembly)
+                            );
+
+                        // this enables automatic token cleanup. this is optional.
+                        options.EnableTokenCleanup = true;
+                    }
+                );
+
             // not recommended for production - you need to store your key material somewhere secure
             if (Environment.IsDevelopment())
             {
@@ -231,16 +241,10 @@ namespace EPlusActivities.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(
-            IApplicationBuilder app,
-            IWebHostEnvironment env,
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager
-        ) // IIdGenerator idGenerator
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             #region Seed data
-            DbInitializer.Initialize(env, context, userManager, roleManager);
+            DbInitializer.Initialize(app: app, environment: env);
             #endregion
 
 

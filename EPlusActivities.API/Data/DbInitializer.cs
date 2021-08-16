@@ -4,9 +4,14 @@ using System.Linq;
 using System.Text.Json;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
+using EPlusActivities.API.Services.IdentityServer;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Lottery = EPlusActivities.API.Entities.Lottery;
 
@@ -23,34 +28,81 @@ namespace EPlusActivities.API.Data
                 System.IO.File.ReadAllText("Data/UserSeedData.json")
             );
 
-        public static void Initialize(
-            IWebHostEnvironment environment,
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager
-        ) {
-            if (environment.IsDevelopment())
+        public static void Initialize(IApplicationBuilder app, IWebHostEnvironment environment)
+        {
+            using (
+                var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()
+                    .CreateScope()
+            ) {
+                var context =
+                    serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var persistedGrantDbContext =
+                    serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+                var configurationDbContext =
+                    serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                var userManager =
+                    serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager =
+                    serviceScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+                if (environment.IsDevelopment())
+                {
+                    var deleted = context.Database.EnsureDeleted();
+                    System.Console.WriteLine($"The old database is deleted: {deleted}");
+                    var created = context.Database.EnsureCreated();
+                    System.Console.WriteLine($"The new database is created: {created}");
+                }
+
+                if (environment.IsProduction())
+                {
+                    persistedGrantDbContext.Database.EnsureDeleted();
+                    configurationDbContext.Database.EnsureDeleted();
+                    context.Database.EnsureDeleted();
+                    persistedGrantDbContext.Database.Migrate();
+                    configurationDbContext.Database.Migrate();
+                    context.Database.Migrate();
+                    SeedConfig(configurationDbContext);
+                }
+
+                // Look for any Data.
+                if (context.Users.Any())
+                {
+                    return; // DB has been seeded
+                }
+
+                SeedRoles(roleManager);
+                SeedUsers(userManager);
+                SeedData(context, userManager);
+            }
+        }
+
+        private static void SeedConfig(ConfigurationDbContext configurationDbContext)
+        {
+            if (!configurationDbContext.Clients.Any())
             {
-                var deleted = context.Database.EnsureDeleted();
-                System.Console.WriteLine($"The old database is deleted: {deleted}");
-                var created = context.Database.EnsureCreated();
-                System.Console.WriteLine($"The new database is created: {created}");
+                foreach (var client in Config.Clients)
+                {
+                    configurationDbContext.Clients.Add(client.ToEntity());
+                }
             }
 
-            if (environment.IsProduction())
+            if (!configurationDbContext.IdentityResources.Any())
             {
-                context.Database.Migrate();
+                foreach (var resource in Config.IdentityResources)
+                {
+                    configurationDbContext.IdentityResources.Add(resource.ToEntity());
+                }
             }
 
-            // Look for any Data.
-            if (context.Users.Any())
+            if (!configurationDbContext.ApiResources.Any())
             {
-                return; // DB has been seeded
+                foreach (var resource in Config.ApiResources)
+                {
+                    configurationDbContext.ApiResources.Add(resource.ToEntity());
+                }
             }
 
-            SeedRoles(roleManager);
-            SeedUsers(userManager);
-            SeedData(context, userManager);
+            configurationDbContext.SaveChanges();
         }
 
         private static void SeedUsers(UserManager<ApplicationUser> userManager) =>

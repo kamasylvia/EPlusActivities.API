@@ -83,8 +83,20 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 ```
 
 7. 运行本项目
-   - `cd` 到解决方案目录(该目录含有 `.sln` 文件) 执行 `dotnet watch run -p EPlusActivities.API` 或 `dotnet run -p EPlusActivities.API`.
-   - 或 `cd` 到项目目录（该目录含有 `.csproj` 文件） 执行 `dotnet watch run`, 或 `dotnet run`.
+    - `cd` 到解决方案目录(该目录含有 `.sln` 文件) 执行
+        - 测试环境：
+            - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development` 
+            - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
+        - 生产环境：
+            - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production` 
+            - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
+    - 或 `cd` 到项目目录（该目录含有 `.csproj` 文件） 执行
+        - 测试环境：
+            - `dotnet watch run --launch-profile EPlusActivities.API-Development` 
+            - 或 `dotnet run --launch-profile EPlusActivities.API-Development`
+        - 生产环境：
+            - `dotnet watch run --launch-profile EPlusActivities.API-Production` 
+            - 或 `dotnet run --launch-profile EPlusActivities.API-Production`
 8. 项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 https://localhost:52538/swagger/index.html
 
 # 测试流程
