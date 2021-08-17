@@ -1,6 +1,7 @@
 # custom
 # Migrations/
 .VSCodeCounter
+mysql
 
 # globs
 Makefile.in

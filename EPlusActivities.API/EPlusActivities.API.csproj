@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <DockerComposeProjectPath>../docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>41df09a5-bb16-469d-af5a-dec9cf7f985d</UserSecretsId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'EPlusActivities.API-Development' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'EPlusActivities.API-Production' " />
@@ -28,5 +30,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="AutoMapper.Extensions.EnumMapping" Version="1.1.0" />
     <PackageReference Include="Yitter.IdGenerator" Version="1.0.12" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Dockerfile" />
   </ItemGroup>
 </Project>

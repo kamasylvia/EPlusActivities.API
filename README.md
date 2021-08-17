@@ -82,23 +82,29 @@ docker run -itd --name mysql-test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mys
 git clone https://github.com/kamasylvia/EPlusActivities.API.git
 ```
 
-7. 运行本项目
-    - `cd` 到解决方案目录(该目录含有 `.sln` 文件) 执行
-        - 测试环境：
-            - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development` 
-            - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
-        - 生产环境：
-            - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production` 
-            - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
-    - 或 `cd` 到项目目录（该目录含有 `.csproj` 文件） 执行
-        - 测试环境：
-            - `dotnet watch run --launch-profile EPlusActivities.API-Development` 
-            - 或 `dotnet run --launch-profile EPlusActivities.API-Development`
-        - 生产环境：
-            - `dotnet watch run --launch-profile EPlusActivities.API-Production` 
-            - 或 `dotnet run --launch-profile EPlusActivities.API-Production`
-8. 项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 https://localhost:52538/swagger/index.html
+# 运行本项目
+## .NET SDK（MySQL 用 docker 版）
+- `cd` 到解决方案目录(该目录含有 `.sln` 文件) 执行
+    - 开发环境：
+        - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development` 
+        - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
+    - 生产环境：
+        - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production` 
+        - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
+- 或 `cd` 到项目目录（该目录含有 `.csproj` 文件） 执行
+    - 开发环境：
+        - `dotnet watch run --launch-profile EPlusActivities.API-Development` 
+        - 或 `dotnet run --launch-profile EPlusActivities.API-Development`
+    - 生产环境：
+        - `dotnet watch run --launch-profile EPlusActivities.API-Production` 
+        - 或 `dotnet run --launch-profile EPlusActivities.API-Production`
+- 项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 https://localhost:52538/swagger/index.html
 
+## docker-compose
+- `cd` 到解决方案目录(该目录含有 `.sln` 和 `docker-compose.yml` 文件) 执行
+    - `docker-compose up -d`
+### 注意
+- 因为有反向代理，比如 nginx，容器内的项目是没有开 https 的。
 # 测试流程
 
 ## 用户验证

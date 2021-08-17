@@ -55,8 +55,8 @@ namespace EPlusActivities.API.Data
 
                 if (environment.IsProduction())
                 {
-                    persistedGrantDbContext.Database.EnsureDeleted();
-                    configurationDbContext.Database.EnsureDeleted();
+                    // persistedGrantDbContext.Database.EnsureDeleted();
+                    // configurationDbContext.Database.EnsureDeleted();
                     context.Database.EnsureDeleted();
                     persistedGrantDbContext.Database.Migrate();
                     configurationDbContext.Database.Migrate();

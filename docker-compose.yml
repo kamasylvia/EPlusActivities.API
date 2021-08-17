@@ -1,0 +1,29 @@
+version: "3.4"
+
+services:
+    db:
+        image: mysql:8.0.25
+        container_name: mysql
+        environment:
+            MYSQL_DATABASE: EPlusActivities
+            MYSQL_USER: ngs
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_PASSWORD: 123456
+        ports:
+            - 3306:3306
+        volumes:
+            - ./mysql:/var/lib/mysql
+        restart: always
+
+    eplusactivities.api:
+        image: ${DOCKER_REGISTRY-}eplusactivities
+        build:
+            context: .
+            dockerfile: EPlusActivities.API/Dockerfile
+        depends_on:
+            - db
+        links:
+            - db
+        ports:
+            - 52537:80
+            # - 50538:443
