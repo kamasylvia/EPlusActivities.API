@@ -116,7 +116,6 @@ namespace EPlusActivities.API.Controllers
         }
 
         [HttpPatch("phonenumber")]
-        // [Authorize(Roles = "test")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -162,34 +161,34 @@ namespace EPlusActivities.API.Controllers
             return new InternalServerErrorObjectResult(result.Errors);
         }
 
-        /*      
         [HttpPost]
-                [Authorize(
+        [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<IActionResult> CreateAsync([FromBody] UserDto userDto)
-        {
+        public async Task<IActionResult> CreateAdminOrManagerAsync(
+            [FromBody] UserForCreateAdminDto userDto
+        ) {
             #region Parameter validation
-            var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
+            var user = await _userManager.FindByNameAsync(userDto.UserName);
             if (user is not null)
             {
-                return BadRequest("The user is already existed.");
+                return Conflict("The user is already existed.");
             }
             #endregion
 
-            // Not Completed
-            user = _mapper.Map<ApplicationUser>(userDto);
-            var result = await _userManager.CreateAsync(user);
+            user = new ApplicationUser { UserName = userDto.UserName };
+            var result = await _userManager.CreateAsync(user, userDto.Password);
+            result = await _userManager.AddToRoleAsync(user, userDto.Role);
             return result.Succeeded ? Ok() : new InternalServerErrorObjectResult(result.Errors);
         }
 
+        /*
         [HttpPut]
-                [Authorize(
+        [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        // [Authorize(Roles = "customer, admin, manager")]
         public async Task<IActionResult> UpdateAsync([FromBody] UserDto userDto)
         {
             #region Parameter validation

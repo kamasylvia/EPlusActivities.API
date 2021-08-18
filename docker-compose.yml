@@ -16,14 +16,20 @@ services:
         restart: always
 
     eplusactivities.api:
-        image: ${DOCKER_REGISTRY-}eplusactivities
+        image: kamasylvia/eplusactivities:20210817
+        container_name: eplusactivities
         build:
             context: .
             dockerfile: EPlusActivities.API/Dockerfile
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://+:80
         depends_on:
             - db
         links:
             - db
         ports:
             - 52537:80
-            # - 50538:443
+        volumes:
+            - ~/.aspnet/https:/root/.aspnet/https:ro
+            - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
