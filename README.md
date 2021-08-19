@@ -98,7 +98,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
     - 生产环境：
         - `dotnet watch run --launch-profile EPlusActivities.API-Production` 
         - 或 `dotnet run --launch-profile EPlusActivities.API-Production`
-- 项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 https://localhost:52538/swagger/index.html
+- 开发环境下，项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 http://localhost:52537/swagger/index.html
 
 ## docker-compose
 - `cd` 到解决方案目录(该目录含有 `.sln` 和 `docker-compose.yml` 文件) 执行
@@ -109,7 +109,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 
 ## 用户验证
 
-1. 发送短信至手机号： POST `https://localhost:52538/api/sms`
+1. 发送短信至手机号： POST `http://localhost:52537/api/sms`
 
 ```json
 {
@@ -117,7 +117,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 }
 ```
 
-2. 获得验证码后发送验证请求： POST `https://localhost:52538/connect/token` with `x-www-form-urlencoded` parameters
+2. 获得验证码后发送验证请求： POST `http://localhost:52537/connect/token` with `x-www-form-urlencoded` parameters
 
 | Key           | Value                   |
 | ------------- | ----------------------- |
@@ -130,7 +130,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 
 ## 管理员验证
 
-POST `https://localhost:52538/connect/token` with `x-www-form-urlencoded` parameters
+POST `http://localhost:52537/connect/token` with `x-www-form-urlencoded` parameters
 
 | Key        | Value                   |
 | ---------- | ----------------------- |
@@ -143,7 +143,7 @@ POST `https://localhost:52538/connect/token` with `x-www-form-urlencoded` parame
 ## 验证通过之后进行登陆
 
 1. 在上一步返回到 json 中提取 `access_token` 作为 JWT。
-2. 带着 JWT 访问 GET `https://localhost:52538/connect/userinfo` 获取 `sub` 字段，该字段的值就是用户的 `id`。
+2. 带着 JWT 访问 GET `http://localhost:52537/connect/userinfo` 获取 `sub` 字段，该字段的值就是用户的 `id`。
 3. 访问 Swagger 页面 https://localhost:52538/swagger/index.html。
 4. 获取用户信息：GET api/user
 5. 创建活动：POST api/activity

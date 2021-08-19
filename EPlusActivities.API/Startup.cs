@@ -137,45 +137,40 @@ namespace EPlusActivities.API
                     }
                 ) // .AddTestUsers(TestUsers.Users)
                 .AddAspNetIdentity<ApplicationUser>() // SMS Validator
-                .AddExtensionGrantValidator<SmsGrantValidator>()
-                /*
-            .AddInMemoryIdentityResources(Config.IdentityResources)
-            .AddInMemoryApiScopes(Config.ApiScopes)
-            .AddInMemoryApiResources(Config.ApiResources)
-            .AddInMemoryClients(Config.Clients);
-            */
+                .AddExtensionGrantValidator<SmsGrantValidator>();
 
-                // this adds the config data from DB (clients, resources, CORS)
-                .AddConfigurationStore(
-                    options =>
-                    {
-                        options.ConfigureDbContext = builder =>
-                            builder.UseMySql(
-                                connectionString,
-                                sql => sql.MigrationsAssembly(migrationsAssembly)
-                            );
-                    }
-                )
-                // this adds the operational data from DB (codes, tokens, consents)
-                .AddOperationalStore(
-                    options =>
-                    {
-                        options.ConfigureDbContext = builder =>
-                            builder.UseMySql(
-                                connectionString,
-                                sql => sql.MigrationsAssembly(migrationsAssembly)
-                            );
+            // InMemory Mode
+            // not recommended for production - you need to store your key material somewhere secure
+            builder.AddDeveloperSigningCredential()
+                .AddInMemoryIdentityResources(Config.IdentityResources)
+                .AddInMemoryApiScopes(Config.ApiScopes)
+                .AddInMemoryApiResources(Config.ApiResources)
+                .AddInMemoryClients(Config.Clients);
+
+            // Db Mode
+            // this adds the config data from DB (clients, resources, CORS)
+            /*
+            builder
+                .AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = builder =>
+                        builder
+                            .UseMySql(connectionString,
+                            sql =>
+                                sql.MigrationsAssembly(migrationsAssembly));
+                }) // this adds the operational data from DB (codes, tokens, consents)
+                .AddOperationalStore(options =>
+                {
+                    options.ConfigureDbContext = builder =>
+                        builder
+                            .UseMySql(connectionString,
+                            sql =>
+                                sql.MigrationsAssembly(migrationsAssembly));
 
                         // this enables automatic token cleanup. this is optional.
                         options.EnableTokenCleanup = true;
-                    }
-                );
-
-            // not recommended for production - you need to store your key material somewhere secure
-            if (Environment.IsDevelopment())
-            {
-                builder.AddDeveloperSigningCredential();
-            }
+                });
+            */
 
             // 受保护的 API 设置
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -183,7 +178,7 @@ namespace EPlusActivities.API
                     options =>
                     {
                         //IdentityServer地址
-                        options.Authority = "https://localhost:52538";
+                        options.Authority = "http://localhost:80";
 
                         //对应Idp中ApiResource的Name
                         // options.Audience = "eplus.api.test";
@@ -191,6 +186,8 @@ namespace EPlusActivities.API
 
                         //不使用https
                         options.RequireHttpsMetadata = false;
+
+                        options.TokenValidationParameters.ValidateIssuer = false;
                     }
                 );
 

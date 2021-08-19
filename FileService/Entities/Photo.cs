@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FileService.Entities
 {
     public class Photo
     {
         [Required]
-        public Guid? Id { get; set; }
+        public System.Guid? Id { get; set; }
     }
 }

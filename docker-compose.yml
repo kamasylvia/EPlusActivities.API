@@ -9,18 +9,16 @@ services:
             MYSQL_USER: ngs
             MYSQL_ROOT_PASSWORD: 123456
             MYSQL_PASSWORD: 123456
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
             - 3306:3306
         volumes:
             - ./mysql:/var/lib/mysql
         restart: always
 
-    eplusactivities.api:
+    webapi:
         image: kamasylvia/eplusactivities:20210817
         container_name: eplusactivities
-        build:
-            context: .
-            dockerfile: EPlusActivities.API/Dockerfile
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
             - ASPNETCORE_URLS=http://+:80
@@ -31,5 +29,6 @@ services:
         ports:
             - 52537:80
         volumes:
+            - ./Log:/app/LogFiles
             - ~/.aspnet/https:/root/.aspnet/https:ro
             - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro

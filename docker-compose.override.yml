@@ -1,0 +1,7 @@
+version: "3.4"
+
+services:
+    webapi:
+        build:
+            context: .
+            dockerfile: EPlusActivities.API/Dockerfile

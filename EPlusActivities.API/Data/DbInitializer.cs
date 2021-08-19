@@ -36,10 +36,6 @@ namespace EPlusActivities.API.Data
             ) {
                 var context =
                     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var persistedGrantDbContext =
-                    serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-                var configurationDbContext =
-                    serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
                 var userManager =
                     serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager =
@@ -55,13 +51,21 @@ namespace EPlusActivities.API.Data
 
                 if (environment.IsProduction())
                 {
+                    /*
+                    var persistedGrantDbContext =
+                        serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+                    var configurationDbContext =
+                        serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+
                     persistedGrantDbContext.Database.EnsureDeleted();
                     configurationDbContext.Database.EnsureDeleted();
-                    context.Database.EnsureDeleted();
+
                     persistedGrantDbContext.Database.Migrate();
                     configurationDbContext.Database.Migrate();
+                    */
+
                     context.Database.Migrate();
-                    SeedConfig(configurationDbContext);
+                    // SeedConfig(configurationDbContext);
                 }
 
                 // Look for any Data.
