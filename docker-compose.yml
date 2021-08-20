@@ -1,7 +1,7 @@
 version: "3.4"
 
 services:
-    db:
+    eplusactivities-db:
         image: mysql:8.0.25
         container_name: mysql
         environment:
@@ -16,7 +16,7 @@ services:
             - ./MySQL:/var/lib/mysql
         restart: always
 
-    webapi:
+    eplusactivities-api:
         image: kamasylvia/eplusactivities:20210820
         container_name: eplusactivities
         environment:
@@ -24,12 +24,21 @@ services:
             - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_URLS=http://+:80
         depends_on:
-            - db
+            - eplusactivities-db
+            - nginx
         links:
-            - db
+            - eplusactivities-db
         ports:
             - 52537:80
         volumes:
             - ./Logs:/app/LogFiles
             - ~/.aspnet/https:/root/.aspnet/https:ro
             - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+
+    nginx:
+        image: nginx
+        container_name: nginx
+        ports:
+            - 80:80
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
