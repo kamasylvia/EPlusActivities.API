@@ -13,14 +13,15 @@ services:
         ports:
             - 3306:3306
         volumes:
-            - ./mysql:/var/lib/mysql
+            - ./MySQL:/var/lib/mysql
         restart: always
 
     webapi:
-        image: kamasylvia/eplusactivities:20210817
+        image: kamasylvia/eplusactivities:20210820
         container_name: eplusactivities
         environment:
-            - ASPNETCORE_ENVIRONMENT=Production
+            # - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_URLS=http://+:80
         depends_on:
             - db
