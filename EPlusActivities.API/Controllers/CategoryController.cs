@@ -39,7 +39,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<CategoryDto>> GetByIdAsync(
-            [FromBody] CategoryForGetByIdDto categoryDto
+            [FromQuery] CategoryForGetByIdDto categoryDto
         ) {
             var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
             return category is null ? NotFound($"Could not find the category.") : Ok(category);
@@ -51,7 +51,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<CategoryDto>> GetByNameAsync(
-            [FromBody] CategoryForGetByNameDto categoryDto
+            [FromQuery] CategoryForGetByNameDto categoryDto
         ) {
             var category = await _categoryRepository.FindByNameAsync(categoryDto.Name);
             return category is null
@@ -65,7 +65,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedAsync(
-            [FromBody] CategoryForGetByNameDto categoryDto
+            [FromQuery] CategoryForGetByNameDto categoryDto
         ) {
             var categories = await _categoryRepository.FindByContainedNameAsync(categoryDto.Name);
             return categories.Count() > 0

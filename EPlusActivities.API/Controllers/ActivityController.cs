@@ -67,7 +67,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<ActivityDto>> GetAsync(
-            [FromBody] ActivityForGetDto activityDto
+            [FromQuery] ActivityForGetDto activityDto
         ) {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             return activity is null
@@ -81,7 +81,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAllAvailableAsync(
-            [FromBody] ActivityForGetAllAvailableDto activityDto
+            [FromQuery] ActivityForGetAllAvailableDto activityDto
         ) {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)

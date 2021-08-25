@@ -69,7 +69,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<AttendanceForAttendDto>>> GetByUserIdAsync(
-            [FromBody] AttendanceForGetByUserIdDto attendanceDto
+            [FromQuery] AttendanceForGetByUserIdDto attendanceDto
         ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
@@ -102,7 +102,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<AttendanceDto>> GetByIdAsync(
-            [FromBody] AttendanceForGetByIdDto attendanceDto
+            [FromQuery] AttendanceForGetByIdDto attendanceDto
         ) {
             var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id.Value);
             return attendance is null

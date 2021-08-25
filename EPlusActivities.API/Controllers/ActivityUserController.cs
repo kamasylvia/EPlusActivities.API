@@ -67,7 +67,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
-            [FromBody] ActivityUserForGetDto activityUserDto
+            [FromQuery] ActivityUserForGetDto activityUserDto
         ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
@@ -101,7 +101,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
-            [FromBody] ActivityUserForGetByUserIdDto activityUserDto
+            [FromQuery] ActivityUserForGetByUserIdDto activityUserDto
         ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());

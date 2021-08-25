@@ -86,7 +86,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetByUserIdAsync(
-            [FromBody] LotteryForGetByUserIdDto lotteryDto
+            [FromQuery] LotteryForGetByUserIdDto lotteryDto
         ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());

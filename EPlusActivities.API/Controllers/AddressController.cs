@@ -44,7 +44,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
-            [FromBody] AddressForGetByUserIdDto addressDto
+            [FromQuery] AddressForGetByUserIdDto addressDto
         ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
@@ -68,7 +68,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<AddressDto>> GetByIdAsync(
-            [FromBody] AddressForGetByIdDto addressDto
+            [FromQuery] AddressForGetByIdDto addressDto
         ) {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
             return address is null

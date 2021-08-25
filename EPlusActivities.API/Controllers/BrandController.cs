@@ -37,7 +37,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<BrandDto>> GetByIdAsync(
-            [FromBody] BrandForGetByIdDto brandDto
+            [FromQuery] BrandForGetByIdDto brandDto
         ) {
             var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
             return brand is null
@@ -51,7 +51,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<BrandDto>> GetByNameAsync(
-            [FromBody] BrandForGetByNameDto brandDto
+            [FromQuery] BrandForGetByNameDto brandDto
         ) {
             var brand = await _brandRepository.FindByNameAsync(brandDto.Name);
             return brand is null

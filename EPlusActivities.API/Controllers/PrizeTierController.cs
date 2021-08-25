@@ -47,7 +47,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeTierDto>> GetByIdAsync(
-            [FromBody] PrizeTierForGetByIdDto prizeTierDto
+            [FromQuery] PrizeTierForGetByIdDto prizeTierDto
         ) {
             var prizeTier = await _prizeTierRepository.FindByIdAsync(prizeTierDto.Id.Value);
             return prizeTier is null
@@ -61,7 +61,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeTierDto>> GetByActivityIdAsync(
-            [FromBody] PrizeTierForGetByActivityIdDto prizeTierDto
+            [FromQuery] PrizeTierForGetByActivityIdDto prizeTierDto
         ) {
             var activity = await _activityRepository.FindByIdAsync(prizeTierDto.ActivityId.Value);
             if (activity is null)

@@ -51,7 +51,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync(
-            [FromBody] PrizeItemForGetByNameDto prizeItemDto
+            [FromQuery] PrizeItemForGetByNameDto prizeItemDto
         ) {
             var prizeItems = await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name);
             return prizeItems.Count() > 0
@@ -69,7 +69,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeItemDto>> GetGetByIdAsync(
-            [FromBody] PrizeItemForGetByIdDto prizeItemDto
+            [FromQuery] PrizeItemForGetByIdDto prizeItemDto
         ) {
             var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
             return prizeItem is null

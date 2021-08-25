@@ -9,9 +9,7 @@ using EPlusActivities.API.Services.DeliveryService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
-using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -53,7 +51,7 @@ namespace EPlusActivities.API
                         {
                             builder.AllowAnyHeader()
                                 .AllowAnyMethod()
-                                .WithOrigins("https://localhost:8080");
+                                .WithOrigins("http://localhost:8080");
                         }
                     );
                 }
@@ -178,7 +176,7 @@ namespace EPlusActivities.API
                     options =>
                     {
                         //IdentityServer地址
-                        options.Authority = "http://localhost:80";
+                        options.Authority = "http://localhost:52537";
 
                         //对应Idp中ApiResource的Name
                         // options.Audience = "eplus.api.test";
