@@ -14,7 +14,7 @@ namespace FileService.Data.Repositories
 
         Task<IEnumerable<T>> FindAllAsync();
 
-        Task<T> FindByIdAsync(params Guid[] keyValues);
+        Task<T> FindByIdAsync(params object[] keyValues);
 
         Task<bool> SaveAsync();
     }

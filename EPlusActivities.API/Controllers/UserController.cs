@@ -35,8 +35,7 @@ namespace EPlusActivities.API.Controllers
             ILogger<UserController> logger,
             IMapper mapper,
             IMemberService memberService
-        )
-        {
+        ) {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _memberService =
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
@@ -123,8 +122,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> UpdatePhoneNumberAsync(
             [FromBody] UserForUpdatePhoneDto userDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
@@ -170,8 +168,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> CreateAdminOrManagerAsync(
             [FromBody] UserForCreateAdminDto userDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByNameAsync(userDto.UserName);
             if (user is not null)

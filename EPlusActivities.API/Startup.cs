@@ -90,17 +90,17 @@ namespace EPlusActivities.API
                 .AddDefaultTokenProviders();
 
             // 启用数据库仓库
-            services.AddTransient<IActivityRepository, ActivityRepository>()
-                .AddTransient<IAttendanceRepository, AttendanceRepository>()
-                .AddTransient<IRepository<Credit>, CreditRepository>()
-                .AddTransient<IRepository<Coupon>, CouponRepository>()
-                .AddTransient<IFindByParentIdRepository<ActivityUser>, ActivityUserRepository>()
-                .AddTransient<IFindByParentIdRepository<Address>, AddressRepository>()
-                .AddTransient<IFindByParentIdRepository<Lottery>, LotteryRepository>()
-                .AddTransient<IPrizeItemRepository, PrizeItemRepository>()
-                .AddTransient<INameExistsRepository<Brand>, BrandRepository>()
-                .AddTransient<INameExistsRepository<Category>, CategoryRepository>()
-                .AddTransient<IFindByParentIdRepository<PrizeTier>, PrizeTierRepository>();
+            services.AddScoped<IActivityRepository, ActivityRepository>()
+                .AddScoped<IAttendanceRepository, AttendanceRepository>()
+                .AddScoped<IRepository<Credit>, CreditRepository>()
+                .AddScoped<IRepository<Coupon>, CouponRepository>()
+                .AddScoped<IFindByParentIdRepository<ActivityUser>, ActivityUserRepository>()
+                .AddScoped<IFindByParentIdRepository<Address>, AddressRepository>()
+                .AddScoped<IFindByParentIdRepository<Lottery>, LotteryRepository>()
+                .AddScoped<IPrizeItemRepository, PrizeItemRepository>()
+                .AddScoped<INameExistsRepository<Brand>, BrandRepository>()
+                .AddScoped<INameExistsRepository<Category>, CategoryRepository>()
+                .AddScoped<IFindByParentIdRepository<PrizeTier>, PrizeTierRepository>();
 
             // 启用创建短 ID 服务
             services.AddSingleton<IIdGeneratorService>(
@@ -110,7 +110,7 @@ namespace EPlusActivities.API
             );
 
             // 启用短信服务
-            services.AddTransient<ISmsService, SmsService>();
+            services.AddScoped<ISmsService, SmsService>();
 
             // 启用会员服务
             services.AddScoped<IMemberService, MemberService>();
@@ -119,7 +119,7 @@ namespace EPlusActivities.API
             services.AddScoped<ILotteryDrawService, LotteryDrawService>();
 
             // 启用活动服务
-            services.AddTransient<IActivityService, ActivityService>();
+            services.AddScoped<IActivityService, ActivityService>();
 
             // IdentityServer 4
             var builder = services.AddIdentityServer(

@@ -21,7 +21,7 @@ namespace FileService.Data.Repositories
         public virtual async Task<IEnumerable<T>> FindAllAsync() =>
             await _context.Set<T>().ToListAsync();
 
-        public virtual async Task<T> FindByIdAsync(params Guid[] keyValues) =>
+        public virtual async Task<T> FindByIdAsync(params object[] keyValues) =>
             await _context.Set<T>().FindAsync(keyValues);
 
         public void Remove(T item) => _context.Set<T>().Remove(item);

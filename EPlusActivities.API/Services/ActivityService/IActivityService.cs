@@ -11,10 +11,12 @@ namespace EPlusActivities.API.Services.ActivityService
             DateTime startTime,
             DateTime? endTime = null
         );
+
         Task<IEnumerable<ActivityUser>> BindUserWithActivities(
             Guid userId,
             IEnumerable<Guid> activityIds
         );
+
         Task<IEnumerable<ActivityUser>> BindUserWithAllAvailableActivities(Guid userId);
     }
 }

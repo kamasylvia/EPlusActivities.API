@@ -3,7 +3,7 @@ version: "3.4"
 services:
     eplusactivities-db:
         image: mysql:8.0.25
-        container_name: mysql
+        container_name: mysql-eplusactivities
         environment:
             MYSQL_DATABASE: EPlusActivities
             MYSQL_USER: ngs
@@ -13,7 +13,7 @@ services:
         ports:
             - 3306:3306
         volumes:
-            - ./MySQL:/var/lib/mysql
+            - ./MySQL/EPlusActivities:/var/lib/mysql
         restart: always
 
     eplusactivities-api:
@@ -44,3 +44,19 @@ services:
           - "eplusactivities-api"
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
+
+    fileservice-db:
+        image: mysql:8.0.25
+        container_name: mysql-fileservice
+        environment:
+            MYSQL_DATABASE: FileService
+            MYSQL_USER: ngs
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_PASSWORD: 123456
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+            - 3307:3307
+        volumes:
+            - ./MySQL/FileService:/var/lib/mysql
+        restart: always
+        

@@ -1,31 +1,38 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using FileService.Data.Repositories;
+using FileService.Dtos.FileDtos;
 using FileService.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FileService.Services.FileService
+namespace FileService.Services.FileStorageService
 {
-    public class FileService : IFileService
+    public class FileStorageService : IFileStorageService
     {
         private readonly string _fileStorageDirectory;
-        private readonly ILogger<FileService> _logger;
-        public FileService(IConfiguration configuration, ILogger<FileService> logger)
-        {
+        private readonly IAppFileRepository _appFileRepository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<FileStorageService> _logger;
+        public FileStorageService(
+            IConfiguration configuration,
+            IMapper mapper,
+            ILogger<FileStorageService> logger,
+            IAppFileRepository appFileRepository
+        ) {
+            _appFileRepository =
+                appFileRepository ?? throw new ArgumentNullException(nameof(appFileRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileStorageDirectory = configuration["FileStorageDirectory"];
         }
 
-        public async Task<MemoryStream> DownloadFileAsync(string path, string fileName)
+        public async Task<MemoryStream> DownloadFileAsync(string filePath)
         {
-            if (fileName == null || fileName.Length == 0)
-                return null;
-
-            var filePath = Path.Combine(path, fileName);
             var memoryStream = new MemoryStream();
             using (var stream = new FileStream(filePath, FileMode.Open))
             {
@@ -36,20 +43,23 @@ namespace FileService.Services.FileService
             return memoryStream;
         }
 
-        public async Task<bool> UploadFileAsync(IFormFile file)
+        public async Task<bool> UploadFileAsync(UploadFileRequestDto fileDto)
         {
             try
             {
+                var file = fileDto.FormFile;
                 if (file.Length > 0)
                 {
-                    var fileName = Path.GetRandomFileName();
-                    var filePath = Path.Combine(_fileStorageDirectory, fileName);
-                    // var filePath = Path.GetTempFileName();
+                    var appFile = _mapper.Map<AppFile>(fileDto);
+                    var filePath = Path.Combine(_fileStorageDirectory, appFile.FilePath);
+                    appFile.FilePath = filePath;
 
                     using (var stream = File.Create(filePath))
                     {
                         await file.CopyToAsync(stream);
                     }
+
+                    await _appFileRepository.AddAsync(appFile);
                 }
                 return true;
             }

@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FileService.Data;
+using FileService.Data.Repositories;
+using FileService.Services.FileStorageService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,31 +38,39 @@ namespace FileService
                     x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
                 );
 
+            #region Swagger
             services.AddSwaggerGen(
                 c =>
                 {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = "FileService", Version = "v1" });
                 }
             );
+            #endregion
 
+            #region HttpClientFactory
             services.AddHttpClient();
+            #endregion
 
-            // 数据库配置系统应用用户数据上下文
+            #region Database
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            // var serverVersion = ServerVersion.AutoDetect(connectionString);
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-
             services.AddDbContext<ApplicationDbContext>(
                 options =>
-                    options.UseMySql(
-                        connectionString,
-                        ServerVersion.AutoDetect(connectionString)
-                    )
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
             );
+            #endregion
 
-            // AutoMapper
+            #region AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            #endregion
+
+            #region Services
+            services.AddScoped<IFileStorageService, FileStorageService>();
+            #endregion
+
+            #region Repositories
+            services.AddScoped<IAppFileRepository, AppFileRepository>();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
