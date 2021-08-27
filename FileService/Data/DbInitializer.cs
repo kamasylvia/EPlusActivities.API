@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using FileService.Data;
 using FileService.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +13,12 @@ namespace FileService.Data
 {
     public class DbInitializer
     {
+        public static void CreateStorageDirectory(IApplicationBuilder app)
+        {
+            var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
+            Directory.CreateDirectory(configuration["FileStorageDirectory"]);
+        }
+
         public static void Initialize(IApplicationBuilder app, IWebHostEnvironment environment)
         {
             using (
@@ -43,9 +48,6 @@ namespace FileService.Data
                 }
 
                 SeedData(context);
-
-                var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
-                Directory.CreateDirectory(configuration["FileStorageDirectory"]);
             }
         }
 

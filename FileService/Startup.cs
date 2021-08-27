@@ -77,6 +77,7 @@ namespace FileService
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             #region Seed data
+            DbInitializer.CreateStorageDirectory(app: app);
             DbInitializer.Initialize(app: app, environment: env);
             #endregion
 

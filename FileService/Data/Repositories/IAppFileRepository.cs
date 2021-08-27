@@ -8,6 +8,7 @@ namespace FileService.Data.Repositories
     public interface IAppFileRepository : IRepository<AppFile>
     {
         Task<IEnumerable<AppFile>> FindByOwnerIdAsync(Guid ownerId);
+
         Task<AppFile> FindByAlternateKeyAsync(Guid ownerId, string key);
     }
 }

@@ -56,7 +56,10 @@ namespace FileService.Controllers
         public async Task<IActionResult> DownloadFilesByKeyAsync(
             [FromQuery] DownloadFileByOwnerIdRequestDto requestDto
         ) {
-            var file = await _appFileRepository.FindByAlternateKeyAsync(requestDto.OwnerId.Value, requestDto.Key);
+            var file = await _appFileRepository.FindByAlternateKeyAsync(
+                requestDto.OwnerId.Value,
+                requestDto.Key
+            );
             if (file is null)
             {
                 return NotFound("Could not find any file.");

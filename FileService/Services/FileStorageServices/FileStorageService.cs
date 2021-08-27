@@ -23,8 +23,7 @@ namespace FileService.Services.FileStorageService
             IMapper mapper,
             ILogger<FileStorageService> logger,
             IAppFileRepository appFileRepository
-        )
-        {
+        ) {
             _appFileRepository =
                 appFileRepository ?? throw new ArgumentNullException(nameof(appFileRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -49,10 +48,15 @@ namespace FileService.Services.FileStorageService
             try
             {
                 var file = fileDto.FormFile;
-                
+
                 if (file.Length > 0)
                 {
-                    var appFile = await _appFileRepository.FindByAlternateKeyAsync(fileDto.OwnerId.Value, fileDto.Key) ?? _mapper.Map<AppFile>(fileDto);
+                    var appFile =
+                        await _appFileRepository.FindByAlternateKeyAsync(
+                            fileDto.OwnerId.Value,
+                            fileDto.Key
+                        )
+                        ?? _mapper.Map<AppFile>(fileDto);
                     var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
                     if (File.Exists(appFile.FilePath))
                     {
@@ -73,7 +77,7 @@ namespace FileService.Services.FileStorageService
                         await file.CopyToAsync(stream);
                     }
                 }
-                
+
                 return true;
             }
             catch (System.Exception ex)
