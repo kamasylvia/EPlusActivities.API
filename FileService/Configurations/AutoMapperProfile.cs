@@ -13,13 +13,6 @@ namespace FileService.Configurations
                 .ForMember(
                     dest => dest.ContentType,
                     opt => opt.MapFrom(src => src.FormFile.ContentType)
-                )
-                .ForMember(
-                    dest => dest.FilePath,
-                    opt =>
-                        opt.MapFrom(
-                            src => Path.Combine(Path.GetRandomFileName(), src.FormFile.FileName)
-                        )
                 );
         }
     }

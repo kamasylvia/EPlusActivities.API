@@ -35,7 +35,7 @@ namespace FileService.Controllers
 
         [HttpPost]
         public async Task<IActionResult> UploadFileAsync(
-            [FromBody] UploadFileRequestDto requestDto
+            [FromForm] UploadFileRequestDto requestDto
         ) => Ok(await _fileStorageService.UploadFileAsync(requestDto));
 
         [HttpGet("id")]
@@ -56,7 +56,7 @@ namespace FileService.Controllers
         public async Task<IActionResult> DownloadFilesByKeyAsync(
             [FromQuery] DownloadFileByOwnerIdRequestDto requestDto
         ) {
-            var file = await _appFileRepository.FindByIdAsync(requestDto.OwnerId, requestDto.Key);
+            var file = await _appFileRepository.FindByAlternateKeyAsync(requestDto.OwnerId.Value, requestDto.Key);
             if (file is null)
             {
                 return NotFound("Could not find any file.");

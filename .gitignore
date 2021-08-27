@@ -3,6 +3,7 @@
 .VSCodeCounter
 MySQL
 Logs
+FileStorage
 
 # globs
 Makefile.in

@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using System.Linq;
 using FileService.Data;
 using FileService.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -41,6 +43,9 @@ namespace FileService.Data
                 }
 
                 SeedData(context);
+
+                var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
+                Directory.CreateDirectory(configuration["FileStorageDirectory"]);
             }
         }
 
