@@ -90,7 +90,7 @@ namespace FileService
                 );
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

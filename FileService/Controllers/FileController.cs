@@ -33,10 +33,19 @@ namespace FileService.Controllers
                 fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> TestAsync()
+        {
+            System.Console.WriteLine("Hello World");
+            return Ok();
+        }
+
         [HttpPost]
-        public async Task<IActionResult> UploadFileAsync(
-            [FromForm] UploadFileRequestDto requestDto
-        ) => Ok(await _fileStorageService.UploadFileAsync(requestDto));
+        public async Task<IActionResult> UploadFileAsync([FromForm] UploadFileRequestDto requestDto)
+        {
+            System.Console.WriteLine("Enter UploadFileAsync");
+            return await _fileStorageService.UploadFileAsync(requestDto) ? Ok() : BadRequest();
+        }
 
         [HttpGet("id")]
         public async Task<IActionResult> DownloadFileByFileIdAsync(
@@ -50,6 +59,14 @@ namespace FileService.Controllers
 
             var memoryStream = await _fileStorageService.DownloadFileAsync(file.FilePath);
             return File(memoryStream, file.ContentType, Path.GetFileName(file.FilePath));
+        }
+
+        [HttpGet("content-type/id")]
+        public async Task<ActionResult<string>> GetContentTypeByIdAsync(
+            [FromQuery] DownloadFileByFileIdRequestDto requestDto
+        ) {
+            var file = await _appFileRepository.FindByIdAsync(requestDto.FileId);
+            return file is null ? NotFound("Could not find the file.") : Ok(file.ContentType);
         }
 
         [HttpGet("key")]
@@ -69,17 +86,23 @@ namespace FileService.Controllers
             return File(memoryStream, file.ContentType, Path.GetFileName(file.FilePath));
         }
 
-        [HttpGet("files")]
-        public async Task<ActionResult<IEnumerable<Guid>>> GetFileIdsByOwnerIdAsync(
+        [HttpGet("content-type/key")]
+        public async Task<ActionResult<string>> GetContentTypeByKeyAsync(
+            [FromQuery] DownloadFileByOwnerIdRequestDto requestDto
+        ) {
+            var file = await _appFileRepository.FindByAlternateKeyAsync(
+                requestDto.OwnerId.Value,
+                requestDto.Key
+            );
+            return file is null ? NotFound("Could not find the file.") : Ok(file.ContentType);
+        }
+
+        [HttpGet("ownerId")]
+        public async Task<IEnumerable<Guid?>> GetFileIdsByOwnerIdAsync(
             [FromQuery] GetFileIdsByOwnerIdRequestDto requestDto
         ) {
             var files = await _appFileRepository.FindByOwnerIdAsync(requestDto.OwnerId.Value);
-            if (files.Count() == 0)
-            {
-                return NotFound("Could not find any file");
-            }
-
-            return Ok(files.Select(file => file.Id));
+            return files.Count() == 0 ? null : files.Select(file => file.Id);
         }
     }
 }

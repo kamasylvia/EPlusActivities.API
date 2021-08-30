@@ -9,6 +9,7 @@ using EPlusActivities.API.Services.DeliveryService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
+using EPlusActivities.API.Services.FileService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -111,6 +112,9 @@ namespace EPlusActivities.API
 
             // 启用短信服务
             services.AddScoped<ISmsService, SmsService>();
+
+            // 启用文件服务
+            services.AddScoped<IFileService, FileService>();
 
             // 启用会员服务
             services.AddScoped<IMemberService, MemberService>();

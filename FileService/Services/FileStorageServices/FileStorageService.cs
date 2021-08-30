@@ -45,6 +45,7 @@ namespace FileService.Services.FileStorageService
 
         public async Task<bool> UploadFileAsync(UploadFileRequestDto fileDto)
         {
+            System.Console.WriteLine("Enter UploadFileAsync");
             try
             {
                 var file = fileDto.FormFile;
@@ -57,7 +58,9 @@ namespace FileService.Services.FileStorageService
                             fileDto.Key
                         )
                         ?? _mapper.Map<AppFile>(fileDto);
+
                     var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
+
                     if (File.Exists(appFile.FilePath))
                     {
                         File.Delete(appFile.FilePath);
@@ -70,21 +73,20 @@ namespace FileService.Services.FileStorageService
                         await _appFileRepository.AddAsync(appFile);
                     }
 
-                    await _appFileRepository.SaveAsync();
-
                     using (var stream = File.Create(filePath))
                     {
                         await file.CopyToAsync(stream);
                     }
-                }
 
-                return true;
+                    return await _appFileRepository.SaveAsync();
+                }
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return false;
             }
+
+            return false;
         }
     }
 }
