@@ -43,6 +43,7 @@ namespace FileService.Controllers
                 fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileStorageDirectory = configuration["FileStorageDirectory"];
+            Directory.CreateDirectory(_fileStorageDirectory);
         }
 
         [HttpGet]
