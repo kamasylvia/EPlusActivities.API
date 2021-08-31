@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos.FileDtos;
@@ -77,6 +78,9 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> UploadFileAsync(
             [FromForm] UploadFileRequestDto requestDto
-        ) => await _fileService.UploadFileAsync(requestDto) ? Ok() : BadRequest();
+        ) =>
+            new StatusCodeResult(
+                Convert.ToInt32((await _fileService.UploadFileAsync(requestDto)).StatusCode)
+            );
     }
 }

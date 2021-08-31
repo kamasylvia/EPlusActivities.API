@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.FileDtos;
 
@@ -6,7 +7,7 @@ namespace EPlusActivities.API.Services.FileService
 {
     public interface IFileService
     {
-        Task<bool> UploadFileAsync(UploadFileRequestDto uploadPhotoDto);
+        Task<HttpResponseMessage> UploadFileAsync(UploadFileRequestDto uploadPhotoDto);
 
         Task<string> GetContentTypeByIdAsync(DownloadFileByIdRequestDto downloadedFileDto);
 

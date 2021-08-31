@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EPlusActivities.API.Infrastructure.ActionResults
+namespace FileService.Infrastructure.ActionResults
 {
     public class ApiResult : ActionResult
     {
@@ -42,10 +42,10 @@ namespace EPlusActivities.API.Infrastructure.ActionResults
         public ApiResult(StatusCodeResult statusCodeResult)
         {
             StatusCode = statusCodeResult.StatusCode;
-            switch (StatusCode)
+            switch (statusCodeResult)
             {
-                case 200:
-                case 203: // 暂时无效
+                case OkResult:
+                case NoContentResult: // 暂时无效
                     Data = "操作成功";
                     Succeeded = true;
                     break;

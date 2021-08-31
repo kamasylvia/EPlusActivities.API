@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.FileDtos;
@@ -110,7 +111,7 @@ namespace EPlusActivities.API.Services.FileService
             return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
         }
 
-        public async Task<bool> UploadFileAsync(UploadFileRequestDto uploadPhotoDto)
+        public async Task<HttpResponseMessage> UploadFileAsync(UploadFileRequestDto uploadFileDto)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -121,25 +122,16 @@ namespace EPlusActivities.API.Services.FileService
 
             var httpClient = _httpClientFactory.CreateClient();
             var formData = new MultipartFormDataContent();
-            formData.Add(new StringContent(uploadPhotoDto.OwnerId.ToString()), "ownerId");
-            formData.Add(new StringContent(uploadPhotoDto.Key), "key");
-            //var fileStream = uploadPhotoDto.FormFile.OpenReadStream();
-            formData.Add(new StreamContent(uploadPhotoDto.FormFile.OpenReadStream()), "formFile");
-            var response = await httpClient.PostAsync(uriBuilder.Uri, formData);
-            // var response = await httpClient.GetAsync(uriBuilder.Uri);
-            /*
-            var response = await httpClient.PostAsJsonAsync(
-                uriBuilder.Uri.ToString(),
-                new
-                {
-                    ownerId = uploadPhotoDto.OwnerId,
-                    key = uploadPhotoDto.Key,
-                    formFile = uploadPhotoDto.FormFile
-                }
+            formData.Add(new StringContent(uploadFileDto.OwnerId.ToString()), "ownerId");
+            formData.Add(new StringContent(uploadFileDto.Key), "key");
+            var streamContent = new StreamContent(uploadFileDto.FormFile.OpenReadStream());
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(
+                uploadFileDto.FormFile.ContentType
             );
-            */
-
-            return response.IsSuccessStatusCode;
+            formData.Add(streamContent, "formFile", uploadFileDto.FormFile.FileName);
+            var response = await httpClient.PostAsync(uriBuilder.Uri, formData);
+            // System.Console.WriteLine(response);
+            return response;
         }
     }
 }

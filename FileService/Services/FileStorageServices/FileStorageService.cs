@@ -45,7 +45,7 @@ namespace FileService.Services.FileStorageService
 
         public async Task<bool> UploadFileAsync(UploadFileRequestDto fileDto)
         {
-            System.Console.WriteLine("Enter UploadFileAsync");
+            System.Console.WriteLine("Inner UploadFileAsync");
             try
             {
                 var file = fileDto.FormFile;
