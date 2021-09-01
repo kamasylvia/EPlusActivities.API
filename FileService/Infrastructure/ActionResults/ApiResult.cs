@@ -42,10 +42,10 @@ namespace FileService.Infrastructure.ActionResults
         public ApiResult(StatusCodeResult statusCodeResult)
         {
             StatusCode = statusCodeResult.StatusCode;
-            switch (statusCodeResult)
+            switch (StatusCode)
             {
-                case OkResult:
-                case NoContentResult: // 暂时无效
+                case 200:
+                case 203: // 暂时无效
                     Data = "操作成功";
                     Succeeded = true;
                     break;

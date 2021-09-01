@@ -15,6 +15,6 @@ namespace EPlusActivities.API.Services.FileService
 
         Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyRequestDto downloadedFileDto);
 
-        Task<FileStream> DownloadFileByKeyAsync(DownloadFileByKeyRequestDto downloadedFileDto);
+        Task<byte[]> DownloadFileByKeyAsync(DownloadFileByKeyRequestDto downloadedFileDto);
     }
 }

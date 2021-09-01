@@ -23,7 +23,8 @@ namespace EPlusActivities.API.Services.FileService
             IHttpClientFactory httpClientFactory,
             ILogger<FileService> logger,
             IConfiguration configuration
-        ) {
+        )
+        {
             _httpClientFactory =
                 httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -31,9 +32,10 @@ namespace EPlusActivities.API.Services.FileService
                 configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task<FileStream> DownloadFileByKeyAsync(
+        public async Task<byte[]> DownloadFileByKeyAsync(
             DownloadFileByKeyRequestDto downloadPhotoDto
-        ) {
+        )
+        {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
                 host: _configuration["FileServiceUriBuilder:Host"],
@@ -50,12 +52,13 @@ namespace EPlusActivities.API.Services.FileService
                 }
             );
 
-            return await _httpClientFactory.CreateClient().GetStreamAsync(requestUrl) as FileStream;
+            return await _httpClientFactory.CreateClient().GetByteArrayAsync(requestUrl);
         }
 
         public async Task<string> GetContentTypeByKeyAsync(
             DownloadFileByKeyRequestDto downloadFileDto
-        ) {
+        )
+        {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
                 host: _configuration["FileServiceUriBuilder:Host"],
@@ -67,7 +70,7 @@ namespace EPlusActivities.API.Services.FileService
                 uriBuilder.Uri.ToString(),
                 new Dictionary<string, string>
                 {
-                    ["FileId"] = downloadFileDto.OwnerId.ToString(),
+                    ["OwnerId"] = downloadFileDto.OwnerId.ToString(),
                     ["Key"] = downloadFileDto.Key
                 }
             );
@@ -77,7 +80,8 @@ namespace EPlusActivities.API.Services.FileService
 
         public async Task<FileStream> DownloadFileByIdAsync(
             DownloadFileByIdRequestDto downloadPhotoDto
-        ) {
+        )
+        {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
                 host: _configuration["FileServiceUriBuilder:Host"],
@@ -95,7 +99,8 @@ namespace EPlusActivities.API.Services.FileService
 
         public async Task<string> GetContentTypeByIdAsync(
             DownloadFileByIdRequestDto downloadPhotoDto
-        ) {
+        )
+        {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
                 host: _configuration["FileServiceUriBuilder:Host"],
@@ -129,9 +134,7 @@ namespace EPlusActivities.API.Services.FileService
                 uploadFileDto.FormFile.ContentType
             );
             formData.Add(streamContent, "formFile", uploadFileDto.FormFile.FileName);
-            var response = await httpClient.PostAsync(uriBuilder.Uri, formData);
-            // System.Console.WriteLine(response);
-            return response;
+            return await httpClient.PostAsync(uriBuilder.Uri, formData);
         }
     }
 }

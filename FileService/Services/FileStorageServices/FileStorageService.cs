@@ -29,6 +29,7 @@ namespace FileService.Services.FileStorageService
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileStorageDirectory = configuration["FileStorageDirectory"];
+            Directory.CreateDirectory(_fileStorageDirectory);
         }
 
         public async Task<MemoryStream> DownloadFileAsync(string filePath)
@@ -43,9 +44,8 @@ namespace FileService.Services.FileStorageService
             return memoryStream;
         }
 
-        public async Task<bool> UploadFileAsync(UploadFileRequestDto fileDto)
+        public async Task<int> UploadFileAsync(UploadFileRequestDto fileDto)
         {
-            System.Console.WriteLine("Inner UploadFileAsync");
             try
             {
                 var file = fileDto.FormFile;
@@ -78,15 +78,16 @@ namespace FileService.Services.FileStorageService
                         await file.CopyToAsync(stream);
                     }
 
-                    return await _appFileRepository.SaveAsync();
+                    return await _appFileRepository.SaveAsync() ? 200 : 500;
                 }
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex.Message);
+                return 500;
             }
 
-            return false;
+            return 400;
         }
     }
 }

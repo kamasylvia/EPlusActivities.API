@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,7 +30,8 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IFileService fileService,
             ILogger<FileController> logger
-        ) {
+        )
+        {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -42,9 +44,10 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DownloadFileByIdAsync(
             [FromQuery] DownloadFileByIdRequestDto requestDto
-        ) {
+        )
+        {
             var fileStream = await _fileService.DownloadFileByIdAsync(requestDto);
-            if (fileStream is null)
+            if (fileStream.Length == 0)
             {
                 return NotFound("Could not find the file.");
             }
@@ -60,13 +63,15 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DownloadFileByKeyAsync(
             [FromQuery] DownloadFileByKeyRequestDto requestDto
-        ) {
-            var fileStream = await _fileService.DownloadFileByKeyAsync(requestDto);
+        )
+        {
+            var fileStream = new MemoryStream(await _fileService.DownloadFileByKeyAsync(requestDto));
             if (fileStream is null)
             {
                 return NotFound("Could not find the file.");
             }
             var contentType = await _fileService.GetContentTypeByKeyAsync(requestDto);
+            System.Console.WriteLine(contentType);
 
             return File(fileStream, contentType);
         }

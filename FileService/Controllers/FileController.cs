@@ -19,7 +19,6 @@ using Microsoft.Extensions.Logging;
 namespace FileService.Controllers
 {
     [ApiController]
-    [FileServiceActionFilterAttribute]
     [Route("api/[controller]")]
     public class FileController : Controller
     {
@@ -35,7 +34,8 @@ namespace FileService.Controllers
             IMapper mapper,
             ILogger<FileController> logger,
             IAppFileRepository appFileRepository
-        ) {
+        )
+        {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _appFileRepository =
                 appFileRepository ?? throw new ArgumentNullException(nameof(appFileRepository));
@@ -54,53 +54,28 @@ namespace FileService.Controllers
         }
 
         [HttpPost]
+        [FileServiceActionFilterAttribute]
         public async Task<IActionResult> UploadFileAsync([FromForm] UploadFileRequestDto requestDto)
         {
-            var file = requestDto.FormFile;
-
-            if (file.Length > 0)
+            var statusCode = await _fileStorageService.UploadFileAsync(requestDto);
+            switch (statusCode)
             {
-                var appFile =
-                    await _appFileRepository.FindByAlternateKeyAsync(
-                        requestDto.OwnerId.Value,
-                        requestDto.Key
-                    )
-                    ?? _mapper.Map<AppFile>(requestDto);
-
-                var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
-
-                if (System.IO.File.Exists(appFile.FilePath))
-                {
-                    System.IO.File.Delete(appFile.FilePath);
-                    appFile.FilePath = filePath;
-                    _appFileRepository.Update(appFile);
-                }
-                else
-                {
-                    appFile.FilePath = filePath;
-                    await _appFileRepository.AddAsync(appFile);
-                }
-
-                using (var stream = System.IO.File.Create(filePath))
-                {
-                    await file.CopyToAsync(stream);
-                }
-
-                if (!await _appFileRepository.SaveAsync())
-                {
-                    return new InternalServerErrorObjectResult("Update database exception");
-                }
-
-                return Ok();
+                case 200:
+                    return Ok();
+                case 400:
+                    return BadRequest("Could not upload an empty file.");
+                case 500:
+                    return new InternalServerErrorObjectResult("Internal server error.");
+                default:
+                    return new StatusCodeResult(statusCode);
             }
-
-            return BadRequest("Could not accept an empty file.");
         }
 
         [HttpGet("id")]
         public async Task<IActionResult> DownloadFileByFileIdAsync(
             [FromQuery] DownloadFileByFileIdRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByIdAsync(requestDto.FileId);
             if (file is null)
             {
@@ -114,7 +89,8 @@ namespace FileService.Controllers
         [HttpGet("content-type/id")]
         public async Task<ActionResult<string>> GetContentTypeByIdAsync(
             [FromQuery] DownloadFileByFileIdRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByIdAsync(requestDto.FileId);
             return file is null ? NotFound("Could not find the file.") : Ok(file.ContentType);
         }
@@ -122,7 +98,8 @@ namespace FileService.Controllers
         [HttpGet("key")]
         public async Task<IActionResult> DownloadFilesByKeyAsync(
             [FromQuery] DownloadFileByOwnerIdRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByAlternateKeyAsync(
                 requestDto.OwnerId.Value,
                 requestDto.Key
@@ -139,7 +116,8 @@ namespace FileService.Controllers
         [HttpGet("content-type/key")]
         public async Task<ActionResult<string>> GetContentTypeByKeyAsync(
             [FromQuery] DownloadFileByOwnerIdRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByAlternateKeyAsync(
                 requestDto.OwnerId.Value,
                 requestDto.Key
@@ -150,7 +128,8 @@ namespace FileService.Controllers
         [HttpGet("ownerId")]
         public async Task<IEnumerable<Guid?>> GetFileIdsByOwnerIdAsync(
             [FromQuery] GetFileIdsByOwnerIdRequestDto requestDto
-        ) {
+        )
+        {
             var files = await _appFileRepository.FindByOwnerIdAsync(requestDto.OwnerId.Value);
             return files.Count() == 0 ? null : files.Select(file => file.Id);
         }
