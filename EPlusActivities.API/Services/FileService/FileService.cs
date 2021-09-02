@@ -23,8 +23,7 @@ namespace EPlusActivities.API.Services.FileService
             IHttpClientFactory httpClientFactory,
             ILogger<FileService> logger,
             IConfiguration configuration
-        )
-        {
+        ) {
             _httpClientFactory =
                 httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -32,9 +31,7 @@ namespace EPlusActivities.API.Services.FileService
                 configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task<byte[]> DownloadFileByKeyAsync(
-            DownloadFileByKeyRequestDto downloadPhotoDto
-        )
+        public async Task<byte[]> DownloadFileByKeyAsync(DownloadFileByKeyRequestDto requestDto)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -47,17 +44,15 @@ namespace EPlusActivities.API.Services.FileService
                 uriBuilder.Uri.ToString(),
                 new Dictionary<string, string>
                 {
-                    ["OwnerId"] = downloadPhotoDto.OwnerId.ToString(),
-                    ["Key"] = downloadPhotoDto.Key
+                    ["OwnerId"] = requestDto.OwnerId.ToString(),
+                    ["Key"] = requestDto.Key
                 }
             );
 
             return await _httpClientFactory.CreateClient().GetByteArrayAsync(requestUrl);
         }
 
-        public async Task<string> GetContentTypeByKeyAsync(
-            DownloadFileByKeyRequestDto downloadFileDto
-        )
+        public async Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyRequestDto requestDto)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -70,17 +65,15 @@ namespace EPlusActivities.API.Services.FileService
                 uriBuilder.Uri.ToString(),
                 new Dictionary<string, string>
                 {
-                    ["OwnerId"] = downloadFileDto.OwnerId.ToString(),
-                    ["Key"] = downloadFileDto.Key
+                    ["OwnerId"] = requestDto.OwnerId.ToString(),
+                    ["Key"] = requestDto.Key
                 }
             );
 
             return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
         }
 
-        public async Task<byte[]> DownloadFileByIdAsync(
-            DownloadFileByIdRequestDto downloadPhotoDto
-        )
+        public async Task<byte[]> DownloadFileByIdAsync(DownloadFileByIdRequestDto requestDto)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -91,15 +84,13 @@ namespace EPlusActivities.API.Services.FileService
 
             var requestUrl = QueryHelpers.AddQueryString(
                 uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["FileId"] = downloadPhotoDto.FileId.ToString() }
+                new Dictionary<string, string> { ["FileId"] = requestDto.FileId.ToString() }
             );
 
             return await _httpClientFactory.CreateClient().GetByteArrayAsync(requestUrl);
         }
 
-        public async Task<string> GetContentTypeByIdAsync(
-            DownloadFileByIdRequestDto downloadPhotoDto
-        )
+        public async Task<string> GetContentTypeByIdAsync(DownloadFileByIdRequestDto requestDto)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -110,13 +101,13 @@ namespace EPlusActivities.API.Services.FileService
 
             var requestUrl = QueryHelpers.AddQueryString(
                 uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["FileId"] = downloadPhotoDto.FileId.ToString() }
+                new Dictionary<string, string> { ["FileId"] = requestDto.FileId.ToString() }
             );
 
             return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
         }
 
-        public async Task<HttpResponseMessage> UploadFileAsync(UploadFileRequestDto uploadFileDto)
+        public async Task<int> UploadFileAsync(UploadFileRequestDto requestDto)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -125,16 +116,59 @@ namespace EPlusActivities.API.Services.FileService
                 pathValue: "api/file"
             );
 
-            var httpClient = _httpClientFactory.CreateClient();
             var formData = new MultipartFormDataContent();
-            formData.Add(new StringContent(uploadFileDto.OwnerId.ToString()), "ownerId");
-            formData.Add(new StringContent(uploadFileDto.Key), "key");
-            var streamContent = new StreamContent(uploadFileDto.FormFile.OpenReadStream());
+            formData.Add(new StringContent(requestDto.OwnerId.ToString()), "ownerId");
+            formData.Add(new StringContent(requestDto.Key), "key");
+
+            var streamContent = new StreamContent(requestDto.FormFile.OpenReadStream());
             streamContent.Headers.ContentType = new MediaTypeHeaderValue(
-                uploadFileDto.FormFile.ContentType
+                requestDto.FormFile.ContentType
             );
-            formData.Add(streamContent, "formFile", uploadFileDto.FormFile.FileName);
-            return await httpClient.PostAsync(uriBuilder.Uri, formData);
+            formData.Add(streamContent, "formFile", requestDto.FormFile.FileName);
+
+            var response = await _httpClientFactory.CreateClient()
+                .PostAsync(uriBuilder.Uri, formData);
+            return Convert.ToInt32(response.StatusCode);
+        }
+
+        public async Task<int> DeleteFileByIdAsync(DownloadFileByIdRequestDto requestDto)
+        {
+            var uriBuilder = new UriBuilder(
+                scheme: _configuration["FileServiceUriBuilder:Scheme"],
+                host: _configuration["FileServiceUriBuilder:Host"],
+                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
+                pathValue: "api/file/id"
+            );
+
+            var requestUrl = QueryHelpers.AddQueryString(
+                uriBuilder.Uri.ToString(),
+                new Dictionary<string, string> { ["FileId"] = requestDto.FileId.ToString() }
+            );
+
+            var response = await _httpClientFactory.CreateClient().DeleteAsync(requestUrl);
+            return Convert.ToInt32(response.StatusCode);
+        }
+
+        public async Task<int> DeleteFileByKeyAsync(DownloadFileByKeyRequestDto requestDto)
+        {
+            var uriBuilder = new UriBuilder(
+                scheme: _configuration["FileServiceUriBuilder:Scheme"],
+                host: _configuration["FileServiceUriBuilder:Host"],
+                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
+                pathValue: "api/file/key"
+            );
+
+            var requestUrl = QueryHelpers.AddQueryString(
+                uriBuilder.Uri.ToString(),
+                new Dictionary<string, string>
+                {
+                    ["OwnerId"] = requestDto.OwnerId.ToString(),
+                    ["Key"] = requestDto.Key
+                }
+            );
+
+            var response = await _httpClientFactory.CreateClient().DeleteAsync(requestUrl);
+            return Convert.ToInt32(response.StatusCode);
         }
     }
 }

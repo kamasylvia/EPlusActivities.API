@@ -29,8 +29,6 @@ namespace EPlusActivities.API.Dtos.PrizeItemDtos
 
         public int RequiredCredit { get; set; }
 
-        public string PhotoUrl { get; set; }
-
         public int Stock { get; set; }
     }
 }

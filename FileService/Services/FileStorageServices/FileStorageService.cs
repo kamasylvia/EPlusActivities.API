@@ -32,6 +32,19 @@ namespace FileService.Services.FileStorageService
             Directory.CreateDirectory(_fileStorageDirectory);
         }
 
+        public bool DeleteFile(string filePath)
+        {
+            try
+            {
+                File.Delete(filePath);
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<MemoryStream> DownloadFileAsync(string filePath)
         {
             var memoryStream = new MemoryStream();
@@ -44,50 +57,43 @@ namespace FileService.Services.FileStorageService
             return memoryStream;
         }
 
-        public async Task<int> UploadFileAsync(UploadFileRequestDto fileDto)
+        public async Task<bool> UploadFileAsync(UploadFileRequestDto fileDto)
         {
             try
             {
-                var file = fileDto.FormFile;
+                var appFile =
+                    await _appFileRepository.FindByAlternateKeyAsync(
+                        fileDto.OwnerId.Value,
+                        fileDto.Key
+                    )
+                    ?? _mapper.Map<AppFile>(fileDto);
 
-                if (file.Length > 0)
+                var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
+
+                if (File.Exists(appFile.FilePath))
                 {
-                    var appFile =
-                        await _appFileRepository.FindByAlternateKeyAsync(
-                            fileDto.OwnerId.Value,
-                            fileDto.Key
-                        )
-                        ?? _mapper.Map<AppFile>(fileDto);
-
-                    var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
-
-                    if (File.Exists(appFile.FilePath))
-                    {
-                        File.Delete(appFile.FilePath);
-                        appFile.FilePath = filePath;
-                        _appFileRepository.Update(appFile);
-                    }
-                    else
-                    {
-                        appFile.FilePath = filePath;
-                        await _appFileRepository.AddAsync(appFile);
-                    }
-
-                    using (var stream = File.Create(filePath))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-
-                    return await _appFileRepository.SaveAsync() ? 200 : 500;
+                    File.Delete(appFile.FilePath);
+                    appFile.FilePath = filePath;
+                    _appFileRepository.Update(appFile);
                 }
+                else
+                {
+                    appFile.FilePath = filePath;
+                    await _appFileRepository.AddAsync(appFile);
+                }
+
+                using (var stream = File.Create(filePath))
+                {
+                    await fileDto.FormFile.CopyToAsync(stream);
+                }
+
+                return await _appFileRepository.SaveAsync();
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return 500;
+                return false;
             }
-
-            return 400;
         }
     }
 }

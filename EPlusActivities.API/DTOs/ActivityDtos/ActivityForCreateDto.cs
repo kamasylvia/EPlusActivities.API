@@ -26,7 +26,5 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         public DateTime? StartTime { get; set; }
 
         public DateTime? EndTime { get; set; }
-
-        public string BackgroundPhotoUrl { get; set; }
     }
 }

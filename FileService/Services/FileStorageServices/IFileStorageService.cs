@@ -7,7 +7,10 @@ namespace FileService.Services.FileStorageService
 {
     public interface IFileStorageService
     {
-        Task<int> UploadFileAsync(UploadFileRequestDto fileDto);
+        Task<bool> UploadFileAsync(UploadFileRequestDto fileDto);
+
         Task<MemoryStream> DownloadFileAsync(string filePath);
+
+        bool DeleteFile(string filePath);
     }
 }

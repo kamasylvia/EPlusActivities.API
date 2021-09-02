@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FileService.Dtos.FileDtos
 {
-    public class DownloadFileByOwnerIdRequestDto
+    public class DownloadFileByKeyRequestDto
     {
         [Required]
         public Guid? OwnerId { get; set; }

@@ -39,9 +39,6 @@ namespace EPlusActivities.API.Entities
         // 奖品数量
         public int Quantity { get; set; }
 
-        // 奖品图片
-        public PrizePhoto Photo { get; set; }
-
         // 奖品库存
         public int Stock { get; set; }
 

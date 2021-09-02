@@ -7,7 +7,11 @@ namespace EPlusActivities.API.Services.FileService
 {
     public interface IFileService
     {
-        Task<HttpResponseMessage> UploadFileAsync(UploadFileRequestDto uploadPhotoDto);
+        Task<int> UploadFileAsync(UploadFileRequestDto uploadPhotoDto);
+
+        Task<int> DeleteFileByIdAsync(DownloadFileByIdRequestDto requestDto);
+
+        Task<int> DeleteFileByKeyAsync(DownloadFileByKeyRequestDto requestDto);
 
         Task<string> GetContentTypeByIdAsync(DownloadFileByIdRequestDto downloadedFileDto);
 
