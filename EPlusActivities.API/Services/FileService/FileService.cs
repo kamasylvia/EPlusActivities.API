@@ -78,7 +78,7 @@ namespace EPlusActivities.API.Services.FileService
             return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
         }
 
-        public async Task<FileStream> DownloadFileByIdAsync(
+        public async Task<byte[]> DownloadFileByIdAsync(
             DownloadFileByIdRequestDto downloadPhotoDto
         )
         {
@@ -94,7 +94,7 @@ namespace EPlusActivities.API.Services.FileService
                 new Dictionary<string, string> { ["FileId"] = downloadPhotoDto.FileId.ToString() }
             );
 
-            return await _httpClientFactory.CreateClient().GetStreamAsync(requestUrl) as FileStream;
+            return await _httpClientFactory.CreateClient().GetByteArrayAsync(requestUrl);
         }
 
         public async Task<string> GetContentTypeByIdAsync(

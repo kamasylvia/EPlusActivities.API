@@ -46,13 +46,6 @@ namespace FileService.Controllers
             Directory.CreateDirectory(_fileStorageDirectory);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> TestAsync()
-        {
-            System.Console.WriteLine("Hello World");
-            return Ok();
-        }
-
         [HttpPost]
         [FileServiceActionFilterAttribute]
         public async Task<IActionResult> UploadFileAsync([FromForm] UploadFileRequestDto requestDto)

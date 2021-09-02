@@ -11,7 +11,7 @@ namespace EPlusActivities.API.Services.FileService
 
         Task<string> GetContentTypeByIdAsync(DownloadFileByIdRequestDto downloadedFileDto);
 
-        Task<FileStream> DownloadFileByIdAsync(DownloadFileByIdRequestDto downloadedFileDto);
+        Task<byte[]> DownloadFileByIdAsync(DownloadFileByIdRequestDto downloadedFileDto);
 
         Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyRequestDto downloadedFileDto);
 
