@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,5 +22,7 @@ namespace EPlusActivities.API.Services.FileService
         Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyRequestDto downloadedFileDto);
 
         Task<byte[]> DownloadFileByKeyAsync(DownloadFileByKeyRequestDto downloadedFileDto);
+
+        Task<IEnumerable<Guid>> DownloadFilesByOwnerIdAsync(Guid ownerId);
     }
 }

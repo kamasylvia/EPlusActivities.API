@@ -74,6 +74,15 @@ namespace EPlusActivities.API.Controllers
             return File(fileStream, contentType);
         }
 
+        [HttpGet("ownerId")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<ActionResult<IEnumerable<Guid>>> DownloadFilesByOwnerIdAsync(
+            [FromQuery] DownloadFilesByOwnerIdRequestDto requestDto
+        ) => Ok(await _fileService.DownloadFilesByOwnerIdAsync(requestDto.OwnerId.Value));
+
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,

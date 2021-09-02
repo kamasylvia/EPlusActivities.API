@@ -170,5 +170,23 @@ namespace EPlusActivities.API.Services.FileService
             var response = await _httpClientFactory.CreateClient().DeleteAsync(requestUrl);
             return Convert.ToInt32(response.StatusCode);
         }
+
+        public async Task<IEnumerable<Guid>> DownloadFilesByOwnerIdAsync(Guid ownerId)
+        {
+            var uriBuilder = new UriBuilder(
+                scheme: _configuration["FileServiceUriBuilder:Scheme"],
+                host: _configuration["FileServiceUriBuilder:Host"],
+                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
+                pathValue: "api/file/ownerId"
+            );
+
+            var requestUrl = QueryHelpers.AddQueryString(
+                uriBuilder.Uri.ToString(),
+                new Dictionary<string, string> { ["OwnerId"] = ownerId.ToString() }
+            );
+
+            return await _httpClientFactory.CreateClient()
+                .GetFromJsonAsync<IEnumerable<Guid>>(requestUrl);
+        }
     }
 }

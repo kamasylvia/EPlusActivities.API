@@ -107,11 +107,11 @@ namespace FileService.Controllers
         }
 
         [HttpGet("ownerId")]
-        public async Task<IEnumerable<Guid?>> GetFileIdsByOwnerIdAsync(
+        public async Task<ActionResult<IEnumerable<Guid?>>> GetFileIdsByOwnerIdAsync(
             [FromQuery] GetFileIdsByOwnerIdRequestDto requestDto
         ) {
             var files = await _appFileRepository.FindByOwnerIdAsync(requestDto.OwnerId.Value);
-            return files.Count() == 0 ? null : files.Select(file => file.Id);
+            return files.Count() == 0 ? NotFound() : Ok(files.Select(file => file.Id));
         }
 
         [HttpDelete("id")]
