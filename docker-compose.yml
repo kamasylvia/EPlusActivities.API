@@ -41,7 +41,7 @@ services:
         ports:
             - 80:80
         links:
-          - "eplusactivities-api"
+            - "eplusactivities-api"
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
 
@@ -59,4 +59,14 @@ services:
         volumes:
             - ./MySQL/FileService:/var/lib/mysql
         restart: always
-        
+
+    fileservice:
+        image: kamasylvia/FileService:20200903
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_URLS=http://+:80
+        ports:
+            - 50000:80
+        # volumes:
+        #   - ~/.aspnet/https:/root/.aspnet/https:ro
+        #   - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro

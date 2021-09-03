@@ -30,8 +30,7 @@ namespace EPlusActivities.API.Controllers
             UserManager<ApplicationUser> userManager,
             IFindByParentIdRepository<Address> addressRepository,
             IMapper mapper
-        )
-        {
+        ) {
             _addressRepository =
                 addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -46,8 +45,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
             [FromQuery] AddressForGetByUserIdDto addressDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -71,8 +69,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AddressDto>> GetByIdAsync(
             [FromQuery] AddressForGetByIdDto addressDto
-        )
-        {
+        ) {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
             return address is null
                 ? NotFound($"Could not find the address with ID '{addressDto.Id}'.")
@@ -87,8 +84,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AddressDto>> CreateAsync(
             [FromBody] AddressForCreateDto addressDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -106,7 +102,9 @@ namespace EPlusActivities.API.Controllers
             #region Database operations
             if (addressDto.IsDefault)
             {
-                var addresses = await _addressRepository.FindByParentIdAsync(addressDto.UserId.Value);
+                var addresses = await _addressRepository.FindByParentIdAsync(
+                    addressDto.UserId.Value
+                );
                 if (addresses.Count() > 0)
                 {
                     var oldDefaultAddress = addresses.Single(x => x.IsDefault);
@@ -114,7 +112,7 @@ namespace EPlusActivities.API.Controllers
                     _addressRepository.Update(oldDefaultAddress);
                 }
             }
-            
+
             var address = _mapper.Map<Address>(addressDto);
             await _addressRepository.AddAsync(address);
             var succeeded = await _addressRepository.SaveAsync();
@@ -151,7 +149,9 @@ namespace EPlusActivities.API.Controllers
             #region Database operations
             if (addressDto.IsDefault)
             {
-                var addresses = await _addressRepository.FindByParentIdAsync(addressDto.UserId.Value);
+                var addresses = await _addressRepository.FindByParentIdAsync(
+                    addressDto.UserId.Value
+                );
                 if (addresses.Count() > 0)
                 {
                     var oldDefaultAddress = addresses.Single(x => x.IsDefault);

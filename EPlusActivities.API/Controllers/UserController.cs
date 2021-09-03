@@ -61,7 +61,7 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Get member info
-            if (userDto.LoginChannel is ChannelCode.MiniProgram)
+            if (userDto.LoginChannel is not ChannelCode.Admin)
             {
                 var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(
                     user.PhoneNumber

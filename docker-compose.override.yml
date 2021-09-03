@@ -5,3 +5,8 @@ services:
         build:
             context: .
             dockerfile: EPlusActivities.API/Dockerfile
+
+    fileservice:
+        build:
+            context: .
+            dockerfile: FileService/Dockerfile
