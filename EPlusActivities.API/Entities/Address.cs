@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -34,5 +34,7 @@ namespace EPlusActivities.API.Entities
         public Guid? UserId { get; set; }
 
         public ApplicationUser User { get; set; }
+
+        public bool IsDefault { get; set; }
     }
 }

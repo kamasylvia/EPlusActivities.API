@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Entities;
@@ -33,5 +33,7 @@ namespace EPlusActivities.API.Dtos.AddressDtos
 
         [Required]
         public Guid? UserId { get; set; }
+
+        public bool IsDefault { get; set; }
     }
 }
