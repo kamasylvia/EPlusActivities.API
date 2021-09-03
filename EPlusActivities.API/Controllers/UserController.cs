@@ -61,7 +61,7 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Get member info
-            if (userDto.LoginChannel is not ChannelCode.Admin)
+            if ((await _userManager.GetRolesAsync(user)).Contains("customer"))
             {
                 var (getMemberSucceed, memberDto) = await _memberService.GetMemberAsync(
                     user.PhoneNumber
@@ -76,7 +76,6 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Update the user
-            user.LoginChannel = userDto.LoginChannel;
             var result = await _userManager.UpdateAsync(user);
             #endregion
 
@@ -86,32 +85,6 @@ namespace EPlusActivities.API.Controllers
             }
 
             _logger.LogError("Failed to update the user.");
-            return new InternalServerErrorObjectResult(result.Errors);
-        }
-
-        [HttpPatch("channel")]
-        [Authorize(
-            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
-        )]
-        public async Task<IActionResult> UpdateLoginChannelAsync([FromBody] UserForLoginDto userDto)
-        {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
-            if (user is null)
-            {
-                return NotFound("Could not find the user.");
-            }
-            #endregion
-
-            user.LoginChannel = userDto.LoginChannel;
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-
-            _logger.LogError("Failed to update the login channel.");
             return new InternalServerErrorObjectResult(result.Errors);
         }
 

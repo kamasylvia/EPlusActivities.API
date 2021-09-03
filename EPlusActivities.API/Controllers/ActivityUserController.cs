@@ -172,12 +172,12 @@ namespace EPlusActivities.API.Controllers
             return Ok();
         }
 
-        [HttpPost("bindAll")]
+        [HttpPost("bindAvailable")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAllAvailableActivities(
+        public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAvailableActivities(
             [FromBody] ActivityUserForGetByUserIdDto activityUserDto
         ) {
             #region Parameter validation
@@ -188,8 +188,9 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var newCreatedLinks = await _activityService.BindUserWithAllAvailableActivities(
-                activityUserDto.UserId.Value
+            var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
+                activityUserDto.UserId.Value,
+                activityUserDto.AvailableChannels
             );
 
             return Ok();

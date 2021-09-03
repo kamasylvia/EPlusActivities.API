@@ -80,8 +80,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAllAvailableAsync(
-            [FromQuery] ActivityForGetAllAvailableDto activityDto
+        public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAvailableActivitiesAsync(
+            [FromQuery] ActivityForGetAvailableDto activityDto
         ) {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
@@ -91,7 +91,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return Ok(
-                await _activityService.GetAllAvailableActivitiesAsync(
+                await _activityService.GetAvailableActivitiesAsync(
+                    activityDto.AvailableChannels,
                     activityDto.StartTime.Value,
                     activityDto.EndTime
                 )

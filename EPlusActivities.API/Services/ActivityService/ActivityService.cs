@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -34,17 +35,23 @@ namespace EPlusActivities.API.Services.ActivityService
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         }
 
-        public async Task<IEnumerable<Activity>> GetAllAvailableActivitiesAsync(
+        public async Task<IEnumerable<Activity>> GetAvailableActivitiesAsync(
+            IEnumerable<ChannelCode> availableChannels,
             DateTime startTime,
             DateTime? endTime = null
         ) {
             var result = new List<Activity>();
-            var activitiesAtStartTime = await _activityRepository.FindAllAvailableAsync(startTime);
-            var activitiesAtEndTime = await _activityRepository.FindAllAvailableAsync(
+            var activitiesAtStartTime = await _activityRepository.FindAvailableActivitiesAsync(
+                startTime
+            );
+            var activitiesAtEndTime = await _activityRepository.FindAvailableActivitiesAsync(
                 endTime ?? DateTime.Now.Date
             );
 
-            return activitiesAtStartTime.Union(activitiesAtEndTime);
+            return activitiesAtStartTime.Union(activitiesAtEndTime)
+                .Where(
+                    activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0
+                );
         }
 
         public async Task<IEnumerable<ActivityUser>> BindUserWithActivities(
@@ -84,12 +91,13 @@ namespace EPlusActivities.API.Services.ActivityService
             return result;
         }
 
-        public async Task<IEnumerable<ActivityUser>> BindUserWithAllAvailableActivities(
-            Guid userId
+        public async Task<IEnumerable<ActivityUser>> BindUserWithAvailableActivities(
+            Guid userId,
+            IEnumerable<ChannelCode> availableChannels
         ) =>
             await BindUserWithActivities(
                 userId,
-                (await GetAllAvailableActivitiesAsync(DateTime.Now.Date)).Select(
+                (await GetAvailableActivitiesAsync(availableChannels, DateTime.Now.Date)).Select(
                     activity => activity.Id.Value
                 )
             );

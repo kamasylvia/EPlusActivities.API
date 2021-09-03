@@ -25,13 +25,6 @@ namespace EPlusActivities.API.Dtos.UserDtos
         // 剩余抽奖次数，null 表示无限
         public int? RemainingDraws { get; set; }
 
-        // 注册渠道
-        public ChannelCode RegisterChannel { get; set; }
-
-        // 登录渠道
-        [Required]
-        public ChannelCode LoginChannel { get; set; }
-
         // 注册日期
         public DateTime RegisterDate { get; set; }
     }

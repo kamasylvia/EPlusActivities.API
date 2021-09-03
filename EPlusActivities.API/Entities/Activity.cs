@@ -27,8 +27,8 @@ namespace EPlusActivities.API.Entities
         [Required]
         public string Name { get; set; }
 
-        // 渠道
-        public ChannelCode ChannelCode { get; set; }
+        // 可用渠道
+        public IEnumerable<ChannelCode> AvailableChannels { get; set; }
 
         // 活动类型：签到、连续签到、抽奖
         public ActivityType ActivityType { get; set; }

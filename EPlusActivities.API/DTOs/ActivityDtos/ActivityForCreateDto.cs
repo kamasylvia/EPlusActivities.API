@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
 
@@ -14,7 +15,7 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         public int? DailyLimit { get; set; }
 
         [Required]
-        public ChannelCode ChannelCode { get; set; }
+        public IEnumerable<ChannelCode> AvailableChannels { get; set; }
 
         [Required]
         public LotteryDisplay LotteryDisplay { get; set; }

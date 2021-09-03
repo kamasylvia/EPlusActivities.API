@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Services.ActivityService
 {
     public interface IActivityService
     {
-        Task<IEnumerable<Activity>> GetAllAvailableActivitiesAsync(
+        Task<IEnumerable<Activity>> GetAvailableActivitiesAsync(
+            IEnumerable<ChannelCode> availableChannels,
             DateTime startTime,
             DateTime? endTime = null
         );
@@ -17,6 +19,9 @@ namespace EPlusActivities.API.Services.ActivityService
             IEnumerable<Guid> activityIds
         );
 
-        Task<IEnumerable<ActivityUser>> BindUserWithAllAvailableActivities(Guid userId);
+        Task<IEnumerable<ActivityUser>> BindUserWithAvailableActivities(
+            Guid userId,
+            IEnumerable<ChannelCode> availableChannels
+        );
     }
 }

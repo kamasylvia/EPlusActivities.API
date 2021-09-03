@@ -8,8 +8,5 @@ namespace EPlusActivities.API.Dtos.UserDtos
     {
         [Required]
         public Guid? Id { get; set; }
-
-        [Required]
-        public ChannelCode LoginChannel { get; set; }
     }
 }

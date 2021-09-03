@@ -101,8 +101,6 @@ namespace EPlusActivities.API.Services.IdentityServer
                 if (requireRegister)
                 {
                     user.PhoneNumberConfirmed = true;
-                    user.RegisterChannel = Enum.Parse<ChannelCode>(loginChannel);
-                    user.LoginChannel = Enum.Parse<ChannelCode>(loginChannel);
                     user.RegisterDate = DateTime.Now;
                     var creationResult = await _userManager.CreateAsync(user);
                     if (!creationResult.Succeeded)

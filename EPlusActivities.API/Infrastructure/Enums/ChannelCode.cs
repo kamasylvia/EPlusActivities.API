@@ -5,6 +5,5 @@ namespace EPlusActivities.API.Infrastructure.Enums
         Ngs,
         NgsPlaza,
         Alldays,
-        Admin
     }
 }
