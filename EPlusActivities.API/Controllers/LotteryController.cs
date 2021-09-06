@@ -80,12 +80,12 @@ namespace EPlusActivities.API.Controllers
         }
 
         // GET: api/values
-        [HttpGet("user")]
+        [HttpGet("lottery-records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetByUserIdAsync(
+        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
         ) {
             #region Parameter validation
@@ -96,13 +96,44 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            var lotteries = await _lotteryRepository.FindByParentIdAsync(lotteryDto.UserId.Value);
+            var result = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
+            return result.Count() > 0
+                ? Ok(result)
+                : NotFound("Could not find the lottery results.");
+        }
+
+        [HttpGet("winning-records")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
+            [FromQuery] LotteryForGetByUserIdDto lotteryDto
+        ) {
+            #region Parameter validation
+            var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
+            if (user is null)
+            {
+                return NotFound("Could not find the user.");
+            }
+            #endregion
+
+            var records = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
+            var result = records.Where(record => record.IsLucky);
+            return result.Count() > 0
+                ? Ok(result)
+                : NotFound("Could not find the winning results.");
+        }
+
+        private async Task<IEnumerable<LotteryDto>> FindLotteryRecordsAsync(Guid userId)
+        {
+            var lotteries = await _lotteryRepository.FindByParentIdAsync(userId);
+            var result = new List<LotteryDto>();
 
             // 因为进行了全剧配置，AutoMapper 在此执行
             // _mapper.Map<IEnumerable<LotteryDto>>(lotteries)
             // 时会自动转换 DateTime 导致精确时间丢失，
             // 所以这里手动添加精确时间。
-            var result = new List<LotteryDto>();
             foreach (var item in lotteries)
             {
                 var temp = _mapper.Map<LotteryDto>(item);
@@ -111,7 +142,7 @@ namespace EPlusActivities.API.Controllers
                 result.Add(temp);
             }
 
-            return lotteries is null ? NotFound("Could not find the lottery results.") : Ok(result);
+            return result;
         }
 
         [HttpPost]
@@ -164,18 +195,18 @@ namespace EPlusActivities.API.Controllers
                 );
             }
 
-            // 今天没登陆过的用户，每日已用抽奖次数清零
-            if (user.LastLoginDate < DateTime.Today)
-            {
-                activityUser.TodayUsedDraws = 0;
-            }
-
             // 超过每日抽奖次数限制
             if (activityUser.TodayUsedDraws + lotteryDto.Count > activity.DailyLimit)
             {
                 return BadRequest(
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
+            }
+
+            // 今天没登陆过的用户，每日已用抽奖次数清零
+            if (user.LastLoginDate < DateTime.Today)
+            {
+                activityUser.TodayUsedDraws = 0;
             }
             #endregion
 
