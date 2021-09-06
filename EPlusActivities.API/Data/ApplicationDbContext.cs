@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -58,8 +60,8 @@ namespace EPlusActivities.API.Data
             #region Set unique properties
             builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
             builder.Entity<Activity>().HasIndex(a => a.ActivityCode).IsUnique();
-            // builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
 
+            // builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
 
@@ -69,6 +71,21 @@ namespace EPlusActivities.API.Data
             builder.Entity<ActivityUser>().HasKey(lad => new { lad.ActivityId, lad.UserId });
 
             builder.Entity<Credit>().HasAlternateKey(c => c.SheetId);
+            #endregion
+
+
+
+            #region Set list of enum values
+            builder.Entity<Activity>()
+                .Property(a => a.AvailableChannels)
+                .HasConversion(
+                    v => string.Join(';', v.Select(e => e.ToString("D")).ToArray()),
+                    v =>
+                        v.Split(new[] { ';' })
+                            .Select(e => Enum.Parse(typeof(ChannelCode), e))
+                            .Cast<ChannelCode>()
+                            .ToList()
+                );
             #endregion
         }
     }

@@ -11,7 +11,7 @@ namespace EPlusActivities.API.Dtos.PrizeItemDtos
 
         public string Name { get; set; }
 
-        public PrizeType PrizeType { get; set; }
+        public string PrizeType { get; set; }
 
         // 会员系统优惠券活动码
         public string CouponActiveCode { get; set; }

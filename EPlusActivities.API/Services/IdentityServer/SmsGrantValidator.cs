@@ -47,7 +47,6 @@ namespace EPlusActivities.API.Services.IdentityServer
                 // 未来版本的 AutoMapper 可以自动获取参数。
                 var phoneNumber = context.Request.Raw["phone_number"];
                 var token = context.Request.Raw["token"];
-                var loginChannel = context.Request.Raw["login_channel"];
 
                 var requireRegister = false;
                 var secret = new Secret(_configuration["Secrets:DefaultSecret"]).Value;

@@ -10,7 +10,7 @@ namespace EPlusActivities.API.Dtos.AttendanceDtos
         /// 渠道号
         /// </summary>
         /// <value></value>
-        public ChannelCode ChannelCode { get; set; }
+        public string ChannelCode { get; set; }
 
         /// <summary>
         /// 签到获得积分

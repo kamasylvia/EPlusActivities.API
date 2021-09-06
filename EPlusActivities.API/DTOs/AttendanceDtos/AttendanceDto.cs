@@ -12,7 +12,7 @@ namespace EPlusActivities.API.Dtos.AttendanceDtos
         [Required]
         public DateTime? Date { get; set; }
 
-        public ChannelCode ChannelCode { get; set; }
+        public string ChannelCode { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

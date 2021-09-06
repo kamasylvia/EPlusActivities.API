@@ -12,6 +12,6 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
 
         public DateTime? EndTime { get; set; }
 
-        public IEnumerable<ChannelCode> AvailableChannels { get; set; }
+        public IEnumerable<string> AvailableChannels { get; set; }
     }
 }

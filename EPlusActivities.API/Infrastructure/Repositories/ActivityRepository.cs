@@ -16,7 +16,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
             await _context.Activities.AnyAsync(a => a.Id == keyValues.FirstOrDefault());
 
-        public async Task<IEnumerable<Activity>> FindAllAvailableAsync(DateTime date) =>
+        public async Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date) =>
             await _context.Activities.Where(
                     a => a.StartTime <= date && (!a.EndTime.HasValue || date <= a.EndTime.Value)
                 )

@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using AutoMapper;
-using AutoMapper.Extensions.EnumMapping;
 using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
@@ -15,6 +14,7 @@ using EPlusActivities.API.Dtos.PrizeItemDtos;
 using EPlusActivities.API.Dtos.PrizeTierDtos;
 using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Configuration
 {
@@ -63,8 +63,24 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Lottery
-            CreateMap<Lottery, LotteryDto>();
-            CreateMap<LotteryForCreateDto, Lottery>();
+            CreateMap<Lottery, LotteryDto>()
+                .ForMember(
+                    dest => dest.ChannelCode,
+                    opt => opt.MapFrom(src => src.ChannelCode.ToString())
+                )
+                .ForMember(
+                    dest => dest.LotteryDisplay,
+                    opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
+                );
+            CreateMap<LotteryForCreateDto, Lottery>()
+                .ForMember(
+                    dest => dest.ChannelCode,
+                    opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode))
+                )
+                .ForMember(
+                    dest => dest.LotteryDisplay,
+                    opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay))
+                );
             CreateMap<LotteryForUpdateDto, Lottery>();
             #endregion
 
@@ -74,17 +90,64 @@ namespace EPlusActivities.API.Configuration
             CreateMap<
                 AttendanceForAttendDto,
                 Attendance
-            >();
-            CreateMap<Attendance, AttendanceDto>();
+            >()
+                .ForMember(
+                    dest => dest.ChannelCode,
+                    opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode))
+                );
+            CreateMap<Attendance, AttendanceDto>()
+                .ForMember(
+                    dest => dest.ChannelCode,
+                    opt => opt.MapFrom(src => src.ChannelCode.ToString())
+                );
             #endregion
 
 
 
             #region Activity
-            CreateMap<Activity, ActivityDto>();
-            CreateMap<ActivityForCreateDto, Activity>();
-            CreateMap<ActivityForUpdateDto, Activity>();
+            CreateMap<Activity, ActivityDto>()
+                .ForMember(
+                    dest => dest.AvailableChannels,
+                    opt =>
+                        opt.MapFrom(
+                            src => src.AvailableChannels.Select(channel => channel.ToString())
+                        )
+                )
+                .ForMember(
+                    dest => dest.LotteryDisplay,
+                    opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
+                )
+                .ForMember(
+                    dest => dest.ActivityType,
+                    opt => opt.MapFrom(src => src.ActivityType.ToString())
+                );
+            CreateMap<ActivityForCreateDto, Activity>()
+                .ForMember(
+                    dest => dest.AvailableChannels,
+                    opt =>
+                        opt.MapFrom(
+                            src =>
+                                src.AvailableChannels.Select(
+                                    channelString => Enum.Parse<ChannelCode>(channelString, true)
+                                )
+                        )
+                )
+                .ForMember(
+                    dest => dest.LotteryDisplay,
+                    opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay))
+                )
+                .ForMember(
+                    dest => dest.ActivityType,
+                    opt => opt.MapFrom(src => Enum.Parse<ActivityType>(src.ActivityType))
+                );
+            CreateMap<ActivityForUpdateDto, Activity>()
+                .ForMember(
+                    dest => dest.LotteryDisplay,
+                    opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay))
+                );
             #endregion
+
+
 
             #region ActivityUser
             CreateMap<
@@ -113,13 +176,25 @@ namespace EPlusActivities.API.Configuration
             #region PrizeItem
             CreateMap<PrizeItem, PrizeItemDto>()
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
+                .ForMember(
+                    dest => dest.PrizeType,
+                    opt => opt.MapFrom(src => src.PrizeType.ToString())
+                );
             CreateMap<PrizeItemForCreateDto, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
-                .ForMember(dest => dest.Category, opt => opt.Ignore());
+                .ForMember(dest => dest.Category, opt => opt.Ignore())
+                .ForMember(
+                    dest => dest.PrizeType,
+                    opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType))
+                );
             CreateMap<PrizeItemForUpdateDto, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
-                .ForMember(dest => dest.Category, opt => opt.Ignore());
+                .ForMember(dest => dest.Category, opt => opt.Ignore())
+                .ForMember(
+                    dest => dest.PrizeType,
+                    opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType))
+                );
             #endregion
 
 

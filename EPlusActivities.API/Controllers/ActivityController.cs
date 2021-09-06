@@ -92,7 +92,7 @@ namespace EPlusActivities.API.Controllers
 
             return Ok(
                 await _activityService.GetAvailableActivitiesAsync(
-                    activityDto.AvailableChannels,
+                    activityDto.AvailableChannels.Select(s => Enum.Parse<ChannelCode>(s, true)),
                     activityDto.StartTime.Value,
                     activityDto.EndTime
                 )

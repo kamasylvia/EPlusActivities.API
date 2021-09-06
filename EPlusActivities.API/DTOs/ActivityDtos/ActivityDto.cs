@@ -17,7 +17,7 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
 
         public int? DailyLimit { get; set; }
 
-        public IEnumerable<ChannelCode> AvailableChannels { get; set; }
+        public IEnumerable<string> AvailableChannels { get; set; }
 
         public LotteryDisplay LotteryDisplay { get; set; }
 

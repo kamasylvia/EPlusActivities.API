@@ -9,9 +9,9 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         [Required]
         public Guid? Id { get; set; }
 
-        public ChannelCode ChannelCode { get; set; }
+        public string ChannelCode { get; set; }
 
-        public LotteryDisplay LotteryDisplay { get; set; }
+        public string LotteryDisplay { get; set; }
 
         public bool IsLucky { get; set; }
 

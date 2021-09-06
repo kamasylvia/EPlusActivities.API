@@ -7,10 +7,10 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
     public class LotteryForCreateDto
     {
         [Required]
-        public ChannelCode? ChannelCode { get; set; }
+        public string ChannelCode { get; set; }
 
         [Required]
-        public LotteryDisplay? LotteryDisplay { get; set; }
+        public string LotteryDisplay { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

@@ -7,7 +7,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 {
     public interface IActivityRepository : IRepository<Activity>
     {
-        Task<IEnumerable<Activity>> FindAllAvailableAsync(DateTime date);
+        Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date);
 
         Task<Activity> FindWithPrizeType(Guid id);
 

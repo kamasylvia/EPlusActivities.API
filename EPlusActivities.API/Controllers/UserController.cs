@@ -5,7 +5,6 @@ using AutoMapper;
 using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
-using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

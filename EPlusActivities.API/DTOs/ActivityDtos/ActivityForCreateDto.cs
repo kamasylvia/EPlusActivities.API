@@ -15,13 +15,13 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         public int? DailyLimit { get; set; }
 
         [Required]
-        public IEnumerable<ChannelCode> AvailableChannels { get; set; }
+        public IEnumerable<string> AvailableChannels { get; set; }
 
         [Required]
-        public LotteryDisplay LotteryDisplay { get; set; }
+        public string LotteryDisplay { get; set; }
 
         [Required]
-        public ActivityType ActivityType { get; set; }
+        public string ActivityType { get; set; }
 
         [Required]
         public DateTime? StartTime { get; set; }
