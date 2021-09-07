@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 短信验证码 API
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class SmsController : Controller
@@ -32,6 +35,11 @@ namespace EPlusActivities.API.Controllers
                 ?? throw new ArgumentNullException(nameof(phoneNumberTokenProvider));
         }
 
+        /// <summary>
+        /// 获取验证码
+        /// </summary>
+        /// <param name="smsDto"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> GetVerificationCodeAsync([FromBody] SmsDto smsDto)

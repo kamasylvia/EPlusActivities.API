@@ -17,6 +17,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 用户账户 API
+    /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
@@ -92,6 +95,11 @@ namespace EPlusActivities.API.Controllers
             return new InternalServerErrorObjectResult(result.Errors);
         }
 
+        /// <summary>
+        /// 修改手机号
+        /// </summary>
+        /// <param name="userDto"></param>
+        /// <returns></returns>
         [HttpPatch("phonenumber")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -138,6 +146,11 @@ namespace EPlusActivities.API.Controllers
             return new InternalServerErrorObjectResult(result.Errors);
         }
 
+        /// <summary>
+        /// 新建管理员账户
+        /// </summary>
+        /// <param name="userDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -182,8 +195,12 @@ namespace EPlusActivities.API.Controllers
         }
         */
 
+        /// <summary>
+        /// 删除账户
+        /// </summary>
+        /// <param name="userDto"></param>
+        /// <returns></returns>
         [HttpDelete]
-        // [Authorize(Roles = "admin")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"

@@ -11,6 +11,10 @@ namespace EPlusActivities.API.Dtos.PrizeTierDtos
 
         public string Name { get; set; }
 
+        /// <summary>
+        /// 获奖概率
+        /// </summary>
+        /// <value></value>
         public int Percentage { get; set; }
 
         [Required]

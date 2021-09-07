@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,6 +17,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 文件、图片 API
+    /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
@@ -36,6 +39,11 @@ namespace EPlusActivities.API.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <summary>
+        /// 通过文件 ID 获取文件
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
         [HttpGet("id")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -54,6 +62,11 @@ namespace EPlusActivities.API.Controllers
             return File(fileStream, contentType);
         }
 
+        /// <summary>
+        /// 通过文件所有者和关键字获取文件
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
         [HttpGet("key")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -74,6 +87,11 @@ namespace EPlusActivities.API.Controllers
             return File(fileStream, contentType);
         }
 
+        /// <summary>
+        /// 获取某个所有者的全部文件
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
         [HttpGet("ownerId")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -92,6 +110,11 @@ namespace EPlusActivities.API.Controllers
             [FromForm] UploadFileRequestDto requestDto
         ) => new StatusCodeResult(await _fileService.UploadFileAsync(requestDto));
 
+        /// <summary>
+        /// 删除指定 ID 的文件
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
         [HttpDelete("id")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -101,6 +124,11 @@ namespace EPlusActivities.API.Controllers
             [FromQuery] DownloadFileByIdRequestDto requestDto
         ) => new StatusCodeResult(await _fileService.DeleteFileByIdAsync(requestDto));
 
+        /// <summary>
+        /// 根据文件所有者和关键字删除文件
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
         [HttpDelete("key")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,

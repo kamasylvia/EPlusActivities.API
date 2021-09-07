@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 奖品 API
+    /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
@@ -45,6 +48,11 @@ namespace EPlusActivities.API.Controllers
                 categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
         }
 
+        /// <summary>
+        /// 通过奖品名获取奖品
+        /// </summary>
+        /// <param name="prizeItemDto"></param>
+        /// <returns></returns>
         [HttpGet("name")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -63,6 +71,11 @@ namespace EPlusActivities.API.Controllers
                 : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
         }
 
+        /// <summary>
+        /// 通过奖品 ID 获取奖品
+        /// </summary>
+        /// <param name="prizeItemDto"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -77,6 +90,11 @@ namespace EPlusActivities.API.Controllers
                 : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
         }
 
+        /// <summary>
+        /// 新建奖品
+        /// </summary>
+        /// <param name="prizeItemDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -109,6 +127,11 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
+        /// <summary>
+        /// 修改奖品
+        /// </summary>
+        /// <param name="prizeItemDto"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -142,6 +165,11 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
+        /// <summary>
+        /// 删除奖品
+        /// </summary>
+        /// <param name="prizeItemDto"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,

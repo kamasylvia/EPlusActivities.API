@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,8 +24,7 @@ namespace EPlusActivities.API.Services.ActivityService
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityService> logger,
             IMapper mapper
-        )
-        {
+        ) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _activityUserRepository =
                 activityUserRepository
@@ -40,8 +39,7 @@ namespace EPlusActivities.API.Services.ActivityService
             IEnumerable<ChannelCode> availableChannels,
             DateTime startTime,
             DateTime? endTime = null
-        )
-        {
+        ) {
             var result = new List<Activity>();
             var activitiesAtStartTime = await _activityRepository.FindAvailableActivitiesAsync(
                 startTime
@@ -59,8 +57,7 @@ namespace EPlusActivities.API.Services.ActivityService
         public async Task<IEnumerable<ActivityUser>> BindUserWithActivities(
             Guid userId,
             IEnumerable<Guid> activityIds
-        )
-        {
+        ) {
             var result = new List<ActivityUser>();
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)
@@ -100,9 +97,12 @@ namespace EPlusActivities.API.Services.ActivityService
         ) =>
             await BindUserWithActivities(
                 userId,
-                (await GetAvailableActivitiesAsync(new List<ChannelCode> { availableChannel }, DateTime.Now.Date)).Select(
-                    activity => activity.Id.Value
-                )
+                (
+                    await GetAvailableActivitiesAsync(
+                        new List<ChannelCode> { availableChannel },
+                        DateTime.Now.Date
+                    )
+                ).Select(activity => activity.Id.Value)
             );
     }
 }

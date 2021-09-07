@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,8 +33,7 @@ namespace EPlusActivities.API.Controllers
             UserManager<ApplicationUser> userManager,
             IFindByParentIdRepository<Address> addressRepository,
             IMapper mapper
-        )
-        {
+        ) {
             _addressRepository =
                 addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -53,8 +52,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
             [FromQuery] AddressForGetByUserIdDto addressDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -83,8 +81,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AddressDto>> GetByIdAsync(
             [FromQuery] AddressForGetByIdDto addressDto
-        )
-        {
+        ) {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
             return address is null
                 ? NotFound($"Could not find the address with ID '{addressDto.Id}'.")
@@ -103,8 +100,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AddressDto>> CreateAsync(
             [FromBody] AddressForCreateDto addressDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)

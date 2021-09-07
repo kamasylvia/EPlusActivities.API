@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,8 +48,7 @@ namespace EPlusActivities.API.Controllers
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<AttendanceController> logger,
             IMemberService memberService
-        )
-        {
+        ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
@@ -79,8 +78,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<AttendanceForAttendDto>>> GetByUserIdAsync(
             [FromQuery] AttendanceForGetByUserIdDto attendanceDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
@@ -118,8 +116,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AttendanceDto>> GetByIdAsync(
             [FromQuery] AttendanceForGetByIdDto attendanceDto
-        )
-        {
+        ) {
             var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id.Value);
             return attendance is null
                 ? BadRequest("Could not find the attendance.")
@@ -138,8 +135,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AttendanceDto>> AttendAsync(
             [FromBody] AttendanceForAttendDto attendanceDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
