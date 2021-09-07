@@ -23,6 +23,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 抽奖记录 API
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [EPlusActionFilterAttribute]
@@ -54,7 +57,8 @@ namespace EPlusActivities.API.Controllers
             ILotteryDrawService lotteryDrawService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService
-        ) {
+        )
+        {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -79,7 +83,11 @@ namespace EPlusActivities.API.Controllers
                 prizeTypeRepository ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
         }
 
-        // GET: api/values
+        /// <summary>
+        /// 获取某个用户的抽奖记录
+        /// </summary>
+        /// <param name="lotteryDto"></param>
+        /// <returns></returns>
         [HttpGet("lottery-records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -87,7 +95,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -102,6 +111,11 @@ namespace EPlusActivities.API.Controllers
                 : NotFound("Could not find the lottery results.");
         }
 
+        /// <summary>
+        /// 获取某个用户的中奖记录
+        /// </summary>
+        /// <param name="lotteryDto"></param>
+        /// <returns></returns>
         [HttpGet("winning-records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -109,7 +123,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -145,6 +160,11 @@ namespace EPlusActivities.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 抽奖
+        /// </summary>
+        /// <param name="lotteryDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -152,7 +172,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -319,6 +340,11 @@ namespace EPlusActivities.API.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// 更新抽奖记录
+        /// </summary>
+        /// <param name="lotteryDto"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -351,6 +377,11 @@ namespace EPlusActivities.API.Controllers
             return new InternalServerErrorObjectResult("Update database exception");
         }
 
+        /// <summary>
+        /// 删除抽奖记录
+        /// </summary>
+        /// <param name="lotteryDto"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
