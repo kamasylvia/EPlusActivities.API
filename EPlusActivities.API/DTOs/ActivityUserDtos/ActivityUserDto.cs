@@ -4,22 +4,40 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
 {
     public class ActivityUserDto
     {
-        // 全活动周期已抽奖次数
+        /// <summary>
+        /// 全活动周期已抽奖次数
+        /// </summary>
+        /// <value></value>
         public int UsedDraws { get; set; }
 
-        // 当天已抽奖次数
+        /// <summary>
+        /// 当天已抽奖次数
+        /// </summary>
+        /// <value></value>
         public int TodayUsedDraws { get; set; }
 
-        // 剩余抽奖次数
+        /// <summary>
+        /// 剩余抽奖次数，null 表示无限
+        /// </summary>
+        /// <value></value>
         public int? RemainingDraws { get; set; }
 
-        // 签到天数
+        /// <summary>
+        /// 签到天数，非签到活动中用 null 表示
+        /// </summary>
+        /// <value></value>
         public int? AttendanceDays { get; set; }
 
-        // 连续签到天数
+        /// <summary>
+        /// 连续签到天数，非签到活动中用 null 表示
+        /// </summary>
+        /// <value></value>
         public int? SequentialAttendanceDays { get; set; }
 
-        // 上次签到日期
+        /// <summary>
+        /// 上次签到日期
+        /// </summary>
+        /// <value></value>
         public DateTime? LastAttendanceDate { get; set; }
 
         public Guid? UserId { get; set; }

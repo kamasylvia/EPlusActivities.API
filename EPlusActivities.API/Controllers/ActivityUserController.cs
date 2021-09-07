@@ -21,6 +21,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 活动和用户的绑定关系 API
+    /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
@@ -44,7 +47,8 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService
-        ) {
+        )
+        {
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =
@@ -61,6 +65,11 @@ namespace EPlusActivities.API.Controllers
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
         }
 
+        /// <summary>
+        /// 获取活动和用户的绑定关系
+        /// </summary>
+        /// <param name="activityUserDto"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -68,7 +77,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
             [FromQuery] ActivityUserForGetDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -95,6 +105,11 @@ namespace EPlusActivities.API.Controllers
                 : Ok(_mapper.Map<ActivityUserDto>(activityUser));
         }
 
+        /// <summary>
+        /// 获取某个用户正在参与的活动
+        /// </summary>
+        /// <param name="activityUserDto"></param>
+        /// <returns></returns>
         [HttpGet("user")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -102,7 +117,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
             [FromQuery] ActivityUserForGetByUserIdDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -129,7 +145,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> JoinAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -172,6 +189,11 @@ namespace EPlusActivities.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// 为某个用户绑定所有可参加的活动
+        /// </summary>
+        /// <param name="activityUserDto"></param>
+        /// <returns></returns>
         [HttpPost("bindAvailable")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -179,7 +201,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAvailableActivities(
             [FromBody] ActivityUserForGetByUserIdDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -190,12 +213,17 @@ namespace EPlusActivities.API.Controllers
 
             var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
                 activityUserDto.UserId.Value,
-                activityUserDto.AvailableChannels
+                activityUserDto.AvailableChannel
             );
 
             return Ok();
         }
 
+        /// <summary>
+        /// 用户积分兑换抽奖次数
+        /// </summary>
+        /// <param name="activityUserDto"></param>
+        /// <returns></returns>
         [HttpPatch("redeeming")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -203,7 +231,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)

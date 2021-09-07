@@ -10,7 +10,12 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
         [Required]
         public Guid? UserId { get; set; }
 
+        /// <summary>
+        /// 用户访问的渠道，字符串不区分大小写。
+        /// 取值范围：Ngs, NgsPlaza, Alldays
+        /// </summary>
+        /// <value></value>
         [Required]
-        public IEnumerable<ChannelCode> AvailableChannels { get; set; }
+        public ChannelCode AvailableChannel { get; set; }
     }
 }

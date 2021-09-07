@@ -7,7 +7,7 @@ namespace EPlusActivities.API.Dtos.AttendanceDtos
     public class AttendanceForAttendDto
     {
         /// <summary>
-        /// 渠道号
+        /// 用户访问的渠道
         /// </summary>
         /// <value></value>
         public string ChannelCode { get; set; }

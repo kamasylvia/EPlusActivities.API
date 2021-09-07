@@ -44,6 +44,11 @@ namespace EPlusActivities.API.Controllers
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <param name="userDto"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,

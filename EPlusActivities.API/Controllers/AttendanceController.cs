@@ -22,6 +22,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 签到 API
+    /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
@@ -45,7 +48,8 @@ namespace EPlusActivities.API.Controllers
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<AttendanceController> logger,
             IMemberService memberService
-        ) {
+        )
+        {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
@@ -63,6 +67,11 @@ namespace EPlusActivities.API.Controllers
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
+        /// <summary>
+        /// 获取指定用户某个时间段内的签到记录
+        /// </summary>
+        /// <param name="attendanceDto"></param>
+        /// <returns></returns>
         [HttpGet("user")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -70,7 +79,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<AttendanceForAttendDto>>> GetByUserIdAsync(
             [FromQuery] AttendanceForGetByUserIdDto attendanceDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)
@@ -96,6 +106,11 @@ namespace EPlusActivities.API.Controllers
                 : NotFound("Could not find any attendances.");
         }
 
+        /// <summary>
+        /// 获取单个签到记录的信息
+        /// </summary>
+        /// <param name="attendanceDto"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -103,13 +118,19 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AttendanceDto>> GetByIdAsync(
             [FromQuery] AttendanceForGetByIdDto attendanceDto
-        ) {
+        )
+        {
             var attendance = await _attendanceRepository.FindByIdAsync(attendanceDto.Id.Value);
             return attendance is null
                 ? BadRequest("Could not find the attendance.")
                 : Ok(_mapper.Map<AttendanceDto>(attendance));
         }
 
+        /// <summary>
+        /// 签到
+        /// </summary>
+        /// <param name="attendanceDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -117,7 +138,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AttendanceDto>> AttendAsync(
             [FromBody] AttendanceForAttendDto attendanceDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(attendanceDto.UserId.ToString());
             if (user is null)

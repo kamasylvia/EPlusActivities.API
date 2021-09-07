@@ -22,6 +22,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 活动 API
+    /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
@@ -44,7 +47,8 @@ namespace EPlusActivities.API.Controllers
             ILogger<ActivityController> logger,
             IMapper mapper,
             IActivityService activityService
-        ) {
+        )
+        {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
@@ -61,6 +65,11 @@ namespace EPlusActivities.API.Controllers
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         }
 
+        /// <summary>
+        /// 获取活动信息
+        /// </summary>
+        /// <param name="activityDto"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -68,13 +77,19 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> GetAsync(
             [FromQuery] ActivityForGetDto activityDto
-        ) {
+        )
+        {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             return activity is null
                 ? NotFound("Could not find the activity.")
                 : Ok(_mapper.Map<ActivityDto>(activity));
         }
 
+        /// <summary>
+        /// 获取当前用户可参与的活动列表
+        /// </summary>
+        /// <param name="activityDto"></param>
+        /// <returns></returns>
         [HttpGet("available")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -82,7 +97,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAvailableActivitiesAsync(
             [FromQuery] ActivityForGetAvailableDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -99,6 +115,11 @@ namespace EPlusActivities.API.Controllers
             );
         }
 
+        /// <summary>
+        /// 创建活动
+        /// </summary>
+        /// <param name="activityDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -106,7 +127,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> CreateAsync(
             [FromBody] ActivityForCreateDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -120,7 +142,8 @@ namespace EPlusActivities.API.Controllers
                 activity.ActivityType
                     is ActivityType.SingleAttendance
                         or ActivityType.SequentialAttendance
-            ) {
+            )
+            {
                 activity.PrizeTiers = new List<PrizeTier>()
                 {
                     new PrizeTier("Attendance") { Percentage = 100 }
@@ -143,6 +166,11 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
+        /// <summary>
+        /// 修改活动信息
+        /// </summary>
+        /// <param name="activityDto"></param>
+        /// <returns></returns>
         [HttpPut]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -177,6 +205,11 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
+        /// <summary>
+        /// 删除活动
+        /// </summary>
+        /// <param name="activityDto"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,

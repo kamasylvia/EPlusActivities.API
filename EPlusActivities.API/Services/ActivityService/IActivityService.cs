@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Services.ActivityService
 
         Task<IEnumerable<ActivityUser>> BindUserWithAvailableActivities(
             Guid userId,
-            IEnumerable<ChannelCode> availableChannels
+            ChannelCode availableChannel
         );
     }
 }

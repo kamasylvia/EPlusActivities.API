@@ -10,30 +10,57 @@ namespace EPlusActivities.API.Dtos.AddressDtos
         [Required]
         public Guid? Id { get; set; }
 
-        // 收件人
+        /// <summary>
+        /// 收件人
+        /// </summary>
+        /// <value></value>
         public string Recipient { get; set; }
 
-        // 收件人电话
+        /// <summary>
+        /// 收件人手机号
+        /// </summary>
+        /// <value></value>
         [Phone]
         [StringLength(11, MinimumLength = 11, ErrorMessage = "手机号必须为 11 位数字。")]
         public string RecipientPhoneNumber { get; set; }
 
+        /// <summary>
+        /// 国家
+        /// </summary>
+        /// <value></value>
         public string Country { get; set; }
 
-        // 省、直辖市、自治区
+        /// <summary>
+        /// 省、自治区、直辖市
+        /// </summary>
+        /// <value></value>
         public string Province { get; set; }
 
+        /// <summary>
+        /// 市
+        /// </summary>
+        /// <value></value>
         public string City { get; set; }
 
-        // 具体地址
+        /// <summary>
+        /// 具体地址
+        /// </summary>
+        /// <value></value>
         public string DetailedAddress { get; set; }
 
-        // 邮编
+        /// <summary>
+        /// 邮编
+        /// </summary>
+        /// <value></value>
         public string Postcode { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }
 
+        /// <summary>
+        /// 是否为默认地址
+        /// </summary>
+        /// <value></value>
         public bool IsDefault { get; set; }
     }
 }

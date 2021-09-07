@@ -18,6 +18,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 地址管理 API
+    /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
     [Route("api/[controller]")]
@@ -30,22 +33,28 @@ namespace EPlusActivities.API.Controllers
             UserManager<ApplicationUser> userManager,
             IFindByParentIdRepository<Address> addressRepository,
             IMapper mapper
-        ) {
+        )
+        {
             _addressRepository =
                 addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
+        /// <summary>
+        /// 获得指定用户的所有地址
+        /// </summary>
+        /// <param name="addressDto"></param>
+        /// <returns></returns>
         [HttpGet("user")]
-        // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
             [FromQuery] AddressForGetByUserIdDto addressDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -62,6 +71,11 @@ namespace EPlusActivities.API.Controllers
                     );
         }
 
+        /// <summary>
+        /// 获取地址信息
+        /// </summary>
+        /// <param name="addressDto"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
@@ -69,22 +83,28 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AddressDto>> GetByIdAsync(
             [FromQuery] AddressForGetByIdDto addressDto
-        ) {
+        )
+        {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
             return address is null
                 ? NotFound($"Could not find the address with ID '{addressDto.Id}'.")
                 : Ok(address);
         }
 
+        /// <summary>
+        /// 新建地址
+        /// </summary>
+        /// <param name="addressDto"></param>
+        /// <returns></returns>
         [HttpPost]
-        // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<AddressDto>> CreateAsync(
             [FromBody] AddressForCreateDto addressDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -123,8 +143,12 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
+        /// <summary>
+        /// 更新地址
+        /// </summary>
+        /// <param name="addressDto"></param>
+        /// <returns></returns>
         [HttpPut]
-        // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -171,8 +195,12 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception.");
         }
 
+        /// <summary>
+        /// 删除地址
+        /// </summary>
+        /// <param name="addressDto"></param>
+        /// <returns></returns>
         [HttpDelete]
-        // [Authorize(Roles = "customer, admin, manager")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"

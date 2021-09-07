@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using EPlusActivities.API.Data;
@@ -6,10 +7,10 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.DeliveryService;
+using EPlusActivities.API.Services.FileService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
-using EPlusActivities.API.Services.FileService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -64,6 +65,12 @@ namespace EPlusActivities.API
                     c.SwaggerDoc(
                         "v1",
                         new OpenApiInfo { Title = "EPlusActivities.API", Version = "v1" }
+                    );
+                    c.IncludeXmlComments(
+                        Path.Combine(
+                            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                            "EPlusActivities.API.xml"
+                        )
                     );
                 }
             );
