@@ -47,8 +47,7 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService
-        )
-        {
+        ) {
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =
@@ -77,8 +76,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
             [FromQuery] ActivityUserForGetDto activityUserDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -117,8 +115,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
             [FromQuery] ActivityUserForGetByUserIdDto activityUserDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -145,8 +142,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> JoinAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -201,8 +197,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAvailableActivities(
             [FromBody] ActivityUserForGetByUserIdDto activityUserDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -213,7 +208,7 @@ namespace EPlusActivities.API.Controllers
 
             var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
                 activityUserDto.UserId.Value,
-               Enum.Parse<ChannelCode>(activityUserDto.AvailableChannel)
+                Enum.Parse<ChannelCode>(activityUserDto.AvailableChannel)
             );
 
             return Ok();
@@ -231,8 +226,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -93,6 +96,37 @@ namespace EPlusActivities.API.Controllers
 
             _logger.LogError("Failed to update the user.");
             return new InternalServerErrorObjectResult(result.Errors);
+        }
+
+        /// <summary>
+        /// 获取用户列表。
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
+        [HttpGet("users")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
+            [FromQuery] UserForGetUsersDto requestDto
+        ) {
+            var allUsers =
+                (
+                    await _userManager.Users.Where(
+                            user =>
+                                _userManager.GetRolesAsync(user).Result.Contains(requestDto.Role)
+                        )
+                        .ToListAsync()
+                );
+            return allUsers.Count > 0
+                ? _mapper.Map<List<UserDto>>(
+                        allUsers.GetRange(
+                            (requestDto.Page - 1) * requestDto.Num,
+                            (requestDto.Page) * requestDto.Num
+                        )
+                    )
+                : NotFound("Could not find any users.");
         }
 
         /// <summary>
