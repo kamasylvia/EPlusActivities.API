@@ -20,10 +20,10 @@ namespace EPlusActivities.API.Dtos.AddressDtos
         public string RecipientPhoneNumber { get; set; }
 
         /// <summary>
-        /// 国家
+        /// 区县
         /// </summary>
         /// <value></value>
-        public string Country { get; set; }
+        public string Region { get; set; }
 
         /// <summary>
         /// 省、自治区、直辖市
