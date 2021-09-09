@@ -16,6 +16,6 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
         /// </summary>
         /// <value></value>
         [Required]
-        public ChannelCode AvailableChannel { get; set; }
+        public string AvailableChannel { get; set; }
     }
 }
