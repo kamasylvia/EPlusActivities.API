@@ -5,7 +5,7 @@ namespace EPlusActivities.API.Dtos.UserDtos
     public class UserForGetUsersDto
     {
         /// <summary>
-        /// 角色
+        /// 角色。大小写不敏感。
         /// </summary>
         /// <value></value>
         [Required]

@@ -115,7 +115,8 @@ namespace EPlusActivities.API.Controllers
                 (
                     await _userManager.Users.Where(
                             user =>
-                                _userManager.GetRolesAsync(user).Result.Contains(requestDto.Role)
+                                _userManager.GetRolesAsync(user)
+                                    .Result.Contains(requestDto.Role.ToLower())
                         )
                         .ToListAsync()
                 );
