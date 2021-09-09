@@ -82,7 +82,7 @@ namespace EPlusActivities.API.Data
                     v => string.Join(';', v.Select(e => e.ToString("D")).ToArray()),
                     v =>
                         v.Split(new[] { ';' })
-                            .Select(e => Enum.Parse(typeof(ChannelCode), e))
+                            .Select(e => Enum.Parse(typeof(ChannelCode), e, true))
                             .Cast<ChannelCode>()
                             .ToList()
                 );
