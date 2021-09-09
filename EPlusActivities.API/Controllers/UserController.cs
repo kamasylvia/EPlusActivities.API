@@ -204,7 +204,7 @@ namespace EPlusActivities.API.Controllers
 
             user = new ApplicationUser { UserName = userDto.UserName };
             var result = await _userManager.CreateAsync(user, userDto.Password);
-            result = await _userManager.AddToRoleAsync(user, userDto.Role);
+            result = await _userManager.AddToRoleAsync(user, userDto.Role.ToLower());
             return result.Succeeded ? Ok() : new InternalServerErrorObjectResult(result.Errors);
         }
 
