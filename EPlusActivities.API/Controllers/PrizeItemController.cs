@@ -107,7 +107,7 @@ namespace EPlusActivities.API.Controllers
                 )
                 .ToList()
                 .GetRange(
-                    prizeItemDto.Page - 1 * prizeItemDto.Num,
+                    (prizeItemDto.Page - 1) * prizeItemDto.Num,
                     prizeItemDto.Page * prizeItemDto.Num
                 );
             return prizeItemList.Count > 0
