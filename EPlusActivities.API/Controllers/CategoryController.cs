@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.CategoryDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
@@ -70,6 +71,29 @@ namespace EPlusActivities.API.Controllers
             var categories = await _categoryRepository.FindByContainedNameAsync(categoryDto.Name);
             return categories.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(categories))
+                : NotFound($"Could not find any category.");
+        }
+
+        /// <summary>
+        /// 获取品种列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("list")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCotegoryListAsync(
+            [FromQuery] DtoForGetList categoryDto
+        ) {
+            var list = (await _categoryRepository.FindAllAsync()).OrderBy(c => c.Name)
+                .ToList()
+                .GetRange(
+                    (categoryDto.Page - 1) * categoryDto.Num,
+                    categoryDto.Page * categoryDto.Num
+                );
+            return list.Count > 1
+                ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(list))
                 : NotFound($"Could not find any category.");
         }
 

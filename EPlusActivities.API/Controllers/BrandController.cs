@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.BrandDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
@@ -59,15 +60,23 @@ namespace EPlusActivities.API.Controllers
                 : Ok(_mapper.Map<BrandDto>(brand));
         }
 
-        [HttpGet("all")]
+        /// <summary>
+        /// 获取品牌列表
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
+        [HttpGet("list")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<BrandDto>>> GetAllBrand()
-        {
-            var brands = await _brandRepository.FindAllAsync();
-            return brands.Count() > 0
+        public async Task<ActionResult<IEnumerable<BrandDto>>> GetBrandListAsync(
+            [FromQuery] DtoForGetList requestDto
+        ) {
+            var brands = (await _brandRepository.FindAllAsync()).OrderBy(b => b.Name)
+                .ToList()
+                .GetRange((requestDto.Page - 1) * requestDto.Num, requestDto.Page * requestDto.Num);
+            return brands.Count > 0
                 ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
                 : NotFound($"Could not find any brand.");
         }
