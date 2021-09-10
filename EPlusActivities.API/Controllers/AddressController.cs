@@ -45,7 +45,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="addressDto"></param>
         /// <returns></returns>
-        [HttpGet("user")]
+        [HttpGet("list")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"

@@ -81,13 +81,38 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<PrizeItemDto>> GetGetByIdAsync(
+        public async Task<ActionResult<PrizeItemDto>> GetByIdAsync(
             [FromQuery] PrizeItemForGetByIdDto prizeItemDto
         ) {
             var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
             return prizeItem is null
                 ? NotFound("Could not find the prizeItem.")
                 : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
+        }
+        /// <summary>
+        /// 获取奖品列表
+        /// </summary>
+        /// <param name="prizeItemDto"></param>
+        /// <returns></returns>
+        [HttpGet("list")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetItemListAsync(
+            [FromQuery] PrizeItemForGetItemListDto prizeItemDto
+        ) {
+            var prizeItemList = (await _prizeItemRepository.FindAllAsync()).OrderBy(
+                    item => item.Name
+                )
+                .ToList()
+                .GetRange(
+                    prizeItemDto.Page - 1 * prizeItemDto.Num,
+                    prizeItemDto.Page * prizeItemDto.Num
+                );
+            return prizeItemList.Count > 0
+                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItemList))
+                : NotFound("Could not find any prizeItem.");
         }
 
         /// <summary>

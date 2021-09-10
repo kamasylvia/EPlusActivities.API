@@ -103,7 +103,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="requestDto"></param>
         /// <returns></returns>
-        [HttpGet("users")]
+        [HttpGet("list")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -121,7 +121,7 @@ namespace EPlusActivities.API.Controllers
                 ? _mapper.Map<List<UserDto>>(
                         allUsers.GetRange(
                             (requestDto.Page - 1) * requestDto.Num,
-                            (requestDto.Page) * requestDto.Num
+                            requestDto.Page * requestDto.Num
                         )
                     )
                 : NotFound("Could not find any users.");
