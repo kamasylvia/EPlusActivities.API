@@ -111,15 +111,12 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
             [FromQuery] UserForGetUsersDto requestDto
         ) {
-            var allUsers =
-                (
-                    await _userManager.Users.Where(
-                            user =>
-                                _userManager.GetRolesAsync(user)
-                                    .Result.Contains(requestDto.Role.ToLower())
-                        )
-                        .ToListAsync()
-                );
+            var allUsers = await _userManager.Users.Where(
+                    user =>
+                        _userManager.GetRolesAsync(user).Result.Contains(requestDto.Role.ToLower())
+                )
+                .OrderBy(user => user.UserName)
+                .ToListAsync();
             return allUsers.Count > 0
                 ? _mapper.Map<List<UserDto>>(
                         allUsers.GetRange(
