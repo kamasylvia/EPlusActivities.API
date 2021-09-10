@@ -10,7 +10,7 @@ namespace EPlusActivities.API.Dtos
         /// <value></value>
         [Range(1, int.MaxValue)]
         [Required]
-        public int Page { get; set; }
+        public int PageIndex { get; set; }
 
         /// <summary>
         /// 每页多少个
@@ -18,6 +18,6 @@ namespace EPlusActivities.API.Dtos
         /// <value></value>
         [Range(0, int.MaxValue)]
         [Required]
-        public int Num { get; set; }
+        public int PageSize { get; set; }
     }
 }

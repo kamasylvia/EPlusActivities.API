@@ -73,9 +73,22 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetBrandListAsync(
             [FromQuery] DtoForGetList requestDto
         ) {
-            var brands = (await _brandRepository.FindAllAsync()).OrderBy(b => b.Name)
-                .ToList()
-                .GetRange((requestDto.Page - 1) * requestDto.Num, requestDto.Page * requestDto.Num);
+            var brands = (await _brandRepository.FindAllAsync()).OrderBy(b => b.Name).ToList();
+
+            var startIndex = (requestDto.PageIndex - 1) * requestDto.PageSize;
+            var count = requestDto.PageIndex * requestDto.PageSize;
+
+            if (brands.Count < startIndex)
+            {
+                return NotFound($"Could not find any brand.");
+            }
+
+            if (brands.Count - startIndex < count)
+            {
+                count = brands.Count - startIndex;
+            }
+
+            var result = brands.GetRange(startIndex, count);
             return brands.Count > 0
                 ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
                 : NotFound($"Could not find any brand.");

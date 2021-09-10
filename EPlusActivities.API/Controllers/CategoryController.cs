@@ -86,14 +86,24 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCotegoryListAsync(
             [FromQuery] DtoForGetList categoryDto
         ) {
-            var list = (await _categoryRepository.FindAllAsync()).OrderBy(c => c.Name)
-                .ToList()
-                .GetRange(
-                    (categoryDto.Page - 1) * categoryDto.Num,
-                    categoryDto.Page * categoryDto.Num
-                );
-            return list.Count > 1
-                ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(list))
+            var list = (await _categoryRepository.FindAllAsync()).OrderBy(c => c.Name).ToList();
+
+            var startIndex = (categoryDto.PageIndex - 1) * categoryDto.PageSize;
+            var count = categoryDto.PageIndex * categoryDto.PageSize;
+
+            if (list.Count < startIndex)
+            {
+                return NotFound($"Could not find any category.");
+            }
+
+            if (list.Count - startIndex < count)
+            {
+                count = list.Count - startIndex;
+            }
+
+            var result = list.GetRange(startIndex, count);
+            return result.Count > 0
+                ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(result))
                 : NotFound($"Could not find any category.");
         }
 

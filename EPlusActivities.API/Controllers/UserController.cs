@@ -117,13 +117,23 @@ namespace EPlusActivities.API.Controllers
                 )
                 .OrderBy(user => user.UserName)
                 .ToListAsync();
-            return allUsers.Count > 0
-                ? _mapper.Map<List<UserDto>>(
-                        allUsers.GetRange(
-                            (requestDto.Page - 1) * requestDto.Num,
-                            requestDto.Page * requestDto.Num
-                        )
-                    )
+
+            var startIndex = (requestDto.PageIndex - 1) * requestDto.PageSize;
+            var count = requestDto.PageIndex * requestDto.PageSize;
+
+            if (allUsers.Count < startIndex)
+            {
+                return NotFound("Could not find any users.");
+            }
+
+            if (allUsers.Count - startIndex < count)
+            {
+                count = allUsers.Count - startIndex;
+            }
+
+            var result = allUsers.GetRange(startIndex, count);
+            return result.Count > 0
+                ? _mapper.Map<List<UserDto>>(result)
                 : NotFound("Could not find any users.");
         }
 

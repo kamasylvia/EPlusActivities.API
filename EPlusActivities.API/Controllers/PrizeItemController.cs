@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.PrizeItemDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
@@ -100,18 +101,28 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetItemListAsync(
-            [FromQuery] PrizeItemForGetItemListDto prizeItemDto
+            [FromQuery] DtoForGetList prizeItemDto
         ) {
             var prizeItemList = (await _prizeItemRepository.FindAllAsync()).OrderBy(
                     item => item.Name
                 )
-                .ToList()
-                .GetRange(
-                    (prizeItemDto.Page - 1) * prizeItemDto.Num,
-                    prizeItemDto.Page * prizeItemDto.Num
-                );
-            return prizeItemList.Count > 0
-                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItemList))
+                .ToList();
+            var startIndex = (prizeItemDto.PageIndex - 1) * prizeItemDto.PageSize;
+            var count = prizeItemDto.PageIndex * prizeItemDto.PageSize;
+
+            if (prizeItemList.Count < startIndex)
+            {
+                return NotFound("Could not find any prizeItem.");
+            }
+
+            if (prizeItemList.Count - startIndex < count)
+            {
+                count = prizeItemList.Count - startIndex;
+            }
+
+            var result = prizeItemList.GetRange(startIndex, count);
+            return result.Count > 0
+                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(result))
                 : NotFound("Could not find any prizeItem.");
         }
 
