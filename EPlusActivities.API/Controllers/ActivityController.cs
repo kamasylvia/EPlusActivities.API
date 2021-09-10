@@ -106,8 +106,8 @@ namespace EPlusActivities.API.Controllers
             return Ok(
                 _mapper.Map<IEnumerable<ActivityDto>>(
                     await _activityService.GetAvailableActivitiesAsync(
-                        activityDto.AvailableChannels.Trim()
-                            .Split(',')
+                        activityDto.AvailableChannels.Split(',')
+                            .Select(s => s.Trim())
                             .Select(s => Enum.Parse<ChannelCode>(s, true)),
                         activityDto.StartTime.Value,
                         activityDto.EndTime
