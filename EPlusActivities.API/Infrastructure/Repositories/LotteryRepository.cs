@@ -12,13 +12,13 @@ namespace EPlusActivities.API.Infrastructure.Repositories
     {
         public LotteryRepository(ApplicationDbContext context) : base(context) { }
 
-        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
-            await _context.LotteryResults.AnyAsync(lr => lr.Id == keyValues.FirstOrDefault());
+        public override async Task<bool> ExistsAsync(params object[] keyValues) =>
+            await _context.LotteryResults.AnyAsync(lr => lr.Id == (Guid)keyValues.FirstOrDefault());
 
-        public override async Task<Lottery> FindByIdAsync(params Guid[] keyValues) =>
+        public override async Task<Lottery> FindByIdAsync(params object[] keyValues) =>
             await _context.LotteryResults.Include(lottery => lottery.Activity)
                 .Include(lottery => lottery.PrizeItem)
-                .SingleOrDefaultAsync(lottery => lottery.Id == keyValues.FirstOrDefault());
+                .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Lottery>> FindByParentIdAsync(Guid userId) =>
             await _context.LotteryResults.Where(a => a.User.Id == userId).ToListAsync();

@@ -14,10 +14,12 @@ namespace EPlusActivities.API.Infrastructure.Repositories
     {
         public PrizeItemRepository(ApplicationDbContext context) : base(context) { }
 
-        public override async Task<PrizeItem> FindByIdAsync(params Guid[] keyValues) =>
+        public override async Task<PrizeItem> FindByIdAsync(params object[] keyValues) =>
             await _context.PrizeItems.Include(prizeItem => prizeItem.Brand)
                 .Include(prizeItem => prizeItem.Category)
-                .SingleOrDefaultAsync(prizeItem => prizeItem.Id == keyValues.FirstOrDefault());
+                .SingleOrDefaultAsync(
+                    prizeItem => prizeItem.Id == (Guid)keyValues.FirstOrDefault()
+                );
 
         public async Task<IEnumerable<PrizeItem>> FindByNameAsync(string name) =>
             await _context.PrizeItems.Where(p => p.Name.Contains(name)).ToArrayAsync();
@@ -28,7 +30,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Where(pt => pt.PrizeTierPrizeItems.Any(ptpi => ptpi.PrizeTier.Id == id))
                 .ToListAsync();
 
-        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
-            await _context.PrizeItems.AnyAsync(p => p.Id == keyValues.FirstOrDefault());
+        public override async Task<bool> ExistsAsync(params object[] keyValues) =>
+            await _context.PrizeItems.AnyAsync(p => p.Id == (Guid)keyValues.FirstOrDefault());
     }
 }

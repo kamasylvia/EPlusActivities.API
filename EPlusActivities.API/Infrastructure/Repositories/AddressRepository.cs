@@ -16,7 +16,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<Address>> FindByParentIdAsync(Guid userId) =>
             await _context.Addresses.Where(a => a.UserId == userId).ToListAsync();
 
-        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
-            await _context.Addresses.AnyAsync(a => a.Id == keyValues.FirstOrDefault());
+        public override async Task<bool> ExistsAsync(params object[] keyValues) =>
+            await _context.Addresses.AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
     }
 }

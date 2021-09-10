@@ -12,8 +12,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
     {
         public BrandRepository(ApplicationDbContext context) : base(context) { }
 
-        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
-            await _context.Brands.AnyAsync(b => b.Id == keyValues.FirstOrDefault());
+        public override async Task<bool> ExistsAsync(params object[] keyValues) =>
+            await _context.Brands.AnyAsync(b => b.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<bool> ExistsAsync(string name) =>
             await _context.Brands.AnyAsync(b => b.Name == name);

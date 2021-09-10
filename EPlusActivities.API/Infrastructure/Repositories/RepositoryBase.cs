@@ -17,7 +17,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public virtual async Task AddAsync(T item) => await _context.Set<T>().AddAsync(item);
 
-        public virtual Task<bool> ExistsAsync(params Guid[] keyValues)
+        public virtual Task<bool> ExistsAsync(params object[] keyValues)
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public virtual async Task<IEnumerable<T>> FindAllAsync() =>
             await _context.Set<T>().ToListAsync();
 
-        public virtual async Task<T> FindByIdAsync(params Guid[] keyValues) =>
+        public virtual async Task<T> FindByIdAsync(params object[] keyValues) =>
             await _context.Set<T>().FindAsync(keyValues);
 
         public void Remove(T item) => _context.Set<T>().Remove(item);

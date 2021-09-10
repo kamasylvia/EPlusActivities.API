@@ -13,8 +13,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
     {
         public ActivityRepository(ApplicationDbContext context) : base(context) { }
 
-        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
-            await _context.Activities.AnyAsync(a => a.Id == keyValues.FirstOrDefault());
+        public override async Task<bool> ExistsAsync(params object[] keyValues) =>
+            await _context.Activities.AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date) =>
             await _context.Activities.Where(
@@ -22,10 +22,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 )
                 .ToListAsync();
 
-        public override async Task<Activity> FindByIdAsync(params Guid[] keyValues) =>
+        public override async Task<Activity> FindByIdAsync(params object[] keyValues) =>
             await _context.Activities.Include(a => a.LotteryResults)
                 .Include(a => a.PrizeTiers)
-                .SingleOrDefaultAsync(a => a.Id == keyValues.FirstOrDefault());
+                .SingleOrDefaultAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<Activity> FindWithActivityUserLink(Guid id) =>
             await _context.Activities.Include(a => a.ActivityUserLinks)

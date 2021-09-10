@@ -14,12 +14,12 @@ namespace EPlusActivities.API.Infrastructure.Repositories
     {
         public PrizeTierRepository(ApplicationDbContext context) : base(context) { }
 
-        public override async Task<bool> ExistsAsync(params Guid[] keyValues) =>
-            await _context.PrizeTiers.AnyAsync(pt => pt.Id == keyValues.FirstOrDefault());
+        public override async Task<bool> ExistsAsync(params object[] keyValues) =>
+            await _context.PrizeTiers.AnyAsync(pt => pt.Id == (Guid)keyValues.FirstOrDefault());
 
-        public override async Task<PrizeTier> FindByIdAsync(params Guid[] keyValues) =>
+        public override async Task<PrizeTier> FindByIdAsync(params object[] keyValues) =>
             await _context.PrizeTiers.Include(pt => pt.Activity)
-                .SingleOrDefaultAsync(pt => pt.Id == keyValues.FirstOrDefault());
+                .SingleOrDefaultAsync(pt => pt.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<PrizeTier>> FindByParentIdAsync(Guid userId) =>
             await _context.PrizeTiers.Where(a => a.Activity.Id == userId).ToListAsync();
