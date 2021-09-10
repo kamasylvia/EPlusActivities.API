@@ -25,6 +25,6 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// 取值范围：Ngs, NgsPlaza, Alldays
         /// </summary>
         /// <value></value>
-        public IEnumerable<string> AvailableChannels { get; set; }
+        public string AvailableChannels { get; set; }
     }
 }

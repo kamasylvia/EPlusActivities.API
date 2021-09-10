@@ -88,7 +88,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="activityDto"></param>
         /// <returns></returns>
-        [HttpGet("available")]
+        [HttpGet("list")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -106,7 +106,9 @@ namespace EPlusActivities.API.Controllers
             return Ok(
                 _mapper.Map<IEnumerable<ActivityDto>>(
                     await _activityService.GetAvailableActivitiesAsync(
-                        activityDto.AvailableChannels.Select(s => Enum.Parse<ChannelCode>(s, true)),
+                        activityDto.AvailableChannels.Trim()
+                            .Split(',')
+                            .Select(s => Enum.Parse<ChannelCode>(s, true)),
                         activityDto.StartTime.Value,
                         activityDto.EndTime
                     )
