@@ -19,9 +19,14 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<PrizeTier> FindByIdAsync(params object[] keyValues) =>
             await _context.PrizeTiers.Include(pt => pt.Activity)
+                .Include(pt => pt.PrizeTierPrizeItems)
+                .ThenInclude(ptpi => ptpi.PrizeTier)
                 .SingleOrDefaultAsync(pt => pt.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<PrizeTier>> FindByParentIdAsync(Guid userId) =>
-            await _context.PrizeTiers.Where(a => a.Activity.Id == userId).ToListAsync();
+            await _context.PrizeTiers.Include(pt => pt.PrizeTierPrizeItems)
+                .ThenInclude(ptpi => ptpi.PrizeItem)
+                .Where(a => a.Activity.Id == userId)
+                .ToListAsync();
     }
 }

@@ -111,27 +111,24 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
             [FromQuery] UserForGetUsersDto requestDto
         ) {
-            var allUsers = await _userManager.Users.Where(
-                    user =>
-                        _userManager.GetRolesAsync(user).Result.Contains(requestDto.Role.ToLower())
-                )
-                .OrderBy(user => user.UserName)
-                .ToListAsync();
+            var userList = (
+                await _userManager.GetUsersInRoleAsync(requestDto.Role.Trim().ToLower())
+            ).ToList();
 
             var startIndex = (requestDto.PageIndex - 1) * requestDto.PageSize;
             var count = requestDto.PageIndex * requestDto.PageSize;
 
-            if (allUsers.Count < startIndex)
+            if (userList.Count < startIndex)
             {
                 return NotFound("Could not find any users.");
             }
 
-            if (allUsers.Count - startIndex < count)
+            if (userList.Count - startIndex < count)
             {
-                count = allUsers.Count - startIndex;
+                count = userList.Count - startIndex;
             }
 
-            var result = allUsers.GetRange(startIndex, count);
+            var result = userList.GetRange(startIndex, count);
             return result.Count > 0
                 ? _mapper.Map<List<UserDto>>(result)
                 : NotFound("Could not find any users.");

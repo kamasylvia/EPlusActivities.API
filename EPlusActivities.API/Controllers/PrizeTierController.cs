@@ -118,25 +118,33 @@ namespace EPlusActivities.API.Controllers
             {
                 return BadRequest("The sum of percentages could not be greater than 100.");
             }
+
+            if (activity.PrizeItemCount + prizeTierDto.PrizeItemIds.Count() > 10)
+            {
+                return BadRequest("Could not add more than 10 prize items in an activity.");
+            }
             #endregion
 
             #region New an entity
+            activity.PrizeItemCount += prizeTierDto.PrizeItemIds.Count();
             var prizeTier = _mapper.Map<PrizeTier>(prizeTierDto);
             prizeTier.Activity = activity;
 
             if (prizeTierDto.PrizeItemIds.Count() > 0)
             {
-                var prizeItems = prizeTierDto.PrizeItemIds.Select(
-                        async id => await _prizeItemRepository.FindByIdAsync(id)
+                var prizeItems = (
+                    await Task.WhenAll(
+                        prizeTierDto.PrizeItemIds.Select(
+                            async id => await _prizeItemRepository.FindByIdAsync(id)
+                        )
                     )
-                    .Where(x => x is not null);
+                ).Where(x => x is not null);
                 var prizeTierPrizeItems = new HashSet<PrizeTierPrizeItem>(
                     new HashSetReferenceEqualityComparer<PrizeTierPrizeItem>()
                 );
                 prizeTierPrizeItems.UnionWith(
                     prizeItems.Select(
-                        pi =>
-                            new PrizeTierPrizeItem { PrizeTier = prizeTier, PrizeItem = pi.Result }
+                        pi => new PrizeTierPrizeItem { PrizeTier = prizeTier, PrizeItem = pi }
                     )
                 );
                 prizeTier.PrizeTierPrizeItems = prizeTierPrizeItems;

@@ -72,6 +72,29 @@ namespace EPlusActivities.API.Controllers
                 : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
         }
 
+        private async Task<IEnumerable<PrizeItem>> FindByIdListAsync(IEnumerable<Guid> ids) =>
+            await Task.WhenAll(
+                ids.Select(async id => await _prizeItemRepository.FindByIdAsync(id))
+            );
+
+        /// <summary>
+        /// 通过奖品 ID 列表获取奖品列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("list")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<ActionResult<PrizeItemDto>> GetByIdsAsync(
+            [FromQuery] PrizeItemForGetByIdsDto requestDto
+        ) {
+            var prizeItems = await FindByIdListAsync(requestDto.Ids);
+            return prizeItems.Count() > 0
+                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItems))
+                : NotFound("Could not find any prizeItem.");
+        }
+
         /// <summary>
         /// 通过奖品 ID 获取奖品
         /// </summary>
@@ -90,12 +113,13 @@ namespace EPlusActivities.API.Controllers
                 ? NotFound("Could not find the prizeItem.")
                 : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
         }
+
         /// <summary>
         /// 获取奖品列表
         /// </summary>
         /// <param name="prizeItemDto"></param>
         /// <returns></returns>
-        [HttpGet("list")]
+        [HttpGet("all")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -139,14 +163,6 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<PrizeItemDto>> CreateAsync(
             [FromBody] PrizeItemForCreateDto prizeItemDto
         ) {
-            #region Parameter validation
-            var allPrizeItems = await _prizeItemRepository.FindAllAsync();
-            if (allPrizeItems.Count() >= 10)
-            {
-                return BadRequest("Could not add more than 10 prize items.");
-            }
-            #endregion
-
             #region New an entity
             var prizeItem = _mapper.Map<PrizeItem>(prizeItemDto);
             prizeItem.Brand = await GetBrandAsync(prizeItemDto.BrandName);
