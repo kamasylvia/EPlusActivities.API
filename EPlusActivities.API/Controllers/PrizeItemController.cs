@@ -72,8 +72,10 @@ namespace EPlusActivities.API.Controllers
                 : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
         }
 
-        private IEnumerable<PrizeItem> FindByIdListAsync(IEnumerable<Guid> ids) =>
-            ids.Select(id => _prizeItemRepository.FindByIdAsync(id).Result);
+        private async Task<IEnumerable<PrizeItem>> FindByIdListAsync(IEnumerable<Guid> ids) =>
+            await ids.ToAsyncEnumerable()
+                .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
+                .ToListAsync();
 
         /// <summary>
         /// 通过奖品 ID 列表获取奖品列表
@@ -88,7 +90,7 @@ namespace EPlusActivities.API.Controllers
             [FromQuery] PrizeItemForGetByIdsDto requestDto
         ) {
             var ids = requestDto.Ids.Split(',', ';').Select(s => Guid.Parse(s.Trim()));
-            var prizeItems = FindByIdListAsync(ids);
+            var prizeItems = await FindByIdListAsync(ids);
             return prizeItems.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItems))
                 : NotFound("Could not find any prizeItem.");

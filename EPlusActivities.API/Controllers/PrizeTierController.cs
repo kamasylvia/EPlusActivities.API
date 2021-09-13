@@ -132,17 +132,16 @@ namespace EPlusActivities.API.Controllers
 
             if (prizeTierDto.PrizeItemIds.Count() > 0)
             {
-                var prizeItems = prizeTierDto.PrizeItemIds.Select(
-                        id => _prizeItemRepository.FindByIdAsync(id)
-                    )
-                    .Where(x => x is not null);
+                var prizeItems = await prizeTierDto.PrizeItemIds.ToAsyncEnumerable()
+                    .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
+                    .Where(x => x is not null)
+                    .ToListAsync();
                 var prizeTierPrizeItems = new HashSet<PrizeTierPrizeItem>(
                     new HashSetReferenceEqualityComparer<PrizeTierPrizeItem>()
                 );
                 prizeTierPrizeItems.UnionWith(
                     prizeItems.Select(
-                        pi =>
-                            new PrizeTierPrizeItem { PrizeTier = prizeTier, PrizeItem = pi.Result }
+                        pi => new PrizeTierPrizeItem { PrizeTier = prizeTier, PrizeItem = pi }
                     )
                 );
                 prizeTier.PrizeTierPrizeItems = prizeTierPrizeItems;
@@ -191,9 +190,28 @@ namespace EPlusActivities.API.Controllers
             ) {
                 return BadRequest("The sum of percentages could not be greater than 100.");
             }
+
+            var activity = prizeTier.Activity;
+            if (activity.PrizeItemCount + prizeTierDto.PrizeItemIds.Count() > 10)
+            {
+                return BadRequest("Could not add more than 10 prizes in an activity.");
+            }
             #endregion
 
             #region Database operations
+            prizeTier.PrizeTierPrizeItems = await prizeTierDto.PrizeItemIds.ToAsyncEnumerable()
+                .SelectAwait(
+                    async id =>
+                        new PrizeTierPrizeItem
+                        {
+                            PrizeTierId = prizeTierDto.Id,
+                            PrizeTier = prizeTier,
+                            PrizeItemId = id,
+                            PrizeItem = await _prizeItemRepository.FindByIdAsync(id)
+                        }
+                )
+                .ToListAsync();
+
             _prizeTierRepository.Update(
                 _mapper.Map<PrizeTierForUpdateDto, PrizeTier>(prizeTierDto, prizeTier)
             );
@@ -206,7 +224,7 @@ namespace EPlusActivities.API.Controllers
         }
 
         /// <summary>
-        /// 删除奖品档次
+        /// 删除奖品档次，删除后其所属的活动会自动更新奖品数量。
         /// </summary>
         /// <param name="prizeTierDto"></param>
         /// <returns></returns>
@@ -239,6 +257,11 @@ namespace EPlusActivities.API.Controllers
                 : new InternalServerErrorObjectResult("Update database exception");
         }
 
+        /// <summary>
+        /// 删除奖品档次中的某些奖品
+        /// </summary>
+        /// <param name="requestDto"></param>
+        /// <returns></returns>
         [HttpDelete("prizeItem")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,

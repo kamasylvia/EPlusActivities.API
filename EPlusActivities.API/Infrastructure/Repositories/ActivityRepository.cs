@@ -14,12 +14,12 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public ActivityRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.Activities.AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
+            await _context.Activities.AsAsyncEnumerable()
+                .AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date) =>
-            await _context.Activities.Where(
-                    a => a.StartTime <= date && (!a.EndTime.HasValue || date <= a.EndTime.Value)
-                )
+            await _context.Activities.AsAsyncEnumerable()
+                .Where(a => a.StartTime <= date && (!a.EndTime.HasValue || date <= a.EndTime.Value))
                 .ToListAsync();
 
         public override async Task<Activity> FindByIdAsync(params object[] keyValues) =>
