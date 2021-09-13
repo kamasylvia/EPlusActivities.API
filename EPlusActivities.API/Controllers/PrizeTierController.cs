@@ -192,13 +192,16 @@ namespace EPlusActivities.API.Controllers
             }
 
             var activity = prizeTier.Activity;
-            if (activity.PrizeItemCount + prizeTierDto.PrizeItemIds.Count() > 10)
+            var countDiff =
+                prizeTierDto.PrizeItemIds.Count() - prizeTier.PrizeTierPrizeItems.Count();
+            if (activity.PrizeItemCount + countDiff > 10)
             {
                 return BadRequest("Could not add more than 10 prizes in an activity.");
             }
             #endregion
 
             #region Database operations
+            activity.PrizeItemCount += countDiff;
             prizeTier.PrizeTierPrizeItems = await prizeTierDto.PrizeItemIds.ToAsyncEnumerable()
                 .SelectAwait(
                     async id =>
@@ -252,39 +255,6 @@ namespace EPlusActivities.API.Controllers
             var succeeded = await _prizeTierRepository.SaveAsync();
             #endregion
 
-            return succeeded
-                ? Ok()
-                : new InternalServerErrorObjectResult("Update database exception");
-        }
-
-        /// <summary>
-        /// 删除奖品档次中的某些奖品
-        /// </summary>
-        /// <param name="requestDto"></param>
-        /// <returns></returns>
-        [HttpDelete("prizeItem")]
-        [Authorize(
-            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
-        )]
-        public async Task<IActionResult> DeletePrizeItemAsync(
-            [FromBody] PrizeTierForDeletePrizeItemDto requestDto
-        ) {
-            var tier = await _prizeTierRepository.FindByIdAsync(requestDto.Id.Value);
-            var activity = tier.Activity;
-            var prizeTierPrizeItems = tier.PrizeTierPrizeItems.ToList();
-
-            foreach (var id in requestDto.PrizeItemIds)
-            {
-                var item = tier.PrizeTierPrizeItems.SingleOrDefault(ptpi => ptpi.PrizeItemId == id);
-                if (prizeTierPrizeItems.Remove(item))
-                {
-                    activity.PrizeItemCount--;
-                }
-            }
-
-            tier.PrizeTierPrizeItems = prizeTierPrizeItems;
-            var succeeded = await _prizeTierRepository.SaveAsync();
             return succeeded
                 ? Ok()
                 : new InternalServerErrorObjectResult("Update database exception");
