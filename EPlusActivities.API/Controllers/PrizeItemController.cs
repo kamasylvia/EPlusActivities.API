@@ -89,7 +89,8 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<PrizeItemDto>> GetByIdsAsync(
             [FromQuery] PrizeItemForGetByIdsDto requestDto
         ) {
-            var prizeItems = await FindByIdListAsync(requestDto.Ids);
+            var ids = requestDto.Ids.Split(',', ';').Select(s => Guid.Parse(s.Trim()));
+            var prizeItems = await FindByIdListAsync(ids);
             return prizeItems.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItems))
                 : NotFound("Could not find any prizeItem.");
