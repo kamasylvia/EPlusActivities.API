@@ -132,19 +132,17 @@ namespace EPlusActivities.API.Controllers
 
             if (prizeTierDto.PrizeItemIds.Count() > 0)
             {
-                var prizeItems = (
-                    await Task.WhenAll(
-                        prizeTierDto.PrizeItemIds.Select(
-                            async id => await _prizeItemRepository.FindByIdAsync(id)
-                        )
+                var prizeItems = prizeTierDto.PrizeItemIds.Select(
+                        id => _prizeItemRepository.FindByIdAsync(id)
                     )
-                ).Where(x => x is not null);
+                    .Where(x => x is not null);
                 var prizeTierPrizeItems = new HashSet<PrizeTierPrizeItem>(
                     new HashSetReferenceEqualityComparer<PrizeTierPrizeItem>()
                 );
                 prizeTierPrizeItems.UnionWith(
                     prizeItems.Select(
-                        pi => new PrizeTierPrizeItem { PrizeTier = prizeTier, PrizeItem = pi }
+                        pi =>
+                            new PrizeTierPrizeItem { PrizeTier = prizeTier, PrizeItem = pi.Result }
                     )
                 );
                 prizeTier.PrizeTierPrizeItems = prizeTierPrizeItems;
