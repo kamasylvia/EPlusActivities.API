@@ -217,20 +217,51 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] PrizeTierForGetByIdDto prizeTierDto)
         {
-            var prizeTier = await _prizeTierRepository.FindByIdAsync(prizeTierDto.Id.Value);
+            var tier = await _prizeTierRepository.FindByIdAsync(prizeTierDto.Id.Value);
 
             #region Parameter validation
-            if (prizeTier is null)
+            if (tier is null)
             {
                 return BadRequest("Could not find the prize type.");
             }
             #endregion
 
+            var activity = tier.Activity;
+            activity.PrizeItemCount -= tier.PrizeTierPrizeItems.Count();
+
             #region Database operations
-            _prizeTierRepository.Remove(prizeTier);
+            _prizeTierRepository.Remove(tier);
             var succeeded = await _prizeTierRepository.SaveAsync();
             #endregion
 
+            return succeeded
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
+        }
+
+        [HttpDelete("prizeItem")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<IActionResult> DeletePrizeItemAsync(
+            [FromBody] PrizeTierForDeletePrizeItemDto requestDto
+        ) {
+            var tier = await _prizeTierRepository.FindByIdAsync(requestDto.Id.Value);
+            var activity = tier.Activity;
+            var prizeTierPrizeItems = tier.PrizeTierPrizeItems.ToList();
+
+            foreach (var id in requestDto.PrizeItemIds)
+            {
+                var item = tier.PrizeTierPrizeItems.SingleOrDefault(ptpi => ptpi.PrizeItemId == id);
+                if (prizeTierPrizeItems.Remove(item))
+                {
+                    activity.PrizeItemCount--;
+                }
+            }
+
+            tier.PrizeTierPrizeItems = prizeTierPrizeItems;
+            var succeeded = await _prizeTierRepository.SaveAsync();
             return succeeded
                 ? Ok()
                 : new InternalServerErrorObjectResult("Update database exception");

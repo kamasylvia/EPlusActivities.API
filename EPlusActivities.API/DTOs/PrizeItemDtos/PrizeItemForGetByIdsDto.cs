@@ -11,6 +11,6 @@ namespace EPlusActivities.API.Dtos.PrizeItemDtos
         /// </summary>
         /// <value></value>
         [Required]
-        public IEnumerable<Guid> Ids { get; set; }
+        public string Ids { get; set; }
     }
 }
