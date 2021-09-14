@@ -22,7 +22,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Lottery>> FindByParentIdAsync(Guid userId) =>
-            await _context.LotteryResults.AsAsyncEnumerable()
+            await _context.LotteryResults.Include(lr => lr.User)
+                .AsAsyncEnumerable()
                 .Where(a => a.User.Id == userId)
                 .ToListAsync();
     }
