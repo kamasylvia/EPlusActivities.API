@@ -110,7 +110,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "ManagerPolicy"
+            Roles = "manager, tester"
         )]
         public async Task<ActionResult<CategoryDto>> CreateAsync(
             [FromBody] CategoryForGetByNameDto categoryDto
@@ -139,7 +139,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPatch("name")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "ManagerPolicy"
+            Roles = "manager, tester"
         )]
         public async Task<IActionResult> UpdateNameAsync([FromBody] CategoryDto categoryDto)
         {
@@ -170,7 +170,7 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "ManagerPolicy"
+            Roles = "manager, tester"
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] CategoryDto categoryDto)
         {

@@ -159,7 +159,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "ManagerPolicy"
+            Roles = "manager, tester"
         )]
         public async Task<ActionResult<PrizeItemDto>> CreateAsync(
             [FromBody] PrizeItemForCreateDto prizeItemDto
@@ -188,7 +188,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPut]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "ManagerPolicy"
+            Roles = "manager, tester"
         )]
         public async Task<IActionResult> UpdateAsync([FromBody] PrizeItemForUpdateDto prizeItemDto)
         {
@@ -226,7 +226,7 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "ManagerPolicy"
+            Roles = "manager, tester"
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] PrizeItemForGetByIdDto prizeItemDto)
         {

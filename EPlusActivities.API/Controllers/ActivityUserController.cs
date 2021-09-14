@@ -138,7 +138,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "CustomerPolicy"
+            Roles = "customer, tester"
         )]
         public async Task<ActionResult<ActivityUserDto>> JoinAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
@@ -193,7 +193,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost("bindAvailable")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "CustomerPolicy"
+            Roles = "customer, tester"
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAvailableActivities(
             [FromBody] ActivityUserForGetByUserIdDto activityUserDto
@@ -222,7 +222,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPatch("redeeming")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "CustomerPolicy"
+            Roles = "customer, tester"
         )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto

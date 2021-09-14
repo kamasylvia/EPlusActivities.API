@@ -165,7 +165,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "CustomerPolicy"
+            Roles = "customer, tester"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
@@ -381,7 +381,7 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AdminPolicy"
+            Roles = "admin, tester"
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] LotteryForGetByIdDto lotteryDto)
         {

@@ -106,7 +106,7 @@ namespace EPlusActivities.API.Controllers
         [HttpGet("list")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "ManagerPolicy"
+            Roles = "manager, tester"
         )]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
             [FromQuery] UserForGetUsersDto requestDto
@@ -142,7 +142,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPatch("phonenumber")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "CustomerPolicy"
+            Roles = "customer, tester"
         )]
         public async Task<IActionResult> UpdatePhoneNumberAsync(
             [FromBody] UserForUpdatePhoneDto userDto
@@ -193,7 +193,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AdminPolicy"
+            Roles = "admin, tester"
         )]
         public async Task<IActionResult> CreateAdminOrManagerAsync(
             [FromBody] UserForCreateAdminDto userDto
@@ -242,7 +242,7 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AdminPolicy"
+            Roles = "admin, tester"
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] UserForDeleteDto userDto)
         {

@@ -131,7 +131,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "CustomerPolicy"
+            Roles = "customer, tester"
         )]
         public async Task<ActionResult<AttendanceDto>> AttendAsync(
             [FromBody] AttendanceForAttendDto attendanceDto
