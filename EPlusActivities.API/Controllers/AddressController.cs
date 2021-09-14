@@ -96,7 +96,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
+            Policy = "CustomerPolicy"
         )]
         public async Task<ActionResult<AddressDto>> CreateAsync(
             [FromBody] AddressForCreateDto addressDto
@@ -147,7 +147,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPut]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
+            Policy = "CustomerPolicy"
         )]
         public async Task<IActionResult> UpdateAsync([FromBody] AddressForUpdateDto addressDto)
         {
@@ -199,7 +199,7 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
+            Policy = "CustomerPolicy"
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] AddressForGetByIdDto addressDto)
         {

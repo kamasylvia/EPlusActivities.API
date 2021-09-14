@@ -97,7 +97,7 @@ namespace EPlusActivities.API.Controllers
         [HttpGet("search")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
+            Policy = "ManagerPolicy"
         )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync(
             [FromBody] BrandForGetByNameDto brandDto
@@ -140,7 +140,7 @@ namespace EPlusActivities.API.Controllers
         [HttpPatch("name")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
+            Policy = "ManagerPolicy"
         )]
         public async Task<IActionResult> UpdateNameAsync([FromBody] BrandDto brandDto)
         {
@@ -166,7 +166,7 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Policy = "AllRoles"
+            Policy = "ManagerPolicy"
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] BrandDto brandDto)
         {

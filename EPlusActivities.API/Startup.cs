@@ -202,7 +202,7 @@ namespace EPlusActivities.API
                 options =>
                 {
                     options.AddPolicy(
-                        "Customer",
+                        "CustomerPolicy",
                         builder =>
                         {
                             builder.RequireRole("customer, tester");
@@ -223,7 +223,7 @@ namespace EPlusActivities.API
                         }
                     );
                     options.AddPolicy(
-                        "TestPolicy",
+                        "TesterPolicy",
                         builder =>
                         {
                             builder.RequireRole("tester");
