@@ -190,10 +190,11 @@ namespace EPlusActivities.API
                     options =>
                     {
                         //IdentityServer地址
-                        options.Authority = "http://localhost:52537";
+                        options.Authority = Environment.IsDevelopment()
+                            ? "http://localhost:52537"
+                            : "http://localhost:80";
 
                         //对应Idp中ApiResource的Name
-                        // options.Audience = "eplus.api.test";
                         options.Audience = "eplus.api";
 
                         //不使用https
