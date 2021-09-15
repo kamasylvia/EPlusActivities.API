@@ -2,22 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Enums;
-using EPlusActivities.API.Services.IdentityServer;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Lottery = EPlusActivities.API.Entities.Lottery;
 
 namespace EPlusActivities.API.Data
 {
-    public class DbInitializer
+    public class ApplicationDbContextSeeder
     {
         private static List<ApplicationRole> _roles =
             JsonSerializer.Deserialize<List<ApplicationRole>>(
@@ -28,7 +24,46 @@ namespace EPlusActivities.API.Data
                 System.IO.File.ReadAllText("Data/UserSeedData.json")
             );
 
-        public static void Initialize(IApplicationBuilder app, IWebHostEnvironment environment)
+        public async Task SeedAsync(IHost host)
+        {
+            using (
+                var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope()
+            ) {
+                var environment =
+                    serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                var context =
+                    serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var userManager =
+                    serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager =
+                    serviceScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+                if (environment.IsDevelopment())
+                {
+                    var deleted = context.Database.EnsureDeleted();
+                    System.Console.WriteLine($"The old database is deleted: {deleted}");
+                    var created = context.Database.EnsureCreated();
+                    System.Console.WriteLine($"The new database is created: {created}");
+                }
+
+                if (environment.IsProduction())
+                {
+                    context.Database.Migrate();
+                }
+
+                // Look for any Data.
+                if (context.Users.Any())
+                {
+                    return; // DB has already been seeded.
+                }
+
+                await SeedRolesAsync(roleManager);
+                await SeedUsersAsync(userManager);
+                await SeedDataAsync(context, userManager);
+            }
+        }
+
+        public async Task SeedAsync(IApplicationBuilder app, IWebHostEnvironment environment)
         {
             using (
                 var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()
@@ -51,15 +86,7 @@ namespace EPlusActivities.API.Data
 
                 if (environment.IsProduction())
                 {
-                    var persistedGrantDbContext =
-                        serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-                    var configurationDbContext =
-                        serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-
-                    persistedGrantDbContext.Database.Migrate();
-                    configurationDbContext.Database.Migrate();
                     context.Database.Migrate();
-                    SeedConfig(configurationDbContext);
                 }
 
                 // Look for any Data.
@@ -68,90 +95,53 @@ namespace EPlusActivities.API.Data
                     return; // DB has already been seeded.
                 }
 
-                SeedRoles(roleManager);
-                SeedUsers(userManager);
-                SeedData(context, userManager);
+                await SeedRolesAsync(roleManager);
+                await SeedUsersAsync(userManager);
+                await SeedDataAsync(context, userManager);
             }
         }
-
-        private static void SeedConfig(ConfigurationDbContext configurationDbContext)
-        {
-            if (!configurationDbContext.Clients.Any())
-            {
-                foreach (var client in Config.Clients)
-                {
-                    configurationDbContext.Clients.Add(client.ToEntity());
-                }
-            }
-
-            if (!configurationDbContext.IdentityResources.Any())
-            {
-                foreach (var resource in Config.IdentityResources)
-                {
-                    configurationDbContext.IdentityResources.Add(resource.ToEntity());
-                }
-            }
-
-            if (!configurationDbContext.ApiResources.Any())
-            {
-                foreach (var resource in Config.ApiResources)
-                {
-                    configurationDbContext.ApiResources.Add(resource.ToEntity());
-                }
-            }
-
-            if (!configurationDbContext.ApiScopes.Any())
-            {
-                foreach (var resource in Config.ApiScopes)
-                {
-                    configurationDbContext.ApiScopes.Add(resource.ToEntity());
-                }
-            }
-
-            configurationDbContext.SaveChanges();
-        }
-
-        private static void SeedUsers(UserManager<ApplicationUser> userManager) =>
-            _users.ForEach(
-                user =>
-                {
-                    if (userManager.FindByNameAsync(user.UserName).Result is null)
+        private async Task SeedUsersAsync(UserManager<ApplicationUser> userManager) =>
+            await _users.ToAsyncEnumerable()
+                .ForEachAwaitAsync(
+                    async user =>
                     {
-                        var result = userManager.CreateAsync(user).Result;
-                        result =
-                            userManager.AddToRoleAsync(
+                        if (await userManager.FindByNameAsync(user.UserName) is null)
+                        {
+                            var result = await userManager.CreateAsync(user);
+                            result = await userManager.AddToRoleAsync(
                                 user,
                                 _roles.SingleOrDefault(r => r.Name.ToLower() == "seed").Name
-                            ).Result;
+                            );
+                        }
                     }
-                }
-            );
+                );
 
-        private static void SeedRoles(RoleManager<ApplicationRole> roleManager) =>
-            _roles.ForEach(
-                role =>
-                {
-                    if (!roleManager.RoleExistsAsync(role.Name).Result)
+        private async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager) =>
+            await _roles.ToAsyncEnumerable()
+                .ForEachAwaitAsync(
+                    async role =>
                     {
-                        var result = roleManager.CreateAsync(role).Result;
+                        if (!await roleManager.RoleExistsAsync(role.Name))
+                        {
+                            var result = await roleManager.CreateAsync(role);
+                        }
                     }
-                }
-            );
+                );
 
-        private static void SeedData(
+        private async Task SeedDataAsync(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager
         ) {
-            var user = userManager.FindByNameAsync("seed").Result;
+            var user = await userManager.FindByNameAsync("seed");
 
             #region Seed Addresses
             var address = new Address { User = user };
-            context.Addresses.Add(address);
+            await context.Addresses.AddAsync(address);
             #endregion
 
             #region Seed AttendanceRecord
             var attendance = new Attendance { User = user, Date = DateTime.MinValue };
-            context.AttendanceRecord.Add(attendance);
+            await context.AttendanceRecord.AddAsync(attendance);
             #endregion
 
             #region Seed Activities
@@ -161,27 +151,27 @@ namespace EPlusActivities.API.Data
                 EndTime = DateTime.MinValue,
                 ActivityCode = "a00000000000"
             };
-            context.Activities.Add(activity);
+            await context.Activities.AddAsync(activity);
             #endregion
 
             #region Seed Brands
             var brand = new Brand("Seed");
-            context.Brands.Add(brand);
+            await context.Brands.AddAsync(brand);
             #endregion
 
             #region Seed Categories
             var category = new Category("Seed");
-            context.Categories.Add(category);
+            await context.Categories.AddAsync(category);
             #endregion
 
             #region Seed PrizeItems
             var prizeItem = new PrizeItem("Seed") { Brand = brand, Category = category, };
-            context.PrizeItems.Add(prizeItem);
+            await context.PrizeItems.AddAsync(prizeItem);
             #endregion
 
             #region Seed PrizeTiers
             var prizeTier = new PrizeTier("Seed") { Activity = activity };
-            context.PrizeTiers.Add(prizeTier);
+            await context.PrizeTiers.AddAsync(prizeTier);
             #endregion
 
             #region Seed PrizeTierPrizeItem
@@ -190,7 +180,7 @@ namespace EPlusActivities.API.Data
                 PrizeItem = prizeItem,
                 PrizeTier = prizeTier
             };
-            context.PrizeTierPrizeItems.Add(prizeTypePrizeItem);
+            await context.PrizeTierPrizeItems.AddAsync(prizeTypePrizeItem);
             #endregion
 
             #region Seed LotteryResults
@@ -200,37 +190,35 @@ namespace EPlusActivities.API.Data
                 Activity = activity,
                 Date = DateTime.MinValue
             };
-            context.LotteryResults.Add(lottery);
+            await context.LotteryResults.AddAsync(lottery);
             #endregion
 
             #region Seed ActivityUser
             var activityUser = new ActivityUser { Activity = activity, User = user, };
-            context.ActivityUserLinks.Add(activityUser);
+            await context.ActivityUserLinks.AddAsync(activityUser);
             #endregion
 
             #region Seed Coupons
             var coupon = new Coupon { User = user, PrizeItem = prizeItem, Code = "Seed" };
-            context.Coupons.Add(coupon);
+            await context.Coupons.AddAsync(coupon);
             #endregion
 
             #region Seed Administrator
             var admin = new ApplicationUser { UserName = "admin" };
             var tester = new ApplicationUser { UserName = "tester" };
-            var result = userManager.CreateAsync(admin, "Pa$$w0rd").Result;
-            result =
-                userManager.AddToRoleAsync(
-                    admin,
-                    _roles.SingleOrDefault(r => r.Name.ToLower() == "admin").Name
-                ).Result;
-            result = userManager.CreateAsync(tester, "Pa$$w0rd").Result;
-            result =
-                userManager.AddToRoleAsync(
-                    tester,
-                    _roles.SingleOrDefault(r => r.Name.ToLower() == "tester").Name
-                ).Result;
+            var result = await userManager.CreateAsync(admin, "Pa$$w0rd");
+            result = await userManager.AddToRoleAsync(
+                admin,
+                _roles.SingleOrDefault(r => r.Name.ToLower() == "admin").Name
+            );
+            result = await userManager.CreateAsync(tester, "Pa$$w0rd");
+            result = await userManager.AddToRoleAsync(
+                tester,
+                _roles.SingleOrDefault(r => r.Name.ToLower() == "tester").Name
+            );
             #endregion
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }

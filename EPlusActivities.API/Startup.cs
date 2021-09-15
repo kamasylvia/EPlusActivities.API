@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Text.Json.Serialization;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -253,11 +252,6 @@ namespace EPlusActivities.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            #region Seed data
-            DbInitializer.Initialize(app: app, environment: env);
-            #endregion
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

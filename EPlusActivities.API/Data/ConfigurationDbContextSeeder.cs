@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using EPlusActivities.API.Services.IdentityServer;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,13 +12,13 @@ namespace EPlusActivities.API.Data
 {
     public class ConfigurationDbContextSeeder
     {
-        public async Task SeedAsync(IApplicationBuilder app, IWebHostEnvironment environment)
+        public async Task SeedAsync(IHost host)
         {
             using (
-                var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()
-                    .CreateScope()
-            )
-            {
+                var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope()
+            ) {
+                var environment =
+                    serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
                 if (environment.IsProduction())
                 {
                     var persistedGrantDbContext =
@@ -34,7 +33,6 @@ namespace EPlusActivities.API.Data
                 }
             }
         }
-
         private async Task SeedConfigAsync(ConfigurationDbContext configurationDbContext)
         {
             if (!configurationDbContext.Clients.Any())

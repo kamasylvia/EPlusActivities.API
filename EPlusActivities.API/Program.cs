@@ -1,7 +1,10 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
+using EPlusActivities.API.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -19,7 +22,7 @@ namespace EPlusActivities.API
                 .AddEnvironmentVariables()
                 .Build();
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
                 .Enrich.FromLogContext()
@@ -28,7 +31,10 @@ namespace EPlusActivities.API
             try
             {
                 Log.Information("启动主机");
-                CreateHostBuilder(args).Build().Run();
+                var host = CreateHostBuilder(args).Build();
+                await new ConfigurationDbContextSeeder().SeedAsync(host);
+                await new ApplicationDbContextSeeder().SeedAsync(host);
+                host.Run();
             }
             catch (Exception ex)
             {
@@ -38,8 +44,6 @@ namespace EPlusActivities.API
             {
                 Log.CloseAndFlush();
             }
-
-            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
