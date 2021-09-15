@@ -55,7 +55,7 @@ services:
             MYSQL_PASSWORD: 123456
             MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
-            - 3307:3307
+            - 3307:3306
         volumes:
             - ./MySQL/FileService:/var/lib/mysql
         restart: always

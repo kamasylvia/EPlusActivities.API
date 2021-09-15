@@ -56,13 +56,8 @@ namespace EPlusActivities.API.Data
                     var configurationDbContext =
                         serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
 
-                    persistedGrantDbContext.Database.EnsureDeleted();
-                    configurationDbContext.Database.EnsureDeleted();
-
                     persistedGrantDbContext.Database.Migrate();
                     configurationDbContext.Database.Migrate();
-
-                    context.Database.EnsureDeleted();
                     context.Database.Migrate();
                     SeedConfig(configurationDbContext);
                 }
@@ -70,7 +65,7 @@ namespace EPlusActivities.API.Data
                 // Look for any Data.
                 if (context.Users.Any())
                 {
-                    return; // DB has been seeded
+                    return; // DB has already been seeded.
                 }
 
                 SeedRoles(roleManager);
