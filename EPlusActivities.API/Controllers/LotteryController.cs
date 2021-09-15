@@ -140,19 +140,20 @@ namespace EPlusActivities.API.Controllers
         private async Task<IEnumerable<LotteryDto>> FindLotteryRecordsAsync(Guid userId)
         {
             var lotteries = await _lotteryRepository.FindByParentIdAsync(userId);
-            var result = new List<LotteryDto>();
 
             // 因为进行了全剧配置，AutoMapper 在此执行
             // _mapper.Map<IEnumerable<LotteryDto>>(lotteries)
             // 时会自动转换 DateTime 导致精确时间丢失，
             // 所以这里手动添加精确时间。
-            foreach (var item in lotteries)
-            {
-                var temp = _mapper.Map<LotteryDto>(item);
-                temp.Date = item.Date;
-                temp.PickedTime = item.PickedUpTime;
-                result.Add(temp);
-            }
+            var result = lotteries.Select(
+                x =>
+                {
+                    var resultItem = _mapper.Map<LotteryDto>(x);
+                    resultItem.Date = x.Date;
+                    resultItem.PickedUpTime = x.PickedUpTime;
+                    return resultItem;
+                }
+            );
 
             return result;
         }

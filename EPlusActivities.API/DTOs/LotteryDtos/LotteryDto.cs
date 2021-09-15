@@ -49,7 +49,7 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// 领取奖品日期，null 表示未领取
         /// </summary>
         /// <value></value>
-        public DateTime? PickedTime { get; set; }
+        public DateTime? PickedUpTime { get; set; }
 
         /// <summary>
         /// 抽奖日期
