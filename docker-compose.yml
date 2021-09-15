@@ -17,21 +17,21 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20210820
-        container_name: eplusactivities
+        image: kamasylvia/eplusactivities:20210915
+        container_name: EplusActivities.API
         environment:
-            # - ASPNETCORE_ENVIRONMENT=Production
-            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_ENVIRONMENT=Production
+            # - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_URLS=http://+:80
         depends_on:
             - eplusactivities-db
-            - nginx
         links:
             - eplusactivities-db
         ports:
             - 52537:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs
+            - ./Settings/EplusActivities.appsettings.json:/app/appsettings.json
             - ~/.aspnet/https:/root/.aspnet/https:ro
             - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
 
@@ -61,12 +61,20 @@ services:
         restart: always
 
     fileservice:
-        image: kamasylvia/FileService:20200903
+        image: kamasylvia/fileservice:20200915
+        container_name: FileService
         environment:
-            - ASPNETCORE_ENVIRONMENT=Development
+            # - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_ENVIRONMENT=Production
             - ASPNETCORE_URLS=http://+:80
+        links:
+            - fileservice-db
+        depends_on:
+            - fileservice-db
         ports:
             - 50000:80
-        # volumes:
+        volumes:
+            - ./Logs/FileServiceLogs:/app/Logs
+            - ./Settings/FileService.appsettings.json:/app/appsettings.json
         #   - ~/.aspnet/https:/root/.aspnet/https:ro
         #   - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro

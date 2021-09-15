@@ -1,15 +1,15 @@
 {
+  "FileStorageDirectory": "./FileStorage",
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "DefaultConnection": "server=eplusactivities-db; database=EPlusActivities; uid=ngs; pwd=123456;"
-  },
-  "FileServiceUriBuilder": {
-    "Scheme": "http",
-    "Host": "fileservice",
-    "Port": 80
-  },
-  "Secrets": {
-    "DefaultSecret": "secret"
+    "DefaultConnection": "server=fileservice-db; database=FileService; uid=ngs; pwd=123456;"
   },
   "Serilog": {
     "MinimumLevel": {

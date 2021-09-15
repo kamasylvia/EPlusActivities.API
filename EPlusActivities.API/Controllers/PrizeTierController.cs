@@ -186,7 +186,7 @@ namespace EPlusActivities.API.Controllers
                     .Select(pt => pt.Percentage)
                     .Sum()
                 + prizeTierDto.Percentage
-                >= 100
+                > 100
             ) {
                 return BadRequest("The sum of percentages could not be greater than 100.");
             }

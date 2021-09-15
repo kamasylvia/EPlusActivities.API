@@ -51,7 +51,6 @@ namespace EPlusActivities.API.Data
 
                 if (environment.IsProduction())
                 {
-                    /*
                     var persistedGrantDbContext =
                         serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
                     var configurationDbContext =
@@ -62,10 +61,10 @@ namespace EPlusActivities.API.Data
 
                     persistedGrantDbContext.Database.Migrate();
                     configurationDbContext.Database.Migrate();
-                    */
 
+                    context.Database.EnsureDeleted();
                     context.Database.Migrate();
-                    // SeedConfig(configurationDbContext);
+                    SeedConfig(configurationDbContext);
                 }
 
                 // Look for any Data.
@@ -103,6 +102,14 @@ namespace EPlusActivities.API.Data
                 foreach (var resource in Config.ApiResources)
                 {
                     configurationDbContext.ApiResources.Add(resource.ToEntity());
+                }
+            }
+
+            if (!configurationDbContext.ApiScopes.Any())
+            {
+                foreach (var resource in Config.ApiScopes)
+                {
+                    configurationDbContext.ApiScopes.Add(resource.ToEntity());
                 }
             }
 
