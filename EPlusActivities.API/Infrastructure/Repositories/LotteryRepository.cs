@@ -18,12 +18,16 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<Lottery> FindByIdAsync(params object[] keyValues) =>
             await _context.LotteryResults.Include(lottery => lottery.Activity)
+                .Include(lr => lr.User)
                 .Include(lottery => lottery.PrizeItem)
+                .Include(lr => lr.PrizeTier)
                 .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Lottery>> FindByParentIdAsync(Guid userId) =>
             await _context.LotteryResults.Include(lr => lr.User)
                 .Include(lr => lr.Activity)
+                .Include(lr => lr.PrizeTier)
+                .Include(lr => lr.PrizeItem)
                 .AsAsyncEnumerable()
                 .Where(a => a.User.Id == userId)
                 .ToListAsync();
