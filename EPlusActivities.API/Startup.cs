@@ -50,7 +50,7 @@ namespace EPlusActivities.API
                         {
                             builder.AllowAnyHeader()
                                 .AllowAnyMethod()
-                                .WithOrigins("http://localhost:8080");
+                                .WithOrigins(Configuration["ClientUrl"]);
                         }
                     );
                 }

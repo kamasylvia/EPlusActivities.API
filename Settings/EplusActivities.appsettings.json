@@ -8,6 +8,7 @@
     "Host": "fileservice",
     "Port": 80
   },
+  "ClientUrl": "http://localhost:80",
   "Secrets": {
     "DefaultSecret": "secret"
   },
