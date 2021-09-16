@@ -41,19 +41,22 @@ namespace EPlusActivities.API
         {
             services.AddControllers();
 
-            services.AddCors(
-                options =>
-                {
-                    options.AddDefaultPolicy(
-                        builder =>
-                        {
-                            builder.AllowAnyHeader()
-                                .AllowAnyMethod()
-                                .WithOrigins(Configuration["ClientUrl"]);
-                        }
-                    );
-                }
-            );
+            if (Environment.IsDevelopment())
+            {
+                services.AddCors(
+                    options =>
+                    {
+                        options.AddDefaultPolicy(
+                            builder =>
+                            {
+                                builder.AllowAnyHeader()
+                                    .AllowAnyMethod()
+                                    .WithOrigins(Configuration["ClientUrl"]);
+                            }
+                        );
+                    }
+                );
+            }
 
             services.AddHttpClient();
             services.AddHttpContextAccessor();
@@ -265,7 +268,10 @@ namespace EPlusActivities.API
 
             app.UseRouting();
 
-            app.UseCors();
+            if (env.IsDevelopment())
+            {
+                app.UseCors();
+            }
 
             app.UseIdentityServer();
 

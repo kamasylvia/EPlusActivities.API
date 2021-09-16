@@ -60,7 +60,7 @@
   - [x] 会员渠道维护、会员奖励积分接口
   - [x] 会员奖励积分接口
 
-# 如何对接
+# 如何对接联调
 
 ### Windows 系统
 
@@ -83,28 +83,34 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 ```
 
 # 运行本项目
+
 ## .NET SDK（MySQL 用 docker 版）
+
 - `cd` 到解决方案目录(该目录含有 `.sln` 文件) 执行
-    - 开发环境：
-        - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development` 
-        - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
-    - 生产环境：
-        - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production` 
-        - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
+  - 开发环境：
+    - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
+    - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
+  - 生产环境：
+    - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
+    - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
 - 或 `cd` 到项目目录（该目录含有 `.csproj` 文件） 执行
-    - 开发环境：
-        - `dotnet watch run --launch-profile EPlusActivities.API-Development` 
-        - 或 `dotnet run --launch-profile EPlusActivities.API-Development`
-    - 生产环境：
-        - `dotnet watch run --launch-profile EPlusActivities.API-Production` 
-        - 或 `dotnet run --launch-profile EPlusActivities.API-Production`
+  - 开发环境：
+    - `dotnet watch run --launch-profile EPlusActivities.API-Development`
+    - 或 `dotnet run --launch-profile EPlusActivities.API-Development`
+  - 生产环境：
+    - `dotnet watch run --launch-profile EPlusActivities.API-Production`
+    - 或 `dotnet run --launch-profile EPlusActivities.API-Production`
 - 开发环境下，项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 http://localhost:52537/swagger/index.html
 
 ## docker-compose
+
 - `cd` 到解决方案目录(该目录含有 `.sln` 和 `docker-compose.yml` 文件) 执行
-    - `docker-compose up -d`
+  - `docker-compose up -d`
+
 ### 注意
+
 - 因为有反向代理，比如 nginx，容器内的项目是没有开 https 的。
+
 # 测试流程
 
 ## 用户验证
@@ -147,3 +153,15 @@ POST `http://localhost:52537/connect/token` with `x-www-form-urlencoded` paramet
 3. 访问 Swagger 页面 https://localhost:52538/swagger/index.html。
 4. 获取用户信息：GET api/user
 5. 创建活动：POST api/activity
+
+# 如何部署
+
+生产环境下使用 docker-compose 部署：
+
+1. 新建空目录
+2. 复制 `docker-compose.yml` 文件，`Settings` 文件夹, `Nginx` 文件夹 和`html` 文件夹到新目录。
+   - 如果前端有更新，删除 `html` 文件夹下所有文件并复制新的前端文件到 `html` 下，请确保 `html/index.html` 可访问。
+3. 在新目录下运行指令 `docker-compose up -d`
+4. 如果 `eplusactivities-api` 服务运行失败，先重启 `eplusactivities-db` 再重启 `eplusactivities-api`。
+5. 如果 `fileservice` 服务运行失败，先重启 `fileservice-db` 再重启 `fileservice`。
+6. 每次修改 `Nginx` 目录下的文件后，需要重启 `nginx` 服务。
