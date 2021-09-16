@@ -27,8 +27,8 @@ services:
             - eplusactivities-db
         links:
             - eplusactivities-db
-        ports:
-            - 52537:80
+        # ports:
+        #     - 52537:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs
             - ./Settings/EplusActivities.appsettings.json:/app/appsettings.json
@@ -39,7 +39,7 @@ services:
         image: nginx
         container_name: nginx
         ports:
-            - 80:80
+            - 52537:52537
         links:
             - "eplusactivities-api"
         volumes:
@@ -71,8 +71,6 @@ services:
             - fileservice-db
         depends_on:
             - fileservice-db
-        ports:
-            - 50000:80
         volumes:
             - ./Logs/FileServiceLogs:/app/Logs
             - ./Settings/FileService.appsettings.json:/app/appsettings.json
