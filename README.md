@@ -158,6 +158,7 @@ POST `http://localhost:52537/connect/token` with `x-www-form-urlencoded` paramet
 
 生产环境下使用 docker-compose 部署：
 
+0. 有压缩包的情况下直接解压到新文件夹，跳过 1、2 步。
 1. 新建空目录
 2. 复制 `docker-compose.yml` 文件，`Settings` 文件夹, `Nginx` 文件夹 和`html` 文件夹到新目录。
    - 如果前端有更新，删除 `html` 文件夹下所有文件并复制新的前端文件到 `html` 下，请确保 `html/index.html` 可访问。

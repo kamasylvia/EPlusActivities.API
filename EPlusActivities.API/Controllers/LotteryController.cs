@@ -38,7 +38,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IActivityRepository _activityRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
-        private readonly IRepository<Coupon> _couponResponseDto;
+        private readonly IRepository<Coupon> _couponRepository;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
         private readonly ILotteryDrawService _lotteryDrawService;
         private readonly IIdGeneratorService _idGeneratorService;
@@ -57,7 +57,8 @@ namespace EPlusActivities.API.Controllers
             ILotteryDrawService lotteryDrawService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService
-        ) {
+        )
+        {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -69,7 +70,7 @@ namespace EPlusActivities.API.Controllers
             _activityUserRepository =
                 activityUserRepository
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
-            _couponResponseDto =
+            _couponRepository =
                 couponResponseDto ?? throw new ArgumentNullException(nameof(couponResponseDto));
             _lotteryRepository =
                 lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
@@ -94,7 +95,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -121,7 +123,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -170,7 +173,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -293,27 +297,32 @@ namespace EPlusActivities.API.Controllers
                                     reason = "优惠券奖品"
                                 }
                             );
-                            var coupons = couponResponseDto.Body.Content.HideCouponCode.Split(", ")
+                            var coupons = couponResponseDto?.Body?.Content?.HideCouponCode?.Split(',')
                                 .Select(
                                     code =>
                                         new Coupon
                                         {
                                             User = user,
                                             PrizeItem = lottery.PrizeItem,
-                                            Code = code
+                                            Code = code.Trim()
                                         }
                                 );
-                            var temp = user.Coupons.ToList();
+
+                            var temp = user.Coupons is null
+                                ? new List<Coupon>()
+                                : user.Coupons.ToList();
                             temp.AddRange(coupons);
                             user.Coupons = temp;
 
-                            temp = lottery.PrizeItem.Coupons.ToList();
+                            temp = lottery.PrizeItem.Coupons is null 
+                                ? new List<Coupon>() 
+                                : lottery.PrizeItem.Coupons.ToList();
                             temp.AddRange(coupons);
                             lottery.PrizeItem.Coupons = temp;
 
                             await coupons.ToAsyncEnumerable()
-                                .ForEachAsync(
-                                    async item => await _couponResponseDto.AddAsync(item)
+                                .ForEachAwaitAsync(
+                                    async item => await _couponRepository.AddAsync(item)
                                 );
                             break;
                         default:
