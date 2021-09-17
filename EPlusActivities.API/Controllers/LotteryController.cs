@@ -57,8 +57,7 @@ namespace EPlusActivities.API.Controllers
             ILotteryDrawService lotteryDrawService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService
-        )
-        {
+        ) {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -95,8 +94,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -123,8 +121,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -173,8 +170,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -297,16 +293,17 @@ namespace EPlusActivities.API.Controllers
                                     reason = "优惠券奖品"
                                 }
                             );
-                            var coupons = couponResponseDto?.Body?.Content?.HideCouponCode?.Split(',')
-                                .Select(
-                                    code =>
-                                        new Coupon
-                                        {
-                                            User = user,
-                                            PrizeItem = lottery.PrizeItem,
-                                            Code = code.Trim()
-                                        }
-                                );
+                            var coupons =
+                                couponResponseDto?.Body?.Content?.HideCouponCode?.Split(',')
+                                    .Select(
+                                        code =>
+                                            new Coupon
+                                            {
+                                                User = user,
+                                                PrizeItem = lottery.PrizeItem,
+                                                Code = code.Trim()
+                                            }
+                                    );
 
                             var temp = user.Coupons is null
                                 ? new List<Coupon>()
@@ -314,8 +311,8 @@ namespace EPlusActivities.API.Controllers
                             temp.AddRange(coupons);
                             user.Coupons = temp;
 
-                            temp = lottery.PrizeItem.Coupons is null 
-                                ? new List<Coupon>() 
+                            temp = lottery.PrizeItem.Coupons is null
+                                ? new List<Coupon>()
                                 : lottery.PrizeItem.Coupons.ToList();
                             temp.AddRange(coupons);
                             lottery.PrizeItem.Coupons = temp;
