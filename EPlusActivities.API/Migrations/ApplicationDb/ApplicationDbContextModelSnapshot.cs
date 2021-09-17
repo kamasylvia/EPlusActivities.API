@@ -3,16 +3,14 @@ using System;
 using EPlusActivities.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EPlusActivities.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210915020512_InitialApplicationDbMigration")]
-    partial class InitialApplicationDbMigration
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,7 +194,7 @@ namespace EPlusActivities.API.Migrations
                     b.Property<bool>("IsMember")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("LastLoginDate")
+                    b.Property<DateTime?>("LastDrawDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("LockoutEnabled")

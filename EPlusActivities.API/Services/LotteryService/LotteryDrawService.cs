@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 
-namespace EPlusActivities.API.Services.DeliveryService
+namespace EPlusActivities.API.Services.LotteryService
 {
     public class LotteryDrawService : ILotteryDrawService
     {

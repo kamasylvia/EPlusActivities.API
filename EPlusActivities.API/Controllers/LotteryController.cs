@@ -10,8 +10,8 @@ using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services.DeliveryService;
 using EPlusActivities.API.Services.IdGeneratorService;
+using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -222,9 +222,10 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 今天没登陆过的用户，每日已用抽奖次数清零
-            if (user.LastLoginDate < DateTime.Today)
+            if (user.LastDrawDate < DateTime.Today)
             {
                 activityUser.TodayUsedDraws = 0;
+                user.LastDrawDate = DateTime.Today;
             }
             #endregion
 
@@ -310,8 +311,10 @@ namespace EPlusActivities.API.Controllers
                             temp.AddRange(coupons);
                             lottery.PrizeItem.Coupons = temp;
 
-                            coupons.ToList()
-                                .ForEach(async item => await _couponResponseDto.AddAsync(item));
+                            await coupons.ToAsyncEnumerable()
+                                .ForEachAsync(
+                                    async item => await _couponResponseDto.AddAsync(item)
+                                );
                             break;
                         default:
                             break;

@@ -10,25 +10,20 @@ services:
             MYSQL_ROOT_PASSWORD: 123456
             MYSQL_PASSWORD: 123456
             MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-        ports:
-            - 3306:3306
         volumes:
             - ./MySQL/EPlusActivities:/var/lib/mysql
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20210916
+        image: kamasylvia/eplusactivities:20210917
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
-            # - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_URLS=http://+:80
         depends_on:
             - eplusactivities-db
         links:
             - eplusactivities-db
-        # ports:
-        #     - 52537:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs
             - ./Settings/EplusActivities.appsettings.json:/app/appsettings.json
@@ -58,8 +53,6 @@ services:
             MYSQL_ROOT_PASSWORD: 123456
             MYSQL_PASSWORD: 123456
             MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-        ports:
-            - 3307:3306
         volumes:
             - ./MySQL/FileService:/var/lib/mysql
         restart: always
@@ -68,7 +61,6 @@ services:
         image: kamasylvia/fileservice:20200915
         container_name: FileService
         environment:
-            # - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_ENVIRONMENT=Production
             - ASPNETCORE_URLS=http://+:80
         links:
@@ -78,6 +70,4 @@ services:
         volumes:
             - ./Logs/FileServiceLogs:/app/Logs
             - ./Settings/FileService.appsettings.json:/app/appsettings.json
-        #   - ~/.aspnet/https:/root/.aspnet/https:ro
-        #   - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
         restart: always

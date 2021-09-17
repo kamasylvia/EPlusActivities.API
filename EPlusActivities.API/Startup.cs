@@ -5,7 +5,7 @@ using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
-using EPlusActivities.API.Services.DeliveryService;
+using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.FileService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
