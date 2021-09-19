@@ -25,10 +25,12 @@ namespace EPlusActivities.API.Services.IdentityServer
             IMapper mapper,
             UserManager<ApplicationUser> userManager
         ) {
-            _mapper = mapper;
-            _userManager = userManager;
-            _configuration = configuration;
-            _httpClientFactory = httpClientFactory;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _configuration =
+                configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _httpClientFactory =
+                httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
         public async Task<ApplicationUser> GetSmsUserAsync(SmsDto smsDto)
@@ -50,7 +52,7 @@ namespace EPlusActivities.API.Services.IdentityServer
 
         public async Task<HttpResponseMessage> SendAsync(string phoneNumber, string token)
         {
-            var requestUri = "http://10.10.34.202:20015/api/sms/message/send";
+            var requestUri = _configuration["SendSmsApi"];
             var contentObject = new
             {
                 messageContent = $"【农工商】验证码: {token}。您正在验证农工商用户，10 分钟内同一手机号最多发送 3 次验证码，每个验证码有效期为 8 分钟，感谢您的支持！",

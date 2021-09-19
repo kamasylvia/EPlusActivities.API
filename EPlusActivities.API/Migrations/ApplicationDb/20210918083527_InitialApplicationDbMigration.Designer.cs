@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EPlusActivities.API.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210917063727_InitialApplicationDbMigration")]
+    [Migration("20210918083527_InitialApplicationDbMigration")]
     partial class InitialApplicationDbMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

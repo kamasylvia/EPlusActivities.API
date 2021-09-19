@@ -9,6 +9,7 @@
     "Port": 80
   },
   "ClientUrl": "http://localhost:80",
+  "SendSmsApi": "http://10.10.1.123:20015/api/sms/message/send",
   "Secrets": {
     "DefaultSecret": "secret"
   },
