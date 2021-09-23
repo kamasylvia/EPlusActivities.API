@@ -16,7 +16,7 @@ namespace EPlusActivities.API.Controllers
     /// 短信验证码 API
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class SmsController : Controller
     {
         private readonly ISmsService _smsService;

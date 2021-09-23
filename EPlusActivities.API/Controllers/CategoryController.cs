@@ -19,7 +19,7 @@ namespace EPlusActivities.API.Controllers
 {
     [ApiController]
     [EPlusActionFilterAttribute]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class CategoryController : Controller
     {
         private readonly INameExistsRepository<Category> _categoryRepository;

@@ -19,7 +19,7 @@ using Microsoft.Extensions.Logging;
 namespace FileService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class FileController : Controller
     {
         private readonly string _fileStorageDirectory;

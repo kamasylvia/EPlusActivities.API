@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Controllers
     /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class PrizeTierController : Controller
     {
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTierRepository;

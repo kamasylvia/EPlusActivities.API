@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Controllers
     /// <summary>
     /// 抽奖记录 API
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     [ApiController]
     [EPlusActionFilterAttribute]
     public class LotteryController : Controller

@@ -22,7 +22,7 @@ namespace EPlusActivities.API.Controllers
     /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class FileController : Controller
     {
         private readonly IMapper _mapper;

@@ -19,7 +19,7 @@ namespace EPlusActivities.API.Controllers
 {
     [ApiController]
     [EPlusActionFilterAttribute]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class BrandController : Controller
     {
         private readonly INameExistsRepository<Brand> _brandRepository;

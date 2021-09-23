@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Controllers
     /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class ActivityUserController : Controller
     {
         private readonly IActivityRepository _activityRepository;

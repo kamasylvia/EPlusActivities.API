@@ -23,7 +23,7 @@ namespace EPlusActivities.API.Controllers
     /// </summary>
     [ApiController]
     [EPlusActionFilterAttribute]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class AddressController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

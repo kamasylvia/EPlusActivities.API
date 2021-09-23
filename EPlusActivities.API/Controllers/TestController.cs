@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EPlusActivities.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class TestController : Controller
     {
         [HttpGet]
