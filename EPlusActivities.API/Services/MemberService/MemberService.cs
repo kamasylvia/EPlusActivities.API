@@ -44,7 +44,7 @@ namespace EPlusActivities.API.Services.MemberService
         public async Task<(bool, MemberForGetDto)> GetMemberAsync(string phone)
         {
             var response = await _httpClientFactory.CreateClient()
-                .PostAsJsonAsync(_configuration["GetMemberInfoRequestUrl"], new { mobile = phone });
+                .PostAsJsonAsync(_configuration["MemberServiceUriBuilder:GetMemberInfoRequestUrl"], new { mobile = phone });
             var result = await response.Content.ReadFromJsonAsync<MemberForGetDto>();
 
             if (result.Header.Code != "0000")
@@ -60,7 +60,7 @@ namespace EPlusActivities.API.Services.MemberService
             MemberForReleaseCouponRequestDto requestDto
         ) {
             var response = await _httpClientFactory.CreateClient()
-                .PostAsJsonAsync(_configuration["CouponRequestUrl"], requestDto);
+                .PostAsJsonAsync(_configuration["MemberServiceUriBuilder:CouponRequestUrl"], requestDto);
             var responseDto =
                 await response.Content.ReadFromJsonAsync<MemberForReleaseCouponResponseDto>();
 
@@ -78,7 +78,7 @@ namespace EPlusActivities.API.Services.MemberService
             MemberForUpdateCreditRequestDto requestDto
         ) {
             var response = await _httpClientFactory.CreateClient()
-                .PostAsJsonAsync(_configuration["UpdateCreditRequestUrl"], requestDto);
+                .PostAsJsonAsync(_configuration["MemberServiceUriBuilder:UpdateCreditRequestUrl"], requestDto);
 
             var responseDto =
                 await response.Content.ReadFromJsonAsync<MemberForUpdateCreditResponseDto>();

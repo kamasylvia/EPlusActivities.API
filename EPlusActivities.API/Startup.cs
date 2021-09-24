@@ -5,10 +5,10 @@ using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
-using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.FileService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
+using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Serilog;
 using Yitter.IdGenerator;
 
 namespace EPlusActivities.API
@@ -40,6 +41,10 @@ namespace EPlusActivities.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddLogging((builder) =>
+            {
+                builder.AddSerilog(dispose: true);
+            });
 
             if (Environment.IsDevelopment())
             {
