@@ -40,7 +40,8 @@ namespace EPlusActivities.API.Controllers
             ILogger<UserController> logger,
             IMapper mapper,
             IMemberService memberService
-        ) {
+        )
+        {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _memberService =
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
@@ -82,6 +83,10 @@ namespace EPlusActivities.API.Controllers
                     user.MemberId = memberDto.Body.Content.MemberId;
                     user.Credit = memberDto.Body.Content.Points;
                 }
+                else
+                {
+                    return new InternalServerErrorObjectResult($"获取会员信息失败：{memberDto.Header.Message}");
+                }
             }
             #endregion
 
@@ -110,7 +115,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
             [FromQuery] UserForGetUsersDto requestDto
-        ) {
+        )
+        {
             var userList = (
                 await _userManager.GetUsersInRoleAsync(requestDto.Role.Trim().ToLower())
             ).ToList();
@@ -146,7 +152,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> UpdatePhoneNumberAsync(
             [FromBody] UserForUpdatePhoneDto userDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
@@ -197,7 +204,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> CreateAdminOrManagerAsync(
             [FromBody] UserForCreateAdminDto userDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByNameAsync(userDto.UserName);
             if (user is not null)
