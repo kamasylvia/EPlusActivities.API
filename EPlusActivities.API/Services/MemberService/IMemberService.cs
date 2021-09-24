@@ -12,7 +12,7 @@ namespace EPlusActivities.API.Services.MemberService
             MemberForUpdateCreditRequestDto requestDto
         );
 
-        Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(
+        Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCouponAsync(
             MemberForReleaseCouponRequestDto requestDto
         );
     }

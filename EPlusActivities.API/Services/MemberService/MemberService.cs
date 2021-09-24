@@ -6,25 +6,28 @@ using AutoMapper;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.MemberService
 {
     public class MemberService : IMemberService
     {
+        private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<MemberService> _logger;
         private readonly IRepository<Credit> _creditRepository;
-        private readonly string _channelCode = "test";
-        private readonly string _host = "http://10.10.34.218:9080";
         private readonly IMapper _mapper;
 
         public MemberService(
+            IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             ILogger<MemberService> logger,
             IRepository<Credit> creditRepository,
             IMapper mapper
         ) {
+            _configuration =
+                configuration ?? throw new ArgumentNullException(nameof(configuration));
             _httpClientFactory =
                 httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -40,9 +43,8 @@ namespace EPlusActivities.API.Services.MemberService
         /// <returns></returns>
         public async Task<(bool, MemberForGetDto)> GetMemberAsync(string phone)
         {
-            var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/get/1.0.0";
             var response = await _httpClientFactory.CreateClient()
-                .PostAsJsonAsync(requestUri, new { mobile = phone });
+                .PostAsJsonAsync(_configuration["GetMemberInfoRequestUrl"], new { mobile = phone });
             var result = await response.Content.ReadFromJsonAsync<MemberForGetDto>();
 
             if (result.Header.Code != "0000")
@@ -54,12 +56,11 @@ namespace EPlusActivities.API.Services.MemberService
             return (true, result);
         }
 
-        public async Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCoouponAsync(
+        public async Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCouponAsync(
             MemberForReleaseCouponRequestDto requestDto
         ) {
-            var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/couponIssue/1.0.0";
             var response = await _httpClientFactory.CreateClient()
-                .PostAsJsonAsync(requestUri, requestDto);
+                .PostAsJsonAsync(_configuration["CouponRequestUrl"], requestDto);
             var responseDto =
                 await response.Content.ReadFromJsonAsync<MemberForReleaseCouponResponseDto>();
 
@@ -76,9 +77,8 @@ namespace EPlusActivities.API.Services.MemberService
             Guid userId,
             MemberForUpdateCreditRequestDto requestDto
         ) {
-            var requestUri = $"{_host}/apis/member/eroc/{_channelCode}/updatePoints/1.0.0";
             var response = await _httpClientFactory.CreateClient()
-                .PostAsJsonAsync(requestUri, requestDto);
+                .PostAsJsonAsync(_configuration["UpdateCreditRequestUrl"], requestDto);
 
             var responseDto =
                 await response.Content.ReadFromJsonAsync<MemberForUpdateCreditResponseDto>();

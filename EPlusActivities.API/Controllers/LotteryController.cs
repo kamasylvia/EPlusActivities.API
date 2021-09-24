@@ -284,7 +284,7 @@ namespace EPlusActivities.API.Controllers
                             break;
                         case PrizeType.Coupon:
                             var (releaseCouponResult, couponResponseDto) =
-                                await _memberService.ReleaseCoouponAsync(
+                                await _memberService.ReleaseCouponAsync(
                                 new MemberForReleaseCouponRequestDto
                                 {
                                     couponActiveCode = lottery.PrizeItem.CouponActiveCode,
