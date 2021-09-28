@@ -35,25 +35,35 @@ namespace EPlusActivities.API.Services.LotteryService
             {
                 // 如果上次中奖日期早于今天，今日中奖人数清零
                 if (item.LastDate < DateTime.Now.Date)
-                {
                     item.TodayWinnerCount = 0;
-                }
 
                 total += item.Percentage;
                 if (
                     total > flag
                     && (!item.DailyLimit.HasValue || item.TodayWinnerCount < item.DailyLimit.Value)
-                )
-                {
+                ) {
                     prizeTier = item;
+
+                    // 提取该档包含多奖品列表
                     var prizeItems = (
                         await _prizeItemRepository.FindByPrizeTierIdAsync(prizeTier.Id.Value)
                     ).Where(item => item.Stock > 0);
+
+                    // 如果该档奖品全部没有库存，顺延到下一档
                     if (prizeItems.Count() <= 0)
                         continue;
+
+                    // 在奖品档次中包含的奖品中抽选一件奖品
                     var prizeItem = prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count()));
                     item.TodayWinnerCount++;
+
+                    // 更新上次中奖日期
+                    if (item.LastDate < DateTime.Now.Date)
+                        item.LastDate = DateTime.Now.Date;
+
+                    // 总库存减一
                     prizeItem.Stock--;
+
                     return (
                         prizeTier,
                         prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count()))
