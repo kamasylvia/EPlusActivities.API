@@ -24,5 +24,11 @@ namespace EPlusActivities.API.Dtos.PrizeTierDtos
         public Guid? ActivityId { get; set; }
 
         public IEnumerable<Guid> PrizeItemIds { get; set; }
+
+        /// <summary>
+        /// 每日中奖上限  
+        /// </summary>
+        /// <value></value>
+        public int DailyLimit { get; set; }
     }
 }

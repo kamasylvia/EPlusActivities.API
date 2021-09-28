@@ -12,7 +12,7 @@ namespace EPlusActivities.API.Entities
         public int TodayUsedDraws { get; set; }
 
         // 剩余抽奖次数
-        public int? RemainingDraws { get; set; }
+        public int RemainingDraws { get; set; }
 
         // 签到天数
         public int? AttendanceDays { get; set; }

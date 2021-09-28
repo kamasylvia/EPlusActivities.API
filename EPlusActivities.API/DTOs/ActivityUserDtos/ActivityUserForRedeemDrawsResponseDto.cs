@@ -15,6 +15,6 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
         /// 剩余抽奖次数
         /// </summary>
         /// <value></value>
-        public int? RemainingDraws { get; set; }
+        public int RemainingDraws { get; set; }
     }
 }

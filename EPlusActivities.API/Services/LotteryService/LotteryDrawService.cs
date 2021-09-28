@@ -28,26 +28,37 @@ namespace EPlusActivities.API.Services.LotteryService
             var total = 0;
             var random = new Random();
             var flag = random.Next(100);
-            var prizeTypes = activity.PrizeTiers;
+            var prizeTiers = activity.PrizeTiers;
 
             PrizeTier prizeTier = null;
-            foreach (var item in prizeTypes)
+            foreach (var item in prizeTiers)
             {
+                // 如果上次中奖日期早于今天，今日中奖人数清零
+                if (item.LastDate < DateTime.Now.Date)
+                {
+                    item.TodayWinnerCount = 0;
+                }
+
                 total += item.Percentage;
-                if (total > flag)
+                if (total > flag && item.TodayWinnerCount < item.DailyLimit)
                 {
                     prizeTier = item;
-                    break;
+                    var prizeItems = (
+                        await _prizeItemRepository.FindByPrizeTierIdAsync(prizeTier.Id.Value)
+                    ).Where(item => item.Stock > 0);
+                    if (prizeItems.Count() <= 0)
+                        continue;
+                    var prizeItem = prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count()));
+                    item.TodayWinnerCount++;
+                    prizeItem.Stock--;
+                    return (
+                        prizeTier,
+                        prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count()))
+                    );
                 }
             }
 
-            if (prizeTier is null)
-            {
-                return (null, null);
-            }
-
-            var prizeItems = await _prizeItemRepository.FindByPrizeTierIdAsync(prizeTier.Id.Value);
-            return (prizeTier, prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count())));
+            return (null, null);
         }
     }
 }

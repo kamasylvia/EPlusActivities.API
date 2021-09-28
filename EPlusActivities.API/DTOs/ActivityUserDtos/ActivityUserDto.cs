@@ -20,7 +20,7 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
         /// 剩余抽奖次数，null 表示无限
         /// </summary>
         /// <value></value>
-        public int? RemainingDraws { get; set; }
+        public int RemainingDraws { get; set; }
 
         /// <summary>
         /// 签到天数，非签到活动中用 null 表示

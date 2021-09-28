@@ -41,10 +41,12 @@ namespace EPlusActivities.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddLogging((builder) =>
-            {
-                builder.AddSerilog(dispose: true);
-            });
+            services.AddLogging(
+                (builder) =>
+                {
+                    builder.AddSerilog(dispose: true);
+                }
+            );
 
             if (Environment.IsDevelopment())
             {

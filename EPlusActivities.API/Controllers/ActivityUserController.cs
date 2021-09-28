@@ -293,8 +293,7 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Update ActivityUser link
-            activityUser.RemainingDraws =
-                activityUser.RemainingDraws + activityUserDto.Count ?? activityUserDto.Count;
+            activityUser.RemainingDraws += activityUserDto.Count;
             _activityUserRepository.Update(activityUser);
             var updateActivityUserResult = await _activityUserRepository.SaveAsync();
             if (!updateActivityUserResult)
