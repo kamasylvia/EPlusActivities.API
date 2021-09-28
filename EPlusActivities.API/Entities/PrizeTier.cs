@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Entities
         public int Percentage { get; set; }
 
         // 每日中奖上限
-        public int DailyLimit { get; set; }
+        public int? DailyLimit { get; set; }
 
         // 今日中奖人数
         public int TodayWinnerCount { get; set; }

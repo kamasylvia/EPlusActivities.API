@@ -40,7 +40,10 @@ namespace EPlusActivities.API.Services.LotteryService
                 }
 
                 total += item.Percentage;
-                if (total > flag && item.TodayWinnerCount < item.DailyLimit)
+                if (
+                    total > flag
+                    && (!item.DailyLimit.HasValue || item.TodayWinnerCount < item.DailyLimit.Value)
+                )
                 {
                     prizeTier = item;
                     var prizeItems = (
