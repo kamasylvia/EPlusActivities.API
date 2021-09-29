@@ -40,7 +40,7 @@ namespace EPlusActivities.API.Entities
         public int Quantity { get; set; }
 
         // 奖品库存
-        public int Stock { get; set; }
+        public int? Stock { get; set; }
 
         public IEnumerable<Lottery> LotteryResults { get; set; }
 
