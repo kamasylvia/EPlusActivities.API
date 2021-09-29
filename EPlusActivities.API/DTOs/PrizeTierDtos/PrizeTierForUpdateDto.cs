@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Dtos.PrizeTierDtos
         /// 每日中奖上限  
         /// </summary>
         /// <value></value>
-        public int DailyLimit { get; set; }
+        public int? DailyLimit { get; set; }
 
         [Required]
         public Guid? ActivityId { get; set; }
