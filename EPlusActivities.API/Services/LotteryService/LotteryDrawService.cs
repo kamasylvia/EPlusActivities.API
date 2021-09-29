@@ -47,7 +47,7 @@ namespace EPlusActivities.API.Services.LotteryService
                     // 提取该档包含多奖品列表
                     var prizeItems = (
                         await _prizeItemRepository.FindByPrizeTierIdAsync(prizeTier.Id.Value)
-                    ).Where(item => item.Stock > 0);
+                    ).Where(item => !item.Stock.HasValue || item.Stock > 0);
 
                     // 如果该档奖品全部没有库存，顺延到下一档
                     if (prizeItems.Count() <= 0)

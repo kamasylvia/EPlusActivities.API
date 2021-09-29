@@ -71,6 +71,6 @@ namespace EPlusActivities.API.Dtos.PrizeItemDtos
         /// 奖品库存
         /// </summary>
         /// <value></value>
-        public int Stock { get; set; }
+        public int? Stock { get; set; }
     }
 }
