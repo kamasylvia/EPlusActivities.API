@@ -27,6 +27,12 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// </summary>
         /// <value></value>
         public int? DailyLimit { get; set; }
+        
+        /// <summary>
+        /// 兑换一次抽奖所需积分，null 表示非抽奖活动
+        /// </summary>
+        /// <value></value>
+        public int? RequiredCreditForRedeeming { get; set; }
 
         /// <summary>
         /// 允许参加该活动的渠道。字符串不区分大小写。

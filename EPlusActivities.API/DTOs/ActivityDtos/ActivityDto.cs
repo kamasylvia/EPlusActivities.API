@@ -46,6 +46,12 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// </summary>
         /// <value></value>
         public string LotteryDisplay { get; set; }
+        
+        /// <summary>
+        /// 兑换一次抽奖所需积分，null 表示非抽奖活动
+        /// </summary>
+        /// <value></value>
+        public int? RequiredCreditForRedeeming { get; set; }
 
         /// <summary>
         /// 活动类型，字符串不区分大小写。

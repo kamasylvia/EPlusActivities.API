@@ -22,7 +22,7 @@ namespace EPlusActivities.API.Entities
         public int? DailyLimit { get; set; }
 
         // 兑换一次抽奖所需积分
-        public int RequiredCreditForRedeeming { get; set; }
+        public int? RequiredCreditForRedeeming { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -46,12 +46,12 @@ namespace EPlusActivities.API.Entities
 
         public int PrizeItemCount { get; set; }
 
-        public IEnumerable<Lottery> LotteryResults { get; set; }
+        public virtual IEnumerable<Lottery> LotteryResults { get; set; }
 
-        public IEnumerable<PrizeTier> PrizeTiers { get; set; }
+        public virtual  IEnumerable<PrizeTier> PrizeTiers { get; set; }
 
-        public IEnumerable<ActivityUser> ActivityUserLinks { get; set; }
+        public virtual IEnumerable<ActivityUser> ActivityUserLinks { get; set; }
 
-        public IEnumerable<Coupon> Coupons { get; set; }
+        public virtual IEnumerable<Coupon> Coupons { get; set; }
     }
 }
