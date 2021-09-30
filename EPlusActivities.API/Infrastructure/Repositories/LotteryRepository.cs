@@ -13,7 +13,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public LotteryRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.LotteryResults.AsAsyncEnumerable()
+            await _context.LotteryResults.AsAsyncQueryable()
                 .AnyAsync(lr => lr.Id == (Guid)keyValues.FirstOrDefault());
 
         public override async Task<Lottery> FindByIdAsync(params object[] keyValues) =>

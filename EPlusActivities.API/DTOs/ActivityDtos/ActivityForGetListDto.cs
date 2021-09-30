@@ -5,8 +5,14 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.ActivityDtos
 {
-    public class ActivityForGetAvailableDto
+    public class ActivityForGetListDto
     {
+        /// <summary>
+        /// 是否正在进行
+        /// </summary>
+        /// <value></value>
+        public bool IsAvailable { get; set; }
+
         /// <summary>
         /// 活动开始时间
         /// </summary>

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -31,6 +32,8 @@ namespace EPlusActivities.API.Data
             ) {
                 var environment =
                     serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                var configuration =
+                    serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
                 var context =
                     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var userManager =
@@ -38,15 +41,14 @@ namespace EPlusActivities.API.Data
                 var roleManager =
                     serviceScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-                if (environment.IsDevelopment())
+                if (Convert.ToBoolean(configuration["RefreshDbEveryTime"]))
                 {
                     var deleted = context.Database.EnsureDeleted();
                     System.Console.WriteLine($"The old database is deleted: {deleted}");
                     var created = context.Database.EnsureCreated();
                     System.Console.WriteLine($"The new database is created: {created}");
                 }
-
-                if (environment.IsProduction())
+                else
                 {
                     context.Database.Migrate();
                 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -46,7 +46,7 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// </summary>
         /// <value></value>
         public string LotteryDisplay { get; set; }
-        
+
         /// <summary>
         /// 兑换一次抽奖所需积分，null 表示非抽奖活动
         /// </summary>

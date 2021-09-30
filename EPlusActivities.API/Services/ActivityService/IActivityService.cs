@@ -8,6 +8,12 @@ namespace EPlusActivities.API.Services.ActivityService
 {
     public interface IActivityService
     {
+        Task<IEnumerable<Activity>> GetActivitiesAsync(
+            IEnumerable<ChannelCode> availableChannels,
+            DateTime startTime,
+            DateTime? endTime = null
+        );
+
         Task<IEnumerable<Activity>> GetAvailableActivitiesAsync(
             IEnumerable<ChannelCode> availableChannels,
             DateTime startTime,

@@ -16,7 +16,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                         Id = table.Column<Guid>(nullable: false),
                         Limit = table.Column<int>(nullable: true),
                         DailyLimit = table.Column<int>(nullable: true),
-                        RequiredCreditForRedeeming = table.Column<int>(nullable: false),
+                        RequiredCreditForRedeeming = table.Column<int>(nullable: true),
                         Name = table.Column<string>(nullable: false),
                         AvailableChannels = table.Column<string>(nullable: true),
                         ActivityType = table.Column<int>(nullable: false),
@@ -139,6 +139,9 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                         Id = table.Column<Guid>(nullable: false),
                         Name = table.Column<string>(nullable: true),
                         Percentage = table.Column<int>(nullable: false),
+                        DailyLimit = table.Column<int>(nullable: true),
+                        TodayWinnerCount = table.Column<int>(nullable: false),
+                        LastDate = table.Column<DateTime>(nullable: false),
                         ActivityId = table.Column<Guid>(nullable: false),
                         RequiredCredit = table.Column<int>(nullable: false)
                     },
@@ -191,7 +194,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                         ActivityId = table.Column<Guid>(nullable: false),
                         UsedDraws = table.Column<int>(nullable: false),
                         TodayUsedDraws = table.Column<int>(nullable: false),
-                        RemainingDraws = table.Column<int>(nullable: true),
+                        RemainingDraws = table.Column<int>(nullable: false),
                         AttendanceDays = table.Column<int>(nullable: true),
                         SequentialAttendanceDays = table.Column<int>(nullable: true),
                         LastAttendanceDate = table.Column<DateTime>(nullable: true)
@@ -414,7 +417,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                         UnitPrice = table.Column<decimal>(nullable: true),
                         Credit = table.Column<int>(nullable: true),
                         Quantity = table.Column<int>(nullable: false),
-                        Stock = table.Column<int>(nullable: false)
+                        Stock = table.Column<int>(nullable: true)
                     },
                 constraints: table =>
                 {

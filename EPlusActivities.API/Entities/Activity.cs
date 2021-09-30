@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -48,7 +48,7 @@ namespace EPlusActivities.API.Entities
 
         public virtual IEnumerable<Lottery> LotteryResults { get; set; }
 
-        public virtual  IEnumerable<PrizeTier> PrizeTiers { get; set; }
+        public virtual IEnumerable<PrizeTier> PrizeTiers { get; set; }
 
         public virtual IEnumerable<ActivityUser> ActivityUserLinks { get; set; }
 

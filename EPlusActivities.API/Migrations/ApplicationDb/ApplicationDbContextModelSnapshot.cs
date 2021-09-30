@@ -51,7 +51,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<int>("PrizeItemCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequiredCreditForRedeeming")
+                    b.Property<int?>("RequiredCreditForRedeeming")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("StartTime")
@@ -80,7 +80,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<DateTime?>("LastAttendanceDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("RemainingDraws")
+                    b.Property<int>("RemainingDraws")
                         .HasColumnType("int");
 
                     b.Property<int?>("SequentialAttendanceDays")
@@ -499,7 +499,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("Stock")
+                    b.Property<int?>("Stock")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("UnitPrice")
@@ -523,6 +523,12 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<Guid>("ActivityId")
                         .HasColumnType("char(36)");
 
+                    b.Property<int?>("DailyLimit")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -530,6 +536,9 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                         .HasColumnType("int");
 
                     b.Property<int>("RequiredCredit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TodayWinnerCount")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

@@ -35,6 +35,15 @@ namespace EPlusActivities.API.Services.ActivityService
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         }
 
+        public async Task<IEnumerable<Activity>> GetActivitiesAsync(
+            IEnumerable<ChannelCode> availableChannels,
+            DateTime startTime,
+            DateTime? endTime = null
+        ) =>
+            (await _activityRepository.FindActivitiesAsync(startTime, endTime)).Where(
+                activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0
+            );
+
         public async Task<IEnumerable<Activity>> GetAvailableActivitiesAsync(
             IEnumerable<ChannelCode> availableChannels,
             DateTime startTime,

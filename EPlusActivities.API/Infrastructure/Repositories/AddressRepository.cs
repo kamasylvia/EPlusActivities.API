@@ -14,12 +14,12 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public AddressRepository(ApplicationDbContext context) : base(context) { }
 
         public async Task<IEnumerable<Address>> FindByParentIdAsync(Guid userId) =>
-            await _context.Addresses.AsAsyncEnumerable()
+            await _context.Addresses.AsAsyncQueryable()
                 .Where(a => a.UserId == userId)
                 .ToListAsync();
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.Addresses.AsAsyncEnumerable()
+            await _context.Addresses.AsAsyncQueryable()
                 .AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
     }
 }

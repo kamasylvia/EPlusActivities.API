@@ -20,7 +20,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 );
 
         public async Task<IEnumerable<PrizeItem>> FindByNameAsync(string name) =>
-            await _context.PrizeItems.AsAsyncEnumerable()
+            await _context.PrizeItems.AsAsyncQueryable()
                 .Where(p => p.Name.Contains(name))
                 .ToArrayAsync();
 
@@ -31,7 +31,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .ToListAsync();
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.PrizeItems.AsAsyncEnumerable()
+            await _context.PrizeItems.AsAsyncQueryable()
                 .AnyAsync(p => p.Id == (Guid)keyValues.FirstOrDefault());
     }
 }

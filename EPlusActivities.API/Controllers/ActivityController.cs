@@ -84,7 +84,7 @@ namespace EPlusActivities.API.Controllers
         }
 
         /// <summary>
-        /// 获取当前用户可参与的活动列表
+        /// 获取活动列表
         /// </summary>
         /// <param name="activityDto"></param>
         /// <returns></returns>
@@ -93,8 +93,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<ActivityDto>>> GetAvailableActivitiesAsync(
-            [FromQuery] ActivityForGetAvailableDto activityDto
+        public async Task<ActionResult<IEnumerable<ActivityDto>>> GetActivitiesAsync(
+            [FromQuery] ActivityForGetListDto activityDto
         ) {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
@@ -105,12 +105,19 @@ namespace EPlusActivities.API.Controllers
 
             return Ok(
                 _mapper.Map<IEnumerable<ActivityDto>>(
-                    await _activityService.GetAvailableActivitiesAsync(
-                        activityDto.AvailableChannels.Split(',', ';')
-                            .Select(s => Enum.Parse<ChannelCode>(s.Trim(), true)),
-                        activityDto.StartTime.Value,
-                        activityDto.EndTime
-                    )
+                    activityDto.IsAvailable
+                        ? await _activityService.GetAvailableActivitiesAsync(
+                                activityDto.AvailableChannels.Split(',', ';')
+                                    .Select(s => Enum.Parse<ChannelCode>(s.Trim(), true)),
+                                activityDto.StartTime.Value,
+                                activityDto.EndTime
+                            )
+                        : await _activityService.GetActivitiesAsync(
+                                activityDto.AvailableChannels.Split(',', ';')
+                                    .Select(s => Enum.Parse<ChannelCode>(s.Trim(), true)),
+                                activityDto.StartTime.Value,
+                                activityDto.EndTime
+                            )
                 )
             );
         }
