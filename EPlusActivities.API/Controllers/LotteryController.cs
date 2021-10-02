@@ -213,19 +213,19 @@ namespace EPlusActivities.API.Controllers
                 );
             }
 
+            // 今天没登陆过的用户，每日已用抽奖次数清零
+            if (user.LastDrawDate < DateTime.Today)
+            {
+                activityUser.TodayUsedDraws = 0;
+                user.LastDrawDate = DateTime.Today;
+            }
+
             // 超过每日抽奖次数限制
             if (activityUser.TodayUsedDraws + lotteryDto.Count > activity.DailyLimit)
             {
                 return BadRequest(
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
-            }
-
-            // 今天没登陆过的用户，每日已用抽奖次数清零
-            if (user.LastDrawDate < DateTime.Today)
-            {
-                activityUser.TodayUsedDraws = 0;
-                user.LastDrawDate = DateTime.Today;
             }
             #endregion
 

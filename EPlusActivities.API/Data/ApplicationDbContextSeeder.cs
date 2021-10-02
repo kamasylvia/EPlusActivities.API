@@ -65,43 +65,6 @@ namespace EPlusActivities.API.Data
             }
         }
 
-        public async Task SeedAsync(IApplicationBuilder app, IWebHostEnvironment environment)
-        {
-            using (
-                var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()
-                    .CreateScope()
-            ) {
-                var context =
-                    serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager =
-                    serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager =
-                    serviceScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-
-                if (environment.IsDevelopment())
-                {
-                    var deleted = context.Database.EnsureDeleted();
-                    System.Console.WriteLine($"The old database is deleted: {deleted}");
-                    var created = context.Database.EnsureCreated();
-                    System.Console.WriteLine($"The new database is created: {created}");
-                }
-
-                if (environment.IsProduction())
-                {
-                    context.Database.Migrate();
-                }
-
-                // Look for any Data.
-                if (context.Users.Any())
-                {
-                    return; // DB has already been seeded.
-                }
-
-                await SeedRolesAsync(roleManager);
-                await SeedUsersAsync(userManager);
-                await SeedDataAsync(context, userManager);
-            }
-        }
         private async Task SeedUsersAsync(UserManager<ApplicationUser> userManager) =>
             await _users.ToAsyncEnumerable()
                 .ForEachAwaitAsync(
