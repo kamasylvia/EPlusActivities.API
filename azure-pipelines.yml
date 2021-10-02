@@ -19,7 +19,6 @@ steps:
       dockerComposeFile: '**/docker-compose.yml'
       additionalDockerComposeFiles: '**/docker-compose.override.yml'
       action: 'Build services'
-      includeSourceTags: true
       includeLatestTag: true
       nopIfNoDockerComposeFile: true
       
@@ -30,9 +29,8 @@ steps:
       dockerComposeFile: '**/docker-compose.yml'
       additionalDockerComposeFiles: '**/docker-compose.override.yml'
       action: 'Push services'
-      includeSourceTags: true
       includeLatestTag: true
-      
+
   - task: DockerCompose@0
     inputs:
       containerregistrytype: 'Container Registry'
