@@ -336,10 +336,17 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             var succeeded = await _lotteryRepository.SaveAsync();
+            var userUpdateResult = await _userManager.UpdateAsync(user);
             if (!succeeded)
             {
                 _logger.LogError("Failed to create the lottery");
                 return new InternalServerErrorObjectResult("Update database exception");
+            }
+
+            if (userUpdateResult.Succeeded)
+            {
+                _logger.LogError("User update error.");
+                return new InternalServerErrorObjectResult(userUpdateResult.Errors);
             }
             #endregion
 
