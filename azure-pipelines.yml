@@ -11,24 +11,30 @@ resources:
 variables:
   tag: '$(Build.BuildId)'
 
-steps:
-  - task: DockerCompose@0
-    inputs:
-      containerregistrytype: 'Container Registry'
-      dockerRegistryEndpoint: 'DockerHub'
-      dockerComposeFile: '**/docker-compose.yml'
-      additionalDockerComposeFiles: 'docker-compose.override.yml'
-      action: 'Build services'
-      includeLatestTag: true
-      nopIfNoDockerComposeFile: true
-      
-  - task: DockerCompose@0
-    inputs:
-      containerregistrytype: 'Container Registry'
-      dockerRegistryEndpoint: 'DockerHub'
-      dockerComposeFile: '**/docker-compose.yml'
-      additionalDockerComposeFiles: 'docker-compose.override.yml'
-      action: 'Push services'
-      includeLatestTag: true
-      nopIfNoDockerComposeFile: true
-
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: DockerCompose@0
+        inputs:
+          containerregistrytype: 'Container Registry'
+          dockerRegistryEndpoint: 'DockerHub'
+          dockerComposeFile: '**/docker-compose.yml'
+          additionalDockerComposeFiles: 'docker-compose.override.yml'
+          action: 'Build services'
+          includeLatestTag: true
+          nopIfNoDockerComposeFile: true
+      - task: DockerCompose@0
+        inputs:
+          containerregistrytype: 'Container Registry'
+          dockerRegistryEndpoint: 'DockerHub'
+          dockerComposeFile: '**/docker-compose.yml'
+          additionalDockerComposeFiles: 'docker-compose.override.yml'
+          action: 'Push services'
+          includeLatestTag: true
+          nopIfNoDockerComposeFile: true
