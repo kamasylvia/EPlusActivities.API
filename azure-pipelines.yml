@@ -27,6 +27,8 @@ steps:
       containerregistrytype: 'Container Registry'
       dockerRegistryEndpoint: 'DockerHub'
       dockerComposeFile: '**/docker-compose.yml'
+      additionalDockerComposeFiles: 'docker-compose.override.yml'
       action: 'Push services'
       includeLatestTag: true
       nopIfNoDockerComposeFile: true
+
