@@ -11,19 +11,34 @@ resources:
 variables:
   tag: '$(Build.BuildId)'
 
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/EPlusActivities.API/Dockerfile'
-        tags: |
-          $(tag)
+steps:
+  - task: DockerCompose@0
+    inputs:
+      containerregistrytype: 'Container Registry'
+      dockerRegistryEndpoint: 'DockerHub'
+      dockerComposeFile: '**/docker-compose.yml'
+      additionalDockerComposeFiles: '**/docker-compose.override.yml'
+      action: 'Build services'
+      includeSourceTags: true
+      includeLatestTag: true
+      nopIfNoDockerComposeFile: true
+      
+  - task: DockerCompose@0
+    inputs:
+      containerregistrytype: 'Container Registry'
+      dockerRegistryEndpoint: 'DockerHub'
+      dockerComposeFile: '**/docker-compose.yml'
+      additionalDockerComposeFiles: '**/docker-compose.override.yml'
+      action: 'Push services'
+      includeSourceTags: true
+      includeLatestTag: true
+      
+  - task: DockerCompose@0
+    inputs:
+      containerregistrytype: 'Container Registry'
+      dockerRegistryEndpoint: 'DockerHub'
+      dockerComposeFile: '**/docker-compose.yml'
+      additionalDockerComposeFiles: '**/docker-compose.override.yml'
+      action: 'Combine configuration'
+      outputDockerComposeFile: '$(Build.StagingDirectory)/docker-compose.yml'
+      nopIfNoDockerComposeFile: true
