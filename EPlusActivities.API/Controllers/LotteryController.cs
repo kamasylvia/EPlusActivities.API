@@ -172,7 +172,11 @@ namespace EPlusActivities.API.Controllers
         ) {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCode(request.ActivityCode);
-            var lotteries = await activity.LotteryResults.Where(lr => lr.IsLucky)
+            var lotteries = await activity.LotteryResults.Where(
+                    lr =>
+                        lr.IsLucky
+                        && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
+                )
                 .ToAsyncEnumerable()
                 .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
                 .ToListAsync();
