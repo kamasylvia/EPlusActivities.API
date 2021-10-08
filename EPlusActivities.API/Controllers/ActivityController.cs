@@ -167,7 +167,7 @@ namespace EPlusActivities.API.Controllers
             activityCode[0] = replacedChar;
             activity.ActivityCode = new string(activityCode);
 
-            activity.AvailableChannels.Append(ChannelCode.Test);
+            activity.AvailableChannels = activity.AvailableChannels.Append(ChannelCode.Test);
             await _activityRepository.AddAsync(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion
