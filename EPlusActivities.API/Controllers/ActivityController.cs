@@ -47,7 +47,8 @@ namespace EPlusActivities.API.Controllers
             ILogger<ActivityController> logger,
             IMapper mapper,
             IActivityService activityService
-        ) {
+        )
+        {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
@@ -76,7 +77,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> GetAsync(
             [FromQuery] ActivityForGetDto activityDto
-        ) {
+        )
+        {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             return activity is null
                 ? NotFound("Could not find the activity.")
@@ -95,7 +97,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetActivitiesAsync(
             [FromQuery] ActivityForGetListDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -107,14 +110,14 @@ namespace EPlusActivities.API.Controllers
                 _mapper.Map<IEnumerable<ActivityDto>>(
                     activityDto.IsAvailable
                         ? await _activityService.GetAvailableActivitiesAsync(
-                                activityDto.AvailableChannels.Split(',', ';')
-                                    .Select(s => Enum.Parse<ChannelCode>(s.Trim(), true)),
+                                activityDto.AvailableChannels.Split(',', ';', StringSplitOptions.TrimEntries)
+                                    .Select(s => Enum.Parse<ChannelCode>(s, true)),
                                 activityDto.StartTime.Value,
                                 activityDto.EndTime
                             )
                         : await _activityService.GetActivitiesAsync(
-                                activityDto.AvailableChannels.Split(',', ';')
-                                    .Select(s => Enum.Parse<ChannelCode>(s.Trim(), true)),
+                                activityDto.AvailableChannels.Split(',', ';', StringSplitOptions.TrimEntries)
+                                    .Select(s => Enum.Parse<ChannelCode>(s, true)),
                                 activityDto.StartTime.Value,
                                 activityDto.EndTime
                             )
@@ -134,7 +137,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> CreateAsync(
             [FromBody] ActivityForCreateDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -143,13 +147,13 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
-            activityDto.AvailableChannels.Append("test");
             var activity = _mapper.Map<Activity>(activityDto);
             if (
                 activity.ActivityType
                     is ActivityType.SingleAttendance
                         or ActivityType.SequentialAttendance
-            ) {
+            )
+            {
                 activity.PrizeTiers = new List<PrizeTier>()
                 {
                     new PrizeTier("Attendance") { Percentage = 100 }
@@ -163,6 +167,7 @@ namespace EPlusActivities.API.Controllers
             activityCode[0] = replacedChar;
             activity.ActivityCode = new string(activityCode);
 
+            activity.AvailableChannels.Append(ChannelCode.Test);
             await _activityRepository.AddAsync(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion

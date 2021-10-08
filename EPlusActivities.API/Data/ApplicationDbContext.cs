@@ -81,7 +81,7 @@ namespace EPlusActivities.API.Data
                 .HasConversion(
                     v => string.Join(';', v.Select(e => e.ToString("D")).ToArray()),
                     v =>
-                        v.Split(new[] { ';' })
+                        v.Split(new[] { ';' }, StringSplitOptions.TrimEntries)
                             .Select(e => Enum.Parse(typeof(ChannelCode), e, true))
                             .Cast<ChannelCode>()
                             .ToList()

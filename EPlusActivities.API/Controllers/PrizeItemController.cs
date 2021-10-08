@@ -89,7 +89,7 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<PrizeItemDto>> GetByIdsAsync(
             [FromQuery] PrizeItemForGetByIdsDto requestDto
         ) {
-            var ids = requestDto.Ids.Split(',', ';').Select(s => Guid.Parse(s.Trim()));
+            var ids = requestDto.Ids.Split(',', ';', StringSplitOptions.TrimEntries).Select(s => Guid.Parse(s));
             var prizeItems = await FindByIdListAsync(ids);
             return prizeItems.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItems))

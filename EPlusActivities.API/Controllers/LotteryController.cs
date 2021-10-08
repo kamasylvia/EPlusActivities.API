@@ -341,14 +341,14 @@ namespace EPlusActivities.API.Controllers
                                 }
                             );
                             var coupons =
-                                couponResponseDto?.Body?.Content?.HideCouponCode?.Split(',')
+                                couponResponseDto?.Body?.Content?.HideCouponCode?.Split(',', StringSplitOptions.TrimEntries)
                                     .Select(
                                         code =>
                                             new Coupon
                                             {
                                                 User = user,
                                                 PrizeItem = lottery.PrizeItem,
-                                                Code = code.Trim()
+                                                Code = code
                                             }
                                     );
 
