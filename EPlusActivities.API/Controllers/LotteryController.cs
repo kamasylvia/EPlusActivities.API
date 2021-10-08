@@ -191,7 +191,7 @@ namespace EPlusActivities.API.Controllers
                     switch (item.PrizeItem.PrizeType)
                     {
                         case PrizeType.Coupon:
-                            prizeContent = string.Join(',', item.PrizeItem.Coupons);
+                            prizeContent = string.Join(',', item.PrizeItem.Coupons.Select(c => c.Code));
                             break;
                         case PrizeType.Credit:
                             prizeContent = item.PrizeItem.Credit.ToString();

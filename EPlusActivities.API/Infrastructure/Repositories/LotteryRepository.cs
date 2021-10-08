@@ -19,8 +19,9 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public override async Task<Lottery> FindByIdAsync(params object[] keyValues) =>
             await _context.LotteryResults.Include(lottery => lottery.Activity)
                 .Include(lr => lr.User)
-                .Include(lottery => lottery.PrizeItem)
                 .Include(lr => lr.PrizeTier)
+                .Include(lr => lr.PrizeItem)
+                .ThenInclude(pi => pi.Coupons)
                 .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Lottery>> FindByParentIdAsync(Guid userId) =>
