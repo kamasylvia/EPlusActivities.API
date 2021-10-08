@@ -176,6 +176,8 @@ namespace EPlusActivities.API.Controllers
                     lr =>
                         lr.IsLucky
                         && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
+                        && !(request.StartTime > lr.Date)
+                        && !(lr.Date > request.EndTime)
                 )
                 .ToAsyncEnumerable()
                 .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
@@ -261,10 +263,10 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 今天没登陆过的用户，每日已用抽奖次数清零
-            if (user.LastDrawDate < DateTime.Today)
+            if (user.LastDrawDate < DateTime.Today.Date)
             {
                 activityUser.TodayUsedDraws = 0;
-                user.LastDrawDate = DateTime.Today;
+                user.LastDrawDate = DateTime.Today.Date;
             }
 
             // 超过每日抽奖次数限制
@@ -385,8 +387,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
-            var succeeded = await _lotteryRepository.SaveAsync();
             var userUpdateResult = await _userManager.UpdateAsync(user);
+            var succeeded = await _lotteryRepository.SaveAsync();
             if (!succeeded)
             {
                 _logger.LogError("Failed to create the lottery");
