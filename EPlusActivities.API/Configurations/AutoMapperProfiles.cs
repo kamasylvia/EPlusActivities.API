@@ -73,6 +73,7 @@ namespace EPlusActivities.API.Configuration
                     opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
                 );
             CreateMap<Lottery, LotteryForGetByActivityCodeResponse>()
+                .ForMember(dest => dest.DateTime, opt => opt.Ignore())
                 .ForMember(
                     dest => dest.ChannelCode,
                     opt => opt.MapFrom(src => src.ChannelCode.ToString())

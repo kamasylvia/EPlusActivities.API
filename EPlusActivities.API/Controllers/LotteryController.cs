@@ -200,6 +200,7 @@ namespace EPlusActivities.API.Controllers
                             break;
                     }
                     var responseItem = _mapper.Map<LotteryForGetByActivityCodeResponse>(item);
+                    responseItem.DateTime = item.DateTime;
                     responseItem.PrizeContent = prizeContent;
                     response.Add(responseItem);
                 }
