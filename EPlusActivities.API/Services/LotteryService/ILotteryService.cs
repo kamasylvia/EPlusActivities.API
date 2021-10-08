@@ -3,7 +3,7 @@ using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Services.LotteryService
 {
-    public interface ILotteryDrawService
+    public interface ILotteryService
     {
         Task<(PrizeTier, PrizeItem)> DrawPrizeAsync(Activity activity);
     }

@@ -6,11 +6,11 @@ using EPlusActivities.API.Infrastructure.Repositories;
 
 namespace EPlusActivities.API.Services.LotteryService
 {
-    public class LotteryDrawService : ILotteryDrawService
+    public class LotteryService : ILotteryService
     {
         private readonly IPrizeItemRepository _prizeItemRepository;
 
-        public LotteryDrawService(IPrizeItemRepository prizeItemRepository)
+        public LotteryService(IPrizeItemRepository prizeItemRepository)
         {
             _prizeItemRepository =
                 prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
@@ -38,10 +38,7 @@ namespace EPlusActivities.API.Services.LotteryService
                     item.TodayWinnerCount = 0;
 
                 total += item.Percentage;
-                if (
-                    total > flag
-                    && !(item.TodayWinnerCount >= item.DailyLimit)
-                )
+                if (total > flag && !(item.TodayWinnerCount >= item.DailyLimit))
                 {
                     prizeTier = item;
 

@@ -133,7 +133,7 @@ namespace EPlusActivities.API
             services.AddScoped<IMemberService, MemberService>();
 
             // 启用发送奖品服务
-            services.AddScoped<ILotteryDrawService, LotteryDrawService>();
+            services.AddScoped<ILotteryService, LotteryService>();
 
             // 启用活动服务
             services.AddScoped<IActivityService, ActivityService>();

@@ -72,6 +72,30 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.LotteryDisplay,
                     opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
                 );
+            CreateMap<Lottery, LotteryForGetByActivityCodeResponse>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.Value.Date))
+                .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Date.Value.TimeOfDay))
+                .ForMember(
+                    dest => dest.ChannelCode,
+                    opt => opt.MapFrom(src => src.ChannelCode.ToString())
+                )
+                .ForMember(
+                    dest => dest.PhoneNumber,
+                    opt => opt.MapFrom(src => src.User.PhoneNumber)
+                )
+                .ForMember(
+                    dest => dest.ActivityCode,
+                    opt => opt.MapFrom(src => src.Activity.ActivityCode)
+                )
+                .ForMember(dest => dest.ActivityName, opt => opt.MapFrom(src => src.Activity.Name))
+                .ForMember(
+                    dest => dest.PrizeTierName,
+                    opt => opt.MapFrom(src => src.PrizeTier.Name)
+                )
+                .ForMember(
+                    dest => dest.PrizeType,
+                    opt => opt.MapFrom(src => src.PrizeItem.PrizeType.ToString())
+                );
             CreateMap<LotteryForCreateDto, Lottery>()
                 .ForMember(
                     dest => dest.ChannelCode,

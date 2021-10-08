@@ -40,7 +40,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly IRepository<Coupon> _couponRepository;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
-        private readonly ILotteryDrawService _lotteryDrawService;
+        private readonly ILotteryService _lotteryDrawService;
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly IMemberService _memberService;
 
@@ -54,7 +54,7 @@ namespace EPlusActivities.API.Controllers
             ILogger<LotteryController> logger,
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             IRepository<Coupon> couponResponseDto,
-            ILotteryDrawService lotteryDrawService,
+            ILotteryService lotteryDrawService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService
         ) {
@@ -156,6 +156,49 @@ namespace EPlusActivities.API.Controllers
             );
 
             return result;
+        }
+
+        /// <summary>
+        /// 根据活动号查询数据
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("list")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Roles = "manager, tester"
+        )]
+        public async Task<ActionResult<LotteryForGetByActivityCodeResponse>> GetByActivityCode(
+            [FromQuery] LotteryForGetByActivityCodeRequest request
+        ) {
+            #region Parameter validation
+            var activity = await _activityRepository.FindByActivityCode(request.ActivityCode);
+            var lotteries = await activity.LotteryResults.Where(lr => lr.IsLucky)
+                .ToAsyncEnumerable()
+                .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
+                .ToListAsync();
+            #endregion
+            var response = new List<LotteryForGetByActivityCodeResponse>();
+            lotteries.ForEach(
+                item =>
+                {
+                    var prizeContent = string.Empty;
+                    switch (item.PrizeItem.PrizeType)
+                    {
+                        case PrizeType.Coupon:
+                            prizeContent = string.Join(',', item.PrizeItem.Coupons);
+                            break;
+                        case PrizeType.Credit:
+                            prizeContent = item.PrizeItem.Credit.ToString();
+                            break;
+                        default:
+                            break;
+                    }
+                    var responseItem = _mapper.Map<LotteryForGetByActivityCodeResponse>(item);
+                    responseItem.PrizeContent = prizeContent;
+                    response.Add(responseItem);
+                }
+            );
+            return Ok(response);
         }
 
         /// <summary>

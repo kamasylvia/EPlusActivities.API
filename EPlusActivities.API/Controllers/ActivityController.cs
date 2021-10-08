@@ -143,6 +143,7 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
+            activityDto.AvailableChannels.Append("test");
             var activity = _mapper.Map<Activity>(activityDto);
             if (
                 activity.ActivityType
