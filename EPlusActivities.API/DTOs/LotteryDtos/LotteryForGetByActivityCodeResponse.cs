@@ -8,16 +8,10 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
     public class LotteryForGetByActivityCodeResponse
     {
         /// <summary>
-        /// 日期
+        /// 日期时间
         /// </summary>
         /// <value></value>
-        public DateTime Date { get; set; }
-
-        /// <summary>
-        /// 时间
-        /// </summary>
-        /// <value></value>
-        public TimeSpan Time { get; set; }
+        public DateTime? DateTime { get; set; }
 
         /// <summary>
         /// 用户手机号

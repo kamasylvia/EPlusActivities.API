@@ -149,7 +149,7 @@ namespace EPlusActivities.API.Controllers
                 x =>
                 {
                     var resultItem = _mapper.Map<LotteryDto>(x);
-                    resultItem.Date = x.Date;
+                    resultItem.Date = x.DateTime;
                     resultItem.PickedUpTime = x.PickedUpTime;
                     return resultItem;
                 }
@@ -176,8 +176,8 @@ namespace EPlusActivities.API.Controllers
                     lr =>
                         lr.IsLucky
                         && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
-                        && !(request.StartTime > lr.Date)
-                        && !(lr.Date > request.EndTime)
+                        && !(request.StartTime > lr.DateTime)
+                        && !(lr.DateTime > request.EndTime)
                 )
                 .ToAsyncEnumerable()
                 .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
@@ -292,7 +292,7 @@ namespace EPlusActivities.API.Controllers
                 var lottery = _mapper.Map<Lottery>(lotteryDto);
                 lottery.User = user;
                 lottery.Activity = activity;
-                lottery.Date = DateTime.Now;
+                lottery.DateTime = DateTime.Now;
 
                 (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryDrawService.DrawPrizeAsync(
                     activity
@@ -381,7 +381,7 @@ namespace EPlusActivities.API.Controllers
 
                 await _lotteryRepository.AddAsync(lottery);
                 var result = _mapper.Map<LotteryDto>(lottery);
-                result.Date = lottery.Date; // Skip auto mapper.
+                result.Date = lottery.DateTime; // Skip auto mapper.
                 response.Add(result);
             }
             #endregion

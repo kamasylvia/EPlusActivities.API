@@ -29,7 +29,7 @@ namespace EPlusActivities.API.Entities
 
         // 抽奖日期
         [Required]
-        public DateTime? Date { get; set; }
+        public DateTime? DateTime { get; set; }
 
         public ApplicationUser User { get; set; }
 

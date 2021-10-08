@@ -153,7 +153,7 @@ namespace EPlusActivities.API.Data
             {
                 User = user,
                 Activity = activity,
-                Date = DateTime.MinValue
+                DateTime = DateTime.MinValue
             };
             await context.LotteryResults.AddAsync(lottery);
             #endregion
