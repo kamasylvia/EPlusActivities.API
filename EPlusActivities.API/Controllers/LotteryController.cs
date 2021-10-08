@@ -395,7 +395,7 @@ namespace EPlusActivities.API.Controllers
                 return new InternalServerErrorObjectResult("Update database exception");
             }
 
-            if (userUpdateResult.Succeeded)
+            if (!userUpdateResult.Succeeded)
             {
                 _logger.LogError(userUpdateResult.ToString());
                 return new InternalServerErrorObjectResult(userUpdateResult.ToString());
