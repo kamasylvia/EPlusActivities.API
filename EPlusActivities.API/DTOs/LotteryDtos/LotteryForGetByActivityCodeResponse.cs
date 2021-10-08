@@ -17,7 +17,7 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// 时间
         /// </summary>
         /// <value></value>
-        public DateTime Time { get; set; }
+        public TimeSpan Time { get; set; }
 
         /// <summary>
         /// 用户手机号
