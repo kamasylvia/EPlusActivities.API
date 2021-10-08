@@ -341,7 +341,10 @@ namespace EPlusActivities.API.Controllers
                                 }
                             );
                             var coupons =
-                                couponResponseDto?.Body?.Content?.HideCouponCode?.Split(',', StringSplitOptions.TrimEntries)
+                                couponResponseDto?.Body?.Content?.HideCouponCode?.Split(
+                                        ',',
+                                        StringSplitOptions.TrimEntries
+                                    )
                                     .Select(
                                         code =>
                                             new Coupon
