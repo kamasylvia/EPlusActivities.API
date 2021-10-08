@@ -397,8 +397,8 @@ namespace EPlusActivities.API.Controllers
 
             if (userUpdateResult.Succeeded)
             {
-                _logger.LogError("User update error.");
-                return new InternalServerErrorObjectResult(userUpdateResult.Errors);
+                _logger.LogError(userUpdateResult.ToString());
+                return new InternalServerErrorObjectResult(userUpdateResult.ToString());
             }
             #endregion
 
