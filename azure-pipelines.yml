@@ -43,7 +43,6 @@ stages:
           command: 'custom'
           custom: 'tool'
           arguments: 'restore'
-      - task: DotNetCoreCLI@2
+      - task: CmdLine@2
         inputs:
-          command: 'custom'
-          custom: 'csharpier'
+          script: 'dotnet-csharpier'
