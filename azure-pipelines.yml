@@ -21,6 +21,7 @@ stages:
         vmImage: ubuntu-latest
       steps:
         - checkout: self
+          persistCredentials: true
         - task: DotNetCoreCLI@2
           inputs:
             command: 'custom'
