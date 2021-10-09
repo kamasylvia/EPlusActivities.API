@@ -3,7 +3,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- dev
+  batch: true
+  branches:
+    include:
+      - dev
 
 resources:
 - repo: self
@@ -40,17 +43,18 @@ stages:
               git checkout dev
               git add -A
               git commit -m "Format source code with CSharpier [skip ci]"
+              
+    - job: Sync
+      displayName: Push back to GitHub repository
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - checkout: self
+        - task: CmdLine@2
+          inputs:
+            script: |
+              git checkout dev
               git push
-    #- job: Sync
-    #  displayName: Push back to GitHub repository
-    #  pool:
-    #    vmImage: ubuntu-latest
-    #  steps:
-    #    - checkout: self
-    #    - task: CmdLine@2
-    #      inputs:
-    #        script: |
-    #          git push
   - stage: Deploy
     displayName: Deploy to production
     jobs:
