@@ -12,39 +12,47 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - task: DockerCompose@0
-        inputs:
-          containerregistrytype: 'Container Registry'
-          dockerRegistryEndpoint: 'DockerHub'
-          dockerComposeFile: '**/docker-compose.yml'
-          additionalDockerComposeFiles: 'docker-compose.override.yml'
-          action: 'Build services'
-          includeLatestTag: true
-          nopIfNoDockerComposeFile: true
-      - task: DockerCompose@0
-        inputs:
-          containerregistrytype: 'Container Registry'
-          dockerRegistryEndpoint: 'DockerHub'
-          dockerComposeFile: '**/docker-compose.yml'
-          additionalDockerComposeFiles: 'docker-compose.override.yml'
-          action: 'Push services'
-          includeLatestTag: true
-          nopIfNoDockerComposeFile: true
-      - task: DotNetCoreCLI@2
-        inputs:
-          command: 'custom'
-          custom: 'tool'
-          arguments: 'restore'
-      - task: DotNetCoreCLI@2
-        inputs:
-          command: 'custom'
-          custom: 'csharpier'
-          arguments: '.'
+  - stage: Source
+    displayName: Source code managerment
+    jobs:
+    - job: Format
+      displayName: Format source code
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'custom'
+            custom: 'tool'
+            arguments: 'restore'
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'custom'
+            custom: 'csharpier'
+            arguments: '.'
+  - stage: Deploy
+    displayName: Deploy to production
+    jobs:
+    - job: Containerization
+      displayName: Build image and push to DockerHub
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: DockerCompose@0
+          inputs:
+            containerregistrytype: 'Container Registry'
+            dockerRegistryEndpoint: 'DockerHub'
+            dockerComposeFile: '**/docker-compose.yml'
+            additionalDockerComposeFiles: 'docker-compose.override.yml'
+            action: 'Build services'
+            includeLatestTag: true
+            nopIfNoDockerComposeFile: true
+        - task: DockerCompose@0
+          inputs:
+            containerregistrytype: 'Container Registry'
+            dockerRegistryEndpoint: 'DockerHub'
+            dockerComposeFile: '**/docker-compose.yml'
+            additionalDockerComposeFiles: 'docker-compose.override.yml'
+            action: 'Push services'
+            includeLatestTag: true
+            nopIfNoDockerComposeFile: true
