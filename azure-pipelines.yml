@@ -36,21 +36,23 @@ stages:
             custom: 'csharpier'
             arguments: '.'
         - task: CmdLine@2
+          continueOnError: true
           inputs:
             script: |
               git config --global user.email "zhangyue.dev@outlook.com"
               git config --global user.name "kamasylvia"
               git checkout dev
               git add -A
-              git commit -m "Format source code with CSharpier [skip ci]"
-              
+              git commit --allow-empty -m "Format source code with CSharpier [skip ci]"          
     - job: Sync
       displayName: Push back to GitHub repository
       pool:
         vmImage: ubuntu-latest
       steps:
         - checkout: self
+          persistCredentials: true
         - task: CmdLine@2
+          continueOnError: true
           inputs:
             script: |
               git checkout dev
