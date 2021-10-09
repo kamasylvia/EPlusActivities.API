@@ -30,6 +30,14 @@ stages:
             command: 'custom'
             custom: 'csharpier'
             arguments: '.'
+    - job: Sync
+      displayName: Push back to GitHub repository
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: CmdLine@2
+          inputs:
+            script: 'git push'
   - stage: Deploy
     displayName: Deploy to production
     jobs:
