@@ -38,3 +38,13 @@ stages:
           action: 'Push services'
           includeLatestTag: true
           nopIfNoDockerComposeFile: true
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'custom'
+          projects: '**/*.csproj'
+          custom: 'tool'
+          arguments: 'restore'
+      - task: CmdLine@2
+        inputs:
+          script: 'dotnet-csharpier'
+          failOnStderr: true
