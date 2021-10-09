@@ -45,7 +45,7 @@ stages:
               git add -A
               git commit --allow-empty -m "Format source code with CSharpier [skip ci]"          
     - job: Sync
-      displayName: Push back to GitHub repository
+      displayName: Push modified code back to GitHub repository
       pool:
         vmImage: ubuntu-latest
       steps:
