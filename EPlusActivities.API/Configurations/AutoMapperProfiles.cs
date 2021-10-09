@@ -24,7 +24,10 @@ namespace EPlusActivities.API.Configuration
         {
             #region Global configurations.
             CreateMap<string, string>()
-                .ConvertUsing(s => string.IsNullOrEmpty(s) ? null : s.Trim());
+                .ConvertUsing(s => string.
+                IsNullOrEmpty(s) ?
+                 null :
+                  s.Trim());
             CreateMap<DateTime, DateTime>().ConvertUsing(d => d.Date);
             #endregion
 
