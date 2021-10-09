@@ -36,6 +36,7 @@ stages:
             script: |
               git config --global user.email "zhangyue.dev@outlook.com"
               git config --global user.name "kamasylvia"
+              git checkout dev
               git add -A
               git commit -m "Format source code with CSharpier [skip ci]"
               git push
