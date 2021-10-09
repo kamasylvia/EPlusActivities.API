@@ -31,6 +31,13 @@ stages:
             command: 'custom'
             custom: 'csharpier'
             arguments: '.'
+        - task: CmdLine@2
+          inputs:
+            script: |
+              git config --global user.email "zhangyue.dev@outlook.com"
+              git config --global user.name "kamasylvia"
+              git add -A
+              git commit -m "Format source code with CSharpier"
     - job: Sync
       displayName: Push back to GitHub repository
       pool:
@@ -40,8 +47,6 @@ stages:
         - task: CmdLine@2
           inputs:
             script: |
-              git add -A
-              git commit -m "Format source code with CSharpier"
               git push
   - stage: Deploy
     displayName: Deploy to production
