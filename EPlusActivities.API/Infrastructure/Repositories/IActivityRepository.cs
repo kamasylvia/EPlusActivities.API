@@ -11,7 +11,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date);
 
-        Task<Activity> FindByActivityCode(string activityCode);
+        Task<Activity> FindByActivityCodeAsync(string activityCode);
 
         Task<Activity> FindWithPrizeType(Guid id);
 

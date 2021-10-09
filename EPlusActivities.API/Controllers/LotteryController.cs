@@ -42,6 +42,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
         private readonly ILotteryService _lotteryDrawService;
         private readonly IIdGeneratorService _idGeneratorService;
+        private readonly IStatementRepository _statementRepository;
         private readonly IMemberService _memberService;
 
         public LotteryController(
@@ -56,12 +57,15 @@ namespace EPlusActivities.API.Controllers
             IRepository<Coupon> couponResponseDto,
             ILotteryService lotteryDrawService,
             IMemberService memberService,
-            IIdGeneratorService idGeneratorService
+            IIdGeneratorService idGeneratorService,
+            IStatementRepository statementRepository
         ) {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _statementRepository =
+                statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger;
             _lotteryDrawService =
@@ -159,7 +163,7 @@ namespace EPlusActivities.API.Controllers
         }
 
         /// <summary>
-        /// 根据活动号查询数据
+        /// 根据活动号查询具体中奖信息
         /// </summary>
         /// <returns></returns>
         [HttpGet("list")]
@@ -171,7 +175,7 @@ namespace EPlusActivities.API.Controllers
             [FromQuery] LotteryForGetByActivityCodeRequest request
         ) {
             #region Parameter validation
-            var activity = await _activityRepository.FindByActivityCode(request.ActivityCode);
+            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             var lotteries = await activity.LotteryResults.Where(
                     lr =>
                         lr.IsLucky
@@ -209,9 +213,39 @@ namespace EPlusActivities.API.Controllers
         }
 
         /// <summary>
+        /// 根据活动号和日期查询抽奖数、中奖数、兑换数
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("statements")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Roles = "manager, tester"
+        )]
+        public async Task<
+            ActionResult<IEnumerable<LotteryForGetStatementsResponse>>
+        > GetStatementsAsync([FromQuery] LotteryForGetStatementRequest request)
+        {
+            #region Parameter validation
+            var channel = Enum.Parse<ChannelCode>(request.Channel);
+            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
+            if (activity is null)
+            {
+                return NotFound("Could not find the activity.");
+            }
+            var statements = await _statementRepository.FindByDateRangeAsync(
+                activity.Id.Value,
+                channel,
+                request.StartTime,
+                request.EndTime
+            );
+            #endregion
+            return Ok(statements.OrderBy(s => s.DateTime));
+        }
+
+        /// <summary>
         /// 抽奖
         /// </summary>
-        /// <param name="lotteryDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
         [Authorize(
@@ -219,16 +253,16 @@ namespace EPlusActivities.API.Controllers
             Roles = "customer, tester"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
-            [FromBody] LotteryForCreateDto lotteryDto
+            [FromBody] LotteryForCreateDto request
         ) {
             #region Parameter validation
-            var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
                 return NotFound("Could not find the user.");
             }
 
-            var activity = await _activityRepository.FindByIdAsync(lotteryDto.ActivityId.Value);
+            var activity = await _activityRepository.FindByIdAsync(request.ActivityId.Value);
             if (activity is null)
             {
                 return NotFound("Could not find the activity.");
@@ -240,8 +274,8 @@ namespace EPlusActivities.API.Controllers
             }
 
             var activityUser = await _activityUserRepository.FindByIdAsync(
-                lotteryDto.ActivityId.Value,
-                lotteryDto.UserId.Value
+                request.ActivityId.Value,
+                request.UserId.Value
             );
 
             if (activityUser is null)
@@ -250,13 +284,13 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 剩余抽奖次数不足
-            if (activityUser.RemainingDraws < lotteryDto.Count)
+            if (activityUser.RemainingDraws < request.Count)
             {
                 return BadRequest("The user did not have enough chance to draw a lottery .");
             }
 
             // 超过全活动周期抽奖次数限制
-            if (activityUser.UsedDraws + lotteryDto.Count > activity.Limit)
+            if (activityUser.UsedDraws + request.Count > activity.Limit)
             {
                 return BadRequest(
                     "Sorry, the user had already achieved the maximum number of draws of this activity."
@@ -271,26 +305,37 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 超过每日抽奖次数限制
-            if (activityUser.TodayUsedDraws + lotteryDto.Count > activity.DailyLimit)
+            if (activityUser.TodayUsedDraws + request.Count > activity.DailyLimit)
             {
                 return BadRequest(
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
             }
+            var statement = await _statementRepository.FindByDateAsync(
+                request.ActivityId.Value,
+                Enum.Parse<ChannelCode>(request.ChannelCode, true),
+                DateTime.Today
+            );
+            var requireNewStatement = statement is null;
+            if (requireNewStatement)
+            {
+                statement = new Statement { Activity = activity, DateTime = DateTime.Today };
+            }
             #endregion
 
             #region Consume the draws
-            activityUser.RemainingDraws -= lotteryDto.Count;
-            activityUser.TodayUsedDraws += lotteryDto.Count;
-            activityUser.UsedDraws += lotteryDto.Count;
+            activityUser.RemainingDraws -= request.Count;
+            activityUser.TodayUsedDraws += request.Count;
+            activityUser.UsedDraws += request.Count;
+            statement.Draws += request.Count;
             #endregion
 
             #region Generate the lottery result
             var response = new List<LotteryDto>();
 
-            for (int i = 0; i < lotteryDto.Count; i++)
+            for (int i = 0; i < request.Count; i++)
             {
-                var lottery = _mapper.Map<Lottery>(lotteryDto);
+                var lottery = _mapper.Map<Lottery>(request);
                 lottery.User = user;
                 lottery.Activity = activity;
                 lottery.DateTime = DateTime.Now;
@@ -302,6 +347,7 @@ namespace EPlusActivities.API.Controllers
                 if (lottery.PrizeTier is not null)
                 {
                     lottery.IsLucky = true;
+                    statement.Winners++;
 
                     switch (lottery.PrizeItem.PrizeType)
                     {
@@ -388,6 +434,15 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             var userUpdateResult = await _userManager.UpdateAsync(user);
+            if (requireNewStatement)
+            {
+                await _statementRepository.AddAsync(statement);
+            }
+            else
+            {
+                _statementRepository.Update(statement);
+            }
+
             var succeeded = await _lotteryRepository.SaveAsync();
             if (!succeeded)
             {

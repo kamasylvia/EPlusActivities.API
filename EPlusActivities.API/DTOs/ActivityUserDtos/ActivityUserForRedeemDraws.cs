@@ -12,6 +12,12 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
         public Guid? UserId { get; set; }
 
         /// <summary>
+        /// 渠道号
+        /// </summary>
+        /// <value></value>
+        public string Channel { get; set; }
+
+        /// <summary>
         /// 兑换几次
         /// </summary>
         /// <value></value>

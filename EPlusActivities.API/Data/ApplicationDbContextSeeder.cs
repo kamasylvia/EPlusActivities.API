@@ -168,6 +168,11 @@ namespace EPlusActivities.API.Data
             await context.Coupons.AddAsync(coupon);
             #endregion
 
+            #region Seed Statement
+            var statement = new Statement { Activity = activity };
+            await context.Statements.AddAsync(statement);
+            #endregion
+
             #region Seed Administrator
             var admin = new ApplicationUser { UserName = "admin" };
             var tester = new ApplicationUser { UserName = "tester" };

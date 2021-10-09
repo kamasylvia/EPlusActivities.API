@@ -35,7 +35,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(a => a.PrizeTiers)
                 .SingleOrDefaultAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
-        public Task<Activity> FindByActivityCode(string activityCode) =>
+        public Task<Activity> FindByActivityCodeAsync(string activityCode) =>
             _context.Activities.Include(a => a.LotteryResults)
                 .SingleOrDefaultAsync(a => a.ActivityCode == activityCode);
 

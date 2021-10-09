@@ -13,7 +13,7 @@ variables:
 
 stages:
   - stage: Source
-    displayName: Source code managerment
+    displayName: Source code management
     jobs:
     - job: Format
       displayName: Format source code

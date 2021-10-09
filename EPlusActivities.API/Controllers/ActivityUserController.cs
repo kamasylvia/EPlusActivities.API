@@ -36,6 +36,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly ILogger<ActivityUserController> _logger;
+        private readonly IStatementRepository _statementRepository;
         private readonly IActivityService _activityService;
 
         public ActivityUserController(
@@ -46,8 +47,11 @@ namespace EPlusActivities.API.Controllers
             ILogger<ActivityUserController> logger,
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
-            IActivityService activityService
+            IActivityService activityService,
+            IStatementRepository statementRepository
         ) {
+            _statementRepository =
+                statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =
@@ -217,7 +221,7 @@ namespace EPlusActivities.API.Controllers
         /// <summary>
         /// 用户积分兑换抽奖次数
         /// </summary>
-        /// <param name="activityUserDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPatch("redeeming")]
         [Authorize(
@@ -225,33 +229,42 @@ namespace EPlusActivities.API.Controllers
             Roles = "customer, tester"
         )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
-            [FromBody] ActivityUserForRedeemDrawsRequestDto activityUserDto
+            [FromBody] ActivityUserForRedeemDrawsRequestDto request
         ) {
             #region Parameter validation
-            var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
             {
                 return NotFound("Could not find the user.");
             }
 
-            var activity = await _activityRepository.FindByIdAsync(
-                activityUserDto.ActivityId.Value
-            );
+            var activity = await _activityRepository.FindByIdAsync(request.ActivityId.Value);
             if (activity is null)
             {
                 return NotFound("Could not find the activity.");
             }
 
+            var statement = await _statementRepository.FindByDateAsync(
+                request.ActivityId.Value,
+                Enum.Parse<ChannelCode>(request.Channel, true),
+                DateTime.Today
+            );
+            var requireNewStatement = statement is null;
+            if (requireNewStatement)
+            {
+                statement = new Statement { Activity = activity, DateTime = DateTime.Today };
+            }
+
             var activityUser = await _activityUserRepository.FindByIdAsync(
-                activityUserDto.ActivityId.Value,
-                activityUserDto.UserId.Value
+                request.ActivityId.Value,
+                request.UserId.Value
             );
             if (activityUser is null)
             {
                 return NotFound("Could not find the ActivityUser link.");
             }
 
-            var cost = activityUserDto.UnitPrice * activityUserDto.Count;
+            var cost = request.UnitPrice * request.Count;
             if (cost > user.Credit)
             {
                 return BadRequest("The user did not have enough credits.");
@@ -264,13 +277,13 @@ namespace EPlusActivities.API.Controllers
             {
                 memberId = member.Body.Content.MemberId,
                 points = cost,
-                reason = activityUserDto.Reason,
+                reason = request.Reason,
                 sheetId = _idGeneratorService.NextId().ToString(),
                 updateType = CreditUpdateType.Subtraction
             };
             var (updateMemberSucceed, memberForUpdateCreditResponseDto) =
                 await _memberService.UpdateCreditAsync(
-                    userId: activityUserDto.UserId.Value,
+                    userId: request.UserId.Value,
                     requestDto: memberForUpdateCreditRequestDto
                 );
             #endregion
@@ -287,14 +300,25 @@ namespace EPlusActivities.API.Controllers
             var updateUserResult = await _userManager.UpdateAsync(user);
             if (!updateUserResult.Succeeded)
             {
-                _logger.LogError("Failed to update the user.");
-                return new InternalServerErrorObjectResult(updateUserResult.Errors);
+                _logger.LogError(updateUserResult.ToString());
+                return new InternalServerErrorObjectResult(updateUserResult.ToString());
             }
             #endregion
 
             #region Update ActivityUser link
-            activityUser.RemainingDraws += activityUserDto.Count;
+            activityUser.RemainingDraws += request.Count;
+            statement.Draws += request.Count;
+
             _activityUserRepository.Update(activityUser);
+            if (requireNewStatement)
+            {
+                await _statementRepository.AddAsync(statement);
+            }
+            else
+            {
+                _statementRepository.Update(statement);
+            }
+
             var updateActivityUserResult = await _activityUserRepository.SaveAsync();
             if (!updateActivityUserResult)
             {
