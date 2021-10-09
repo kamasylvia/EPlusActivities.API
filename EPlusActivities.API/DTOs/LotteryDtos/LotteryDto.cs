@@ -55,7 +55,7 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// 抽奖日期
         /// </summary>
         /// <value></value>
-        public DateTime? Date { get; set; }
+        public DateTime? DateTime { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

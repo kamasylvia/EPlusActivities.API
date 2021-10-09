@@ -57,8 +57,7 @@ namespace EPlusActivities.API.Controllers
             ILotteryService lotteryDrawService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService
-        )
-        {
+        ) {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -95,8 +94,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -107,7 +105,7 @@ namespace EPlusActivities.API.Controllers
 
             var result = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
             return result.Count() > 0
-                ? Ok(result)
+                ? Ok(result.OrderBy(x => x.DateTime))
                 : NotFound("Could not find the lottery results.");
         }
 
@@ -123,8 +121,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -136,7 +133,7 @@ namespace EPlusActivities.API.Controllers
             var records = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
             var result = records.Where(record => record.IsLucky);
             return result.Count() > 0
-                ? Ok(result)
+                ? Ok(result.OrderBy(x => x.DateTime))
                 : NotFound("Could not find the winning results.");
         }
 
@@ -152,7 +149,7 @@ namespace EPlusActivities.API.Controllers
                 x =>
                 {
                     var resultItem = _mapper.Map<LotteryDto>(x);
-                    resultItem.Date = x.DateTime;
+                    resultItem.DateTime = x.DateTime;
                     resultItem.PickedUpTime = x.PickedUpTime;
                     return resultItem;
                 }
@@ -172,8 +169,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<LotteryForGetByActivityCodeResponse>> GetByActivityCode(
             [FromQuery] LotteryForGetByActivityCodeRequest request
-        )
-        {
+        ) {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCode(request.ActivityCode);
             var lotteries = await activity.LotteryResults.Where(
@@ -209,7 +205,7 @@ namespace EPlusActivities.API.Controllers
                     response.Add(responseItem);
                 }
             );
-            return Ok(response);
+            return Ok(response.OrderBy(x => x.DateTime));
         }
 
         /// <summary>
@@ -224,8 +220,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -386,7 +381,7 @@ namespace EPlusActivities.API.Controllers
 
                 await _lotteryRepository.AddAsync(lottery);
                 var result = _mapper.Map<LotteryDto>(lottery);
-                result.Date = lottery.DateTime; // Skip auto mapper.
+                result.DateTime = lottery.DateTime; // Skip auto mapper.
                 response.Add(result);
             }
             #endregion
@@ -407,7 +402,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            return Ok(response);
+            return Ok(response.OrderBy(x => x.DateTime));
         }
 
         /// <summary>
