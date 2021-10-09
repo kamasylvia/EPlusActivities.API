@@ -47,4 +47,4 @@ stages:
         inputs:
           command: 'custom'
           custom: 'csharpier'
-          workingDirectory: '.'
+          arguments: '.'
