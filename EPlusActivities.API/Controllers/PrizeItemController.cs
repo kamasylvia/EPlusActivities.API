@@ -65,10 +65,10 @@ namespace EPlusActivities.API.Controllers
             var prizeItems = await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name);
             return prizeItems.Count() > 0
                 ? Ok(
-                        _mapper.Map<IEnumerable<PrizeItemDto>>(
-                            await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)
-                        )
-                    )
+                      _mapper.Map<IEnumerable<PrizeItemDto>>(
+                          await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)
+                      )
+                  )
                 : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
         }
 

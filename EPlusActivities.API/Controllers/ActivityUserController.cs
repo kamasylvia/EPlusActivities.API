@@ -270,9 +270,9 @@ namespace EPlusActivities.API.Controllers
             };
             var (updateMemberSucceed, memberForUpdateCreditResponseDto) =
                 await _memberService.UpdateCreditAsync(
-                userId: activityUserDto.UserId.Value,
-                requestDto: memberForUpdateCreditRequestDto
-            );
+                    userId: activityUserDto.UserId.Value,
+                    requestDto: memberForUpdateCreditRequestDto
+                );
             #endregion
 
             #region Update the user's credit

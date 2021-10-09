@@ -184,8 +184,7 @@ namespace EPlusActivities.API.Controllers
             if (
                 prizeTypes.Where(pt => pt.Id != prizeTierDto.Id.Value)
                     .Select(pt => pt.Percentage)
-                    .Sum()
-                + prizeTierDto.Percentage
+                    .Sum() + prizeTierDto.Percentage
                 > 100
             ) {
                 return BadRequest("The sum of percentages could not be greater than 100.");

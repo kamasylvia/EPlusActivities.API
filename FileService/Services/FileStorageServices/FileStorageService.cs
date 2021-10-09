@@ -65,8 +65,7 @@ namespace FileService.Services.FileStorageService
                     await _appFileRepository.FindByAlternateKeyAsync(
                         fileDto.OwnerId.Value,
                         fileDto.Key
-                    )
-                    ?? _mapper.Map<AppFile>(fileDto);
+                    ) ?? _mapper.Map<AppFile>(fileDto);
 
                 var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
 

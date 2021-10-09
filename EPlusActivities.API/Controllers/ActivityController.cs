@@ -107,23 +107,23 @@ namespace EPlusActivities.API.Controllers
                 _mapper.Map<IEnumerable<ActivityDto>>(
                     activityDto.IsAvailable
                         ? await _activityService.GetAvailableActivitiesAsync(
-                                activityDto.AvailableChannels.Split(
-                                        new[] { ',', ';' },
-                                        StringSplitOptions.TrimEntries
-                                    )
-                                    .Select(s => Enum.Parse<ChannelCode>(s, true)),
-                                activityDto.StartTime.Value,
-                                activityDto.EndTime
-                            )
+                              activityDto.AvailableChannels.Split(
+                                      new[] { ',', ';' },
+                                      StringSplitOptions.TrimEntries
+                                  )
+                                  .Select(s => Enum.Parse<ChannelCode>(s, true)),
+                              activityDto.StartTime.Value,
+                              activityDto.EndTime
+                          )
                         : await _activityService.GetActivitiesAsync(
-                                activityDto.AvailableChannels.Split(
-                                        new[] { ',', ';' },
-                                        StringSplitOptions.TrimEntries
-                                    )
-                                    .Select(s => Enum.Parse<ChannelCode>(s, true)),
-                                activityDto.StartTime.Value,
-                                activityDto.EndTime
-                            )
+                              activityDto.AvailableChannels.Split(
+                                      new[] { ',', ';' },
+                                      StringSplitOptions.TrimEntries
+                                  )
+                                  .Select(s => Enum.Parse<ChannelCode>(s, true)),
+                              activityDto.StartTime.Value,
+                              activityDto.EndTime
+                          )
                 )
             );
         }
@@ -152,8 +152,8 @@ namespace EPlusActivities.API.Controllers
             var activity = _mapper.Map<Activity>(activityDto);
             if (
                 activity.ActivityType
-                    is ActivityType.SingleAttendance
-                        or ActivityType.SequentialAttendance
+                is ActivityType.SingleAttendance
+                or ActivityType.SequentialAttendance
             ) {
                 activity.PrizeTiers = new List<PrizeTier>()
                 {

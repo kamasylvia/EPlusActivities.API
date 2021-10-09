@@ -57,7 +57,8 @@ namespace EPlusActivities.API.Controllers
             ILotteryService lotteryDrawService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService
-        ) {
+        )
+        {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -94,7 +95,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -121,7 +123,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -169,7 +172,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<LotteryForGetByActivityCodeResponse>> GetByActivityCode(
             [FromQuery] LotteryForGetByActivityCodeRequest request
-        ) {
+        )
+        {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCode(request.ActivityCode);
             var lotteries = await activity.LotteryResults.Where(
@@ -191,7 +195,7 @@ namespace EPlusActivities.API.Controllers
                     switch (item.PrizeItem.PrizeType)
                     {
                         case PrizeType.Coupon:
-                            prizeContent = string.Join(',', item.PrizeItem.Coupons.Select(c => c.Code));
+                            prizeContent = item.PrizeItem.CouponActiveCode;
                             break;
                         case PrizeType.Credit:
                             prizeContent = item.PrizeItem.Credit.ToString();
@@ -220,7 +224,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -308,16 +313,16 @@ namespace EPlusActivities.API.Controllers
                         case PrizeType.Credit:
                             var (updateCreditResult, updateCreditResponseDto) =
                                 await _memberService.UpdateCreditAsync(
-                                user.Id,
-                                new MemberForUpdateCreditRequestDto
-                                {
-                                    memberId = user.MemberId,
-                                    points = lottery.PrizeItem.Credit.Value,
-                                    reason = "积分奖品",
-                                    sheetId = _idGeneratorService.NextId().ToString(),
-                                    updateType = CreditUpdateType.Addition
-                                }
-                            );
+                                    user.Id,
+                                    new MemberForUpdateCreditRequestDto
+                                    {
+                                        memberId = user.MemberId,
+                                        points = lottery.PrizeItem.Credit.Value,
+                                        reason = "积分奖品",
+                                        sheetId = _idGeneratorService.NextId().ToString(),
+                                        updateType = CreditUpdateType.Addition
+                                    }
+                                );
                             if (updateCreditResult)
                             {
                                 user.Credit += lottery.PrizeItem.Credit.Value;
@@ -335,28 +340,27 @@ namespace EPlusActivities.API.Controllers
                         case PrizeType.Coupon:
                             var (releaseCouponResult, couponResponseDto) =
                                 await _memberService.ReleaseCouponAsync(
-                                new MemberForReleaseCouponRequestDto
-                                {
-                                    couponActiveCode = lottery.PrizeItem.CouponActiveCode,
-                                    memberId = user.MemberId,
-                                    qty = 1,
-                                    reason = "优惠券奖品"
-                                }
-                            );
-                            var coupons =
-                                couponResponseDto?.Body?.Content?.HideCouponCode?.Split(
-                                        ',',
-                                        StringSplitOptions.TrimEntries
-                                    )
-                                    .Select(
-                                        code =>
-                                            new Coupon
-                                            {
-                                                User = user,
-                                                PrizeItem = lottery.PrizeItem,
-                                                Code = code
-                                            }
-                                    );
+                                    new MemberForReleaseCouponRequestDto
+                                    {
+                                        couponActiveCode = lottery.PrizeItem.CouponActiveCode,
+                                        memberId = user.MemberId,
+                                        qty = 1,
+                                        reason = "优惠券奖品"
+                                    }
+                                );
+                            var coupons = couponResponseDto?.Body?.Content?.HideCouponCode?.Split(
+                                    ',',
+                                    StringSplitOptions.TrimEntries
+                                )
+                                .Select(
+                                    code =>
+                                        new Coupon
+                                        {
+                                            User = user,
+                                            PrizeItem = lottery.PrizeItem,
+                                            Code = code
+                                        }
+                                );
 
                             var temp = user.Coupons is null
                                 ? new List<Coupon>()

@@ -52,8 +52,8 @@ namespace FileService.Controllers
         ) =>
             requestDto.FormFile.Length > 0
                 ? await _fileStorageService.UploadFileAsync(requestDto)
-                        ? Ok()
-                        : new InternalServerErrorObjectResult("Internal Server Error")
+                    ? Ok()
+                    : new InternalServerErrorObjectResult("Internal Server Error")
                 : BadRequest("Could not upload an empty file.");
 
         [HttpGet("id")]

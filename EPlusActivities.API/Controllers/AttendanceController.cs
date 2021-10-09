@@ -169,7 +169,9 @@ namespace EPlusActivities.API.Controllers
             activityUser.SequentialAttendanceDays = IsSequential(
                 activityUser.LastAttendanceDate,
                 today
-            ) ? sequentialAttendanceDays + 1 : 1;
+            )
+                ? sequentialAttendanceDays + 1
+                : 1;
             activityUser.LastAttendanceDate = today;
             activityUser.AttendanceDays = ++attendanceDays;
             #endregion
@@ -186,9 +188,9 @@ namespace EPlusActivities.API.Controllers
 
             var (memberUpdateSucceed, memberForUpdateCreditResponseDto) =
                 await _memberService.UpdateCreditAsync(
-                attendanceDto.UserId.Value,
-                memberForUpdateCreditRequestDto
-            );
+                    attendanceDto.UserId.Value,
+                    memberForUpdateCreditRequestDto
+                );
             if (!memberUpdateSucceed)
             {
                 _logger.LogError("Failed to update the member.");

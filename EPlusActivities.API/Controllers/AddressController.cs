@@ -65,8 +65,8 @@ namespace EPlusActivities.API.Controllers
             return addresses.Count() > 0
                 ? Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses))
                 : NotFound(
-                        $"Could not find any addresses with the specified user '{addressDto.UserId.Value}'"
-                    );
+                      $"Could not find any addresses with the specified user '{addressDto.UserId.Value}'"
+                  );
         }
 
         /// <summary>

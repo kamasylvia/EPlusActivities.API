@@ -21,7 +21,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(lr => lr.User)
                 .Include(lr => lr.PrizeTier)
                 .Include(lr => lr.PrizeItem)
-                .ThenInclude(pi => pi.Coupons)
                 .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Lottery>> FindByParentIdAsync(Guid userId) =>

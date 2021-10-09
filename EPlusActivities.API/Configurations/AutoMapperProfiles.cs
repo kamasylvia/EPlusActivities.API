@@ -31,10 +31,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Dtos to Entities and vice versa.
-            CreateMap<
-                SmsDto,
-                ApplicationUser
-            >()
+            CreateMap<SmsDto, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(
                     dest => dest.NormalizedUserName,
@@ -110,10 +107,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Attendance
-            CreateMap<
-                AttendanceForAttendDto,
-                Attendance
-            >()
+            CreateMap<AttendanceForAttendDto, Attendance>()
                 .ForMember(
                     dest => dest.ChannelCode,
                     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
@@ -173,10 +167,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region ActivityUser
-            CreateMap<
-                ActivityUser,
-                ActivityUserDto
-            >();
+            CreateMap<ActivityUser, ActivityUserDto>();
             CreateMap<ActivityUser, ActivityUserForRedeemDrawsResponseDto>();
             #endregion
 
@@ -238,10 +229,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Credit
-            CreateMap<
-                MemberForUpdateCreditRequestDto,
-                Credit
-            >();
+            CreateMap<MemberForUpdateCreditRequestDto, Credit>();
             CreateMap<MemberForUpdateCreditResponseDto, Credit>()
                 .ForMember(
                     dest => dest.MemberId,

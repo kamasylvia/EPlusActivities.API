@@ -16,14 +16,12 @@ namespace EPlusActivities.API.Data
 {
     public class ApplicationDbContextSeeder
     {
-        private static List<ApplicationRole> _roles =
-            JsonSerializer.Deserialize<List<ApplicationRole>>(
-                System.IO.File.ReadAllText("Data/RoleSeedData.json")
-            );
-        private static List<ApplicationUser> _users =
-            JsonSerializer.Deserialize<List<ApplicationUser>>(
-                System.IO.File.ReadAllText("Data/UserSeedData.json")
-            );
+        private static List<ApplicationRole> _roles = JsonSerializer.Deserialize<
+            List<ApplicationRole>
+        >(System.IO.File.ReadAllText("Data/RoleSeedData.json"));
+        private static List<ApplicationUser> _users = JsonSerializer.Deserialize<
+            List<ApplicationUser>
+        >(System.IO.File.ReadAllText("Data/UserSeedData.json"));
 
         public async Task SeedAsync(IHost host)
         {
@@ -36,10 +34,12 @@ namespace EPlusActivities.API.Data
                     serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
                 var context =
                     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager =
-                    serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager =
-                    serviceScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<
+                    UserManager<ApplicationUser>
+                >();
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<
+                    RoleManager<ApplicationRole>
+                >();
 
                 if (Convert.ToBoolean(configuration["RefreshDbEveryTime"]))
                 {
