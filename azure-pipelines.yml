@@ -37,17 +37,18 @@ stages:
               git config --global user.email "zhangyue.dev@outlook.com"
               git config --global user.name "kamasylvia"
               git add -A
-              git commit -m "Format source code with CSharpier"
-    - job: Sync
-      displayName: Push back to GitHub repository
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - checkout: self
-        - task: CmdLine@2
-          inputs:
-            script: |
+              git commit -m "Format source code with CSharpier [skip ci]"
               git push
+    #- job: Sync
+    #  displayName: Push back to GitHub repository
+    #  pool:
+    #    vmImage: ubuntu-latest
+    #  steps:
+    #    - checkout: self
+    #    - task: CmdLine@2
+    #      inputs:
+    #        script: |
+    #          git push
   - stage: Deploy
     displayName: Deploy to production
     jobs:
