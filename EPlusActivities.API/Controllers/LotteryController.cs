@@ -298,10 +298,10 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 今天没登陆过的用户，每日已用抽奖次数清零
-            if (user.LastDrawDate < DateTime.Today.Date)
+            if (!(user.LastDrawDate >= DateTime.Today))
             {
                 activityUser.TodayUsedDraws = 0;
-                user.LastDrawDate = DateTime.Today.Date;
+                user.LastDrawDate = DateTime.Today;
             }
 
             // 超过每日抽奖次数限制
@@ -435,13 +435,9 @@ namespace EPlusActivities.API.Controllers
             #region Database operations
             var userUpdateResult = await _userManager.UpdateAsync(user);
             if (requireNewStatement)
-            {
                 await _statementRepository.AddAsync(statement);
-            }
             else
-            {
                 _statementRepository.Update(statement);
-            }
 
             var succeeded = await _lotteryRepository.SaveAsync();
             if (!succeeded)
