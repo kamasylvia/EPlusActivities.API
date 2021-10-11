@@ -29,7 +29,7 @@ stages:
           inputs:
             command: 'custom'
             custom: 'tool'
-            arguments: 'restore'
+            arguments: 'install -g csharpier'
         - task: DotNetCoreCLI@2
           inputs:
             command: 'custom'
