@@ -237,7 +237,7 @@ namespace EPlusActivities.API.Controllers
                 generalLotteryRecords,
                 lotteries
             );
-            
+
             return File(memoryString, contentType);
         }
 
