@@ -50,6 +50,7 @@ stages:
             action: 'create'
             target: '$(Build.SourceVersion)'
             tagSource: 'gitTag'
+            tagPattern: 'release-v[0-9]*\S*' 
             assets: '$(Build.ArtifactStagingDirectory)/*.zip'
             isDraft: true
             changeLogCompareToRelease: 'lastFullRelease'
