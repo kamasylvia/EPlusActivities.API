@@ -29,9 +29,9 @@ stages:
           inputs:
             Contents: |
               docker-compose.yml
-              Settings
-              Nginx
-              html
+              Settings/**
+              Nginx/**
+              html/**
               README.md
             TargetFolder: 'ArchiveFolder'
             CleanTargetFolder: true
