@@ -64,6 +64,9 @@ stages:
       steps:
         - checkout: self
           persistCredentials: true
+        - task: CmdLine@2
+          inputs:
+            script: 'mkdir ArchiveFolder'
         - task: CopyFiles@2
           inputs:
             Contents: |
@@ -72,12 +75,12 @@ stages:
               Nginx
               html
               README.md
-            TargetFolder: 'AchieveFolder'
+            TargetFolder: 'ArchiveFolder'
             CleanTargetFolder: true
             OverWrite: true
         - task: ArchiveFiles@2
           inputs:
-            rootFolderOrFile: '$(Build.BinariesDirectory)/AchieveFolder'
+            rootFolderOrFile: '$(Build.BinariesDirectory)/ArchiveFolder'
             includeRootFolder: true
             archiveType: 'zip'
             archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
