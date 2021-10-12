@@ -80,6 +80,10 @@ stages:
               archiveType: 'zip'
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
               replaceExistingArchive: true
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
+              publishLocation: 'pipeline'
   - stage: Deploy
     displayName: Deploy to production
     jobs:
