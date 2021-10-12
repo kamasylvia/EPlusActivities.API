@@ -80,10 +80,17 @@ stages:
               archiveType: 'zip'
               archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
               replaceExistingArchive: true
-          - task: PublishPipelineArtifact@1
+          - task: GitHubRelease@1
             inputs:
-              targetPath: '$(Pipeline.Workspace)/$(Build.BuildId).zip'
-              publishLocation: 'pipeline'
+              gitHubConnection: 'KamasylviaOAuth'
+              repositoryName: '$(Build.Repository.Name)'
+              action: 'create'
+              target: '$(Build.SourceVersion)'
+              tagSource: 'gitTag'
+              assets: '$(Build.ArtifactStagingDirectory)/*.zip'
+              isDraft: true
+              changeLogCompareToRelease: 'lastFullRelease'
+              changeLogType: 'commitBased'
   - stage: Deploy
     displayName: Deploy to production
     jobs:
