@@ -45,7 +45,7 @@ namespace EPlusActivities.API.Data
         public virtual DbSet<Credit> Credits { get; set; }
 
         public virtual DbSet<Coupon> Coupons { get; set; }
-        public virtual DbSet<Statement> Statements { get; set; }
+        public virtual DbSet<GeneralLotteryRecords> GeneralLotteryRecords { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }

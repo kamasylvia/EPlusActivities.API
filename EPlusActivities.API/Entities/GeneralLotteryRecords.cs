@@ -7,7 +7,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Entities
 {
-    public class Statement
+    public class GeneralLotteryRecords
     {
         [Required]
         public Guid? Id { get; set; }

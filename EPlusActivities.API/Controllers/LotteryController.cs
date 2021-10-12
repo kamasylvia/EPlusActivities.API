@@ -40,9 +40,9 @@ namespace EPlusActivities.API.Controllers
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly IRepository<Coupon> _couponRepository;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
-        private readonly ILotteryService _lotteryDrawService;
+        private readonly ILotteryService _lotteryService;
         private readonly IIdGeneratorService _idGeneratorService;
-        private readonly IStatementRepository _statementRepository;
+        private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
         private readonly IMemberService _memberService;
 
         public LotteryController(
@@ -55,21 +55,22 @@ namespace EPlusActivities.API.Controllers
             ILogger<LotteryController> logger,
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             IRepository<Coupon> couponResponseDto,
-            ILotteryService lotteryDrawService,
+            ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IStatementRepository statementRepository
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository
         ) {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
-            _statementRepository =
-                statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
+            _generalLotteryRecordsRepository =
+                generalLotteryRecordsRepository
+                ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger;
-            _lotteryDrawService =
-                lotteryDrawService ?? throw new ArgumentNullException(nameof(lotteryDrawService));
+            _lotteryService =
+                lotteryService ?? throw new ArgumentNullException(nameof(lotteryService));
             _activityUserRepository =
                 activityUserRepository
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
@@ -91,7 +92,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="lotteryDto"></param>
         /// <returns></returns>
-        [HttpGet("lottery-records")]
+        [HttpGet("customer/lottery-records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -118,7 +119,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="lotteryDto"></param>
         /// <returns></returns>
-        [HttpGet("winning-records")]
+        [HttpGet("customer/lucky-records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -163,19 +164,24 @@ namespace EPlusActivities.API.Controllers
         }
 
         /// <summary>
-        /// 根据活动号查询具体中奖信息
+        /// 管理员根据活动号查询中奖记录报表
         /// </summary>
         /// <returns></returns>
-        [HttpGet("list")]
+        [HttpGet("manager/detailed-records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<ActionResult<LotteryForGetByActivityCodeResponse>> GetByActivityCode(
-            [FromQuery] LotteryForGetByActivityCodeRequest request
-        ) {
+        public async Task<
+            ActionResult<LotteryRecordsForManagerResponse>
+        > GetLotteryRecordsForManagerAsync([FromQuery] LotteryRecordsForManagerRequest request)
+        {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
+            if (activity is null)
+            {
+                return NotFound("Could not find the activity.");
+            }
             var lotteries = await activity.LotteryResults.Where(
                     lr =>
                         lr.IsLucky
@@ -187,59 +193,82 @@ namespace EPlusActivities.API.Controllers
                 .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
                 .ToListAsync();
             #endregion
-            var response = new List<LotteryForGetByActivityCodeResponse>();
-            lotteries.ForEach(
-                item =>
-                {
-                    var prizeContent = string.Empty;
-                    switch (item.PrizeItem.PrizeType)
-                    {
-                        case PrizeType.Coupon:
-                            prizeContent = item.PrizeItem.CouponActiveCode;
-                            break;
-                        case PrizeType.Credit:
-                            prizeContent = item.PrizeItem.Credit.ToString();
-                            break;
-                        default:
-                            break;
-                    }
-                    var responseItem = _mapper.Map<LotteryForGetByActivityCodeResponse>(item);
-                    responseItem.DateTime = item.DateTime;
-                    responseItem.PrizeContent = prizeContent;
-                    response.Add(responseItem);
-                }
+            return Ok(_lotteryService.CreateLotteryForDownload(lotteries));
+        }
+
+        /// <summary>
+        /// 管理员根据活动号下载中奖记录报表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("manager/excel")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Roles = "manager, tester"
+        )]
+        public async Task<IActionResult> DownloadLotteryRecordsForManagerAsyncs(
+            [FromQuery] LotteryRecordsForManagerRequest request
+        ) {
+            #region Parameter validation
+            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
+            if (activity is null)
+            {
+                return NotFound("Could not find the activity.");
+            }
+            var lotteries = await activity.LotteryResults.Where(
+                    lr =>
+                        lr.IsLucky
+                        && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
+                        && !(request.StartTime > lr.DateTime)
+                        && !(lr.DateTime > request.EndTime)
+                )
+                .ToAsyncEnumerable()
+                .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
+                .ToListAsync();
+            #endregion
+
+            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
+                activity.Id.Value,
+                Enum.Parse<ChannelCode>(request.Channel, true),
+                request.StartTime,
+                request.EndTime
             );
-            return Ok(response.OrderBy(x => x.DateTime));
+
+            var (memoryString, contentType) = _lotteryService.DownloadLotteryRecords(
+                generalLotteryRecords,
+                lotteries
+            );
+            
+            return File(memoryString, contentType);
         }
 
         /// <summary>
         /// 根据活动号和日期查询抽奖数、中奖数、兑换数
         /// </summary>
         /// <returns></returns>
-        [HttpGet("statements")]
+        [HttpGet("manager/general-records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
         public async Task<
-            ActionResult<IEnumerable<LotteryForGetStatementsResponse>>
-        > GetStatementsAsync([FromQuery] LotteryForGetStatementRequest request)
+            ActionResult<IEnumerable<LotteryForGetGeneralRecordsResponse>>
+        > GetStatementsAsync([FromQuery] LotteryForGetGeneralRecordsRequest request)
         {
             #region Parameter validation
-            var channel = Enum.Parse<ChannelCode>(request.Channel);
+            var channel = Enum.Parse<ChannelCode>(request.Channel, true);
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
             {
                 return NotFound("Could not find the activity.");
             }
-            var statements = await _statementRepository.FindByDateRangeAsync(
+            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
                 activity.Id.Value,
                 channel,
                 request.StartTime,
                 request.EndTime
             );
             #endregion
-            return Ok(statements.OrderBy(s => s.DateTime));
+            return Ok(generalLotteryRecords.OrderBy(s => s.DateTime));
         }
 
         /// <summary>
@@ -311,7 +340,7 @@ namespace EPlusActivities.API.Controllers
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
             }
-            var statement = await _statementRepository.FindByDateAsync(
+            var statement = await _generalLotteryRecordsRepository.FindByDateAsync(
                 request.ActivityId.Value,
                 Enum.Parse<ChannelCode>(request.ChannelCode, true),
                 DateTime.Today
@@ -319,7 +348,11 @@ namespace EPlusActivities.API.Controllers
             var requireNewStatement = statement is null;
             if (requireNewStatement)
             {
-                statement = new Statement { Activity = activity, DateTime = DateTime.Today };
+                statement = new GeneralLotteryRecords
+                {
+                    Activity = activity,
+                    DateTime = DateTime.Today
+                };
             }
             #endregion
 
@@ -340,7 +373,7 @@ namespace EPlusActivities.API.Controllers
                 lottery.Activity = activity;
                 lottery.DateTime = DateTime.Now;
 
-                (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryDrawService.DrawPrizeAsync(
+                (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryService.DrawPrizeAsync(
                     activity
                 );
 
@@ -435,9 +468,9 @@ namespace EPlusActivities.API.Controllers
             #region Database operations
             var userUpdateResult = await _userManager.UpdateAsync(user);
             if (requireNewStatement)
-                await _statementRepository.AddAsync(statement);
+                await _generalLotteryRecordsRepository.AddAsync(statement);
             else
-                _statementRepository.Update(statement);
+                _generalLotteryRecordsRepository.Update(statement);
 
             var succeeded = await _lotteryRepository.SaveAsync();
             if (!succeeded)

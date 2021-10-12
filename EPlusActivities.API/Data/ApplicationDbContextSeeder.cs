@@ -169,8 +169,8 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Statement
-            var statement = new Statement { Activity = activity };
-            await context.Statements.AddAsync(statement);
+            var statement = new GeneralLotteryRecords { Activity = activity };
+            await context.GeneralLotteryRecords.AddAsync(statement);
             #endregion
 
             #region Seed Administrator

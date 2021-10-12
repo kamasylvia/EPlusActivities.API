@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EPlusActivities.API.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211009064129_AddChannel2Statement")]
-    partial class AddChannel2Statement
+    [Migration("20211012052220_ApplicationDbContextMigration1")]
+    partial class ApplicationDbContextMigration1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -420,6 +420,37 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.ToTable("Credits");
                 });
 
+            modelBuilder.Entity("EPlusActivities.API.Entities.GeneralLotteryRecords", b =>
+                {
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("ActivityId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Draws")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Redemption")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Winners")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
+
+                    b.ToTable("GeneralLotteryRecords");
+                });
+
             modelBuilder.Entity("EPlusActivities.API.Entities.Lottery", b =>
                 {
                     b.Property<Guid?>("Id")
@@ -563,37 +594,6 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.HasIndex("PrizeItemId");
 
                     b.ToTable("PrizeTierPrizeItems");
-                });
-
-            modelBuilder.Entity("EPlusActivities.API.Entities.Statement", b =>
-                {
-                    b.Property<Guid?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid?>("ActivityId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<int>("Channel")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Draws")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Redemption")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Winners")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityId");
-
-                    b.ToTable("Statements");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -753,6 +753,13 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("EPlusActivities.API.Entities.GeneralLotteryRecords", b =>
+                {
+                    b.HasOne("EPlusActivities.API.Entities.Activity", "Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityId");
+                });
+
             modelBuilder.Entity("EPlusActivities.API.Entities.Lottery", b =>
                 {
                     b.HasOne("EPlusActivities.API.Entities.Activity", "Activity")
@@ -805,13 +812,6 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                         .HasForeignKey("PrizeTierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("EPlusActivities.API.Entities.Statement", b =>
-                {
-                    b.HasOne("EPlusActivities.API.Entities.Activity", "Activity")
-                        .WithMany()
-                        .HasForeignKey("ActivityId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

@@ -36,7 +36,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly ILogger<ActivityUserController> _logger;
-        private readonly IStatementRepository _statementRepository;
+        private readonly IGeneralLotteryRecordsRepository _statementRepository;
         private readonly IActivityService _activityService;
 
         public ActivityUserController(
@@ -48,7 +48,7 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IStatementRepository statementRepository
+            IGeneralLotteryRecordsRepository statementRepository
         ) {
             _statementRepository =
                 statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
@@ -244,15 +244,19 @@ namespace EPlusActivities.API.Controllers
                 return NotFound("Could not find the activity.");
             }
 
-            var statement = await _statementRepository.FindByDateAsync(
+            var generalLotteryRecords = await _statementRepository.FindByDateAsync(
                 request.ActivityId.Value,
                 Enum.Parse<ChannelCode>(request.Channel, true),
                 DateTime.Today
             );
-            var requireNewStatement = statement is null;
+            var requireNewStatement = generalLotteryRecords is null;
             if (requireNewStatement)
             {
-                statement = new Statement { Activity = activity, DateTime = DateTime.Today };
+                generalLotteryRecords = new GeneralLotteryRecords
+                {
+                    Activity = activity,
+                    DateTime = DateTime.Today
+                };
             }
 
             var activityUser = await _activityUserRepository.FindByIdAsync(
@@ -307,16 +311,16 @@ namespace EPlusActivities.API.Controllers
 
             #region Update ActivityUser link
             activityUser.RemainingDraws += request.Count;
-            statement.Draws += request.Count;
+            generalLotteryRecords.Draws += request.Count;
 
             _activityUserRepository.Update(activityUser);
             if (requireNewStatement)
             {
-                await _statementRepository.AddAsync(statement);
+                await _statementRepository.AddAsync(generalLotteryRecords);
             }
             else
             {
-                _statementRepository.Update(statement);
+                _statementRepository.Update(generalLotteryRecords);
             }
 
             var updateActivityUserResult = await _activityUserRepository.SaveAsync();

@@ -1,5 +1,7 @@
 # EPlusActivities.API
 
+[![Build Status](https://dev.azure.com/kamasylvia/NGS%20Lottery/_apis/build/status/kamasylvia.EPlusActivities.API?branchName=dev)](https://dev.azure.com/kamasylvia/NGS%20Lottery/_build/latest?definitionId=1&branchName=dev)
+
 农工商 E+ 小程序签到抽奖 API
 
 # 项目进度

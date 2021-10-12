@@ -9,16 +9,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class StatementRepository : RepositoryBase<Statement>, IStatementRepository
+    public class GeneralLotteryRecordsRepository
+        : RepositoryBase<GeneralLotteryRecords>,
+          IGeneralLotteryRecordsRepository
     {
-        public StatementRepository(ApplicationDbContext context) : base(context) { }
+        public GeneralLotteryRecordsRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<Statement> FindByDateAsync(
+        public async Task<GeneralLotteryRecords> FindByDateAsync(
             Guid activityId,
             ChannelCode channel,
             DateTime date
         ) =>
-            await _context.Statements.Include(s => s.Activity)
+            await _context.GeneralLotteryRecords.Include(s => s.Activity)
                 .Where(
                     s =>
                         s.Activity.Id == activityId
@@ -27,13 +29,13 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 )
                 .SingleOrDefaultAsync();
 
-        public async Task<IEnumerable<Statement>> FindByDateRangeAsync(
+        public async Task<IEnumerable<GeneralLotteryRecords>> FindByDateRangeAsync(
             Guid activityId,
             ChannelCode channel,
             DateTime? startTime,
             DateTime? endTime
         ) =>
-            await _context.Statements.Include(s => s.Activity)
+            await _context.GeneralLotteryRecords.Include(s => s.Activity)
                 .Where(
                     s =>
                         s.Activity.Id == activityId
