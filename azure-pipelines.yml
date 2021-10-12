@@ -57,6 +57,29 @@ stages:
             script: |
               git checkout dev
               git push
+    - job: Achieve
+      displayName: Achieve files for docker-compose up.
+      pool:
+        vmImage: ubuntu-latest
+        steps:
+          - task: CopyFiles@2
+            inputs:
+              Contents: |
+                docker-compose.yml
+                Settings
+                Nginx
+                html
+                README.md
+              TargetFolder: 'AchieveFolder'
+              CleanTargetFolder: true
+              OverWrite: true
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(Build.BinariesDirectory)/AchieveFolder'
+              includeRootFolder: true
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+              replaceExistingArchive: true
   - stage: Deploy
     displayName: Deploy to production
     jobs:
