@@ -14,19 +14,6 @@ stages:
   - stage: Source
     displayName: Source code management
     jobs:
-    - job: Account
-      displayName: Set your account's default identity.
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - checkout: self
-          persistCredentials: true
-        - task: CmdLine@2
-          continueOnError: true
-          inputs:
-            script: |
-              git config --global user.email "zhangyue.dev@outlook.com"
-              git config --global user.name "kamasylvia"
     - job: Release
       displayName: GitHub Release.
       pool:
@@ -71,6 +58,12 @@ stages:
       steps:
         - checkout: self
           persistCredentials: true
+        - task: CmdLine@2
+          continueOnError: true
+          inputs:
+            script: |
+              git config --global user.email "zhangyue.dev@outlook.com"
+              git config --global user.name "kamasylvia"
         - task: DotNetCoreCLI@2
           inputs:
             command: 'custom'
