@@ -15,6 +15,7 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
         /// 渠道号
         /// </summary>
         /// <value></value>
+        [Required]
         public string Channel { get; set; }
 
         /// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,12 +24,14 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// 渠道
         /// </summary>
         /// <value></value>
+        [Required]
         public string Channel { get; set; }
 
         /// <summary>
         /// 活动号
         /// </summary>
         /// <value></value>
+        [Required]
         public string ActivityCode { get; set; }
     }
 }
