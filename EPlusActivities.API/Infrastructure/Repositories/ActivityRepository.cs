@@ -35,8 +35,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(a => a.PrizeTiers)
                 .SingleOrDefaultAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
-        public Task<Activity> FindByActivityCodeAsync(string activityCode) =>
-            _context.Activities.Include(a => a.LotteryResults)
+        public async Task<Activity> FindByActivityCodeAsync(string activityCode) =>
+            await _context.Activities.Include(a => a.LotteryResults)
                 .SingleOrDefaultAsync(a => a.ActivityCode == activityCode);
 
         public async Task<Activity> FindWithActivityUserLink(Guid id) =>
