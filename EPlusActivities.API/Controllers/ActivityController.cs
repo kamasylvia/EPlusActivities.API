@@ -84,6 +84,25 @@ namespace EPlusActivities.API.Controllers
         }
 
         /// <summary>
+        /// 根据活动号获取活动信息
+        /// </summary>
+        /// <param name="activityDto"></param>
+        /// <returns></returns>
+        [HttpGet("code")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<ActionResult<ActivityDto>> GetByActivityCodeAsync(
+            [FromQuery] string activityCode
+        ) {
+            var activity = await _activityRepository.FindByActivityCodeAsync(activityCode);
+            return activity is null
+                ? NotFound("Could not find the activity.")
+                : Ok(_mapper.Map<ActivityDto>(activity));
+        }
+
+        /// <summary>
         /// 获取活动列表
         /// </summary>
         /// <param name="activityDto"></param>
