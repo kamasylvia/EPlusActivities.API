@@ -78,7 +78,7 @@ stages:
             script: |
               git config --global user.email "zhangyue.dev@outlook.com"
               git config --global user.name "kamasylvia"
-              git checkout dev
+              git checkout $(Build.SourceBranchName)
               git add -A
               git commit --allow-empty -m "Format source code with CSharpier [skip ci]"          
     - job: Sync
@@ -92,7 +92,7 @@ stages:
           continueOnError: true
           inputs:
             script: |
-              git checkout dev
+              git checkout $(Build.SourceBranchName)
               git push
   - stage: Deploy
     displayName: Deploy to production
