@@ -18,6 +18,19 @@ stages:
   - stage: Source
     displayName: Source code management
     jobs:
+    - job: Account
+      displayName: Set your account's default identity.
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - checkout: self
+          persistCredentials: true
+        - task: CmdLine@2
+          continueOnError: true
+          inputs:
+            script: |
+              git config --global user.email "zhangyue.dev@outlook.com"
+              git config --global user.name "kamasylvia"
     - job: Release
       displayName: GitHub Release.
       pool:
@@ -76,11 +89,9 @@ stages:
           continueOnError: true
           inputs:
             script: |
-              git config --global user.email "zhangyue.dev@outlook.com"
-              git config --global user.name "kamasylvia"
               git checkout $(Build.SourceBranchName)
               git add -A
-              git commit --allow-empty -m "Format source code with CSharpier [skip ci]"          
+              git commit --allow-empty -m "Format source code with CSharpier [skip ci]"
     - job: Sync
       displayName: Push modified code back to GitHub repository
       pool:
