@@ -9,41 +9,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class
-    GeneralLotteryRecordsRepository
-    : RepositoryBase<GeneralLotteryRecords>, IGeneralLotteryRecordsRepository
+    public class GeneralLotteryRecordsRepository
+        : RepositoryBase<GeneralLotteryRecords>,
+          IGeneralLotteryRecordsRepository
     {
-        public GeneralLotteryRecordsRepository(ApplicationDbContext context) :
-            base(context)
-        {
-        }
+        public GeneralLotteryRecordsRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<GeneralLotteryRecords>
-        FindByDateAsync(Guid activityId, ChannelCode channel, DateTime date) =>
-            await _context
-                .GeneralLotteryRecords
-                .Include(s => s.Activity)
-                .Where(s =>
-                    s.Activity.Id == activityId &&
-                    s.Channel == channel &&
-                    s.DateTime.Date == date.Date)
+        public async Task<GeneralLotteryRecords> FindByDateAsync(
+            Guid activityId,
+            ChannelCode channel,
+            DateTime date
+        ) =>
+            await _context.GeneralLotteryRecords.Include(s => s.Activity)
+                .Where(
+                    s =>
+                        s.Activity.Id == activityId
+                        && s.Channel == channel
+                        && s.DateTime.Date == date.Date
+                )
                 .SingleOrDefaultAsync();
 
-        public async Task<IEnumerable<GeneralLotteryRecords>>
-        FindByDateRangeAsync(
+        public async Task<IEnumerable<GeneralLotteryRecords>> FindByDateRangeAsync(
             Guid activityId,
             ChannelCode channel,
             DateTime? startTime,
             DateTime? endTime
         ) =>
-            await _context
-                .GeneralLotteryRecords
-                .Include(s => s.Activity)
-                .Where(s =>
-                    s.Activity.Id == activityId &&
-                    s.Channel == channel &&
-                    !(startTime > s.DateTime) &&
-                    !(s.DateTime > endTime))
+            await _context.GeneralLotteryRecords.Include(s => s.Activity)
+                .Where(
+                    s =>
+                        s.Activity.Id == activityId
+                        && s.Channel == channel
+                        && !(startTime > s.DateTime)
+                        && !(s.DateTime > endTime)
+                )
                 .OrderBy(x => x.DateTime)
                 .ToListAsync();
     }
