@@ -81,24 +81,6 @@ stages:
               git checkout $(Build.SourceBranchName)
               git add -A
               git commit --allow-empty -m "Format source code with CSharpier [skip ci]"
-    - job: Sync
-      displayName: Push modified code back to GitHub repository
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - checkout: self
-          persistCredentials: true
-        - task: CmdLine@2
-          continueOnError: true
-          inputs:
-            script: |
-              git config --global user.email "zhangyue.dev@outlook.com"
-              git config --global user.name "kamasylvia"
-        - task: CmdLine@2
-          continueOnError: true
-          inputs:
-            script: |
-              git checkout $(Build.SourceBranchName)
               git push
   - stage: Deploy
     displayName: Deploy to production
