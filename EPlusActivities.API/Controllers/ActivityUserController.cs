@@ -312,7 +312,7 @@ namespace EPlusActivities.API.Controllers
 
             #region Update ActivityUser link
             activityUser.RemainingDraws += request.Count;
-            generalLotteryRecords.Draws += request.Count;
+            generalLotteryRecords.Redemption += request.Count;
 
             _activityUserRepository.Update(activityUser);
             if (requireNewStatement)
