@@ -92,6 +92,12 @@ stages:
           continueOnError: true
           inputs:
             script: |
+              git config --global user.email "zhangyue.dev@outlook.com"
+              git config --global user.name "kamasylvia"
+        - task: CmdLine@2
+          continueOnError: true
+          inputs:
+            script: |
               git checkout $(Build.SourceBranchName)
               git push
   - stage: Deploy
