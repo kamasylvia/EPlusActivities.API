@@ -268,6 +268,7 @@ namespace EPlusActivities.API.Controllers
                 request.EndTime
             );
             #endregion
+
             return Ok(
                 _mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(generalLotteryRecords)
             );
@@ -342,15 +343,15 @@ namespace EPlusActivities.API.Controllers
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
             }
-            var statement = await _generalLotteryRecordsRepository.FindByDateAsync(
+            var generalRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
                 request.ActivityId.Value,
                 Enum.Parse<ChannelCode>(request.ChannelCode, true),
                 DateTime.Today
             );
-            var requireNewStatement = statement is null;
+            var requireNewStatement = generalRecords is null;
             if (requireNewStatement)
             {
-                statement = new GeneralLotteryRecords
+                generalRecords = new GeneralLotteryRecords
                 {
                     Activity = activity,
                     DateTime = DateTime.Today
@@ -362,7 +363,7 @@ namespace EPlusActivities.API.Controllers
             activityUser.RemainingDraws -= request.Count;
             activityUser.TodayUsedDraws += request.Count;
             activityUser.UsedDraws += request.Count;
-            statement.Draws += request.Count;
+            generalRecords.Draws += request.Count;
             #endregion
 
             #region Generate the lottery result
@@ -382,7 +383,7 @@ namespace EPlusActivities.API.Controllers
                 if (lottery.PrizeTier is not null)
                 {
                     lottery.IsLucky = true;
-                    statement.Winners++;
+                    generalRecords.Winners++;
 
                     switch (lottery.PrizeItem.PrizeType)
                     {
@@ -470,9 +471,9 @@ namespace EPlusActivities.API.Controllers
             #region Database operations
             var userUpdateResult = await _userManager.UpdateAsync(user);
             if (requireNewStatement)
-                await _generalLotteryRecordsRepository.AddAsync(statement);
+                await _generalLotteryRecordsRepository.AddAsync(generalRecords);
             else
-                _generalLotteryRecordsRepository.Update(statement);
+                _generalLotteryRecordsRepository.Update(generalRecords);
 
             var succeeded = await _lotteryRepository.SaveAsync();
             if (!succeeded)

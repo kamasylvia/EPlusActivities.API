@@ -65,6 +65,7 @@ namespace EPlusActivities.API.Data
             // builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
+            builder.Entity<GeneralLotteryRecords>().HasIndex(b => b.DateTime.Date).IsUnique();
 
             builder.Entity<PrizeTierPrizeItem>()
                 .HasKey(ptpi => new { ptpi.PrizeTierId, ptpi.PrizeItemId });

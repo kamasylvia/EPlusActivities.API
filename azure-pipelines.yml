@@ -46,7 +46,7 @@ stages:
             action: 'create'
             target: '$(Build.SourceVersion)'
             tagSource: 'gitTag'
-            tagPattern: '[Rr]elease-v[1-9]*\S*' 
+            tagPattern: '[Rr]elease-v[1-9]*\S*' # required 
             assets: '$(Build.ArtifactStagingDirectory)/*.zip'
             isDraft: true
             changeLogCompareToRelease: 'lastFullRelease'
@@ -56,24 +56,31 @@ stages:
       pool:
         vmImage: ubuntu-latest
       steps:
+        # Allow scripts to access the system token
         - checkout: self
           persistCredentials: true
+
+        # Install CSharpier
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'custom'
+            custom: 'tool'
+            arguments: 'install -g csharpier'
+        # Run CSarpier to format the source code
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'custom'
+            custom: 'csharpier'
+            arguments: '.'
+        # Before git commands, be sure your account's default identity is set
         - task: CmdLine@2
           continueOnError: true
           inputs:
             script: |
               git config --global user.email "zhangyue.dev@outlook.com"
               git config --global user.name "kamasylvia"
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'custom'
-            custom: 'tool'
-            arguments: 'install -g csharpier'
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'custom'
-            custom: 'csharpier'
-            arguments: '.'
+
+        # Push formatted code back to remote repository
         - task: CmdLine@2
           continueOnError: true
           inputs:

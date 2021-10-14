@@ -21,13 +21,12 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateTime date
         ) =>
             await _context.GeneralLotteryRecords.Include(s => s.Activity)
-                .Where(
+                .SingleOrDefaultAsync(
                     s =>
                         s.Activity.Id == activityId
                         && s.Channel == channel
                         && s.DateTime.Date == date.Date
-                )
-                .SingleOrDefaultAsync();
+                );
 
         public async Task<IEnumerable<GeneralLotteryRecords>> FindByDateRangeAsync(
             Guid activityId,
