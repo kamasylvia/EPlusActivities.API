@@ -59,7 +59,8 @@ namespace EPlusActivities.API.Controllers
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
             IGeneralLotteryRecordsRepository generalLotteryRecordsRepository
-        ) {
+        )
+        {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -99,7 +100,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -126,7 +128,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -207,7 +210,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DownloadLotteryRecordsForManagerAsyncs(
             [FromQuery] LotteryRecordsForManagerRequest request
-        ) {
+        )
+        {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
@@ -286,7 +290,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto request
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
@@ -343,9 +348,10 @@ namespace EPlusActivities.API.Controllers
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
             }
+            var channel = Enum.Parse<ChannelCode>(request.ChannelCode, true);
             var generalRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
                 request.ActivityId.Value,
-                Enum.Parse<ChannelCode>(request.ChannelCode, true),
+                channel,
                 DateTime.Today
             );
             var requireNewStatement = generalRecords is null;
@@ -354,7 +360,8 @@ namespace EPlusActivities.API.Controllers
                 generalRecords = new GeneralLotteryRecords
                 {
                     Activity = activity,
-                    DateTime = DateTime.Today
+                    DateTime = DateTime.Today,
+                    Channel = channel,
                 };
             }
             #endregion
@@ -489,7 +496,7 @@ namespace EPlusActivities.API.Controllers
             }
             #endregion
 
-            return Ok(response.OrderBy(x => x.DateTime));
+            return Ok(response);
         }
 
         /// <summary>

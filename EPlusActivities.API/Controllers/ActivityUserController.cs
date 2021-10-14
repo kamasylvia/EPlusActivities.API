@@ -49,7 +49,8 @@ namespace EPlusActivities.API.Controllers
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
             IGeneralLotteryRecordsRepository statementRepository
-        ) {
+        )
+        {
             _statementRepository =
                 statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
             _activityService =
@@ -80,7 +81,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
             [FromQuery] ActivityUserForGetDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -119,7 +121,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
             [FromQuery] ActivityUserForGetByUserIdDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -146,7 +149,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> JoinAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -201,7 +205,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAvailableActivities(
             [FromBody] ActivityUserForGetByUserIdDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -230,7 +235,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto request
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
@@ -243,10 +249,10 @@ namespace EPlusActivities.API.Controllers
             {
                 return NotFound("Could not find the activity.");
             }
-
+            var channel = Enum.Parse<ChannelCode>(request.Channel, true);
             var generalLotteryRecords = await _statementRepository.FindByDateAsync(
                 request.ActivityId.Value,
-                Enum.Parse<ChannelCode>(request.Channel, true),
+                channel,
                 DateTime.Today
             );
             var requireNewStatement = generalLotteryRecords is null;
@@ -255,7 +261,8 @@ namespace EPlusActivities.API.Controllers
                 generalLotteryRecords = new GeneralLotteryRecords
                 {
                     Activity = activity,
-                    DateTime = DateTime.Today
+                    DateTime = DateTime.Today,
+                    Channel = channel,
                 };
             }
 
