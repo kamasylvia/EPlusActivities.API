@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public class LotteryRepository : RepositoryBase<Lottery>, IFindByParentIdRepository<Lottery>
+    public class LotteryRepository : RepositoryBase<Lottery>, ILotteryRepository
     {
         public LotteryRepository(ApplicationDbContext context) : base(context) { }
 
@@ -23,13 +23,22 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(lr => lr.PrizeItem)
                 .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
-        public async Task<IEnumerable<Lottery>> FindByParentIdAsync(Guid userId) =>
+        public async Task<IEnumerable<Lottery>> FindByUserIdAsync(Guid userId) =>
             await _context.LotteryResults.Include(lr => lr.User)
                 .Include(lr => lr.Activity)
                 .Include(lr => lr.PrizeTier)
                 .Include(lr => lr.PrizeItem)
                 .AsAsyncEnumerable()
                 .Where(a => a.User.Id == userId)
+                .ToListAsync();
+
+        public async Task<IEnumerable<Lottery>> FindByActivityIdAsync(Guid activityId) =>
+            await _context.LotteryResults.Include(lr => lr.User)
+                .Include(lr => lr.Activity)
+                .Include(lr => lr.PrizeTier)
+                .Include(lr => lr.PrizeItem)
+                .AsAsyncEnumerable()
+                .Where(a => a.Activity.Id == activityId)
                 .ToListAsync();
     }
 }

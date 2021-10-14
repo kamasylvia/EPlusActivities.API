@@ -11,6 +11,7 @@ using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
+using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -36,8 +37,10 @@ namespace EPlusActivities.API.Controllers
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
         private readonly ILogger<ActivityController> _logger;
+        private readonly ILotteryRepository _lotteryRepository;
         private readonly IMapper _mapper;
         private readonly IActivityService _activityService;
+        private readonly ILotteryService _lotteryService;
         public ActivityController(
             IMemberService memberService,
             IActivityRepository activityRepository,
@@ -45,9 +48,13 @@ namespace EPlusActivities.API.Controllers
             IIdGeneratorService idGeneratorService,
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityController> logger,
+            ILotteryRepository lotteryRepository,
             IMapper mapper,
-            IActivityService activityService
-        ) {
+            IActivityService activityService,
+            ILotteryService lotteryService
+        )
+        {
+            _lotteryService = lotteryService ?? throw new ArgumentNullException(nameof(lotteryService));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
@@ -59,6 +66,7 @@ namespace EPlusActivities.API.Controllers
                 activityUserRepository
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _lotteryRepository = lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _activityRepository =
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
@@ -76,7 +84,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> GetAsync(
             [FromQuery] ActivityForGetDto activityDto
-        ) {
+        )
+        {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             return activity is null
                 ? NotFound("Could not find the activity.")
@@ -95,7 +104,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> GetByActivityCodeAsync(
             [FromQuery] string activityCode
-        ) {
+        )
+        {
             var activity = await _activityRepository.FindByActivityCodeAsync(activityCode);
             return activity is null
                 ? NotFound("Could not find the activity.")
@@ -114,7 +124,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetActivitiesAsync(
             [FromQuery] ActivityForGetListDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -159,7 +170,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> CreateAsync(
             [FromBody] ActivityForCreateDto activityDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -173,7 +185,8 @@ namespace EPlusActivities.API.Controllers
                 activity.ActivityType
                 is ActivityType.SingleAttendance
                 or ActivityType.SequentialAttendance
-            ) {
+            )
+            {
                 activity.PrizeTiers = new List<PrizeTier>()
                 {
                     new PrizeTier("Attendance") { Percentage = 100 }
@@ -244,7 +257,7 @@ namespace EPlusActivities.API.Controllers
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Roles = "manager, tester"
+            Roles = "admin, tester"
         )]
         public async Task<IActionResult> DeleteAsync([FromBody] ActivityForGetDto activityDto)
         {
@@ -258,6 +271,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             #region Database operations
+            var lotteries = await _lotteryRepository.FindByActivityIdAsync(activityDto.Id.Value);
+            await lotteries.ToAsyncEnumerable().ForEachAsync(lottery => _lotteryRepository.Remove(lottery));
             _activityRepository.Remove(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion

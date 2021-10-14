@@ -110,7 +110,7 @@ namespace EPlusActivities.API
                 .AddScoped<IRepository<Coupon>, CouponRepository>()
                 .AddScoped<IFindByParentIdRepository<ActivityUser>, ActivityUserRepository>()
                 .AddScoped<IFindByParentIdRepository<Address>, AddressRepository>()
-                .AddScoped<IFindByParentIdRepository<Lottery>, LotteryRepository>()
+                .AddScoped<ILotteryRepository, LotteryRepository>()
                 .AddScoped<IPrizeItemRepository, PrizeItemRepository>()
                 .AddScoped<IGeneralLotteryRecordsRepository, GeneralLotteryRecordsRepository>()
                 .AddScoped<INameExistsRepository<Brand>, BrandRepository>()

@@ -4,6 +4,8 @@ services:
     eplusactivities-db:
         image: mysql:8.0.25
         container_name: mysql-eplusactivities
+        ports:
+          - 30303:3306 
         environment:
             MYSQL_DATABASE: EPlusActivities
             MYSQL_USER: ngs
@@ -15,7 +17,7 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211013
+        image: kamasylvia/eplusactivities:20211014
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
@@ -49,6 +51,8 @@ services:
     fileservice-db:
         image: mysql:8.0.25
         container_name: mysql-fileservice
+        ports:
+          - 30304:3306 
         environment:
             MYSQL_DATABASE: FileService
             MYSQL_USER: ngs

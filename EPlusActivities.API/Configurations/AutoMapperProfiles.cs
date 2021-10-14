@@ -92,6 +92,7 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.PrizeType,
                     opt => opt.MapFrom(src => src.PrizeItem.PrizeType.ToString())
                 );
+            CreateMap<GeneralLotteryRecords, LotteryForGetGeneralRecordsResponse>();
             CreateMap<LotteryForCreateDto, Lottery>()
                 .ForMember(
                     dest => dest.ChannelCode,

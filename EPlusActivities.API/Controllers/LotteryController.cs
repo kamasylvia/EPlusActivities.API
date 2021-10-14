@@ -33,7 +33,7 @@ namespace EPlusActivities.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<LotteryController> _logger;
-        private readonly IFindByParentIdRepository<Lottery> _lotteryRepository;
+        private readonly ILotteryRepository _lotteryRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityRepository _activityRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
@@ -46,7 +46,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IMemberService _memberService;
 
         public LotteryController(
-            IFindByParentIdRepository<Lottery> lotteryRepository,
+            ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -59,7 +59,8 @@ namespace EPlusActivities.API.Controllers
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
             IGeneralLotteryRecordsRepository generalLotteryRecordsRepository
-        ) {
+        )
+        {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -99,7 +100,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -126,7 +128,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -144,7 +147,7 @@ namespace EPlusActivities.API.Controllers
 
         private async Task<IEnumerable<LotteryDto>> FindLotteryRecordsAsync(Guid userId)
         {
-            var lotteries = await _lotteryRepository.FindByParentIdAsync(userId);
+            var lotteries = await _lotteryRepository.FindByUserIdAsync(userId);
 
             // 因为进行了全剧配置，AutoMapper 在此执行
             // _mapper.Map<IEnumerable<LotteryDto>>(lotteries)
@@ -207,7 +210,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DownloadLotteryRecordsForManagerAsyncs(
             [FromQuery] LotteryRecordsForManagerRequest request
-        ) {
+        )
+        {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
@@ -252,7 +256,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<
             ActionResult<IEnumerable<LotteryForGetGeneralRecordsResponse>>
-        > GetStatementsAsync([FromQuery] LotteryForGetGeneralRecordsRequest request)
+        > GetGeneralStatementsAsync([FromQuery] LotteryForGetGeneralRecordsRequest request)
         {
             #region Parameter validation
             var channel = Enum.Parse<ChannelCode>(request.Channel, true);
@@ -268,7 +272,7 @@ namespace EPlusActivities.API.Controllers
                 request.EndTime
             );
             #endregion
-            return Ok(generalLotteryRecords.OrderBy(s => s.DateTime));
+            return Ok(_mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(generalLotteryRecords));
         }
 
         /// <summary>
@@ -283,7 +287,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto request
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)

@@ -27,7 +27,7 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
 
         /// <summary>
         /// 兑换总数
-        /// /// </summary>
+        /// </summary>
         /// <value></value>
         public int Redemption { get; set; }
     }
