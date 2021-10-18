@@ -26,7 +26,13 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// 每日抽奖次数上限，null 表示无限。
         /// </summary>
         /// <value></value>
-        public int? DailyLimit { get; set; }
+        public int? DailyDrawLimit { get; set; }
+
+        /// <summary>
+        /// 每日兑换次数上限，null 表示无限。
+        /// </summary>
+        /// <value></value>
+        public int? DailyRedemptionLimit { get; set; }
 
         /// <summary>
         /// 兑换一次抽奖所需积分，null 表示非抽奖活动
