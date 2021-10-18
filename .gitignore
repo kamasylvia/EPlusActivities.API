@@ -4,6 +4,7 @@
 MySQL
 Logs
 FileStorage
+EPlusActivities.Test
 
 # globs
 Makefile.in
