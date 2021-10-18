@@ -14,7 +14,7 @@ namespace EPlusActivities.API.Entities
         public DateTime RegisterDate { get; set; }
 
         // 上次登陆日期
-        public DateTime? LastDrawDate { get; set; }
+        public DateTime? LastLoginDate { get; set; }
 
         // 积分
         public int Credit { get; set; }

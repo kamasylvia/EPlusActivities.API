@@ -19,7 +19,10 @@ namespace EPlusActivities.API.Entities
         public int? Limit { get; set; }
 
         // 每用户每天抽奖限制, null 表示无限制
-        public int? DailyLimit { get; set; }
+        public int? DailyDrawLimit { get; set; }
+
+        // 每用户每天兑换限制, null 表示无限制
+        public int? DailyRedemptionLimit { get; set; }
 
         // 兑换一次抽奖所需积分
         public int? RequiredCreditForRedeeming { get; set; }

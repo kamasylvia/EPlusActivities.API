@@ -49,7 +49,8 @@ namespace EPlusActivities.API.Controllers
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
             IGeneralLotteryRecordsRepository statementRepository
-        ) {
+        )
+        {
             _statementRepository =
                 statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
             _activityService =
@@ -80,7 +81,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
             [FromQuery] ActivityUserForGetDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -119,7 +121,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
             [FromQuery] ActivityUserForGetByUserIdDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -146,7 +149,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserDto>> JoinAsync(
             [FromBody] ActivityUserForGetDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.Value.ToString());
             if (user is null)
@@ -201,7 +205,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAvailableActivities(
             [FromBody] ActivityUserForGetByUserIdDto activityUserDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(activityUserDto.UserId.ToString());
             if (user is null)
@@ -230,7 +235,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
             [FromBody] ActivityUserForRedeemDrawsRequestDto request
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
@@ -267,6 +273,22 @@ namespace EPlusActivities.API.Controllers
             if (activityUser is null)
             {
                 return NotFound("Could not find the ActivityUser link.");
+            }
+
+            // 今日没登陆过的用户，每日兑换次数清零
+            if (!(user.LastLoginDate >= DateTime.Today))
+            {
+                activityUser.TodayUsedRedempion = 0;
+            }
+
+            // 超过每日兑换限制
+            if (!(activityUser.TodayUsedRedempion + request.Count >= activity.DailyRedemptionLimit))
+            {
+                return BadRequest("Sorry, the user had already achieved the daily maximum number of redemption of this activity.");
+            }
+            else
+            {
+                activityUser.TodayUsedRedempion += request.Count;
             }
 
             var cost = request.UnitPrice * request.Count;
