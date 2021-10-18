@@ -24,7 +24,8 @@ namespace EPlusActivities.API.Services.ActivityService
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityService> logger,
             IMapper mapper
-        ) {
+        )
+        {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _activityUserRepository =
                 activityUserRepository
@@ -33,6 +34,16 @@ namespace EPlusActivities.API.Services.ActivityService
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _activityRepository =
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
+        }
+
+        public async Task UpdateDailyLimitsAsync(ApplicationUser user, ActivityUser activityUser)
+        {
+            if (!(user.LastLoginDate >= DateTime.Today))
+            {
+                user.LastLoginDate = DateTime.Today;
+                activityUser.TodayUsedDraws = 0;
+                activityUser.TodayUsedRedempion = 0;
+            }
         }
 
         public async Task<IEnumerable<Activity>> GetActivitiesAsync(
@@ -48,7 +59,8 @@ namespace EPlusActivities.API.Services.ActivityService
             IEnumerable<ChannelCode> availableChannels,
             DateTime startTime,
             DateTime? endTime = null
-        ) {
+        )
+        {
             var result = new List<Activity>();
             var activitiesAtStartTime = await _activityRepository.FindAvailableActivitiesAsync(
                 startTime
@@ -66,7 +78,8 @@ namespace EPlusActivities.API.Services.ActivityService
         public async Task<IEnumerable<ActivityUser>> BindUserWithActivities(
             Guid userId,
             IEnumerable<Guid> activityIds
-        ) {
+        )
+        {
             var result = new List<ActivityUser>();
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)

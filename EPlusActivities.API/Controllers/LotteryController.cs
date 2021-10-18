@@ -10,6 +10,7 @@ using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
@@ -44,6 +45,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
         private readonly IMemberService _memberService;
+		private readonly IActivityService _activityService;
 
         public LotteryController(
             ILotteryRepository lotteryRepository,
@@ -58,7 +60,8 @@ namespace EPlusActivities.API.Controllers
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+			IActivityService activityService
         ) {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
@@ -74,6 +77,7 @@ namespace EPlusActivities.API.Controllers
             _activityUserRepository =
                 activityUserRepository
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
+			_activityService = activityService ?? throw new ArgumentNullException(nameof(activityService));
             _couponRepository =
                 couponResponseDto ?? throw new ArgumentNullException(nameof(couponResponseDto));
             _lotteryRepository =
@@ -330,11 +334,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 今天没登陆过的用户，每日已用抽奖次数清零
-            if (!(user.LastLoginDate >= DateTime.Today))
-            {
-                activityUser.TodayUsedDraws = 0;
-                user.LastLoginDate = DateTime.Today;
-            }
+            await _activityService.UpdateDailyLimitsAsync(user, activityUser);
 
             // 超过每日抽奖次数限制
             if (activityUser.TodayUsedDraws + request.Count > activity.DailyDrawLimit)

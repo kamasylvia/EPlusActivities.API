@@ -29,5 +29,7 @@ namespace EPlusActivities.API.Services.ActivityService
             Guid userId,
             ChannelCode availableChannel
         );
+
+        Task UpdateDailyLimitsAsync(ApplicationUser user, ActivityUser activityUser);
     }
 }
