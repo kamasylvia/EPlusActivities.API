@@ -282,7 +282,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 超过每日兑换限制
-            if (!(activityUser.TodayUsedRedempion + request.Count >= activity.DailyRedemptionLimit))
+            if (!(activityUser.TodayUsedRedempion + request.Count <= activity.DailyRedemptionLimit))
             {
                 return BadRequest("Sorry, the user had already achieved the daily maximum number of redemption of this activity.");
             }

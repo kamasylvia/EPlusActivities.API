@@ -11,7 +11,7 @@ namespace EPlusActivities.API.Entities
         // 当天已抽奖次数
         public int TodayUsedDraws { get; set; }
 
-        // 当天已抽奖次数
+        // 当天已兑换次数
         public int TodayUsedRedempion { get; set; }
 
         // 剩余抽奖次数
