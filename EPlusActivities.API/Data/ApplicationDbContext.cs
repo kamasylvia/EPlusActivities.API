@@ -67,7 +67,8 @@ namespace EPlusActivities.API.Data
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<GeneralLotteryRecords>().HasIndex(b => b.DateTime).IsUnique();
 
-            builder.Entity<PrizeTierPrizeItem>()
+            builder
+                .Entity<PrizeTierPrizeItem>()
                 .HasKey(ptpi => new { ptpi.PrizeTierId, ptpi.PrizeItemId });
 
             builder.Entity<ActivityUser>().HasKey(lad => new { lad.ActivityId, lad.UserId });
@@ -78,7 +79,8 @@ namespace EPlusActivities.API.Data
 
 
             #region Set list of enum values
-            builder.Entity<Activity>()
+            builder
+                .Entity<Activity>()
                 .Property(a => a.AvailableChannels)
                 .HasConversion(
                     v => string.Join(';', v.Select(e => e.ToString("D")).ToArray()),

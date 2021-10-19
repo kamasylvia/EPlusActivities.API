@@ -23,7 +23,8 @@ namespace EPlusActivities.API.Services.FileService
             IHttpClientFactory httpClientFactory,
             ILogger<FileService> logger,
             IConfiguration configuration
-        ) {
+        )
+        {
             _httpClientFactory =
                 httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -126,7 +127,8 @@ namespace EPlusActivities.API.Services.FileService
             );
             formData.Add(streamContent, "formFile", requestDto.FormFile.FileName);
 
-            var response = await _httpClientFactory.CreateClient()
+            var response = await _httpClientFactory
+                .CreateClient()
                 .PostAsync(uriBuilder.Uri, formData);
             return Convert.ToInt32(response.StatusCode);
         }
@@ -185,7 +187,8 @@ namespace EPlusActivities.API.Services.FileService
                 new Dictionary<string, string> { ["OwnerId"] = ownerId.ToString() }
             );
 
-            return await _httpClientFactory.CreateClient()
+            return await _httpClientFactory
+                .CreateClient()
                 .GetFromJsonAsync<IEnumerable<Guid>>(requestUrl);
         }
     }

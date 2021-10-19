@@ -10,7 +10,8 @@ namespace EPlusActivities.API.Services.OfficeService
     {
         public Task<byte[]> DownloadLotteryResults(
             IEnumerable<LotteryRecordsForManagerResponse> lotteries
-        ) {
+        )
+        {
             throw new NotImplementedException();
         }
     }

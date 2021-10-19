@@ -23,7 +23,8 @@ namespace FileService.Services.FileStorageService
             IMapper mapper,
             ILogger<FileStorageService> logger,
             IAppFileRepository appFileRepository
-        ) {
+        )
+        {
             _appFileRepository =
                 appFileRepository ?? throw new ArgumentNullException(nameof(appFileRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

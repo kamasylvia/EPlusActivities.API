@@ -27,7 +27,8 @@ namespace EPlusActivities.API.Data
         {
             using (
                 var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope()
-            ) {
+            )
+            {
                 var environment =
                     serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
                 var configuration =
@@ -66,7 +67,8 @@ namespace EPlusActivities.API.Data
         }
 
         private async Task SeedUsersAsync(UserManager<ApplicationUser> userManager) =>
-            await _users.ToAsyncEnumerable()
+            await _users
+                .ToAsyncEnumerable()
                 .ForEachAwaitAsync(
                     async user =>
                     {
@@ -82,7 +84,8 @@ namespace EPlusActivities.API.Data
                 );
 
         private async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager) =>
-            await _roles.ToAsyncEnumerable()
+            await _roles
+                .ToAsyncEnumerable()
                 .ForEachAwaitAsync(
                     async role =>
                     {
@@ -96,7 +99,8 @@ namespace EPlusActivities.API.Data
         private async Task SeedDataAsync(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager
-        ) {
+        )
+        {
             var user = await userManager.FindByNameAsync("seed");
 
             #region Seed Addresses

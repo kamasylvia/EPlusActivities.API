@@ -27,7 +27,8 @@ namespace EPlusActivities.API.Controllers
             ISmsService smsService,
             UserManager<ApplicationUser> userManager,
             PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider
-        ) {
+        )
+        {
             _smsService = smsService ?? throw new ArgumentNullException(nameof(smsService));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _phoneNumberTokenProvider =

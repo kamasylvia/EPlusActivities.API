@@ -18,7 +18,8 @@ namespace EPlusActivities.API.Utils
         public static void CreateSpreadsheetWorkbook(
             string filepath,
             string defaultSheetName = "Sheet1"
-        ) {
+        )
+        {
             // Create a spreadsheet document by supplying the filepath.
             // By default, AutoSave = true, Editable = true, and Type = xlsx.
             SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Create(
@@ -60,7 +61,8 @@ namespace EPlusActivities.API.Utils
             string columnName,
             uint rowIndex,
             WorksheetPart worksheetPart
-        ) {
+        )
+        {
             Worksheet worksheet = worksheetPart.Worksheet;
             SheetData sheetData = worksheet.GetFirstChild<SheetData>();
             string cellReference = columnName + rowIndex;
@@ -82,7 +84,8 @@ namespace EPlusActivities.API.Utils
                 row.Elements<Cell>()
                     .Where(c => c.CellReference.Value == columnName + rowIndex)
                     .Count() > 0
-            ) {
+            )
+            {
                 return row.Elements<Cell>()
                     .Where(c => c.CellReference.Value == cellReference)
                     .First();

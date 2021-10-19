@@ -25,7 +25,8 @@ namespace EPlusActivities.API.Services.MemberService
             ILogger<MemberService> logger,
             IRepository<Credit> creditRepository,
             IMapper mapper
-        ) {
+        )
+        {
             _configuration =
                 configuration ?? throw new ArgumentNullException(nameof(configuration));
             _httpClientFactory =
@@ -43,7 +44,8 @@ namespace EPlusActivities.API.Services.MemberService
         /// <returns></returns>
         public async Task<(bool, MemberForGetDto)> GetMemberAsync(string phone)
         {
-            var response = await _httpClientFactory.CreateClient()
+            var response = await _httpClientFactory
+                .CreateClient()
                 .PostAsJsonAsync(
                     _configuration["MemberServiceUriBuilder:GetMemberInfoRequestUrl"],
                     new { mobile = phone }
@@ -61,8 +63,10 @@ namespace EPlusActivities.API.Services.MemberService
 
         public async Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCouponAsync(
             MemberForReleaseCouponRequestDto requestDto
-        ) {
-            var response = await _httpClientFactory.CreateClient()
+        )
+        {
+            var response = await _httpClientFactory
+                .CreateClient()
                 .PostAsJsonAsync(
                     _configuration["MemberServiceUriBuilder:CouponRequestUrl"],
                     requestDto
@@ -82,8 +86,10 @@ namespace EPlusActivities.API.Services.MemberService
         public async Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(
             Guid userId,
             MemberForUpdateCreditRequestDto requestDto
-        ) {
-            var response = await _httpClientFactory.CreateClient()
+        )
+        {
+            var response = await _httpClientFactory
+                .CreateClient()
                 .PostAsJsonAsync(
                     _configuration["MemberServiceUriBuilder:UpdateCreditRequestUrl"],
                     requestDto

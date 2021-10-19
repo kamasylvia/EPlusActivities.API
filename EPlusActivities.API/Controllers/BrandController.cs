@@ -39,11 +39,12 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<BrandDto>> GetByIdAsync(
             [FromQuery] BrandForGetByIdDto brandDto
-        ) {
+        )
+        {
             var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
             return brand is null
-                ? NotFound($"Could not find the brand.")
-                : Ok(_mapper.Map<BrandDto>(brand));
+              ? NotFound($"Could not find the brand.")
+              : Ok(_mapper.Map<BrandDto>(brand));
         }
 
         [HttpGet("name")]
@@ -53,11 +54,12 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<BrandDto>> GetByNameAsync(
             [FromQuery] BrandForGetByNameDto brandDto
-        ) {
+        )
+        {
             var brand = await _brandRepository.FindByNameAsync(brandDto.Name);
             return brand is null
-                ? NotFound($"Could not find the brand.")
-                : Ok(_mapper.Map<BrandDto>(brand));
+              ? NotFound($"Could not find the brand.")
+              : Ok(_mapper.Map<BrandDto>(brand));
         }
 
         /// <summary>
@@ -72,7 +74,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetBrandListAsync(
             [FromQuery] DtoForGetList requestDto
-        ) {
+        )
+        {
             var brands = (await _brandRepository.FindAllAsync()).OrderBy(b => b.Name).ToList();
 
             var startIndex = (requestDto.PageIndex - 1) * requestDto.PageSize;
@@ -90,8 +93,8 @@ namespace EPlusActivities.API.Controllers
 
             var result = brands.GetRange(startIndex, count);
             return brands.Count > 0
-                ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
-                : NotFound($"Could not find any brand.");
+              ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
+              : NotFound($"Could not find any brand.");
         }
 
         [HttpGet("search")]
@@ -101,11 +104,12 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync(
             [FromBody] BrandForGetByNameDto brandDto
-        ) {
+        )
+        {
             var brands = await _brandRepository.FindByContainedNameAsync(brandDto.Name);
             return brands.Count() > 0
-                ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
-                : NotFound($"Could not find any brand with name '{brandDto.Name}'");
+              ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
+              : NotFound($"Could not find any brand with name '{brandDto.Name}'");
         }
 
         [HttpPost]
@@ -115,7 +119,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<BrandDto>> CreateAsync(
             [FromBody] BrandForGetByNameDto brandDto
-        ) {
+        )
+        {
             #region Parameter validation
             if (await _brandRepository.ExistsAsync(brandDto.Name))
             {
@@ -133,8 +138,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-                ? Ok(_mapper.Map<BrandDto>(brand))
-                : new InternalServerErrorObjectResult("Update database exception");
+              ? Ok(_mapper.Map<BrandDto>(brand))
+              : new InternalServerErrorObjectResult("Update database exception");
         }
 
         [HttpPatch("name")]
@@ -159,8 +164,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-                ? Ok()
-                : new InternalServerErrorObjectResult("Update database exception");
+              ? Ok()
+              : new InternalServerErrorObjectResult("Update database exception");
         }
 
         [HttpDelete]
@@ -174,7 +179,8 @@ namespace EPlusActivities.API.Controllers
             if (
                 !await _brandRepository.ExistsAsync(brandDto.Id.Value)
                 || !await _brandRepository.ExistsAsync(brandDto.Name)
-            ) {
+            )
+            {
                 return NotFound($"Could not find the brand '{brandDto.Name}'");
             }
             #endregion
@@ -186,8 +192,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-                ? Ok()
-                : new InternalServerErrorObjectResult("Update database exception");
+              ? Ok()
+              : new InternalServerErrorObjectResult("Update database exception");
         }
     }
 }

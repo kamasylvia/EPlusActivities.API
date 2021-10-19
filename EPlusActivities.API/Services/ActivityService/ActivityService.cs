@@ -69,7 +69,8 @@ namespace EPlusActivities.API.Services.ActivityService
                 endTime ?? DateTime.Now.Date
             );
 
-            return activitiesAtStartTime.Union(activitiesAtEndTime)
+            return activitiesAtStartTime
+                .Union(activitiesAtEndTime)
                 .Where(
                     activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0
                 );

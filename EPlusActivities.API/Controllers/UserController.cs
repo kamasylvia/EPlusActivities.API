@@ -40,7 +40,8 @@ namespace EPlusActivities.API.Controllers
             ILogger<UserController> logger,
             IMapper mapper,
             IMemberService memberService
-        ) {
+        )
+        {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _memberService =
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
@@ -116,7 +117,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
             [FromQuery] UserForGetUsersDto requestDto
-        ) {
+        )
+        {
             var userList = (
                 await _userManager.GetUsersInRoleAsync(requestDto.Role.Trim().ToLower())
             ).ToList();
@@ -136,8 +138,8 @@ namespace EPlusActivities.API.Controllers
 
             var result = userList.GetRange(startIndex, count);
             return result.Count > 0
-                ? _mapper.Map<List<UserDto>>(result)
-                : NotFound("Could not find any users.");
+              ? _mapper.Map<List<UserDto>>(result)
+              : NotFound("Could not find any users.");
         }
 
         /// <summary>
@@ -152,7 +154,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> UpdatePhoneNumberAsync(
             [FromBody] UserForUpdatePhoneDto userDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(userDto.Id.ToString());
             if (user is null)
@@ -203,7 +206,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> CreateAdminOrManagerAsync(
             [FromBody] UserForCreateAdminDto userDto
-        ) {
+        )
+        {
             #region Parameter validation
             var user = await _userManager.FindByNameAsync(userDto.UserName);
             if (user is not null)

@@ -14,7 +14,8 @@ namespace EPlusActivities.API.Extensions
             this WorksheetPart workSheetPart,
             string cellValue,
             (string, uint) coordinate
-        ) {
+        )
+        {
             var cell = workSheetPart.InsertCell(coordinate);
             cell.CellValue = new CellValue(cellValue);
             cell.DataType = new EnumValue<CellValues>(CellValues.String);
@@ -24,7 +25,8 @@ namespace EPlusActivities.API.Extensions
             this WorksheetPart workSheetPart,
             int cellValue,
             (string, uint) coordinate
-        ) {
+        )
+        {
             var cell = workSheetPart.InsertCell(coordinate);
             cell.CellValue = new CellValue(cellValue);
             cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -34,7 +36,8 @@ namespace EPlusActivities.API.Extensions
             this WorksheetPart workSheetPart,
             decimal cellValue,
             (string, uint) coordinate
-        ) {
+        )
+        {
             var cell = workSheetPart.InsertCell(coordinate);
             cell.CellValue = new CellValue(cellValue);
             cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -44,7 +47,8 @@ namespace EPlusActivities.API.Extensions
             this WorksheetPart workSheetPart,
             double cellValue,
             (string, uint) coordinate
-        ) {
+        )
+        {
             var cell = workSheetPart.InsertCell(coordinate);
             cell.CellValue = new CellValue(cellValue);
             cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -54,7 +58,8 @@ namespace EPlusActivities.API.Extensions
             this WorksheetPart workSheetPart,
             bool cellValue,
             (string, uint) coordinate
-        ) {
+        )
+        {
             var cell = workSheetPart.InsertCell(coordinate);
             cell.CellValue = new CellValue(cellValue);
             cell.DataType = new EnumValue<CellValues>(CellValues.Number);
@@ -64,7 +69,8 @@ namespace EPlusActivities.API.Extensions
             this WorksheetPart workSheetPart,
             DateTime cellValue,
             (string, uint) coordinate
-        ) {
+        )
+        {
             var cell = workSheetPart.InsertCell(coordinate);
             cell.CellValue = new CellValue(cellValue);
             cell.DataType = new EnumValue<CellValues>(CellValues.Date);
@@ -74,7 +80,8 @@ namespace EPlusActivities.API.Extensions
             this WorksheetPart workSheetPart,
             DateTimeOffset cellValue,
             (string, uint) coordinate
-        ) {
+        )
+        {
             var cell = workSheetPart.InsertCell(coordinate);
             cell.CellValue = new CellValue(cellValue);
             cell.DataType = new EnumValue<CellValues>(CellValues.Date);
@@ -109,7 +116,8 @@ namespace EPlusActivities.API.Extensions
                 row.Elements<Cell>()
                     .Where(c => c.CellReference.Value == columnName + rowIndex)
                     .Count() > 0
-            ) {
+            )
+            {
                 return row.Elements<Cell>()
                     .Where(c => c.CellReference.Value == cellReference)
                     .First();

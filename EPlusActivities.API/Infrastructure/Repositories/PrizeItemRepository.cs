@@ -13,25 +13,29 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public PrizeItemRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<PrizeItem> FindByIdAsync(params object[] keyValues) =>
-            await _context.PrizeItems.Include(prizeItem => prizeItem.Brand)
+            await _context.PrizeItems
+                .Include(prizeItem => prizeItem.Brand)
                 .Include(prizeItem => prizeItem.Category)
                 .SingleOrDefaultAsync(
                     prizeItem => prizeItem.Id == (Guid)keyValues.FirstOrDefault()
                 );
 
         public async Task<IEnumerable<PrizeItem>> FindByNameAsync(string name) =>
-            await _context.PrizeItems.AsAsyncQueryable()
+            await _context.PrizeItems
+                .AsAsyncQueryable()
                 .Where(p => p.Name.Contains(name))
                 .ToArrayAsync();
 
         public async Task<IEnumerable<PrizeItem>> FindByPrizeTierIdAsync(Guid id) =>
-            await _context.PrizeItems.Include(pi => pi.PrizeTierPrizeItems)
+            await _context.PrizeItems
+                .Include(pi => pi.PrizeTierPrizeItems)
                 .ThenInclude(ptpi => ptpi.PrizeTier)
                 .Where(pt => pt.PrizeTierPrizeItems.Any(ptpi => ptpi.PrizeTier.Id == id))
                 .ToListAsync();
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.PrizeItems.AsAsyncQueryable()
+            await _context.PrizeItems
+                .AsAsyncQueryable()
                 .AnyAsync(p => p.Id == (Guid)keyValues.FirstOrDefault());
     }
 }

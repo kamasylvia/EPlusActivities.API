@@ -105,8 +105,8 @@ namespace EPlusActivities.API.Controllers
             );
 
             return activityUser is null
-                ? NotFound("Could not find the ActivityUser link.")
-                : Ok(_mapper.Map<ActivityUserDto>(activityUser));
+              ? NotFound("Could not find the ActivityUser link.")
+              : Ok(_mapper.Map<ActivityUserDto>(activityUser));
         }
 
         /// <summary>
@@ -281,7 +281,9 @@ namespace EPlusActivities.API.Controllers
             // 超过每日兑换限制
             if (!(activityUser.TodayUsedRedempion + request.Count <= activity.DailyRedemptionLimit))
             {
-                return BadRequest("Sorry, the user had already achieved the daily maximum number of redemption of this activity.");
+                return BadRequest(
+                    "Sorry, the user had already achieved the daily maximum number of redemption of this activity."
+                );
             }
             else
             {

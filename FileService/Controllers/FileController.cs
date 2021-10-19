@@ -34,7 +34,8 @@ namespace FileService.Controllers
             IMapper mapper,
             ILogger<FileController> logger,
             IAppFileRepository appFileRepository
-        ) {
+        )
+        {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _appFileRepository =
                 appFileRepository ?? throw new ArgumentNullException(nameof(appFileRepository));
@@ -59,7 +60,8 @@ namespace FileService.Controllers
         [HttpGet("id")]
         public async Task<IActionResult> DownloadFileByFileIdAsync(
             [FromQuery] DownloadFileByFileIdRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByIdAsync(requestDto.FileId);
             if (file is null)
             {
@@ -73,7 +75,8 @@ namespace FileService.Controllers
         [HttpGet("content-type/id")]
         public async Task<ActionResult<string>> GetContentTypeByIdAsync(
             [FromQuery] DownloadFileByFileIdRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByIdAsync(requestDto.FileId);
             return file is null ? NotFound("Could not find the file.") : Ok(file.ContentType);
         }
@@ -81,7 +84,8 @@ namespace FileService.Controllers
         [HttpGet("key")]
         public async Task<IActionResult> DownloadFilesByKeyAsync(
             [FromQuery] DownloadFileByKeyRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByAlternateKeyAsync(
                 requestDto.OwnerId.Value,
                 requestDto.Key
@@ -98,7 +102,8 @@ namespace FileService.Controllers
         [HttpGet("content-type/key")]
         public async Task<ActionResult<string>> GetContentTypeByKeyAsync(
             [FromQuery] DownloadFileByKeyRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByAlternateKeyAsync(
                 requestDto.OwnerId.Value,
                 requestDto.Key
@@ -109,7 +114,8 @@ namespace FileService.Controllers
         [HttpGet("ownerId")]
         public async Task<ActionResult<IEnumerable<Guid?>>> GetFileIdsByOwnerIdAsync(
             [FromQuery] GetFileIdsByOwnerIdRequestDto requestDto
-        ) {
+        )
+        {
             var files = await _appFileRepository.FindByOwnerIdAsync(requestDto.OwnerId.Value);
             return files.Count() == 0 ? NotFound() : Ok(files.Select(file => file.Id));
         }
@@ -117,7 +123,8 @@ namespace FileService.Controllers
         [HttpDelete("id")]
         public async Task<IActionResult> DeleteFileById(
             [FromQuery] DownloadFileByFileIdRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByIdAsync(requestDto.FileId);
             if (file is null)
             {
@@ -126,16 +133,18 @@ namespace FileService.Controllers
 
             _appFileRepository.Remove(file);
 
-            return await _appFileRepository.SaveAsync()
-            && _fileStorageService.DeleteFile(file.FilePath)
-                ? Ok()
-                : new InternalServerErrorObjectResult("Inter Server Error");
+            return
+                await _appFileRepository.SaveAsync()
+                && _fileStorageService.DeleteFile(file.FilePath)
+              ? Ok()
+              : new InternalServerErrorObjectResult("Inter Server Error");
         }
 
         [HttpDelete("key")]
         public async Task<IActionResult> DeleteFileByKey(
             [FromQuery] DownloadFileByKeyRequestDto requestDto
-        ) {
+        )
+        {
             var file = await _appFileRepository.FindByAlternateKeyAsync(
                 requestDto.OwnerId.Value,
                 requestDto.Key
@@ -147,10 +156,11 @@ namespace FileService.Controllers
 
             _appFileRepository.Remove(file);
 
-            return await _appFileRepository.SaveAsync()
-            && _fileStorageService.DeleteFile(file.FilePath)
-                ? Ok()
-                : new InternalServerErrorObjectResult("Inter Server Error");
+            return
+                await _appFileRepository.SaveAsync()
+                && _fileStorageService.DeleteFile(file.FilePath)
+              ? Ok()
+              : new InternalServerErrorObjectResult("Inter Server Error");
         }
     }
 }

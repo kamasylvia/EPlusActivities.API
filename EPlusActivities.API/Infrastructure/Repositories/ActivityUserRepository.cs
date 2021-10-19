@@ -15,7 +15,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public ActivityUserRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.ActivityUserLinks.AsAsyncQueryable()
+            await _context.ActivityUserLinks
+                .AsAsyncQueryable()
                 .AnyAsync(
                     activityUser =>
                         activityUser.ActivityId.Value == (Guid)keyValues[0]
@@ -23,7 +24,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 );
 
         public override async Task<ActivityUser> FindByIdAsync(params object[] keyValues) =>
-            await _context.ActivityUserLinks.AsAsyncQueryable()
+            await _context.ActivityUserLinks
+                .AsAsyncQueryable()
                 .SingleOrDefaultAsync(
                     activityUser =>
                         activityUser.ActivityId.Value == (Guid)keyValues[0]
@@ -31,7 +33,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 );
 
         public async Task<IEnumerable<ActivityUser>> FindByParentIdAsync(Guid userId) =>
-            await _context.ActivityUserLinks.AsAsyncQueryable()
+            await _context.ActivityUserLinks
+                .AsAsyncQueryable()
                 .Where(activityUser => activityUser.UserId == userId)
                 .ToListAsync();
     }
