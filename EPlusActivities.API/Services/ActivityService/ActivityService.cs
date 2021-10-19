@@ -36,7 +36,7 @@ namespace EPlusActivities.API.Services.ActivityService
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         }
 
-        public async Task UpdateDailyLimitsAsync(ApplicationUser user, ActivityUser activityUser)
+        public void UpdateDailyLimitsAsync(ApplicationUser user, ActivityUser activityUser)
         {
             if (!(user.LastLoginDate >= DateTime.Today))
             {

@@ -276,7 +276,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 今日没登陆过的用户，每日兑换次数清零
-            await _activityService.UpdateDailyLimitsAsync(user, activityUser);
+            _activityService.UpdateDailyLimitsAsync(user, activityUser);
 
             // 超过每日兑换限制
             if (!(activityUser.TodayUsedRedempion + request.Count <= activity.DailyRedemptionLimit))

@@ -342,7 +342,7 @@ namespace EPlusActivities.API.Controllers
             }
 
             // 今天没登陆过的用户，每日已用抽奖次数清零
-            await _activityService.UpdateDailyLimitsAsync(user, activityUser);
+            _activityService.UpdateDailyLimitsAsync(user, activityUser);
 
             // 超过每日抽奖次数限制
             if (activityUser.TodayUsedDraws + request.Count > activity.DailyDrawLimit)
