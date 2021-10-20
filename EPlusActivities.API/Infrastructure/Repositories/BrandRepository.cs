@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    [Repository(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class BrandRepository : RepositoryBase<Brand>, INameExistsRepository<Brand>
     {
         public BrandRepository(ApplicationDbContext context) : base(context) { }

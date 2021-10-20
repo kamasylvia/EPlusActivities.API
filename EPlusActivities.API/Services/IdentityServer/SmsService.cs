@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Services.IdentityServer
 {
-    [Service(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class SmsService : ISmsService
     {
         private readonly IConfiguration _configuration;

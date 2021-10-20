@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    [Repository(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class AddressRepository : RepositoryBase<Address>, IFindByParentIdRepository<Address>
     {
         public AddressRepository(ApplicationDbContext context) : base(context) { }

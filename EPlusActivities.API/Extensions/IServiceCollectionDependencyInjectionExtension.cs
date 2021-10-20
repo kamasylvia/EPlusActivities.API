@@ -14,9 +14,9 @@ namespace EPlusActivities.API.Extensions
             this IServiceCollection services
         )
         {
-           services.RegisterLifetimesByAttribute(ServiceLifetime.Transient); 
-           services.RegisterLifetimesByAttribute(ServiceLifetime.Scoped); 
-           services.RegisterLifetimesByAttribute(ServiceLifetime.Singleton); 
+            services.RegisterLifetimesByAttribute(ServiceLifetime.Transient);
+            services.RegisterLifetimesByAttribute(ServiceLifetime.Scoped);
+            services.RegisterLifetimesByAttribute(ServiceLifetime.Singleton);
         }
 
         private static void RegisterLifetimesByAttribute(
@@ -25,17 +25,20 @@ namespace EPlusActivities.API.Extensions
         )
         {
             // var types =
-            Assembly
-                .GetEntryAssembly()
-                .GetReferencedAssemblies()
-                .Select(Assembly.Load)
-                .SelectMany(asm => asm.DefinedTypes)
+            /* 
+             Assembly
+                 .GetEntryAssembly()
+                 .GetReferencedAssemblies()
+                 .Select(Assembly.Load)
+                 .SelectMany(asm => asm.DefinedTypes)
+             */
+            AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
                 .Where(implementer =>
                     implementer
-                        .GetCustomAttributes(typeof(DependencyAttribute), true)
+                        .GetCustomAttributes(typeof(CustomDependencyAttribute), false)
                         .Length >
                     0 &&
-                    implementer.GetCustomAttribute<DependencyAttribute>().Lifetime ==
+                    implementer.GetCustomAttribute<CustomDependencyAttribute>().Lifetime ==
                     serviceLifetime &&
                     implementer.IsClass &&
                     !implementer.IsAbstract)

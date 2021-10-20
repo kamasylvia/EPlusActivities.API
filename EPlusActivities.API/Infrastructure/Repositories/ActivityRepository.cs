@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    [Repository(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class ActivityRepository : RepositoryBase<Activity>, IActivityRepository
     {
         public ActivityRepository(ApplicationDbContext context) : base(context) { }

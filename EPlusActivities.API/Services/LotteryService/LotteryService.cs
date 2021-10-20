@@ -18,7 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Services.LotteryService
 {
-    [Service(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class LotteryService : ILotteryService
     {
         private readonly IConfiguration _configuration;

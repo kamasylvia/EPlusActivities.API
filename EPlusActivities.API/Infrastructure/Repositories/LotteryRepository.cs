@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    [Repository(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class LotteryRepository : RepositoryBase<Lottery>, ILotteryRepository
     {
         public LotteryRepository(ApplicationDbContext context) : base(context) { }

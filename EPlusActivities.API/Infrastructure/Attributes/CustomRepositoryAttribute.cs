@@ -6,9 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Attributes
 {
-    public class RepositoryAttribute : DependencyAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CustomRepositoryAttribute : CustomDependencyAttribute
     {
-        public RepositoryAttribute(ServiceLifetime serviceLifetime) : base(serviceLifetime)
+        public CustomRepositoryAttribute(ServiceLifetime serviceLifetime) : base(serviceLifetime)
         {
         }
     }

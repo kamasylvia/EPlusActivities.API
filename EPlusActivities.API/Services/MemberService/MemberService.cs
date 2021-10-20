@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.MemberService
 {
-    [Service(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class MemberService : IMemberService
     {
         private readonly IConfiguration _configuration;

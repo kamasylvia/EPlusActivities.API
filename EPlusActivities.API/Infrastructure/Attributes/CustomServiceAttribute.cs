@@ -6,12 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Attributes
 {
-    public class DependencyAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CustomServiceAttribute : CustomDependencyAttribute
     {
-        public ServiceLifetime Lifetime { get; set; } = ServiceLifetime.Transient;
-        public DependencyAttribute(ServiceLifetime serviceLifetime)
+        public CustomServiceAttribute(ServiceLifetime serviceLifetime) : base(serviceLifetime)
         {
-           Lifetime = serviceLifetime; 
         }
     }
 }

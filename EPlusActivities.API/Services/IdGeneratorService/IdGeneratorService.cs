@@ -4,7 +4,7 @@ using Yitter.IdGenerator;
 
 namespace EPlusActivities.API.Services.IdGeneratorService
 {
-    [Service(ServiceLifetime.Scoped)]
+    // [CustomDependency(ServiceLifetime.Singleton)]
     public class IdGeneratorService : IIdGeneratorService
     {
         private static IIdGenerator _IdGenInstance = null;

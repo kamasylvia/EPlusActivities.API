@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.FileService
 {
-    [Service(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class FileService : IFileService
     {
         private readonly IHttpClientFactory _httpClientFactory;

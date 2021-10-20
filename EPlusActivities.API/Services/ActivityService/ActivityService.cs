@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.ActivityService
 {
-    [Service(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class ActivityService : IActivityService
     {
         private readonly IActivityRepository _activityRepository;

@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Services.OfficeService
 {
-    [Service(ServiceLifetime.Scoped)]
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class ExcelService : IExcelService
     {
         public Task<byte[]> DownloadLotteryResults(

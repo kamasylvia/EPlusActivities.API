@@ -126,13 +126,13 @@ namespace EPlusActivities.API
             */
 
             // 启用创建短 ID 服务
-           /* 
             services.AddSingleton<IIdGeneratorService>(
                 new IdGeneratorService(
                     new IdGeneratorOptions(1) { WorkerIdBitLength = 1, SeqBitLength = 3 }
                 )
             );
 
+            /* 
             // 启用短信服务
             services.AddScoped<ISmsService, SmsService>();
 
