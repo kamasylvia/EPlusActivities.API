@@ -107,23 +107,8 @@ namespace EPlusActivities.API
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // 启用数据库仓库
+            // 启用自定义依赖，包括仓储和服务
             services.AddCustomDependencies();
-            /* 
-             services
-                 .AddScoped<IActivityRepository, ActivityRepository>()
-                 .AddScoped<IAttendanceRepository, AttendanceRepository>()
-                 .AddScoped<IRepository<Credit>, CreditRepository>()
-                 .AddScoped<IRepository<Coupon>, CouponRepository>()
-                 .AddScoped<IFindByParentIdRepository<ActivityUser>, ActivityUserRepository>()
-                 .AddScoped<IFindByParentIdRepository<Address>, AddressRepository>()
-                 .AddScoped<ILotteryRepository, LotteryRepository>()
-                 .AddScoped<IPrizeItemRepository, PrizeItemRepository>()
-                 .AddScoped<IGeneralLotteryRecordsRepository, GeneralLotteryRecordsRepository>()
-                 .AddScoped<INameExistsRepository<Brand>, BrandRepository>()
-                 .AddScoped<INameExistsRepository<Category>, CategoryRepository>()
-                 .AddScoped<IFindByParentIdRepository<PrizeTier>, PrizeTierRepository>();
-            */
 
             // 启用创建短 ID 服务
             services.AddSingleton<IIdGeneratorService>(
@@ -131,23 +116,6 @@ namespace EPlusActivities.API
                     new IdGeneratorOptions(1) { WorkerIdBitLength = 1, SeqBitLength = 3 }
                 )
             );
-
-            /* 
-            // 启用短信服务
-            services.AddScoped<ISmsService, SmsService>();
-
-            // 启用文件服务
-            services.AddScoped<IFileService, FileService>();
-
-            // 启用会员服务
-            services.AddScoped<IMemberService, MemberService>();
-
-            // 启用发送奖品服务
-            services.AddScoped<ILotteryService, LotteryService>();
-
-            // 启用活动服务
-            services.AddScoped<IActivityService, ActivityService>();
-            */
 
             // IdentityServer 4
             var builder = services
