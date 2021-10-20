@@ -31,8 +31,7 @@ namespace EPlusActivities.API.Services.IdentityServer
             UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager,
             SignInManager<ApplicationUser> signInManager
-        )
-        {
+        ) {
             _configuration = configuration;
             _phoneNumberTokenProvider = phoneNumberTokenProvider;
             _signInManager = signInManager;

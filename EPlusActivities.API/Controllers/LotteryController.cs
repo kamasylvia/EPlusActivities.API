@@ -62,8 +62,7 @@ namespace EPlusActivities.API.Controllers
             IIdGeneratorService idGeneratorService,
             IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
             IActivityService activityService
-        )
-        {
+        ) {
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
@@ -105,8 +104,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -117,8 +115,8 @@ namespace EPlusActivities.API.Controllers
 
             var result = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
             return result.Count() > 0
-              ? Ok(result.OrderBy(x => x.DateTime))
-              : NotFound("Could not find the lottery results.");
+                ? Ok(result.OrderBy(x => x.DateTime))
+                : NotFound("Could not find the lottery results.");
         }
 
         /// <summary>
@@ -133,8 +131,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
             if (user is null)
@@ -146,8 +143,8 @@ namespace EPlusActivities.API.Controllers
             var records = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
             var result = records.Where(record => record.IsLucky);
             return result.Count() > 0
-              ? Ok(result.OrderBy(x => x.DateTime))
-              : NotFound("Could not find the winning results.");
+                ? Ok(result.OrderBy(x => x.DateTime))
+                : NotFound("Could not find the winning results.");
         }
 
         private async Task<IEnumerable<LotteryDto>> FindLotteryRecordsAsync(Guid userId)
@@ -190,8 +187,7 @@ namespace EPlusActivities.API.Controllers
             {
                 return NotFound("Could not find the activity.");
             }
-            var lotteries = await activity.LotteryResults
-                .Where(
+            var lotteries = await activity.LotteryResults.Where(
                     lr =>
                         lr.IsLucky
                         && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
@@ -216,16 +212,14 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DownloadLotteryRecordsForManagerAsyncs(
             [FromQuery] LotteryRecordsForManagerRequest request
-        )
-        {
+        ) {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
             {
                 return NotFound("Could not find the activity.");
             }
-            var lotteries = await activity.LotteryResults
-                .Where(
+            var lotteries = await activity.LotteryResults.Where(
                     lr =>
                         lr.IsLucky
                         && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
@@ -297,8 +291,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
             [FromBody] LotteryForCreateDto request
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
@@ -435,8 +428,10 @@ namespace EPlusActivities.API.Controllers
                                         reason = "优惠券奖品"
                                     }
                                 );
-                            var coupons = couponResponseDto?.Body?.Content?
-                                .HideCouponCode?.Split(',', StringSplitOptions.TrimEntries)
+                            var coupons = couponResponseDto?.Body?.Content?.HideCouponCode?.Split(
+                                    ',',
+                                    StringSplitOptions.TrimEntries
+                                )
                                 .Select(
                                     code =>
                                         new Coupon
@@ -459,8 +454,7 @@ namespace EPlusActivities.API.Controllers
                             temp.AddRange(coupons);
                             lottery.PrizeItem.Coupons = temp;
 
-                            await coupons
-                                .ToAsyncEnumerable()
+                            await coupons.ToAsyncEnumerable()
                                 .ForEachAwaitAsync(
                                     async item => await _couponRepository.AddAsync(item)
                                 );

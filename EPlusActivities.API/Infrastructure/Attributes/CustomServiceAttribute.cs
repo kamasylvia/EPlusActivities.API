@@ -9,8 +9,6 @@ namespace EPlusActivities.API.Infrastructure.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class CustomServiceAttribute : CustomDependencyAttribute
     {
-        public CustomServiceAttribute(ServiceLifetime serviceLifetime) : base(serviceLifetime)
-        {
-        }
+        public CustomServiceAttribute(ServiceLifetime serviceLifetime) : base(serviceLifetime) { }
     }
 }

@@ -33,8 +33,7 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IFileService fileService,
             ILogger<FileController> logger
-        )
-        {
+        ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -52,8 +51,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DownloadFileByIdAsync(
             [FromQuery] DownloadFileByIdRequestDto requestDto
-        )
-        {
+        ) {
             var fileStream = await _fileService.DownloadFileByIdAsync(requestDto);
             if (fileStream.Length == 0)
             {
@@ -76,8 +74,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<IActionResult> DownloadFileByKeyAsync(
             [FromQuery] DownloadFileByKeyRequestDto requestDto
-        )
-        {
+        ) {
             var fileStream = new MemoryStream(
                 await _fileService.DownloadFileByKeyAsync(requestDto)
             );

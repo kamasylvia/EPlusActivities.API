@@ -52,8 +52,7 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IActivityService activityService,
             ILotteryService lotteryService
-        )
-        {
+        ) {
             _lotteryService =
                 lotteryService ?? throw new ArgumentNullException(nameof(lotteryService));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -86,12 +85,11 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> GetAsync(
             [FromQuery] ActivityForGetDto activityDto
-        )
-        {
+        ) {
             var activity = await _activityRepository.FindByIdAsync(activityDto.Id.Value);
             return activity is null
-              ? NotFound("Could not find the activity.")
-              : Ok(_mapper.Map<ActivityDto>(activity));
+                ? NotFound("Could not find the activity.")
+                : Ok(_mapper.Map<ActivityDto>(activity));
         }
 
         /// <summary>
@@ -106,12 +104,11 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> GetByActivityCodeAsync(
             [FromQuery] string activityCode
-        )
-        {
+        ) {
             var activity = await _activityRepository.FindByActivityCodeAsync(activityCode);
             return activity is null
-              ? NotFound("Could not find the activity.")
-              : Ok(_mapper.Map<ActivityDto>(activity));
+                ? NotFound("Could not find the activity.")
+                : Ok(_mapper.Map<ActivityDto>(activity));
         }
 
         /// <summary>
@@ -126,8 +123,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetActivitiesAsync(
             [FromQuery] ActivityForGetListDto activityDto
-        )
-        {
+        ) {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -138,20 +134,24 @@ namespace EPlusActivities.API.Controllers
             return Ok(
                 _mapper.Map<IEnumerable<ActivityDto>>(
                     activityDto.IsAvailable
-                      ? await _activityService.GetAvailableActivitiesAsync(
-                            activityDto.AvailableChannels
-                                .Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries)
-                                .Select(s => Enum.Parse<ChannelCode>(s, true)),
-                            activityDto.StartTime.Value,
-                            activityDto.EndTime
-                        )
-                      : await _activityService.GetActivitiesAsync(
-                            activityDto.AvailableChannels
-                                .Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries)
-                                .Select(s => Enum.Parse<ChannelCode>(s, true)),
-                            activityDto.StartTime.Value,
-                            activityDto.EndTime
-                        )
+                        ? await _activityService.GetAvailableActivitiesAsync(
+                              activityDto.AvailableChannels.Split(
+                                      new[] { ',', ';' },
+                                      StringSplitOptions.TrimEntries
+                                  )
+                                  .Select(s => Enum.Parse<ChannelCode>(s, true)),
+                              activityDto.StartTime.Value,
+                              activityDto.EndTime
+                          )
+                        : await _activityService.GetActivitiesAsync(
+                              activityDto.AvailableChannels.Split(
+                                      new[] { ',', ';' },
+                                      StringSplitOptions.TrimEntries
+                                  )
+                                  .Select(s => Enum.Parse<ChannelCode>(s, true)),
+                              activityDto.StartTime.Value,
+                              activityDto.EndTime
+                          )
                 )
             );
         }
@@ -168,8 +168,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<ActivityDto>> CreateAsync(
             [FromBody] ActivityForCreateDto activityDto
-        )
-        {
+        ) {
             #region Parameter validation
             if (activityDto.StartTime > activityDto.EndTime)
             {
@@ -182,9 +181,8 @@ namespace EPlusActivities.API.Controllers
             if (
                 activity.ActivityType
                 is ActivityType.SingleAttendance
-                    or ActivityType.SequentialAttendance
-            )
-            {
+                or ActivityType.SequentialAttendance
+            ) {
                 activity.PrizeTiers = new List<PrizeTier>()
                 {
                     new PrizeTier("Attendance") { Percentage = 100 }
@@ -204,8 +202,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok(_mapper.Map<ActivityDto>(activity))
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok(_mapper.Map<ActivityDto>(activity))
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         /// <summary>
@@ -243,8 +241,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         /// <summary>
@@ -270,16 +268,15 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             var lotteries = await _lotteryRepository.FindByActivityIdAsync(activityDto.Id.Value);
-            await lotteries
-                .ToAsyncEnumerable()
+            await lotteries.ToAsyncEnumerable()
                 .ForEachAsync(lottery => _lotteryRepository.Remove(lottery));
             _activityRepository.Remove(activity);
             var succeeded = await _activityRepository.SaveAsync();
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
     }
 }

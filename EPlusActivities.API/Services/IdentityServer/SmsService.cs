@@ -27,8 +27,7 @@ namespace EPlusActivities.API.Services.IdentityServer
             IHttpClientFactory httpClientFactory,
             IMapper mapper,
             UserManager<ApplicationUser> userManager
-        )
-        {
+        ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _configuration =

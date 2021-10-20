@@ -16,8 +16,7 @@ namespace EPlusActivities.API.Data
         {
             using (
                 var serviceScope = host.Services.GetService<IServiceScopeFactory>().CreateScope()
-            )
-            {
+            ) {
                 var environment =
                     serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
                 if (environment.IsProduction())

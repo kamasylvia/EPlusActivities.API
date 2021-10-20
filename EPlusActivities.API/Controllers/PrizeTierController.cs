@@ -34,8 +34,7 @@ namespace EPlusActivities.API.Controllers
             IPrizeItemRepository prizeItemRepository,
             IActivityRepository activityRepository,
             IMapper mapper
-        )
-        {
+        ) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _prizeTierRepository =
                 prizeTypeRepository ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
@@ -57,12 +56,11 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<PrizeTierDto>> GetByIdAsync(
             [FromQuery] PrizeTierForGetByIdDto prizeTierDto
-        )
-        {
+        ) {
             var prizeTier = await _prizeTierRepository.FindByIdAsync(prizeTierDto.Id.Value);
             return prizeTier is null
-              ? NotFound("Could not find the prize type.")
-              : Ok(_mapper.Map<PrizeTierDto>(prizeTier));
+                ? NotFound("Could not find the prize type.")
+                : Ok(_mapper.Map<PrizeTierDto>(prizeTier));
         }
 
         /// <summary>
@@ -77,8 +75,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<PrizeTierDto>> GetByActivityIdAsync(
             [FromQuery] PrizeTierForGetByActivityIdDto prizeTierDto
-        )
-        {
+        ) {
             var activity = await _activityRepository.FindByIdAsync(prizeTierDto.ActivityId.Value);
             if (activity is null)
             {
@@ -90,8 +87,8 @@ namespace EPlusActivities.API.Controllers
             );
 
             return prizeTiers.Count() > 0
-              ? Ok(_mapper.Map<IEnumerable<PrizeTierDto>>(prizeTiers))
-              : NotFound("Could not find any prize types.");
+                ? Ok(_mapper.Map<IEnumerable<PrizeTierDto>>(prizeTiers))
+                : NotFound("Could not find any prize types.");
         }
 
         /// <summary>
@@ -106,8 +103,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<PrizeTierDto>> CreateAsync(
             [FromBody] PrizeTierForCreateDto prizeTierDto
-        )
-        {
+        ) {
             #region  Parameter validation
             var activity = await _activityRepository.FindByIdAsync(prizeTierDto.ActivityId.Value);
             if (activity is null)
@@ -136,8 +132,7 @@ namespace EPlusActivities.API.Controllers
 
             if (prizeTierDto.PrizeItemIds.Count() > 0)
             {
-                var prizeItems = await prizeTierDto.PrizeItemIds
-                    .ToAsyncEnumerable()
+                var prizeItems = await prizeTierDto.PrizeItemIds.ToAsyncEnumerable()
                     .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
                     .Where(x => x is not null)
                     .ToListAsync();
@@ -159,8 +154,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok(_mapper.Map<PrizeTierDto>(prizeTier))
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok(_mapper.Map<PrizeTierDto>(prizeTier))
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         /// <summary>
@@ -187,13 +182,11 @@ namespace EPlusActivities.API.Controllers
                 prizeTierDto.ActivityId.Value
             );
             if (
-                prizeTypes
-                    .Where(pt => pt.Id != prizeTierDto.Id.Value)
+                prizeTypes.Where(pt => pt.Id != prizeTierDto.Id.Value)
                     .Select(pt => pt.Percentage)
                     .Sum() + prizeTierDto.Percentage
                 > 100
-            )
-            {
+            ) {
                 return BadRequest("The sum of percentages could not be greater than 100.");
             }
 
@@ -208,8 +201,7 @@ namespace EPlusActivities.API.Controllers
 
             #region Database operations
             activity.PrizeItemCount += countDiff;
-            prizeTier.PrizeTierPrizeItems = await prizeTierDto.PrizeItemIds
-                .ToAsyncEnumerable()
+            prizeTier.PrizeTierPrizeItems = await prizeTierDto.PrizeItemIds.ToAsyncEnumerable()
                 .SelectAwait(
                     async id =>
                         new PrizeTierPrizeItem
@@ -229,8 +221,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         /// <summary>
@@ -263,8 +255,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
     }
 }

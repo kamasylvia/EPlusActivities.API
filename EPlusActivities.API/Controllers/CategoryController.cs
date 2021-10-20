@@ -28,8 +28,7 @@ namespace EPlusActivities.API.Controllers
         public CategoryController(
             INameExistsRepository<Category> categoryRepository,
             IMapper mapper
-        )
-        {
+        ) {
             _categoryRepository =
                 categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -42,8 +41,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<CategoryDto>> GetByIdAsync(
             [FromQuery] CategoryForGetByIdDto categoryDto
-        )
-        {
+        ) {
             var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
             return category is null ? NotFound($"Could not find the category.") : Ok(category);
         }
@@ -55,12 +53,11 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<CategoryDto>> GetByNameAsync(
             [FromQuery] CategoryForGetByNameDto categoryDto
-        )
-        {
+        ) {
             var category = await _categoryRepository.FindByNameAsync(categoryDto.Name);
             return category is null
-              ? NotFound($"Could not find the category.")
-              : Ok(_mapper.Map<CategoryDto>(category));
+                ? NotFound($"Could not find the category.")
+                : Ok(_mapper.Map<CategoryDto>(category));
         }
 
         [HttpGet("search")]
@@ -70,12 +67,11 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedAsync(
             [FromQuery] CategoryForGetByNameDto categoryDto
-        )
-        {
+        ) {
             var categories = await _categoryRepository.FindByContainedNameAsync(categoryDto.Name);
             return categories.Count() > 0
-              ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(categories))
-              : NotFound($"Could not find any category.");
+                ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(categories))
+                : NotFound($"Could not find any category.");
         }
 
         /// <summary>
@@ -89,8 +85,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCotegoryListAsync(
             [FromQuery] DtoForGetList categoryDto
-        )
-        {
+        ) {
             var list = (await _categoryRepository.FindAllAsync()).OrderBy(c => c.Name).ToList();
 
             var startIndex = (categoryDto.PageIndex - 1) * categoryDto.PageSize;
@@ -108,8 +103,8 @@ namespace EPlusActivities.API.Controllers
 
             var result = list.GetRange(startIndex, count);
             return result.Count > 0
-              ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(result))
-              : NotFound($"Could not find any category.");
+                ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(result))
+                : NotFound($"Could not find any category.");
         }
 
         [HttpPost]
@@ -119,8 +114,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<CategoryDto>> CreateAsync(
             [FromBody] CategoryForGetByNameDto categoryDto
-        )
-        {
+        ) {
             #region Parameter validation
             if (await _categoryRepository.ExistsAsync(categoryDto.Name))
             {
@@ -138,8 +132,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok(_mapper.Map<CategoryDto>(category))
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok(_mapper.Map<CategoryDto>(category))
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         [HttpPatch("name")]
@@ -169,8 +163,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         [HttpDelete]
@@ -184,8 +178,7 @@ namespace EPlusActivities.API.Controllers
             if (
                 !await _categoryRepository.ExistsAsync(categoryDto.Id.Value)
                 || !await _categoryRepository.ExistsAsync(categoryDto.Name)
-            )
-            {
+            ) {
                 return BadRequest($"Could not find the category.");
             }
             #endregion
@@ -197,8 +190,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
     }
 }

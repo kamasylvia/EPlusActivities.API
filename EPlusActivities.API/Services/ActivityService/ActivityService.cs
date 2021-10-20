@@ -27,8 +27,7 @@ namespace EPlusActivities.API.Services.ActivityService
             IFindByParentIdRepository<ActivityUser> activityUserRepository,
             ILogger<ActivityService> logger,
             IMapper mapper
-        )
-        {
+        ) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _activityUserRepository =
                 activityUserRepository
@@ -62,8 +61,7 @@ namespace EPlusActivities.API.Services.ActivityService
             IEnumerable<ChannelCode> availableChannels,
             DateTime startTime,
             DateTime? endTime = null
-        )
-        {
+        ) {
             var result = new List<Activity>();
             var activitiesAtStartTime = await _activityRepository.FindAvailableActivitiesAsync(
                 startTime
@@ -72,8 +70,7 @@ namespace EPlusActivities.API.Services.ActivityService
                 endTime ?? DateTime.Now.Date
             );
 
-            return activitiesAtStartTime
-                .Union(activitiesAtEndTime)
+            return activitiesAtStartTime.Union(activitiesAtEndTime)
                 .Where(
                     activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0
                 );
@@ -82,8 +79,7 @@ namespace EPlusActivities.API.Services.ActivityService
         public async Task<IEnumerable<ActivityUser>> BindUserWithActivities(
             Guid userId,
             IEnumerable<Guid> activityIds
-        )
-        {
+        ) {
             var result = new List<ActivityUser>();
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)

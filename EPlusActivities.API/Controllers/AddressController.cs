@@ -33,8 +33,7 @@ namespace EPlusActivities.API.Controllers
             UserManager<ApplicationUser> userManager,
             IFindByParentIdRepository<Address> addressRepository,
             IMapper mapper
-        )
-        {
+        ) {
             _addressRepository =
                 addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -53,8 +52,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
             [FromQuery] AddressForGetByUserIdDto addressDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -65,10 +63,10 @@ namespace EPlusActivities.API.Controllers
 
             var addresses = await _addressRepository.FindByParentIdAsync(addressDto.UserId.Value);
             return addresses.Count() > 0
-              ? Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses))
-              : NotFound(
-                    $"Could not find any addresses with the specified user '{addressDto.UserId.Value}'"
-                );
+                ? Ok(_mapper.Map<IEnumerable<AddressDto>>(addresses))
+                : NotFound(
+                      $"Could not find any addresses with the specified user '{addressDto.UserId.Value}'"
+                  );
         }
 
         /// <summary>
@@ -83,12 +81,11 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AddressDto>> GetByIdAsync(
             [FromQuery] AddressForGetByIdDto addressDto
-        )
-        {
+        ) {
             var address = await _addressRepository.FindByIdAsync(addressDto.Id.Value);
             return address is null
-              ? NotFound($"Could not find the address with ID '{addressDto.Id}'.")
-              : Ok(address);
+                ? NotFound($"Could not find the address with ID '{addressDto.Id}'.")
+                : Ok(address);
         }
 
         /// <summary>
@@ -104,8 +101,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<AddressDto>> CreateAsync(
             [FromBody] AddressForCreateDto addressDto
-        )
-        {
+        ) {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(addressDto.UserId.ToString());
             if (user is null)
@@ -140,8 +136,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok(_mapper.Map<AddressDto>(address))
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok(_mapper.Map<AddressDto>(address))
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         /// <summary>
@@ -192,8 +188,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception.");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception.");
         }
 
         /// <summary>
@@ -223,8 +219,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception.");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception.");
         }
     }
 }

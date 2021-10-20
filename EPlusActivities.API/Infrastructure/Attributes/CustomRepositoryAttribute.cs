@@ -10,7 +10,6 @@ namespace EPlusActivities.API.Infrastructure.Attributes
     public class CustomRepositoryAttribute : CustomDependencyAttribute
     {
         public CustomRepositoryAttribute(ServiceLifetime serviceLifetime) : base(serviceLifetime)
-        {
-        }
+        { }
     }
 }

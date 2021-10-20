@@ -22,11 +22,9 @@ namespace FileService.Data
         public static void Initialize(IApplicationBuilder app, IWebHostEnvironment environment)
         {
             using (
-                var serviceScope = app.ApplicationServices
-                    .GetService<IServiceScopeFactory>()
+                var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()
                     .CreateScope()
-            )
-            {
+            ) {
                 var context =
                     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 

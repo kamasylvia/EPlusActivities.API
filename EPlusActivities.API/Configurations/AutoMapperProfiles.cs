@@ -175,16 +175,14 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Brand
-            CreateMap<Brand, BrandDto>()
-                .ReverseMap();
+            CreateMap<Brand, BrandDto>().ReverseMap();
             CreateMap<BrandForGetByNameDto, Brand>();
             #endregion
 
 
 
             #region Category
-            CreateMap<Category, CategoryDto>()
-                .ReverseMap();
+            CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<CategoryForGetByNameDto, Category>();
             #endregion
 

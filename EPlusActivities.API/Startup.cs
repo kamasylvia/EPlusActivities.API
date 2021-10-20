@@ -7,8 +7,8 @@ using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.FileService;
-using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
+using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
 using MediatR;
@@ -58,8 +58,7 @@ namespace EPlusActivities.API
                         options.AddDefaultPolicy(
                             builder =>
                             {
-                                builder
-                                    .AllowAnyHeader()
+                                builder.AllowAnyHeader()
                                     .AllowAnyMethod()
                                     .WithOrigins(Configuration["ClientUrl"]);
                             }
@@ -102,8 +101,7 @@ namespace EPlusActivities.API
             );
 
             // 启用 Identity 服务 添加指定的用户和角色类型的默认标识系统配置
-            services
-                .AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -118,8 +116,7 @@ namespace EPlusActivities.API
             );
 
             // IdentityServer 4
-            var builder = services
-                .AddIdentityServer(
+            var builder = services.AddIdentityServer(
                     options =>
                     {
                         options.Events.RaiseErrorEvents = true;
@@ -139,8 +136,7 @@ namespace EPlusActivities.API
             builder.AddDeveloperSigningCredential();
             if (Environment.IsDevelopment())
             {
-                builder
-                    .AddInMemoryIdentityResources(Config.IdentityResources)
+                builder.AddInMemoryIdentityResources(Config.IdentityResources)
                     .AddInMemoryApiScopes(Config.ApiScopes)
                     .AddInMemoryApiResources(Config.ApiResources)
                     .AddInMemoryClients(Config.Clients);
@@ -149,8 +145,7 @@ namespace EPlusActivities.API
             {
                 // Db Mode
                 // this adds the config data from DB (clients, resources, CORS)
-                builder
-                    .AddConfigurationStore(
+                builder.AddConfigurationStore(
                         options =>
                         {
                             options.ConfigureDbContext = builder =>
@@ -176,8 +171,7 @@ namespace EPlusActivities.API
             }
 
             // 受保护的 API 设置
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(
                     options =>
                     {
@@ -240,6 +234,7 @@ namespace EPlusActivities.API
 
             // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             // MediatR
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
         }

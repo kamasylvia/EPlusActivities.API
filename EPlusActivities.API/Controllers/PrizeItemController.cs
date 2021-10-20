@@ -38,8 +38,7 @@ namespace EPlusActivities.API.Controllers
             INameExistsRepository<Brand> brandRepository,
             INameExistsRepository<Category> categoryRepository,
             IMapper mapper
-        )
-        {
+        ) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _prizeItemRepository =
                 prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
@@ -62,16 +61,15 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync(
             [FromQuery] PrizeItemForGetByNameDto prizeItemDto
-        )
-        {
+        ) {
             var prizeItems = await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name);
             return prizeItems.Count() > 0
-              ? Ok(
-                    _mapper.Map<IEnumerable<PrizeItemDto>>(
-                        await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)
-                    )
-                )
-              : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
+                ? Ok(
+                      _mapper.Map<IEnumerable<PrizeItemDto>>(
+                          await _prizeItemRepository.FindByNameAsync(prizeItemDto.Name)
+                      )
+                  )
+                : NotFound($"Could not find any prize item with name '{prizeItemDto.Name}' ");
         }
 
         private async Task<IEnumerable<PrizeItem>> FindByIdListAsync(IEnumerable<Guid> ids) =>
@@ -90,15 +88,13 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<PrizeItemDto>> GetByIdsAsync(
             [FromQuery] PrizeItemForGetByIdsDto requestDto
-        )
-        {
-            var ids = requestDto.Ids
-                .Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries)
+        ) {
+            var ids = requestDto.Ids.Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries)
                 .Select(s => Guid.Parse(s));
             var prizeItems = await FindByIdListAsync(ids);
             return prizeItems.Count() > 0
-              ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItems))
-              : NotFound("Could not find any prizeItem.");
+                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(prizeItems))
+                : NotFound("Could not find any prizeItem.");
         }
 
         /// <summary>
@@ -113,12 +109,11 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<PrizeItemDto>> GetByIdAsync(
             [FromQuery] PrizeItemForGetByIdDto prizeItemDto
-        )
-        {
+        ) {
             var prizeItem = await _prizeItemRepository.FindByIdAsync(prizeItemDto.Id.Value);
             return prizeItem is null
-              ? NotFound("Could not find the prizeItem.")
-              : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
+                ? NotFound("Could not find the prizeItem.")
+                : Ok(_mapper.Map<PrizeItemDto>(prizeItem));
         }
 
         /// <summary>
@@ -133,10 +128,10 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetItemListAsync(
             [FromQuery] DtoForGetList prizeItemDto
-        )
-        {
-            var prizeItemList = (await _prizeItemRepository.FindAllAsync())
-                .OrderBy(item => item.Name)
+        ) {
+            var prizeItemList = (await _prizeItemRepository.FindAllAsync()).OrderBy(
+                    item => item.Name
+                )
                 .ToList();
             var startIndex = (prizeItemDto.PageIndex - 1) * prizeItemDto.PageSize;
             var count = prizeItemDto.PageIndex * prizeItemDto.PageSize;
@@ -153,8 +148,8 @@ namespace EPlusActivities.API.Controllers
 
             var result = prizeItemList.GetRange(startIndex, count);
             return result.Count > 0
-              ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(result))
-              : NotFound("Could not find any prizeItem.");
+                ? Ok(_mapper.Map<IEnumerable<PrizeItemDto>>(result))
+                : NotFound("Could not find any prizeItem.");
         }
 
         /// <summary>
@@ -169,8 +164,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<ActionResult<PrizeItemDto>> CreateAsync(
             [FromBody] PrizeItemForCreateDto prizeItemDto
-        )
-        {
+        ) {
             #region New an entity
             var prizeItem = _mapper.Map<PrizeItem>(prizeItemDto);
             prizeItem.Brand = await GetBrandAsync(prizeItemDto.BrandName);
@@ -183,8 +177,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok(_mapper.Map<PrizeItemDto>(prizeItem))
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok(_mapper.Map<PrizeItemDto>(prizeItem))
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         /// <summary>
@@ -221,8 +215,8 @@ namespace EPlusActivities.API.Controllers
             #endregion
 
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         /// <summary>
@@ -253,8 +247,8 @@ namespace EPlusActivities.API.Controllers
 
             #endregion
             return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+                ? Ok()
+                : new InternalServerErrorObjectResult("Update database exception");
         }
 
         private async Task<Brand> GetBrandAsync(string brandName)

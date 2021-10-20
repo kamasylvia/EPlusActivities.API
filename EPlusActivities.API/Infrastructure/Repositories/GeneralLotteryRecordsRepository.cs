@@ -23,8 +23,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             ChannelCode channel,
             DateTime date
         ) =>
-            await _context.GeneralLotteryRecords
-                .Include(s => s.Activity)
+            await _context.GeneralLotteryRecords.Include(s => s.Activity)
                 .SingleOrDefaultAsync(
                     s =>
                         s.Activity.Id == activityId
@@ -38,8 +37,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateTime? startTime,
             DateTime? endTime
         ) =>
-            await _context.GeneralLotteryRecords
-                .Include(s => s.Activity)
+            await _context.GeneralLotteryRecords.Include(s => s.Activity)
                 .Where(
                     s =>
                         s.Activity.Id == activityId

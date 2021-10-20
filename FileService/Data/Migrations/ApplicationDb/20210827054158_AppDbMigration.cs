@@ -9,8 +9,7 @@ namespace FileService.Data.Migrations.ApplicationDb
         {
             migrationBuilder.AlterDatabase().Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder
-                .CreateTable(
+            migrationBuilder.CreateTable(
                     name: "Files",
                     columns: table =>
                         new
@@ -25,14 +24,11 @@ namespace FileService.Data.Migrations.ApplicationDb
                                 nullable: false,
                                 collation: "ascii_general_ci"
                             ),
-                            Key = table
-                                .Column<string>(type: "varchar(255)", nullable: false)
+                            Key = table.Column<string>(type: "varchar(255)", nullable: false)
                                 .Annotation("MySql:CharSet", "utf8mb4"),
-                            ContentType = table
-                                .Column<string>(type: "longtext", nullable: false)
+                            ContentType = table.Column<string>(type: "longtext", nullable: false)
                                 .Annotation("MySql:CharSet", "utf8mb4"),
-                            FilePath = table
-                                .Column<string>(type: "longtext", nullable: true)
+                            FilePath = table.Column<string>(type: "longtext", nullable: true)
                                 .Annotation("MySql:CharSet", "utf8mb4")
                         },
                     constraints: table =>
