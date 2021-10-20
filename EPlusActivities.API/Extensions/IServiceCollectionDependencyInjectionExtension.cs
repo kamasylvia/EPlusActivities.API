@@ -19,6 +19,13 @@ namespace EPlusActivities.API.Extensions
             services.RegisterLifetimesByAttribute(ServiceLifetime.Singleton);
         }
 
+        /*
+        利用反射取所有类型时，用的是
+            AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
+        如果是多项目分层的话要替换成
+            Assembly.GetEntryAssembly().GetReferencedAssemblies()
+                .Select(Assembly.Load).SelectMany(x => x.DefinedTypes)
+        */
         private static void RegisterLifetimesByAttribute(
             this IServiceCollection services,
             ServiceLifetime serviceLifetime
