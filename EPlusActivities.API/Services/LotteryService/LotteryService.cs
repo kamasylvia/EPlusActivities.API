@@ -9,13 +9,16 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Utils;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Services.LotteryService
 {
+    [Service(ServiceLifetime.Scoped)]
     public class LotteryService : ILotteryService
     {
         private readonly IConfiguration _configuration;

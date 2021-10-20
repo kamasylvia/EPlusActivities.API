@@ -1,7 +1,10 @@
+using EPlusActivities.API.Infrastructure.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 using Yitter.IdGenerator;
 
 namespace EPlusActivities.API.Services.IdGeneratorService
 {
+    [Service(ServiceLifetime.Scoped)]
     public class IdGeneratorService : IIdGeneratorService
     {
         private static IIdGenerator _IdGenInstance = null;

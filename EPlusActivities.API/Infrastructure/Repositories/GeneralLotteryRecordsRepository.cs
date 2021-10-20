@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.API.Infrastructure.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
+    [Repository(ServiceLifetime.Scoped)]
     public class GeneralLotteryRecordsRepository
         : RepositoryBase<GeneralLotteryRecords>,
           IGeneralLotteryRecordsRepository

@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.MemberService
 {
+    [Service(ServiceLifetime.Scoped)]
     public class MemberService : IMemberService
     {
         private readonly IConfiguration _configuration;

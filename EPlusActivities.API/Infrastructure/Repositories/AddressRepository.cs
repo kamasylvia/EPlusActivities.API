@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Attributes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
+    [Repository(ServiceLifetime.Scoped)]
     public class AddressRepository : RepositoryBase<Address>, IFindByParentIdRepository<Address>
     {
         public AddressRepository(ApplicationDbContext context) : base(context) { }

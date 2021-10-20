@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.FileService;
@@ -10,6 +11,7 @@ using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -106,21 +108,25 @@ namespace EPlusActivities.API
                 .AddDefaultTokenProviders();
 
             // 启用数据库仓库
-            services
-                .AddScoped<IActivityRepository, ActivityRepository>()
-                .AddScoped<IAttendanceRepository, AttendanceRepository>()
-                .AddScoped<IRepository<Credit>, CreditRepository>()
-                .AddScoped<IRepository<Coupon>, CouponRepository>()
-                .AddScoped<IFindByParentIdRepository<ActivityUser>, ActivityUserRepository>()
-                .AddScoped<IFindByParentIdRepository<Address>, AddressRepository>()
-                .AddScoped<ILotteryRepository, LotteryRepository>()
-                .AddScoped<IPrizeItemRepository, PrizeItemRepository>()
-                .AddScoped<IGeneralLotteryRecordsRepository, GeneralLotteryRecordsRepository>()
-                .AddScoped<INameExistsRepository<Brand>, BrandRepository>()
-                .AddScoped<INameExistsRepository<Category>, CategoryRepository>()
-                .AddScoped<IFindByParentIdRepository<PrizeTier>, PrizeTierRepository>();
+            services.AddCustomDependencies();
+            /* 
+             services
+                 .AddScoped<IActivityRepository, ActivityRepository>()
+                 .AddScoped<IAttendanceRepository, AttendanceRepository>()
+                 .AddScoped<IRepository<Credit>, CreditRepository>()
+                 .AddScoped<IRepository<Coupon>, CouponRepository>()
+                 .AddScoped<IFindByParentIdRepository<ActivityUser>, ActivityUserRepository>()
+                 .AddScoped<IFindByParentIdRepository<Address>, AddressRepository>()
+                 .AddScoped<ILotteryRepository, LotteryRepository>()
+                 .AddScoped<IPrizeItemRepository, PrizeItemRepository>()
+                 .AddScoped<IGeneralLotteryRecordsRepository, GeneralLotteryRecordsRepository>()
+                 .AddScoped<INameExistsRepository<Brand>, BrandRepository>()
+                 .AddScoped<INameExistsRepository<Category>, CategoryRepository>()
+                 .AddScoped<IFindByParentIdRepository<PrizeTier>, PrizeTierRepository>();
+            */
 
             // 启用创建短 ID 服务
+           /* 
             services.AddSingleton<IIdGeneratorService>(
                 new IdGeneratorService(
                     new IdGeneratorOptions(1) { WorkerIdBitLength = 1, SeqBitLength = 3 }
@@ -141,6 +147,7 @@ namespace EPlusActivities.API
 
             // 启用活动服务
             services.AddScoped<IActivityService, ActivityService>();
+            */
 
             // IdentityServer 4
             var builder = services
@@ -265,6 +272,8 @@ namespace EPlusActivities.API
 
             // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            // MediatR
+            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

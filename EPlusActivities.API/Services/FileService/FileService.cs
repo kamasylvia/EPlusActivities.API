@@ -6,13 +6,16 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.FileDtos;
+using EPlusActivities.API.Infrastructure.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.FileService
 {
+    [Service(ServiceLifetime.Scoped)]
     public class FileService : IFileService
     {
         private readonly IHttpClientFactory _httpClientFactory;

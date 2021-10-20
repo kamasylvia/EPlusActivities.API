@@ -4,13 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.ActivityService
 {
+    [Service(ServiceLifetime.Scoped)]
     public class ActivityService : IActivityService
     {
         private readonly IActivityRepository _activityRepository;

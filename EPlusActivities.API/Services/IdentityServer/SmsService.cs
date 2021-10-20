@@ -5,13 +5,16 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Attributes;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Services.IdentityServer
 {
+    [Service(ServiceLifetime.Scoped)]
     public class SmsService : ISmsService
     {
         private readonly IConfiguration _configuration;
