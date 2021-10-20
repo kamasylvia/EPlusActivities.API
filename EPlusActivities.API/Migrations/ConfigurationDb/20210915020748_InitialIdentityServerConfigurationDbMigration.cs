@@ -13,7 +13,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -43,7 +44,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -67,7 +69,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -136,7 +139,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -163,7 +167,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -189,7 +194,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -216,7 +222,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -242,7 +249,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -272,7 +280,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -298,7 +307,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -325,7 +335,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -352,7 +363,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -378,7 +390,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -404,7 +417,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -430,7 +444,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -459,7 +474,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -486,7 +502,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -512,7 +529,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -538,7 +556,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -568,7 +587,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn
@@ -594,7 +614,8 @@ namespace EPlusActivities.API.Migrations.ConfigurationDb
                 columns: table =>
                     new
                     {
-                        Id = table.Column<int>(nullable: false)
+                        Id = table
+                            .Column<int>(nullable: false)
                             .Annotation(
                                 "MySql:ValueGenerationStrategy",
                                 MySqlValueGenerationStrategy.IdentityColumn

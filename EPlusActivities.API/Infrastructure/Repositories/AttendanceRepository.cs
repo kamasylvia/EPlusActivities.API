@@ -16,7 +16,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public AttendanceRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.AttendanceRecord.AsAsyncQueryable()
+            await _context.AttendanceRecord
+                .AsAsyncQueryable()
                 .AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Attendance>> FindByUserIdAsync(
@@ -25,7 +26,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateTime startDate,
             DateTime? endDate
         ) =>
-            await _context.AttendanceRecord.AsAsyncQueryable()
+            await _context.AttendanceRecord
+                .AsAsyncQueryable()
                 .Where(
                     a =>
                         a.User.Id == userId

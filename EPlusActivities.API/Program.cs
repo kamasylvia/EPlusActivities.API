@@ -13,7 +13,8 @@ namespace EPlusActivities.API
     public class Program
     {
         public static IConfiguration Configuration { get; } =
-            new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile(
                     $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
@@ -24,7 +25,8 @@ namespace EPlusActivities.API
 
         public static async Task Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
+            Log.Logger = new LoggerConfiguration().ReadFrom
+                .Configuration(Configuration)
                 .Enrich.FromLogContext()
                 .CreateLogger();
 

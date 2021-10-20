@@ -26,7 +26,8 @@ namespace EPlusActivities.API.Extensions
             this IServiceCollection services,
             ServiceLifetime serviceLifetime
         ) =>
-            AppDomain.CurrentDomain.GetAssemblies()
+            AppDomain.CurrentDomain
+                .GetAssemblies()
                 .SelectMany(x => x.GetTypes())
                 .Where(
                     implementer =>
@@ -42,7 +43,8 @@ namespace EPlusActivities.API.Extensions
                 .ToList()
                 .ForEach(
                     implementerItem =>
-                        implementerItem.GetInterfaces()
+                        implementerItem
+                            .GetInterfaces()
                             .ToList()
                             .ForEach(
                                 interfaceItem =>

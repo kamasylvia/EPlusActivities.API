@@ -11,7 +11,8 @@ namespace EPlusActivities.API.Infrastructure.Filters
         public override async Task OnResultExecutionAsync(
             ResultExecutingContext context,
             ResultExecutionDelegate next
-        ) {
+        )
+        {
             switch (context.Result)
             {
                 case ObjectResult objectResult:

@@ -29,7 +29,8 @@ namespace EPlusActivities.API.Services.LotteryService
             IConfiguration configuration,
             IPrizeItemRepository prizeItemRepository,
             IMapper mapper
-        ) {
+        )
+        {
             _configuration = configuration;
             _prizeItemRepository =
                 prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
@@ -42,9 +43,11 @@ namespace EPlusActivities.API.Services.LotteryService
         /// <returns></returns>
         public IEnumerable<LotteryRecordsForManagerResponse> CreateLotteryForDownload(
             IEnumerable<Lottery> lotteries
-        ) {
+        )
+        {
             var response = new List<LotteryRecordsForManagerResponse>();
-            lotteries.ToList()
+            lotteries
+                .ToList()
                 .ForEach(
                     item =>
                     {
@@ -76,14 +79,16 @@ namespace EPlusActivities.API.Services.LotteryService
         public (MemoryStream, string) DownloadLotteryRecords(
             IEnumerable<GeneralLotteryRecords> generals,
             IEnumerable<Lottery> details
-        ) {
+        )
+        {
             var memoryStream = new MemoryStream();
             var contentType = string.Empty;
             using (
                 var spreadsheetDocument = SpreadsheetDocument.CreateFromTemplate(
                     _configuration["LotteryDataExcelTemplatePath"]
                 )
-            ) {
+            )
+            {
                 FillGeneralSheet(spreadsheetDocument, generals);
                 FillDetailSheet(spreadsheetDocument, details);
                 spreadsheetDocument.Clone(memoryStream);
@@ -97,7 +102,8 @@ namespace EPlusActivities.API.Services.LotteryService
         private void FillGeneralSheet(
             SpreadsheetDocument spreadsheetDocument,
             IEnumerable<GeneralLotteryRecords> generals
-        ) {
+        )
+        {
             var list = generals.ToList();
             var workbookPart = spreadsheetDocument.WorkbookPart;
             var worksheetPart = workbookPart.WorksheetParts.First();
@@ -167,7 +173,8 @@ namespace EPlusActivities.API.Services.LotteryService
         private void FillDetailSheet(
             SpreadsheetDocument spreadsheetDocument,
             IEnumerable<Lottery> details
-        ) {
+        )
+        {
             var data = CreateLotteryForDownload(details).ToList();
 
             var workbookPart = spreadsheetDocument.WorkbookPart;
