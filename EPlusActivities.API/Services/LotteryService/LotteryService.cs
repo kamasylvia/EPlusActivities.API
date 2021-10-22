@@ -96,6 +96,12 @@ namespace EPlusActivities.API.Services.LotteryService
             }
 
             memoryStream.Position = 0;
+
+            using (var fileStream = new FileStream("Excel.xlsx", FileMode.OpenOrCreate))
+            {
+                 memoryStream.WriteTo(fileStream);
+            }
+            
             return (memoryStream, contentType);
         }
 
