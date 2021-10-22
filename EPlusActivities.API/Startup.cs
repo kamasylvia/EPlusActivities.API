@@ -7,14 +7,16 @@ using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.FileService;
-using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.IdentityServer;
+using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -256,6 +258,23 @@ namespace EPlusActivities.API
                     c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EPlusActivities.API")
                 );
             }
+
+            app.UseExceptionHandler(
+                new ExceptionHandlerOptions
+                {
+                    ExceptionHandler = async context =>
+                    {
+                        var exceptionHandlerPathFeature =
+                            context.Features.Get<IExceptionHandlerPathFeature>();
+                        var ex = exceptionHandlerPathFeature?.Error;
+                        if (ex != null)
+                        {
+                            context.Response.ContentType = "text/plain;charset=utf-8";
+                            await context.Response.WriteAsync(ex.ToString());
+                        }
+                    }
+                }
+            );
 
             app.UseHttpsRedirection();
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace EPlusActivities.API.Infrastructure.Filters
 {
-    public class EPlusActionFilterAttribute : ActionFilterAttribute
+    public class CustomActionFilterAttribute : ActionFilterAttribute
     {
         public override async Task OnResultExecutionAsync(
             ResultExecutingContext context,

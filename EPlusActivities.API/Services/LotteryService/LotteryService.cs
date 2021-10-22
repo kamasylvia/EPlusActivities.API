@@ -89,8 +89,8 @@ namespace EPlusActivities.API.Services.LotteryService
                 )
             )
             {
-                FillGeneralSheet(spreadsheetDocument, generals);
-                FillDetailSheet(spreadsheetDocument, details);
+                // FillGeneralSheet(spreadsheetDocument, generals);
+                // FillDetailSheet(spreadsheetDocument, details);
                 spreadsheetDocument.Clone(memoryStream);
                 contentType = spreadsheetDocument.RootPart.ContentType;
             }
