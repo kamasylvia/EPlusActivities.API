@@ -39,8 +39,8 @@ namespace EPlusActivities.API.Configuration
                 );
 
             #region ApplicationUser
-            CreateMap<ApplicationUser, UserDto>();
-            CreateMap<UserDto, ApplicationUser>()
+            CreateMap<ApplicationUser, UserResponse>();
+            CreateMap<UserResponse, ApplicationUser>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.UserName, opt => opt.Ignore())
                 .ForMember(dest => dest.PhoneNumber, opt => opt.Ignore());

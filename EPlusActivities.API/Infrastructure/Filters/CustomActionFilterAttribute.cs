@@ -16,15 +16,18 @@ namespace EPlusActivities.API.Infrastructure.Filters
             switch (context.Result)
             {
                 case ObjectResult objectResult:
-                    var apiResult = new ApiResult(objectResult);
-                    objectResult.Value = apiResult;
+                    // var apiResult = new ApiResult(objectResult);
+                    objectResult.Value = new ApiResult
+                    {
+                        StatusCode = objectResult.StatusCode,
+                        Data = objectResult.Value,
+                        Succeeded = true
+                    };
                     break;
-                case StatusCodeResult statusCodeResult:
-                    apiResult = new ApiResult(statusCodeResult);
-                    var result = new ObjectResult(apiResult);
-                    result.StatusCode = apiResult.StatusCode;
-                    context.Result = result;
-                    break;
+                // case StatusCodeResult statusCodeResult:
+                //     apiResult = new ApiResult(statusCodeResult);
+                //     context.Result = new ObjectResult(apiResult) { StatusCode = apiResult.StatusCode };
+                //     break;
                 default:
                     break;
             }

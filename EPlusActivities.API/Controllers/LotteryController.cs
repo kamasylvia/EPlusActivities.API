@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.Application.Commands.LotteryCommands;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
@@ -14,6 +15,7 @@ using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -46,6 +48,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
         private readonly IMemberService _memberService;
         private readonly IActivityService _activityService;
+        private readonly IMediator _mediator;
 
         public LotteryController(
             ILotteryRepository lotteryRepository,
@@ -61,7 +64,8 @@ namespace EPlusActivities.API.Controllers
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
             IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
-            IActivityService activityService
+            IActivityService activityService,
+            IMediator mediator
         )
         {
             _idGeneratorService =
@@ -80,6 +84,7 @@ namespace EPlusActivities.API.Controllers
                 ?? throw new ArgumentNullException(nameof(activityUserRepository));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _couponRepository =
                 couponResponseDto ?? throw new ArgumentNullException(nameof(couponResponseDto));
             _lotteryRepository =
@@ -296,210 +301,8 @@ namespace EPlusActivities.API.Controllers
             Roles = "customer, tester"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
-            [FromBody] LotteryForCreateDto request
-        )
-        {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user is null)
-            {
-                return NotFound("Could not find the user.");
-            }
-
-            var activity = await _activityRepository.FindByIdAsync(request.ActivityId.Value);
-            if (activity is null)
-            {
-                return NotFound("Could not find the activity.");
-            }
-
-            if (DateTime.Today < activity.StartTime || DateTime.Today > activity.EndTime)
-            {
-                return BadRequest("This activity is expired.");
-            }
-
-            var activityUser = await _activityUserRepository.FindByIdAsync(
-                request.ActivityId.Value,
-                request.UserId.Value
-            );
-
-            if (activityUser is null)
-            {
-                return BadRequest("The user had to join the activity first.");
-            }
-
-            // 剩余抽奖次数不足
-            if (activityUser.RemainingDraws < request.Count)
-            {
-                return BadRequest("The user did not have enough chance to draw a lottery .");
-            }
-
-            // 超过全活动周期抽奖次数限制
-            if (activityUser.UsedDraws + request.Count > activity.Limit)
-            {
-                return BadRequest(
-                    "Sorry, the user had already achieved the maximum number of draws of this activity."
-                );
-            }
-
-            // 今天没登陆过的用户，每日已用抽奖次数清零
-            _activityService.UpdateDailyLimitsAsync(user, activityUser);
-
-            // 超过每日抽奖次数限制
-            if (activityUser.TodayUsedDraws + request.Count > activity.DailyDrawLimit)
-            {
-                return BadRequest(
-                    "Sorry, the user had already achieved the daily maximum number of draws of this activity."
-                );
-            }
-            var channel = Enum.Parse<ChannelCode>(request.ChannelCode, true);
-            var generalRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
-                request.ActivityId.Value,
-                channel,
-                DateTime.Today
-            );
-            var requireNewStatement = generalRecords is null;
-            if (requireNewStatement)
-            {
-                generalRecords = new GeneralLotteryRecords
-                {
-                    Activity = activity,
-                    DateTime = DateTime.Today,
-                    Channel = channel,
-                };
-            }
-            #endregion
-
-            #region Consume the draws
-            activityUser.RemainingDraws -= request.Count;
-            activityUser.TodayUsedDraws += request.Count;
-            activityUser.UsedDraws += request.Count;
-            generalRecords.Draws += request.Count;
-            #endregion
-
-            #region Generate the lottery result
-            var response = new List<LotteryDto>();
-
-            for (int i = 0; i < request.Count; i++)
-            {
-                var lottery = _mapper.Map<Lottery>(request);
-                lottery.User = user;
-                lottery.Activity = activity;
-                lottery.DateTime = DateTime.Now;
-
-                (lottery.PrizeTier, lottery.PrizeItem) = await _lotteryService.DrawPrizeAsync(
-                    activity
-                );
-
-                if (lottery.PrizeTier is not null)
-                {
-                    lottery.IsLucky = true;
-                    generalRecords.Winners++;
-
-                    switch (lottery.PrizeItem.PrizeType)
-                    {
-                        case PrizeType.Credit:
-                            var (updateCreditResult, updateCreditResponseDto) =
-                                await _memberService.UpdateCreditAsync(
-                                    user.Id,
-                                    new MemberForUpdateCreditRequestDto
-                                    {
-                                        memberId = user.MemberId,
-                                        points = lottery.PrizeItem.Credit.Value,
-                                        reason = "积分奖品",
-                                        sheetId = _idGeneratorService.NextId().ToString(),
-                                        updateType = CreditUpdateType.Addition
-                                    }
-                                );
-                            if (updateCreditResult)
-                            {
-                                user.Credit += lottery.PrizeItem.Credit.Value;
-                                if (user.Credit != updateCreditResponseDto.Body.Content.NewPoints)
-                                {
-                                    _logger.LogError(
-                                        "Local credits did not equal to the member's new points."
-                                    );
-                                    return new InternalServerErrorObjectResult(
-                                        "Local credits did not equal to the member's new points."
-                                    );
-                                }
-                            }
-                            break;
-                        case PrizeType.Coupon:
-                            var (releaseCouponResult, couponResponseDto) =
-                                await _memberService.ReleaseCouponAsync(
-                                    new MemberForReleaseCouponRequestDto
-                                    {
-                                        couponActiveCode = lottery.PrizeItem.CouponActiveCode,
-                                        memberId = user.MemberId,
-                                        qty = 1,
-                                        reason = "优惠券奖品"
-                                    }
-                                );
-                            var coupons = couponResponseDto?.Body?.Content?
-                                .HideCouponCode?.Split(',', StringSplitOptions.TrimEntries)
-                                .Select(
-                                    code =>
-                                        new Coupon
-                                        {
-                                            User = user,
-                                            PrizeItem = lottery.PrizeItem,
-                                            Code = code
-                                        }
-                                );
-
-                            var temp = user.Coupons is null
-                                ? new List<Coupon>()
-                                : user.Coupons.ToList();
-                            temp.AddRange(coupons);
-                            user.Coupons = temp;
-
-                            temp = lottery.PrizeItem.Coupons is null
-                                ? new List<Coupon>()
-                                : lottery.PrizeItem.Coupons.ToList();
-                            temp.AddRange(coupons);
-                            lottery.PrizeItem.Coupons = temp;
-
-                            await coupons
-                                .ToAsyncEnumerable()
-                                .ForEachAwaitAsync(
-                                    async item => await _couponRepository.AddAsync(item)
-                                );
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                await _lotteryRepository.AddAsync(lottery);
-                var result = _mapper.Map<LotteryDto>(lottery);
-                result.DateTime = lottery.DateTime; // Skip auto mapper.
-                response.Add(result);
-            }
-            #endregion
-
-            #region Database operations
-            var userUpdateResult = await _userManager.UpdateAsync(user);
-            if (requireNewStatement)
-                await _generalLotteryRecordsRepository.AddAsync(generalRecords);
-            else
-                _generalLotteryRecordsRepository.Update(generalRecords);
-
-            var succeeded = await _lotteryRepository.SaveAsync();
-            if (!succeeded)
-            {
-                _logger.LogError("Failed to create the lottery");
-                return new InternalServerErrorObjectResult("Update database exception");
-            }
-
-            if (!userUpdateResult.Succeeded)
-            {
-                _logger.LogError(userUpdateResult.ToString());
-                return new InternalServerErrorObjectResult(userUpdateResult.ToString());
-            }
-            #endregion
-
-            return Ok(response);
-        }
+            [FromBody] DrawCommand request
+        ) => Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 更新抽奖记录

@@ -4,6 +4,7 @@ using System.Reflection;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Extensions;
+using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.FileService;
@@ -44,7 +45,12 @@ namespace EPlusActivities.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(
+                options =>
+                {
+                    options.Filters.Add<CustomExceptionFilterAttribute>();
+                }
+            );
             services.AddLogging(
                 (builder) =>
                 {

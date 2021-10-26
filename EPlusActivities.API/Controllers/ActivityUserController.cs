@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.Application.Commands.ActivityUserCommands;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
@@ -13,6 +14,7 @@ using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -37,6 +39,7 @@ namespace EPlusActivities.API.Controllers
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly ILogger<ActivityUserController> _logger;
         private readonly IGeneralLotteryRecordsRepository _statementRepository;
+        private readonly IMediator _mediator;
         private readonly IActivityService _activityService;
 
         public ActivityUserController(
@@ -48,11 +51,13 @@ namespace EPlusActivities.API.Controllers
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IGeneralLotteryRecordsRepository statementRepository
+            IGeneralLotteryRecordsRepository statementRepository,
+            IMediator mediator
         )
         {
             _statementRepository =
                 statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =
@@ -234,126 +239,7 @@ namespace EPlusActivities.API.Controllers
             Roles = "customer, tester"
         )]
         public async Task<ActionResult<ActivityUserForRedeemDrawsResponseDto>> RedeemDrawsAsync(
-            [FromBody] ActivityUserForRedeemDrawsRequestDto request
-        )
-        {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user is null)
-            {
-                return NotFound("Could not find the user.");
-            }
-
-            var activity = await _activityRepository.FindByIdAsync(request.ActivityId.Value);
-            if (activity is null)
-            {
-                return NotFound("Could not find the activity.");
-            }
-            var channel = Enum.Parse<ChannelCode>(request.Channel, true);
-            var generalLotteryRecords = await _statementRepository.FindByDateAsync(
-                request.ActivityId.Value,
-                channel,
-                DateTime.Today
-            );
-            var requireNewStatement = generalLotteryRecords is null;
-            if (requireNewStatement)
-            {
-                generalLotteryRecords = new GeneralLotteryRecords
-                {
-                    Activity = activity,
-                    DateTime = DateTime.Today,
-                    Channel = channel,
-                };
-            }
-
-            var activityUser = await _activityUserRepository.FindByIdAsync(
-                request.ActivityId.Value,
-                request.UserId.Value
-            );
-            if (activityUser is null)
-            {
-                return NotFound("Could not find the ActivityUser link.");
-            }
-
-            // 今日没登陆过的用户，每日兑换次数清零
-            _activityService.UpdateDailyLimitsAsync(user, activityUser);
-
-            // 超过每日兑换限制
-            if (!(activityUser.TodayUsedRedempion + request.Count <= activity.DailyRedemptionLimit))
-            {
-                return BadRequest(
-                    "Sorry, the user had already achieved the daily maximum number of redemption of this activity."
-                );
-            }
-            else
-            {
-                activityUser.TodayUsedRedempion += request.Count;
-            }
-
-            var cost = request.UnitPrice * request.Count;
-            if (cost > user.Credit)
-            {
-                return BadRequest("The user did not have enough credits.");
-            }
-            #endregion
-
-            #region Connect member server
-            var (getMemberSucceed, member) = await _memberService.GetMemberAsync(user.PhoneNumber);
-            var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
-            {
-                memberId = member.Body.Content.MemberId,
-                points = cost,
-                reason = request.Reason,
-                sheetId = _idGeneratorService.NextId().ToString(),
-                updateType = CreditUpdateType.Subtraction
-            };
-            var (updateMemberSucceed, memberForUpdateCreditResponseDto) =
-                await _memberService.UpdateCreditAsync(
-                    userId: request.UserId.Value,
-                    requestDto: memberForUpdateCreditRequestDto
-                );
-            #endregion
-
-            #region Update the user's credit
-            if (!updateMemberSucceed)
-            {
-                var error = "Failed to update the credit.";
-                _logger.LogError(error);
-                return new InternalServerErrorObjectResult(error);
-            }
-
-            user.Credit = memberForUpdateCreditResponseDto.Body.Content.NewPoints;
-            var updateUserResult = await _userManager.UpdateAsync(user);
-            if (!updateUserResult.Succeeded)
-            {
-                _logger.LogError(updateUserResult.ToString());
-                return new InternalServerErrorObjectResult(updateUserResult.ToString());
-            }
-            #endregion
-
-            #region Update ActivityUser link
-            activityUser.RemainingDraws += request.Count;
-            generalLotteryRecords.Redemption += request.Count;
-
-            _activityUserRepository.Update(activityUser);
-            if (requireNewStatement)
-            {
-                await _statementRepository.AddAsync(generalLotteryRecords);
-            }
-            else
-            {
-                _statementRepository.Update(generalLotteryRecords);
-            }
-
-            var updateActivityUserResult = await _activityUserRepository.SaveAsync();
-            if (!updateActivityUserResult)
-            {
-                _logger.LogError("Failed to update the ActivityUser link");
-                return new InternalServerErrorObjectResult("Update database exception");
-            }
-            #endregion
-
-            return Ok(_mapper.Map<ActivityUserForRedeemDrawsResponseDto>(activityUser));
-        }
+            [FromBody] RedeemCommand request
+        ) => Ok(await _mediator.Send(request));
     }
 }

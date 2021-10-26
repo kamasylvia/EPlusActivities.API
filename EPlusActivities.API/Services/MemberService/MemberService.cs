@@ -6,6 +6,8 @@ using AutoMapper;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
+using EPlusActivities.API.Infrastructure.Enums;
+using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,13 +46,28 @@ namespace EPlusActivities.API.Services.MemberService
         /// 获取会员信息
         /// </summary>
         /// <param name="phone">会员手机号</param>
+        /// <param name="channelCode">渠道号</param>
         /// <returns></returns>
-        public async Task<(bool, MemberForGetDto)> GetMemberAsync(string phone)
+        public async Task<MemberForGetDto> GetMemberAsync(string phone, ChannelCode channelCode)
         {
+            var channel = channelCode.ToString().ToLower();
+
             var response = await _httpClientFactory
                 .CreateClient()
                 .PostAsJsonAsync(
-                    _configuration["MemberServiceUriBuilder:GetMemberInfoRequestUrl"],
+                    new UriBuilder(
+                        scheme: _configuration["MemberServiceUriBuilder:Scheme"],
+                        host: _configuration["MemberServiceUriBuilder:Host"],
+                        port: Convert.ToInt32(_configuration["MemberServiceUriBuilder:Port"]),
+                        pathValue: string.Join(
+                            '/',
+                            _configuration["MemberServiceUriBuilder:PreChannelCodePathValue"],
+                            channel,
+                            _configuration[
+                                "MemberServiceUriBuilder:PostChannelCodeGetMemberInfoRequest"
+                            ]
+                        )
+                    ).Uri,
                     new { mobile = phone }
                 );
             var result = await response.Content.ReadFromJsonAsync<MemberForGetDto>();
@@ -58,20 +75,35 @@ namespace EPlusActivities.API.Services.MemberService
             if (result.Header.Code != "0000")
             {
                 _logger.LogError("获取会员信息失败：", result.Header.Message);
-                return (false, result);
+                throw new RemoteServiceException($"获取会员信息失败：{result.Header.Message}");
             }
 
-            return (true, result);
+            return result;
         }
 
-        public async Task<(bool, MemberForReleaseCouponResponseDto)> ReleaseCouponAsync(
+        public async Task<MemberForReleaseCouponResponseDto> ReleaseCouponAsync(
+            ChannelCode channelCode,
             MemberForReleaseCouponRequestDto requestDto
         )
         {
+            var channel = channelCode.ToString().ToLower();
+
             var response = await _httpClientFactory
                 .CreateClient()
                 .PostAsJsonAsync(
-                    _configuration["MemberServiceUriBuilder:CouponRequestUrl"],
+                    new UriBuilder(
+                        scheme: _configuration["MemberServiceUriBuilder:Scheme"],
+                        host: _configuration["MemberServiceUriBuilder:Host"],
+                        port: Convert.ToInt32(_configuration["MemberServiceUriBuilder:Port"]),
+                        pathValue: string.Join(
+                            '/',
+                            _configuration["MemberServiceUriBuilder:PreChannelCodePathValue"],
+                            channel,
+                            _configuration[
+                                "MemberServiceUriBuilder:PostChannelReleaseCouponRequest"
+                            ]
+                        )
+                    ).Uri,
                     requestDto
                 );
             var responseDto =
@@ -80,21 +112,34 @@ namespace EPlusActivities.API.Services.MemberService
             if (responseDto.Header.Code != "0000")
             {
                 _logger.LogError("发放优惠券失败：", responseDto.Header.Message);
-                return (false, responseDto);
+                throw new RemoteServiceException($"发放优惠券失败：{responseDto.Header.Message}");
             }
 
-            return (true, responseDto);
+            return responseDto;
         }
 
-        public async Task<(bool, MemberForUpdateCreditResponseDto)> UpdateCreditAsync(
+        public async Task<MemberForUpdateCreditResponseDto> UpdateCreditAsync(
             Guid userId,
+            ChannelCode channelCode,
             MemberForUpdateCreditRequestDto requestDto
         )
         {
+            var channel = channelCode.ToString().ToLower();
+
             var response = await _httpClientFactory
                 .CreateClient()
                 .PostAsJsonAsync(
-                    _configuration["MemberServiceUriBuilder:UpdateCreditRequestUrl"],
+                    new UriBuilder(
+                        scheme: _configuration["MemberServiceUriBuilder:Scheme"],
+                        host: _configuration["MemberServiceUriBuilder:Host"],
+                        port: Convert.ToInt32(_configuration["MemberServiceUriBuilder:Port"]),
+                        pathValue: string.Join(
+                            '/',
+                            _configuration["MemberServiceUriBuilder:PreChannelCodePathValue"],
+                            channel,
+                            _configuration["MemberServiceUriBuilder:PostChannelUpdateCreditRequest"]
+                        )
+                    ).Uri,
                     requestDto
                 );
 
@@ -104,7 +149,7 @@ namespace EPlusActivities.API.Services.MemberService
             if (responseDto.Header.Code != "0000")
             {
                 _logger.LogError("更新会员积分失败：", responseDto.Header.Message);
-                return (false, responseDto);
+                throw new RemoteServiceException($"更新会员积分失败：{responseDto.Header.Message}");
             }
 
             #region Database operations
@@ -116,10 +161,11 @@ namespace EPlusActivities.API.Services.MemberService
             if (!result)
             {
                 _logger.LogError("Update database exception.");
+                throw new DatabaseUpdateException();
             }
             #endregion
 
-            return (result, responseDto);
+            return responseDto;
         }
     }
 }
