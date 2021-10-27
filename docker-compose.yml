@@ -64,7 +64,7 @@ services:
         restart: always
 
     fileservice:
-        image: kamasylvia/fileservice:20210915
+        image: kamasylvia/fileservice:20211027
         container_name: FileService
         environment:
             - ASPNETCORE_ENVIRONMENT=Production

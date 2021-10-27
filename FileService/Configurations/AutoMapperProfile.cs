@@ -14,6 +14,7 @@ namespace FileService.Configurations
                     dest => dest.ContentType,
                     opt => opt.MapFrom(src => src.FormFile.ContentType)
                 );
+            CreateMap<AppFile, GetFileByOwnerIdResponseDto>();
         }
     }
 }

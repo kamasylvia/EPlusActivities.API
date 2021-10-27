@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using AutoMapper;
+using EPlusActivities.API.Application.Commands.FileCommands;
 using EPlusActivities.API.Dtos.FileDtos;
-using EPlusActivities.API.Infrastructure.Filters;
-using EPlusActivities.API.Services.FileService;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,25 +19,17 @@ namespace EPlusActivities.API.Controllers
     [Route("choujiang/api/[controller]")]
     public class FileController : Controller
     {
-        private readonly IMapper _mapper;
-        private readonly IFileService _fileService;
-        private readonly ILogger<FileController> _logger;
+        private readonly IMediator _mediator;
 
-        public FileController(
-            IMapper mapper,
-            IFileService fileService,
-            ILogger<FileController> logger
-        )
+        public FileController(IMediator mediator)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         /// <summary>
         /// 通过文件 ID 获取文件
         /// </summary>
-        /// <param name="requestDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("id")]
         [Authorize(
@@ -50,23 +37,17 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> DownloadFileByIdAsync(
-            [FromQuery] DownloadFileByIdRequestDto requestDto
+            [FromQuery] DownloadFileByIdCommand request
         )
         {
-            var fileStream = await _fileService.DownloadFileByIdAsync(requestDto);
-            if (fileStream.Length == 0)
-            {
-                return NotFound("Could not find the file.");
-            }
-            var contentType = await _fileService.GetContentTypeByIdAsync(requestDto);
-
-            return File(fileStream, contentType);
+            var result = await _mediator.Send(request);
+            return File(result.FileContents, result.ContentType);
         }
 
         /// <summary>
         /// 通过文件所有者和关键字获取文件
         /// </summary>
-        /// <param name="requestDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("key")]
         [Authorize(
@@ -74,48 +55,48 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> DownloadFileByKeyAsync(
-            [FromQuery] DownloadFileByKeyRequestDto requestDto
+            [FromQuery] DownloadFileByKeyCommand request
         )
         {
-            var fileStream = new MemoryStream(
-                await _fileService.DownloadFileByKeyAsync(requestDto)
-            );
-            if (fileStream is null)
-            {
-                return NotFound("Could not find the file.");
-            }
-            var contentType = await _fileService.GetContentTypeByKeyAsync(requestDto);
-
-            return File(fileStream, contentType);
+            var result = await _mediator.Send(request);
+            return File(result.FileStream, result.ContentType);
         }
 
         /// <summary>
         /// 获取某个所有者的全部文件
         /// </summary>
-        /// <param name="requestDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("ownerId")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<Guid>>> DownloadFilesByOwnerIdAsync(
-            [FromQuery] DownloadFilesByOwnerIdRequestDto requestDto
-        ) => Ok(await _fileService.DownloadFilesByOwnerIdAsync(requestDto.OwnerId.Value));
+        public async Task<
+            ActionResult<IEnumerable<DownloadFilesByOwnerIdDto>>
+        > DownloadFilesByOwnerIdAsync([FromQuery] DownloadFilesByOwnerIdCommand request) =>
+            Ok(await _mediator.Send(request));
 
+        /// <summary>
+        /// 上传文件
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<IActionResult> UploadFileAsync(
-            [FromForm] UploadFileRequestDto requestDto
-        ) => new StatusCodeResult(await _fileService.UploadFileAsync(requestDto));
+        public async Task<IActionResult> UploadFileAsync([FromForm] UploadFileCommand request)
+        {
+            await _mediator.Send(request);
+            return Ok();
+        }
 
         /// <summary>
-        /// 删除指定 ID 的文件
+        /// 根据文件 ID 删除文件
         /// </summary>
-        /// <param name="requestDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete("id")]
         [Authorize(
@@ -123,13 +104,17 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> DeleteFileByIdAsync(
-            [FromQuery] DownloadFileByIdRequestDto requestDto
-        ) => new StatusCodeResult(await _fileService.DeleteFileByIdAsync(requestDto));
+            [FromQuery] DeleteFileByIdCommand request
+        )
+        {
+            await _mediator.Send(request);
+            return Ok();
+        }
 
         /// <summary>
         /// 根据文件所有者和关键字删除文件
         /// </summary>
-        /// <param name="requestDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete("key")]
         [Authorize(
@@ -137,7 +122,11 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> DeleteFileByKeyAsync(
-            [FromQuery] DownloadFileByKeyRequestDto requestDto
-        ) => new StatusCodeResult(await _fileService.DeleteFileByKeyAsync(requestDto));
+            [FromQuery] DeleteFileByKeyCommand request
+        )
+        {
+            await _mediator.Send(request);
+            return Ok();
+        }
     }
 }

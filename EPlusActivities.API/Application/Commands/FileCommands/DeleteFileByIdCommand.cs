@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos.FileDtos
+namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class DownloadFileByIdRequestDto
+    public class DeleteFileByIdCommand : IRequest
     {
         /// <summary>
         /// 文件 ID

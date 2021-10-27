@@ -1,10 +1,13 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Threading.Tasks;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos.FileDtos
+namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class UploadFileRequestDto
+    public class DeleteFileByKeyCommand : IRequest
     {
         /// <summary>
         /// 文件拥有者的 ID，为保持唯一性，使用 Guid
@@ -19,12 +22,5 @@ namespace EPlusActivities.API.Dtos.FileDtos
         /// <value></value>
         [Required]
         public string Key { get; set; }
-
-        /// <summary>
-        /// 使用 Http 协议发送的文件
-        /// </summary>
-        /// <value></value>
-        [Required]
-        public IFormFile FormFile { get; set; }
     }
 }

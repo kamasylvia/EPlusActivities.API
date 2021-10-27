@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using EPlusActivities.API.Application.Commands.FileCommands;
 using EPlusActivities.API.Dtos.FileDtos;
 using EPlusActivities.API.Infrastructure.Attributes;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,7 @@ namespace EPlusActivities.API.Services.FileService
                 configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task<byte[]> DownloadFileByKeyAsync(DownloadFileByKeyRequestDto requestDto)
+        public async Task<byte[]> DownloadFileByKeyAsync(DownloadFileByKeyCommand request)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -48,15 +49,15 @@ namespace EPlusActivities.API.Services.FileService
                 uriBuilder.Uri.ToString(),
                 new Dictionary<string, string>
                 {
-                    ["OwnerId"] = requestDto.OwnerId.ToString(),
-                    ["Key"] = requestDto.Key
+                    ["OwnerId"] = request.OwnerId.ToString(),
+                    ["Key"] = request.Key
                 }
             );
 
             return await _httpClientFactory.CreateClient().GetByteArrayAsync(requestUrl);
         }
 
-        public async Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyRequestDto requestDto)
+        public async Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyCommand request)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -69,15 +70,15 @@ namespace EPlusActivities.API.Services.FileService
                 uriBuilder.Uri.ToString(),
                 new Dictionary<string, string>
                 {
-                    ["OwnerId"] = requestDto.OwnerId.ToString(),
-                    ["Key"] = requestDto.Key
+                    ["OwnerId"] = request.OwnerId.ToString(),
+                    ["Key"] = request.Key
                 }
             );
 
             return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
         }
 
-        public async Task<byte[]> DownloadFileByIdAsync(DownloadFileByIdRequestDto requestDto)
+        public async Task<byte[]> DownloadFileByIdAsync(DownloadFileByIdCommand request)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -88,13 +89,13 @@ namespace EPlusActivities.API.Services.FileService
 
             var requestUrl = QueryHelpers.AddQueryString(
                 uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["FileId"] = requestDto.FileId.ToString() }
+                new Dictionary<string, string> { ["FileId"] = request.FileId.ToString() }
             );
 
             return await _httpClientFactory.CreateClient().GetByteArrayAsync(requestUrl);
         }
 
-        public async Task<string> GetContentTypeByIdAsync(DownloadFileByIdRequestDto requestDto)
+        public async Task<string> GetContentTypeByIdAsync(DownloadFileByIdCommand request)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -105,13 +106,13 @@ namespace EPlusActivities.API.Services.FileService
 
             var requestUrl = QueryHelpers.AddQueryString(
                 uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["FileId"] = requestDto.FileId.ToString() }
+                new Dictionary<string, string> { ["FileId"] = request.FileId.ToString() }
             );
 
             return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
         }
 
-        public async Task<int> UploadFileAsync(UploadFileRequestDto requestDto)
+        public async Task<bool> UploadFileAsync(UploadFileCommand request)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -121,22 +122,22 @@ namespace EPlusActivities.API.Services.FileService
             );
 
             var formData = new MultipartFormDataContent();
-            formData.Add(new StringContent(requestDto.OwnerId.ToString()), "ownerId");
-            formData.Add(new StringContent(requestDto.Key), "key");
+            formData.Add(new StringContent(request.OwnerId.ToString()), "ownerId");
+            formData.Add(new StringContent(request.Key), "key");
 
-            var streamContent = new StreamContent(requestDto.FormFile.OpenReadStream());
+            var streamContent = new StreamContent(request.FormFile.OpenReadStream());
             streamContent.Headers.ContentType = new MediaTypeHeaderValue(
-                requestDto.FormFile.ContentType
+                request.FormFile.ContentType
             );
-            formData.Add(streamContent, "formFile", requestDto.FormFile.FileName);
+            formData.Add(streamContent, "formFile", request.FormFile.FileName);
 
             var response = await _httpClientFactory
                 .CreateClient()
                 .PostAsync(uriBuilder.Uri, formData);
-            return Convert.ToInt32(response.StatusCode);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task<int> DeleteFileByIdAsync(DownloadFileByIdRequestDto requestDto)
+        public async Task<bool> DeleteFileByIdAsync(DeleteFileByIdCommand requestDto)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -151,10 +152,10 @@ namespace EPlusActivities.API.Services.FileService
             );
 
             var response = await _httpClientFactory.CreateClient().DeleteAsync(requestUrl);
-            return Convert.ToInt32(response.StatusCode);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task<int> DeleteFileByKeyAsync(DownloadFileByKeyRequestDto requestDto)
+        public async Task<bool> DeleteFileByKeyAsync(DeleteFileByKeyCommand request)
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -167,16 +168,18 @@ namespace EPlusActivities.API.Services.FileService
                 uriBuilder.Uri.ToString(),
                 new Dictionary<string, string>
                 {
-                    ["OwnerId"] = requestDto.OwnerId.ToString(),
-                    ["Key"] = requestDto.Key
+                    ["OwnerId"] = request.OwnerId.ToString(),
+                    ["Key"] = request.Key
                 }
             );
 
             var response = await _httpClientFactory.CreateClient().DeleteAsync(requestUrl);
-            return Convert.ToInt32(response.StatusCode);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task<IEnumerable<Guid>> DownloadFilesByOwnerIdAsync(Guid ownerId)
+        public async Task<IEnumerable<DownloadFilesByOwnerIdDto>> DownloadFilesByOwnerIdAsync(
+            Guid ownerId
+        )
         {
             var uriBuilder = new UriBuilder(
                 scheme: _configuration["FileServiceUriBuilder:Scheme"],
@@ -192,7 +195,7 @@ namespace EPlusActivities.API.Services.FileService
 
             return await _httpClientFactory
                 .CreateClient()
-                .GetFromJsonAsync<IEnumerable<Guid>>(requestUrl);
+                .GetFromJsonAsync<IEnumerable<DownloadFilesByOwnerIdDto>>(requestUrl);
         }
     }
 }

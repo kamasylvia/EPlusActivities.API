@@ -33,74 +33,19 @@ namespace EPlusActivities.API.Controllers
     [ApiController]
     public class LotteryController : Controller
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger<LotteryController> _logger;
-        private readonly ILotteryRepository _lotteryRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IActivityRepository _activityRepository;
-        private readonly IPrizeItemRepository _prizeItemRepository;
-        private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
-        private readonly IRepository<Coupon> _couponRepository;
-        private readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
-        private readonly ILotteryService _lotteryService;
-        private readonly IIdGeneratorService _idGeneratorService;
-        private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
-        private readonly IMemberService _memberService;
-        private readonly IActivityService _activityService;
         private readonly IMediator _mediator;
 
         public LotteryController(
-            ILotteryRepository lotteryRepository,
-            UserManager<ApplicationUser> userManager,
-            IActivityRepository activityRepository,
-            IPrizeItemRepository prizeItemRepository,
-            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
-            IMapper mapper,
-            ILogger<LotteryController> logger,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
-            IRepository<Coupon> couponResponseDto,
-            ILotteryService lotteryService,
-            IMemberService memberService,
-            IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
-            IActivityService activityService,
             IMediator mediator
         )
         {
-            _idGeneratorService =
-                idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
-            _memberService =
-                memberService ?? throw new ArgumentNullException(nameof(memberService));
-            _generalLotteryRecordsRepository =
-                generalLotteryRecordsRepository
-                ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _logger = logger;
-            _lotteryService =
-                lotteryService ?? throw new ArgumentNullException(nameof(lotteryService));
-            _activityUserRepository =
-                activityUserRepository
-                ?? throw new ArgumentNullException(nameof(activityUserRepository));
-            _activityService =
-                activityService ?? throw new ArgumentNullException(nameof(activityService));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _couponRepository =
-                couponResponseDto ?? throw new ArgumentNullException(nameof(couponResponseDto));
-            _lotteryRepository =
-                lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _activityRepository =
-                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
-            _prizeItemRepository =
-                prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
-            _prizeTypeRepository =
-                prizeTypeRepository ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
         }
 
         /// <summary>
         /// 获取某个用户的抽奖记录
         /// </summary>
-        /// <param name="lotteryDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("customer/lottery-records")]
         [Authorize(
@@ -108,27 +53,13 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
-            [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
-            if (user is null)
-            {
-                return NotFound("Could not find the user.");
-            }
-            #endregion
-
-            var result = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
-            return result.Count() > 0
-              ? Ok(result.OrderBy(x => x.DateTime))
-              : NotFound("Could not find the lottery results.");
-        }
+            [FromQuery] GetLotteryRecordsByUserIdCommand request
+        ) => Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 获取某个用户的中奖记录
         /// </summary>
-        /// <param name="lotteryDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("customer/lucky-records")]
         [Authorize(
@@ -136,44 +67,9 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
-            [FromQuery] LotteryForGetByUserIdDto lotteryDto
-        )
-        {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(lotteryDto.UserId.ToString());
-            if (user is null)
-            {
-                return NotFound("Could not find the user.");
-            }
-            #endregion
+            [FromQuery] GetWinningRecordsByUserIdCommand request
+        ) => Ok(await _mediator.Send(request));
 
-            var records = await FindLotteryRecordsAsync(lotteryDto.UserId.Value);
-            var result = records.Where(record => record.IsLucky);
-            return result.Count() > 0
-              ? Ok(result.OrderBy(x => x.DateTime))
-              : NotFound("Could not find the winning results.");
-        }
-
-        private async Task<IEnumerable<LotteryDto>> FindLotteryRecordsAsync(Guid userId)
-        {
-            var lotteries = await _lotteryRepository.FindByUserIdAsync(userId);
-
-            // 因为进行了全剧配置，AutoMapper 在此执行
-            // _mapper.Map<IEnumerable<LotteryDto>>(lotteries)
-            // 时会自动转换 DateTime 导致精确时间丢失，
-            // 所以这里手动添加精确时间。
-            var result = lotteries.Select(
-                x =>
-                {
-                    var resultItem = _mapper.Map<LotteryDto>(x);
-                    resultItem.DateTime = x.DateTime;
-                    resultItem.PickedUpTime = x.PickedUpTime;
-                    return resultItem;
-                }
-            );
-
-            return result;
-        }
 
         /// <summary>
         /// 管理员根据活动号查询中奖记录报表
