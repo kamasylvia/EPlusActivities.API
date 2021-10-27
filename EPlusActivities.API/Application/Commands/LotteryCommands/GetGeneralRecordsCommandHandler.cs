@@ -18,13 +18,48 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class GetGeneralRecordsCommandHandler : BaseCommandHandler, IRequestHandler<GetGeneralRecordsCommand, IEnumerable<LotteryForGetGeneralRecordsResponse>>
+    public class GetGeneralRecordsCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<
+              GetGeneralRecordsCommand,
+              IEnumerable<LotteryForGetGeneralRecordsResponse>
+          >
     {
-        public GetGeneralRecordsCommandHandler(ILotteryRepository lotteryRepository, UserManager<ApplicationUser> userManager, IActivityRepository activityRepository, IPrizeItemRepository prizeItemRepository, IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IMapper mapper, IFindByParentIdRepository<ActivityUser> activityUserRepository, IRepository<Coupon> couponResponseDto, ILotteryService lotteryService, IMemberService memberService, IIdGeneratorService idGeneratorService, IGeneralLotteryRecordsRepository generalLotteryRecordsRepository, IActivityService activityService) : base(lotteryRepository, userManager, activityRepository, prizeItemRepository, prizeTypeRepository, mapper, activityUserRepository, couponResponseDto, lotteryService, memberService, idGeneratorService, generalLotteryRecordsRepository, activityService)
-        {
-        }
+        public GetGeneralRecordsCommandHandler(
+            ILotteryRepository lotteryRepository,
+            UserManager<ApplicationUser> userManager,
+            IActivityRepository activityRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IMapper mapper,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IRepository<Coupon> couponResponseDto,
+            ILotteryService lotteryService,
+            IMemberService memberService,
+            IIdGeneratorService idGeneratorService,
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            IActivityService activityService
+        )
+            : base(
+                lotteryRepository,
+                userManager,
+                activityRepository,
+                prizeItemRepository,
+                prizeTypeRepository,
+                mapper,
+                activityUserRepository,
+                couponResponseDto,
+                lotteryService,
+                memberService,
+                idGeneratorService,
+                generalLotteryRecordsRepository,
+                activityService
+            ) { }
 
-        public async Task<IEnumerable<LotteryForGetGeneralRecordsResponse>> Handle(GetGeneralRecordsCommand request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<LotteryForGetGeneralRecordsResponse>> Handle(
+            GetGeneralRecordsCommand request,
+            CancellationToken cancellationToken
+        )
         {
             #region Parameter validation
             var channel = Enum.Parse<ChannelCode>(request.Channel, true);
@@ -41,9 +76,9 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             );
             #endregion
 
-            return
-                _mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(generalLotteryRecords)
-            ;
+            return _mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(
+                generalLotteryRecords
+            );
         }
     }
 }

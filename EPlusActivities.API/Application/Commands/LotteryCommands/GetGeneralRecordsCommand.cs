@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,7 +8,8 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class GetGeneralRecordsCommand : IRequest<IEnumerable<LotteryForGetGeneralRecordsResponse>>
+    public class GetGeneralRecordsCommand
+        : IRequest<IEnumerable<LotteryForGetGeneralRecordsResponse>>
     {
         /// <summary>
         /// 开始日期

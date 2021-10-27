@@ -17,13 +17,45 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class DownloadLotteryExcelCommandHandler : BaseCommandHandler, IRequestHandler<DownloadLotteryExcelCommand,FileDto>
+    public class DownloadLotteryExcelCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<DownloadLotteryExcelCommand, FileDto>
     {
-        public DownloadLotteryExcelCommandHandler(ILotteryRepository lotteryRepository, UserManager<ApplicationUser> userManager, IActivityRepository activityRepository, IPrizeItemRepository prizeItemRepository, IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IMapper mapper, IFindByParentIdRepository<ActivityUser> activityUserRepository, IRepository<Coupon> couponResponseDto, ILotteryService lotteryService, IMemberService memberService, IIdGeneratorService idGeneratorService, IGeneralLotteryRecordsRepository generalLotteryRecordsRepository, IActivityService activityService) : base(lotteryRepository, userManager, activityRepository, prizeItemRepository, prizeTypeRepository, mapper, activityUserRepository, couponResponseDto, lotteryService, memberService, idGeneratorService, generalLotteryRecordsRepository, activityService)
-        {
-        }
+        public DownloadLotteryExcelCommandHandler(
+            ILotteryRepository lotteryRepository,
+            UserManager<ApplicationUser> userManager,
+            IActivityRepository activityRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IMapper mapper,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IRepository<Coupon> couponResponseDto,
+            ILotteryService lotteryService,
+            IMemberService memberService,
+            IIdGeneratorService idGeneratorService,
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            IActivityService activityService
+        )
+            : base(
+                lotteryRepository,
+                userManager,
+                activityRepository,
+                prizeItemRepository,
+                prizeTypeRepository,
+                mapper,
+                activityUserRepository,
+                couponResponseDto,
+                lotteryService,
+                memberService,
+                idGeneratorService,
+                generalLotteryRecordsRepository,
+                activityService
+            ) { }
 
-        public async Task<FileDto> Handle(DownloadLotteryExcelCommand request, CancellationToken cancellationToken)
+        public async Task<FileDto> Handle(
+            DownloadLotteryExcelCommand request,
+            CancellationToken cancellationToken
+        )
         {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);

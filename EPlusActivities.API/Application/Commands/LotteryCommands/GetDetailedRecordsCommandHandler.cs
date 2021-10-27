@@ -18,19 +18,51 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class GetDetailedRecordsCommandHandler : BaseCommandHandler, IRequestHandler<GetDetailedRecordsCommand, IEnumerable<LotteryRecordsForManagerResponse>>
+    public class GetDetailedRecordsCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<GetDetailedRecordsCommand, IEnumerable<LotteryRecordsForManagerResponse>>
     {
-        public GetDetailedRecordsCommandHandler(ILotteryRepository lotteryRepository, UserManager<ApplicationUser> userManager, IActivityRepository activityRepository, IPrizeItemRepository prizeItemRepository, IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IMapper mapper, IFindByParentIdRepository<ActivityUser> activityUserRepository, IRepository<Coupon> couponResponseDto, ILotteryService lotteryService, IMemberService memberService, IIdGeneratorService idGeneratorService, IGeneralLotteryRecordsRepository generalLotteryRecordsRepository, IActivityService activityService) : base(lotteryRepository, userManager, activityRepository, prizeItemRepository, prizeTypeRepository, mapper, activityUserRepository, couponResponseDto, lotteryService, memberService, idGeneratorService, generalLotteryRecordsRepository, activityService)
-        {
-        }
+        public GetDetailedRecordsCommandHandler(
+            ILotteryRepository lotteryRepository,
+            UserManager<ApplicationUser> userManager,
+            IActivityRepository activityRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IMapper mapper,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IRepository<Coupon> couponResponseDto,
+            ILotteryService lotteryService,
+            IMemberService memberService,
+            IIdGeneratorService idGeneratorService,
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            IActivityService activityService
+        )
+            : base(
+                lotteryRepository,
+                userManager,
+                activityRepository,
+                prizeItemRepository,
+                prizeTypeRepository,
+                mapper,
+                activityUserRepository,
+                couponResponseDto,
+                lotteryService,
+                memberService,
+                idGeneratorService,
+                generalLotteryRecordsRepository,
+                activityService
+            ) { }
 
-        public async Task<IEnumerable<LotteryRecordsForManagerResponse>> Handle(GetDetailedRecordsCommand request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<LotteryRecordsForManagerResponse>> Handle(
+            GetDetailedRecordsCommand request,
+            CancellationToken cancellationToken
+        )
         {
             #region Parameter validation
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
             {
-               throw new NotFoundException("Could not find the activity.");
+                throw new NotFoundException("Could not find the activity.");
             }
             var lotteries = await activity.LotteryResults
                 .Where(

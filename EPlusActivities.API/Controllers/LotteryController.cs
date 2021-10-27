@@ -77,9 +77,9 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<
-            ActionResult<LotteryRecordsForManagerResponse>
-        > GetDetailedRecordsAsync([FromQuery] GetDetailedRecordsCommand request) => Ok(await _mediator.Send(request));
+        public async Task<ActionResult<LotteryRecordsForManagerResponse>> GetDetailedRecordsAsync(
+            [FromQuery] GetDetailedRecordsCommand request
+        ) => Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 管理员根据活动号下载中奖记录报表
@@ -109,7 +109,8 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<
             ActionResult<IEnumerable<LotteryForGetGeneralRecordsResponse>>
-        > GetGeneralRecordsAsync([FromQuery] GetGeneralRecordsCommand request) => Ok(await _mediator.Send(request));
+        > GetGeneralRecordsAsync([FromQuery] GetGeneralRecordsCommand request) =>
+            Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 抽奖
