@@ -13,7 +13,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class GetUserCommandHandler : BaseHandler, IRequestHandler<GetUserCommand, UserResponse>
+    public class GetUserCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<GetUserCommand, UserDto>
     {
         private readonly IMemberService _memberService;
         private readonly IMapper _mapper;
@@ -29,7 +31,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
         }
 
-        public async Task<UserResponse> Handle(
+        public async Task<UserDto> Handle(
             GetUserCommand request,
             CancellationToken cancellationToken
         )
@@ -63,7 +65,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
             }
             #endregion
 
-            return _mapper.Map<UserResponse>(user);
+            return _mapper.Map<UserDto>(user);
         }
     }
 }

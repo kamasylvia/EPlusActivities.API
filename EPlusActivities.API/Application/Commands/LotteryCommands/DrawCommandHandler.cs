@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
     public class DrawCommandHandler
-        : BaseHandler,
+        : BaseCommandHandler,
           IRequestHandler<DrawCommand, IEnumerable<LotteryDto>>
     {
         public DrawCommandHandler(
@@ -240,8 +240,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             else
                 _generalLotteryRecordsRepository.Update(generalRecords);
 
-            var succeeded = await _lotteryRepository.SaveAsync();
-            if (!succeeded)
+            if (!await _lotteryRepository.SaveAsync())
             {
                 throw new DatabaseUpdateException("Update database exception");
             }

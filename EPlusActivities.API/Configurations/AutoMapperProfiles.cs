@@ -1,6 +1,12 @@
 using System;
 using System.Linq;
 using AutoMapper;
+using EPlusActivities.API.Application.Commands.ActivityCommands;
+using EPlusActivities.API.Application.Commands.AddressCommands;
+using EPlusActivities.API.Application.Commands.AttendanceCommands;
+using EPlusActivities.API.Application.Commands.BrandCommands;
+using EPlusActivities.API.Application.Commands.CategoryCommands;
+using EPlusActivities.API.Application.Commands.LotteryCommands;
 using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
@@ -39,8 +45,8 @@ namespace EPlusActivities.API.Configuration
                 );
 
             #region ApplicationUser
-            CreateMap<ApplicationUser, UserResponse>();
-            CreateMap<UserResponse, ApplicationUser>()
+            CreateMap<ApplicationUser, UserDto>();
+            CreateMap<UserDto, ApplicationUser>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.UserName, opt => opt.Ignore())
                 .ForMember(dest => dest.PhoneNumber, opt => opt.Ignore());
@@ -50,8 +56,8 @@ namespace EPlusActivities.API.Configuration
 
             #region Address
             CreateMap<Address, AddressDto>();
-            CreateMap<AddressForCreateDto, Address>();
-            CreateMap<AddressForUpdateDto, Address>()
+            CreateMap<CreateAddressCommand, Address>();
+            CreateMap<UpdateAddressCommand, Address>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
                 .ForMember(dest => dest.User, opt => opt.Ignore());
@@ -93,7 +99,7 @@ namespace EPlusActivities.API.Configuration
                     opt => opt.MapFrom(src => src.PrizeItem.PrizeType.ToString())
                 );
             CreateMap<GeneralLotteryRecords, LotteryForGetGeneralRecordsResponse>();
-            CreateMap<LotteryForCreateDto, Lottery>()
+            CreateMap<DrawCommand, Lottery>()
                 .ForMember(
                     dest => dest.ChannelCode,
                     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
@@ -108,7 +114,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Attendance
-            CreateMap<AttendanceForAttendDto, Attendance>()
+            CreateMap<AttendCommand, Attendance>()
                 .ForMember(
                     dest => dest.ChannelCode,
                     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
@@ -139,7 +145,7 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.ActivityType,
                     opt => opt.MapFrom(src => src.ActivityType.ToString())
                 );
-            CreateMap<ActivityForCreateDto, Activity>()
+            CreateMap<CreateActivityCommand, Activity>()
                 .ForMember(
                     dest => dest.AvailableChannels,
                     opt =>
@@ -158,7 +164,7 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.ActivityType,
                     opt => opt.MapFrom(src => Enum.Parse<ActivityType>(src.ActivityType, true))
                 );
-            CreateMap<ActivityForUpdateDto, Activity>()
+            CreateMap<UpdateActivityCommand, Activity>()
                 .ForMember(
                     dest => dest.LotteryDisplay,
                     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
@@ -175,9 +181,9 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Brand
-            CreateMap<Brand, BrandDto>()
-                .ReverseMap();
-            CreateMap<BrandForGetByNameDto, Brand>();
+            CreateMap<Brand, BrandDto>();
+            CreateMap<CreateBrandCommand, Brand>();
+            CreateMap<UpdateBrandNameCommand, Brand>();
             #endregion
 
 
@@ -185,7 +191,8 @@ namespace EPlusActivities.API.Configuration
             #region Category
             CreateMap<Category, CategoryDto>()
                 .ReverseMap();
-            CreateMap<CategoryForGetByNameDto, Category>();
+            CreateMap<CreateCategoryCommand, Category>();
+            CreateMap<UpdateCategoryNameCommand, Category>();
             #endregion
 
 

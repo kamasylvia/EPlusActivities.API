@@ -23,10 +23,6 @@ namespace EPlusActivities.API.Infrastructure.Filters
                         Succeeded = true
                     };
                     break;
-                // case StatusCodeResult statusCodeResult:
-                //     apiResult = new ApiResult(statusCodeResult);
-                //     context.Result = new ObjectResult(apiResult) { StatusCode = apiResult.StatusCode };
-                //     break;
                 default:
                     break;
             }

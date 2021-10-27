@@ -17,7 +17,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.AttendanceCommands
 {
-    public class AttendCommandHandler : BaseHandler, IRequestHandler<AttendCommand, AttendanceDto>
+    public class AttendCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<AttendCommand, AttendanceDto>
     {
         public AttendCommandHandler(
             IAttendanceRepository attendanceRepository,
@@ -127,13 +129,11 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
             #region Database operations
             _activityUserRepository.Update(activityUser);
             await _attendanceRepository.AddAsync(attendance);
-            var succeeded = await _attendanceRepository.SaveAsync();
-            #endregion
-
-            if (!succeeded)
+            if (!await _attendanceRepository.SaveAsync())
             {
                 throw new DatabaseUpdateException();
             }
+            #endregion
 
             return _mapper.Map<AttendanceDto>(attendance);
         }

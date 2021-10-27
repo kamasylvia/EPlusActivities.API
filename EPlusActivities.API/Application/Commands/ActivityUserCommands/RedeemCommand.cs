@@ -30,12 +30,6 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
         public int Count { get; set; }
 
         /// <summary>
-        /// 每次所需积分
-        /// </summary>
-        /// <value></value>
-        public int UnitPrice { get; set; }
-
-        /// <summary>
         /// 原因
         /// </summary>
         /// <value></value>

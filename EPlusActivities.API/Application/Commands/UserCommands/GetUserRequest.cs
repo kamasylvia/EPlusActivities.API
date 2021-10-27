@@ -6,7 +6,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class GetUserCommand : IRequest<UserResponse>
+    public class GetUserCommand : IRequest<UserDto>
     {
         [Required]
         public Guid? UserId { get; set; }

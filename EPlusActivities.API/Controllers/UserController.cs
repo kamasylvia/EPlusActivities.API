@@ -39,9 +39,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<UserResponse>> GetAsync(
-            [FromQuery] GetUserCommand request
-        ) => Ok(await _mediator.Send<UserResponse>(request));
+        public async Task<ActionResult<UserDto>> GetAsync([FromQuery] GetUserCommand request) =>
+            Ok(await _mediator.Send<UserDto>(request));
 
         /// <summary>
         /// 获取用户列表。
@@ -53,9 +52,9 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersAsync(
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
             [FromQuery] GetUserListCommand request
-        ) => Ok(await _mediator.Send<IEnumerable<UserResponse>>(request));
+        ) => Ok(await _mediator.Send<IEnumerable<UserDto>>(request));
 
         /// <summary>
         /// 修改手机号

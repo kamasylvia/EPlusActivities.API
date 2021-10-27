@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.AttendanceCommands
 {
     public class GetAttendanceRecordsCommandHandler
-        : BaseHandler,
+        : BaseCommandHandler,
           IRequestHandler<GetAttendanceRecordsCommand, IEnumerable<AttendanceDto>>
     {
         public GetAttendanceRecordsCommandHandler(

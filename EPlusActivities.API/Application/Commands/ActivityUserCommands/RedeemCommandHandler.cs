@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class RedeemCommandHandler
-        : BaseHandler,
+        : BaseCommandHandler,
           IRequestHandler<RedeemCommand, ActivityUserForRedeemDrawsResponseDto>
     {
         public RedeemCommandHandler(
@@ -101,7 +101,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 activityUser.TodayUsedRedempion += request.Count;
             }
 
-            var cost = request.UnitPrice * request.Count;
+            var cost = activity.RequiredCreditForRedeeming * request.Count;
             if (cost > user.Credit)
             {
                 throw new BadRequestException("The user did not have enough credits.");
@@ -113,7 +113,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
             {
                 memberId = member.Body.Content.MemberId,
-                points = cost,
+                points = cost ?? 0,
                 reason = request.Reason,
                 sheetId = _idGeneratorService.NextId().ToString(),
                 updateType = CreditUpdateType.Subtraction
@@ -148,8 +148,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 _statementRepository.Update(generalLotteryRecords);
             }
 
-            var updateActivityUserResult = await _activityUserRepository.SaveAsync();
-            if (!updateActivityUserResult)
+            if (!await _activityUserRepository.SaveAsync())
             {
                 throw new DatabaseUpdateException("Update database exception");
             }

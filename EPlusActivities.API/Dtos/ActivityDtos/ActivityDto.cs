@@ -5,7 +5,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.ActivityDtos
 {
-    public class ActivityDto
+    public record ActivityDto
     {
         /// <summary>
         /// 活动 ID

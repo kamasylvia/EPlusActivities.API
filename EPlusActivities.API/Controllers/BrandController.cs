@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using EPlusActivities.API.Dtos;
+using EPlusActivities.API.Application.Commands.BrandCommands;
 using EPlusActivities.API.Dtos.BrandDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.ActionResults;
-using EPlusActivities.API.Infrastructure.Filters;
-using EPlusActivities.API.Infrastructure.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,54 +12,52 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EPlusActivities.API.Controllers
 {
+    /// <summary>
+    /// 品牌 API
+    /// </summary>
     [ApiController]
     [Route("choujiang/api/[controller]")]
     public class BrandController : Controller
     {
-        private readonly INameExistsRepository<Brand> _brandRepository;
-        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public BrandController(INameExistsRepository<Brand> brandRepository, IMapper mapper)
+        public BrandController(IMediator mediator)
         {
-            _brandRepository =
-                brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        /// <summary>
+        /// 根据 ID 获取品牌
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<BrandDto>> GetByIdAsync(
-            [FromQuery] BrandForGetByIdDto brandDto
-        )
-        {
-            var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
-            return brand is null
-              ? NotFound($"Could not find the brand.")
-              : Ok(_mapper.Map<BrandDto>(brand));
-        }
+            [FromQuery] GetBrandByIdCommand request
+        ) => Ok(await _mediator.Send(request));
 
+        /// <summary>
+        /// 根据品牌名获取品牌
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet("name")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<BrandDto>> GetByNameAsync(
-            [FromQuery] BrandForGetByNameDto brandDto
-        )
-        {
-            var brand = await _brandRepository.FindByNameAsync(brandDto.Name);
-            return brand is null
-              ? NotFound($"Could not find the brand.")
-              : Ok(_mapper.Map<BrandDto>(brand));
-        }
+            [FromQuery] GetBrandByNameCommand request
+        ) => Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 获取品牌列表
         /// </summary>
-        /// <param name="requestDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("list")]
         [Authorize(
@@ -72,127 +65,67 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetBrandListAsync(
-            [FromQuery] DtoForGetList requestDto
-        )
-        {
-            var brands = (await _brandRepository.FindAllAsync()).OrderBy(b => b.Name).ToList();
+            [FromQuery] GetBrandListCommand request
+        ) => Ok(await _mediator.Send(request));
 
-            var startIndex = (requestDto.PageIndex - 1) * requestDto.PageSize;
-            var count = requestDto.PageIndex * requestDto.PageSize;
-
-            if (brands.Count < startIndex)
-            {
-                return NotFound($"Could not find any brand.");
-            }
-
-            if (brands.Count - startIndex < count)
-            {
-                count = brands.Count - startIndex;
-            }
-
-            var result = brands.GetRange(startIndex, count);
-            return brands.Count > 0
-              ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
-              : NotFound($"Could not find any brand.");
-        }
-
+        /// <summary>
+        /// 根据关键字查找品牌
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet("search")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync(
-            [FromBody] BrandForGetByNameDto brandDto
-        )
-        {
-            var brands = await _brandRepository.FindByContainedNameAsync(brandDto.Name);
-            return brands.Count() > 0
-              ? Ok(_mapper.Map<IEnumerable<BrandDto>>(brands))
-              : NotFound($"Could not find any brand with name '{brandDto.Name}'");
-        }
+            [FromBody] GetBrandByContainedNameCommand request
+        ) => Ok(await _mediator.Send(request));
 
+        /// <summary>
+        /// 创建品牌
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<BrandDto>> CreateAsync(
-            [FromBody] BrandForGetByNameDto brandDto
-        )
-        {
-            #region Parameter validation
-            if (await _brandRepository.ExistsAsync(brandDto.Name))
-            {
-                return Conflict($"The brand {brandDto.Name} is already existed");
-            }
-            #endregion
+            [FromBody] CreateBrandCommand request
+        ) => Ok(await _mediator.Send(request));
 
-            #region New an entity
-            var brand = _mapper.Map<Brand>(brandDto);
-            #endregion
-
-            #region Database operations
-            await _brandRepository.AddAsync(brand);
-            var succeeded = await _brandRepository.SaveAsync();
-            #endregion
-
-            return succeeded
-              ? Ok(_mapper.Map<BrandDto>(brand))
-              : new InternalServerErrorObjectResult("Update database exception");
-        }
-
+        /// <summary>
+        /// 修改品牌名称
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPatch("name")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> UpdateNameAsync([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> UpdateNameAsync([FromBody] UpdateBrandNameCommand request)
         {
-            #region Parameter validation
-            if (!await _brandRepository.ExistsAsync(brandDto.Id.Value))
-            {
-                return NotFound($"Could not find the brand.");
-            }
-            #endregion
-
-            #region Database operations
-            var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
-            brand = _mapper.Map<BrandDto, Brand>(brandDto, brand);
-            _brandRepository.Update(brand);
-            var succeeded = await _brandRepository.SaveAsync();
-            #endregion
-
-            return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+            await _mediator.Send(request);
+            return Ok();
         }
 
+        /// <summary>
+        /// 删除品牌
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> DeleteAsync([FromBody] BrandDto brandDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteBrandCommand request)
         {
-            #region Parameter validation
-            if (
-                !await _brandRepository.ExistsAsync(brandDto.Id.Value)
-                || !await _brandRepository.ExistsAsync(brandDto.Name)
-            )
-            {
-                return NotFound($"Could not find the brand '{brandDto.Name}'");
-            }
-            #endregion
-
-            #region Database operations
-            var brand = await _brandRepository.FindByIdAsync(brandDto.Id.Value);
-            _brandRepository.Remove(brand);
-            var succeeded = await _brandRepository.SaveAsync();
-            #endregion
-
-            return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+            await _mediator.Send(request);
+            return Ok();
         }
     }
 }

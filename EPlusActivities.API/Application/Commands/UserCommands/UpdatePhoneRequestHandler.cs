@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class UpdatePhoneCommandHandler : BaseHandler, IRequestHandler<UpdatePhoneCommand>
+    public class UpdatePhoneCommandHandler : BaseCommandHandler, IRequestHandler<UpdatePhoneCommand>
     {
         public UpdatePhoneCommandHandler(UserManager<ApplicationUser> userManager)
             : base(userManager) { }

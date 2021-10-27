@@ -266,23 +266,6 @@ namespace EPlusActivities.API
                 );
             }
 
-            app.UseExceptionHandler(
-                new ExceptionHandlerOptions
-                {
-                    ExceptionHandler = async context =>
-                    {
-                        var exceptionHandlerPathFeature =
-                            context.Features.Get<IExceptionHandlerPathFeature>();
-                        var ex = exceptionHandlerPathFeature?.Error;
-                        if (ex != null)
-                        {
-                            context.Response.ContentType = "text/plain;charset=utf-8";
-                            await context.Response.WriteAsync(ex.ToString());
-                        }
-                    }
-                }
-            );
-
             app.UseHttpsRedirection();
 
             app.UseRouting();

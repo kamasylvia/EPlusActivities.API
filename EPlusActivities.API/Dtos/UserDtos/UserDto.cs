@@ -6,7 +6,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.UserDtos
 {
-    public record UserResponse
+    public record UserDto
     {
         /// <summary>
         /// 用户 ID

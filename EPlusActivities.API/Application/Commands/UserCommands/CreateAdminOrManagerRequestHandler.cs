@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
     public class CreateAdminOrManagerCommandHandler
-        : BaseHandler,
+        : BaseCommandHandler,
           IRequestHandler<CreateAdminOrManagerCommand>
     {
         public CreateAdminOrManagerCommandHandler(UserManager<ApplicationUser> userManager)

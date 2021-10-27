@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.API.Application.Commands.CategoryCommands;
 using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.CategoryDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.ActionResults;
-using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Infrastructure.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,64 +22,57 @@ namespace EPlusActivities.API.Controllers
     [Route("choujiang/api/[controller]")]
     public class CategoryController : Controller
     {
-        private readonly INameExistsRepository<Category> _categoryRepository;
-        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public CategoryController(
-            INameExistsRepository<Category> categoryRepository,
-            IMapper mapper
-        )
+        public CategoryController(IMediator mediator)
         {
-            _categoryRepository =
-                categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        /// <summary>
+        /// 根据 ID 获取分类
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<CategoryDto>> GetByIdAsync(
-            [FromQuery] CategoryForGetByIdDto categoryDto
-        )
-        {
-            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
-            return category is null ? NotFound($"Could not find the category.") : Ok(category);
-        }
+            [FromQuery] GetCategoryByIdCommand request
+        ) => Ok(await _mediator.Send(request));
 
+        /// <summary>
+        /// 根据名称获取分类
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet("name")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<CategoryDto>> GetByNameAsync(
-            [FromQuery] CategoryForGetByNameDto categoryDto
-        )
-        {
-            var category = await _categoryRepository.FindByNameAsync(categoryDto.Name);
-            return category is null
-              ? NotFound($"Could not find the category.")
-              : Ok(_mapper.Map<CategoryDto>(category));
-        }
+            [FromQuery] GetCategoryByNameCommand request
+        ) => Ok(await _mediator.Send(request));
 
+        /// <summary>
+        /// 根据关键字查找分类
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet("search")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedAsync(
-            [FromQuery] CategoryForGetByNameDto categoryDto
-        )
-        {
-            var categories = await _categoryRepository.FindByContainedNameAsync(categoryDto.Name);
-            return categories.Count() > 0
-              ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(categories))
-              : NotFound($"Could not find any category.");
-        }
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedNameAsync(
+            [FromQuery] GetCategoryByContainedNameCommand request
+        ) => Ok(await _mediator.Send(request));
 
         /// <summary>
-        /// 获取品种列表
+        /// 获取奖品分类列表
         /// </summary>
         /// <returns></returns>
         [HttpGet("list")]
@@ -86,118 +80,56 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCotegoryListAsync(
-            [FromQuery] DtoForGetList categoryDto
-        )
-        {
-            var list = (await _categoryRepository.FindAllAsync()).OrderBy(c => c.Name).ToList();
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoryListAsync(
+            [FromQuery] GetCategoryListCommand request
+        ) => Ok(await _mediator.Send(request));
 
-            var startIndex = (categoryDto.PageIndex - 1) * categoryDto.PageSize;
-            var count = categoryDto.PageIndex * categoryDto.PageSize;
-
-            if (list.Count < startIndex)
-            {
-                return NotFound($"Could not find any category.");
-            }
-
-            if (list.Count - startIndex < count)
-            {
-                count = list.Count - startIndex;
-            }
-
-            var result = list.GetRange(startIndex, count);
-            return result.Count > 0
-              ? Ok(_mapper.Map<IEnumerable<CategoryDto>>(result))
-              : NotFound($"Could not find any category.");
-        }
-
+        /// <summary>
+        /// 创建奖品分类
+        /// </summary>
+        /// <param name="categoryDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
         public async Task<ActionResult<CategoryDto>> CreateAsync(
-            [FromBody] CategoryForGetByNameDto categoryDto
-        )
-        {
-            #region Parameter validation
-            if (await _categoryRepository.ExistsAsync(categoryDto.Name))
-            {
-                return Conflict($"The category '{categoryDto.Name}' is already existed.");
-            }
-            #endregion
+            [FromBody] CreateCategoryCommand request
+        ) => Ok(await _mediator.Send(request));
 
-            #region New an entity
-            var category = _mapper.Map<Category>(categoryDto);
-            #endregion
-
-            #region Database operations
-            await _categoryRepository.AddAsync(category);
-            var succeeded = await _categoryRepository.SaveAsync();
-            #endregion
-
-            return succeeded
-              ? Ok(_mapper.Map<CategoryDto>(category))
-              : new InternalServerErrorObjectResult("Update database exception");
-        }
-
+        /// <summary>
+        /// 修改分类名称
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPatch("name")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> UpdateNameAsync([FromBody] CategoryDto categoryDto)
+        public async Task<IActionResult> UpdateNameAsync(
+            [FromBody] UpdateCategoryNameCommand request
+        )
         {
-            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
-
-            #region Parameter validation
-            if (category is null)
-            {
-                return NotFound($"Could not find the category with ID '{categoryDto.Id}'");
-            }
-
-            if (await _categoryRepository.ExistsAsync(categoryDto.Name))
-            {
-                return Conflict($"The category '{categoryDto.Name}' is already existed.");
-            }
-            #endregion
-
-            #region Database operations
-            _categoryRepository.Update(_mapper.Map<CategoryDto, Category>(categoryDto, category));
-            var succeeded = await _categoryRepository.SaveAsync();
-            #endregion
-
-            return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+            await _mediator.Send(request);
+            return Ok();
         }
 
+        /// <summary>
+        /// 删除奖品分类
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> DeleteAsync([FromBody] CategoryDto categoryDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteCategoryCommand request)
         {
-            #region Parameter validation
-            if (
-                !await _categoryRepository.ExistsAsync(categoryDto.Id.Value)
-                || !await _categoryRepository.ExistsAsync(categoryDto.Name)
-            )
-            {
-                return BadRequest($"Could not find the category.");
-            }
-            #endregion
-
-            #region Database operations
-            var category = await _categoryRepository.FindByIdAsync(categoryDto.Id.Value);
-            _categoryRepository.Remove(category);
-            var succeeded = await _categoryRepository.SaveAsync();
-            #endregion
-
-            return succeeded
-              ? Ok()
-              : new InternalServerErrorObjectResult("Update database exception");
+            await _mediator.Send(request);
+            return Ok();
         }
     }
 }

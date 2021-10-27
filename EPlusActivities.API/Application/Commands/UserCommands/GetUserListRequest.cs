@@ -9,7 +9,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class GetUserListCommand : DtoForGetList, IRequest<IEnumerable<UserResponse>>
+    public class GetUserListCommand : DtoForGetList, IRequest<IEnumerable<UserDto>>
     {
         /// <summary>
         /// 角色。大小写不敏感。

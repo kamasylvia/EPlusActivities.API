@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
     public class GetUserListCommandHandler
-        : BaseHandler,
-          IRequestHandler<GetUserListCommand, IEnumerable<UserResponse>>
+        : BaseCommandHandler,
+          IRequestHandler<GetUserListCommand, IEnumerable<UserDto>>
     {
         private readonly IMapper _mapper;
         public GetUserListCommandHandler(IMapper mapper, UserManager<ApplicationUser> userManager)
@@ -23,7 +23,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<IEnumerable<UserResponse>> Handle(
+        public async Task<IEnumerable<UserDto>> Handle(
             GetUserListCommand request,
             CancellationToken cancellationToken
         )
@@ -51,7 +51,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
                 throw new NotFoundException("Could not find any user.");
             }
 
-            return _mapper.Map<IEnumerable<UserResponse>>(result);
+            return _mapper.Map<IEnumerable<UserDto>>(result);
         }
     }
 }

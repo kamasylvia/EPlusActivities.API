@@ -276,7 +276,7 @@ namespace EPlusActivities.API.Services.LotteryService
         /// <returns>(几等奖, 奖品)</returns>
         public async Task<(PrizeTier, PrizeItem)> DrawPrizeAsync(Activity activity)
         {
-            var total = 0;
+            var total = 0.0;
             var random = new Random();
             var flag = random.Next(100);
             var prizeTiers = activity.PrizeTiers;
