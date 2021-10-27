@@ -31,7 +31,6 @@ namespace EPlusActivities.API.Controllers
     /// </summary>
     [Route("choujiang/api/[controller]")]
     [ApiController]
-    [CustomActionFilterAttribute]
     public class LotteryController : Controller
     {
         private readonly IMapper _mapper;

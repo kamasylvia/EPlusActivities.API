@@ -22,7 +22,6 @@ namespace EPlusActivities.API.Controllers
     /// 奖品 API
     /// </summary>
     [ApiController]
-    [CustomActionFilterAttribute]
     [Route("choujiang/api/[controller]")]
     public class PrizeItemController : Controller
     {

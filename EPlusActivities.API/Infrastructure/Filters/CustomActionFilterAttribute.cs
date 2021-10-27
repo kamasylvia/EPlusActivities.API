@@ -16,7 +16,6 @@ namespace EPlusActivities.API.Infrastructure.Filters
             switch (context.Result)
             {
                 case ObjectResult objectResult:
-                    // var apiResult = new ApiResult(objectResult);
                     objectResult.Value = new ApiResult
                     {
                         StatusCode = objectResult.StatusCode,

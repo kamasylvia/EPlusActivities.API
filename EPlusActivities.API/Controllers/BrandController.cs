@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace EPlusActivities.API.Controllers
 {
     [ApiController]
-    [CustomActionFilterAttribute]
     [Route("choujiang/api/[controller]")]
     public class BrandController : Controller
     {

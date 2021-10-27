@@ -49,6 +49,7 @@ namespace EPlusActivities.API
                 options =>
                 {
                     options.Filters.Add<CustomExceptionFilterAttribute>();
+                    options.Filters.Add<CustomActionFilterAttribute>();
                 }
             );
             services.AddLogging(

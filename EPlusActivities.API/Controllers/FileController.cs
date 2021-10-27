@@ -21,7 +21,6 @@ namespace EPlusActivities.API.Controllers
     /// 文件、图片 API
     /// </summary>
     [ApiController]
-    [CustomActionFilterAttribute]
     [Route("choujiang/api/[controller]")]
     public class FileController : Controller
     {

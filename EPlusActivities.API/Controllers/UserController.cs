@@ -18,7 +18,6 @@ namespace EPlusActivities.API.Controllers
     /// 用户账户 API
     /// </summary>
     [ApiController]
-    [CustomActionFilterAttribute]
     [Route("choujiang/api/[controller]")]
     public class UserController : Controller
     {

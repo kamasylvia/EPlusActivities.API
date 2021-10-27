@@ -22,7 +22,6 @@ namespace EPlusActivities.API.Controllers
     /// 地址管理 API
     /// </summary>
     [ApiController]
-    [CustomActionFilterAttribute]
     [Route("choujiang/api/[controller]")]
     public class AddressController : Controller
     {

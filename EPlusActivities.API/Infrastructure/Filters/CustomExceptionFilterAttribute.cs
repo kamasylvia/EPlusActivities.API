@@ -20,7 +20,7 @@ namespace EPlusActivities.API.Infrastructure.Filters
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task OnExceptionAsync(ExceptionContext context)
+        public override async Task OnExceptionAsync(ExceptionContext context)
         {
             string methodInfo =
                 $"{context.RouteData.Values["controller"] as string}Controller.{context.RouteData.Values["action"] as string}:{context.HttpContext.Request.Method}";
