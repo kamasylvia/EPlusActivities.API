@@ -35,9 +35,7 @@ namespace EPlusActivities.API.Controllers
     {
         private readonly IMediator _mediator;
 
-        public LotteryController(
-            IMediator mediator
-        )
+        public LotteryController(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
@@ -69,7 +67,6 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] GetWinningRecordsByUserIdCommand request
         ) => Ok(await _mediator.Send(request));
-
 
         /// <summary>
         /// 管理员根据活动号查询中奖记录报表

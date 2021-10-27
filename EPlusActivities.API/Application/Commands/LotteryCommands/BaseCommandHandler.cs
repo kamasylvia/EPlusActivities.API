@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -81,15 +81,17 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             // _mapper.Map<IEnumerable<LotteryDto>>(lotteries)
             // 时会自动转换 DateTime 导致精确时间丢失，
             // 所以这里手动添加精确时间。
-            var result = lotteries.Select(
-                x =>
-                {
-                    var resultItem = _mapper.Map<LotteryDto>(x);
-                    resultItem.DateTime = x.DateTime;
-                    resultItem.PickedUpTime = x.PickedUpTime;
-                    return resultItem;
-                }
-            ).OrderBy(x => x.DateTime);
+            var result = lotteries
+                .Select(
+                    x =>
+                    {
+                        var resultItem = _mapper.Map<LotteryDto>(x);
+                        resultItem.DateTime = x.DateTime;
+                        resultItem.PickedUpTime = x.PickedUpTime;
+                        return resultItem;
+                    }
+                )
+                .OrderBy(x => x.DateTime);
 
             return result;
         }
