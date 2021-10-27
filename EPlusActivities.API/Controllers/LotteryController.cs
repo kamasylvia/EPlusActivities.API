@@ -79,28 +79,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<
             ActionResult<LotteryRecordsForManagerResponse>
-        > GetLotteryRecordsForManagerAsync([FromQuery] LotteryRecordsForManagerRequest request)
-        {
-            #region Parameter validation
-            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
-            if (activity is null)
-            {
-                return NotFound("Could not find the activity.");
-            }
-            var lotteries = await activity.LotteryResults
-                .Where(
-                    lr =>
-                        lr.IsLucky
-                        && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
-                        && !(request.StartTime > lr.DateTime)
-                        && !(lr.DateTime > request.EndTime)
-                )
-                .ToAsyncEnumerable()
-                .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
-                .ToListAsync();
-            #endregion
-            return Ok(_lotteryService.CreateLotteryForDownload(lotteries));
-        }
+        > GetDetailedRecordsAsync([FromQuery] GetDetailedRecordsCommand request) => Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 管理员根据活动号下载中奖记录报表
@@ -111,42 +90,12 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> DownloadLotteryRecordsForManagerAsyncs(
-            [FromQuery] LotteryRecordsForManagerRequest request
+        public async Task<IActionResult> DownloadLotteryExcelAsyncs(
+            [FromQuery] DownloadLotteryExcelCommand request
         )
         {
-            #region Parameter validation
-            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
-            if (activity is null)
-            {
-                return NotFound("Could not find the activity.");
-            }
-            var lotteries = await activity.LotteryResults
-                .Where(
-                    lr =>
-                        lr.IsLucky
-                        && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
-                        && !(request.StartTime > lr.DateTime)
-                        && !(lr.DateTime > request.EndTime)
-                )
-                .ToAsyncEnumerable()
-                .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
-                .ToListAsync();
-            #endregion
-
-            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
-                activity.Id.Value,
-                Enum.Parse<ChannelCode>(request.Channel, true),
-                request.StartTime,
-                request.EndTime
-            );
-
-            var (memoryString, contentType) = _lotteryService.DownloadLotteryRecords(
-                generalLotteryRecords,
-                lotteries
-            );
-
-            return File(memoryString, contentType);
+            var file = await _mediator.Send(request);
+            return File(file.FileStream, file.ContentType);
         }
 
         /// <summary>
@@ -160,27 +109,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<
             ActionResult<IEnumerable<LotteryForGetGeneralRecordsResponse>>
-        > GetGeneralStatementsAsync([FromQuery] LotteryForGetGeneralRecordsRequest request)
-        {
-            #region Parameter validation
-            var channel = Enum.Parse<ChannelCode>(request.Channel, true);
-            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
-            if (activity is null)
-            {
-                return NotFound("Could not find the activity.");
-            }
-            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
-                activity.Id.Value,
-                channel,
-                request.StartTime,
-                request.EndTime
-            );
-            #endregion
-
-            return Ok(
-                _mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(generalLotteryRecords)
-            );
-        }
+        > GetGeneralRecordsAsync([FromQuery] GetGeneralRecordsCommand request) => Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 抽奖

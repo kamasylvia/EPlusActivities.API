@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EPlusActivities.API.Dtos.LotteryDtos
 {
-    public class LotteryRecordsForManagerResponse
+    public record LotteryRecordsForManagerResponse
     {
         /// <summary>
         /// 日期时间
