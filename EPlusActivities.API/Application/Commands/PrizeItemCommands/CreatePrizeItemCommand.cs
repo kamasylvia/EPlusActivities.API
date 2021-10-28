@@ -1,23 +1,27 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Infrastructure.Enums;
+using System.Linq;
+using System.Threading.Tasks;
+using EPlusActivities.API.Dtos.PrizeItemDtos;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos.PrizeItemDtos
+namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
-    public class PrizeItemForUpdateDto
+    public class CreatePrizeItemCommand:IRequest<PrizeItemDto>
     {
-        /// <summary>
-        /// 奖品 ID
-        /// </summary>
-        /// <value></value>
-        [Required]
-        public Guid? Id { get; set; }
-
         /// <summary>
         /// 奖品名
         /// </summary>
         /// <value></value>
+        [Required]
         public string Name { get; set; }
+
+        /// <summary>
+        /// 奖品数量
+        /// </summary>
+        /// <value></value>
+        public int Quantity { get; set; }
 
         /// <summary>
         /// 奖品类型，可选：Default, Credit, Coupon, Physical
@@ -38,21 +42,17 @@ namespace EPlusActivities.API.Dtos.PrizeItemDtos
         public int? Credit { get; set; }
 
         /// <summary>
-        /// 奖品数量
-        /// </summary>
-        /// <value></value>
-        public int Quantity { get; set; }
-
-        /// <summary>
         /// 奖品种类
         /// </summary>
         /// <value></value>
+        [Required]
         public string CategoryName { get; set; }
 
         /// <summary>
         /// 奖品品牌
         /// </summary>
         /// <value></value>
+        [Required]
         public string BrandName { get; set; }
 
         /// <summary>
@@ -72,5 +72,7 @@ namespace EPlusActivities.API.Dtos.PrizeItemDtos
         /// </summary>
         /// <value></value>
         public int? Stock { get; set; }
+    
+        
     }
 }

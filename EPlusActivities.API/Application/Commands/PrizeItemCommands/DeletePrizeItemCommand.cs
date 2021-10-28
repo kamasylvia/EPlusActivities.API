@@ -1,9 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos.PrizeItemDtos
+namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
-    public class PrizeItemForGetByIdDto
+    public class DeletePrizeItemCommand : IRequest
     {
         [Required]
         public Guid? Id { get; set; }

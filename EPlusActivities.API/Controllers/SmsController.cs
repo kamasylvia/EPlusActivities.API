@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using EPlusActivities.API.Application.Commands.SmsCommands;
 using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Services.IdentityServer;
 using IdentityModel;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,45 +21,24 @@ namespace EPlusActivities.API.Controllers
     [Route("choujiang/api/[controller]")]
     public class SmsController : Controller
     {
-        private readonly ISmsService _smsService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly PhoneNumberTokenProvider<ApplicationUser> _phoneNumberTokenProvider;
+        private readonly IMediator _mediator;
 
-        public SmsController(
-            ISmsService smsService,
-            UserManager<ApplicationUser> userManager,
-            PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider
-        )
+        public SmsController(IMediator mediator)
         {
-            _smsService = smsService ?? throw new ArgumentNullException(nameof(smsService));
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _phoneNumberTokenProvider =
-                phoneNumberTokenProvider
-                ?? throw new ArgumentNullException(nameof(phoneNumberTokenProvider));
+            _mediator = mediator;
         }
 
         /// <summary>
         /// 获取验证码
         /// </summary>
-        /// <param name="smsDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> GetVerificationCodeAsync([FromBody] SmsDto smsDto)
+        public async Task<IActionResult> GetVerificationCodeAsync([FromBody] GetVerificationCodeCommand request)
         {
-            var user = await _smsService.GetSmsUserAsync(smsDto);
-            var phoneNumber = smsDto.PhoneNumber;
-
-            // 有效期：9 分钟
-            // 重新生成周期：3 分钟
-            var token = await _phoneNumberTokenProvider.GenerateAsync(
-                OidcConstants.AuthenticationMethods.ConfirmationBySms,
-                _userManager,
-                user
-            );
-
-            var response = await _smsService.SendAsync(phoneNumber, token);
-            return Ok(response);
+            await _mediator.Send(request);
+            return Ok();
         }
     }
 }

@@ -1,26 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using EPlusActivities.API.Application.Commands.LotteryCommands;
 using EPlusActivities.API.Dtos.LotteryDtos;
-using EPlusActivities.API.Dtos.MemberDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.ActionResults;
-using EPlusActivities.API.Infrastructure.Enums;
-using EPlusActivities.API.Infrastructure.Filters;
-using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services.ActivityService;
-using EPlusActivities.API.Services.IdGeneratorService;
-using EPlusActivities.API.Services.LotteryService;
-using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -129,72 +115,33 @@ namespace EPlusActivities.API.Controllers
         /// <summary>
         /// 更新抽奖记录
         /// </summary>
-        /// <param name="lotteryDto"></param>
+        /// <param name="notification"></param>
         /// <returns></returns>
         [HttpPut]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<IActionResult> UpdateAsync([FromBody] LotteryForUpdateDto lotteryDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateLotteryRecordCommand notification)
         {
-            var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);
-
-            #region Parameter validation
-            if (lottery is null)
-            {
-                return NotFound("Could not find the lottery.");
-            }
-            #endregion
-
-            #region Database operations
-            lottery = _mapper.Map<LotteryForUpdateDto, Lottery>(lotteryDto, lottery);
-            lottery.PickedUpTime = lotteryDto.PickedUpTime; // Skip auto mapper.
-            _lotteryRepository.Update(lottery);
-            var succeeded = await _lotteryRepository.SaveAsync();
-            #endregion
-
-            if (succeeded)
-            {
-                return Ok();
-            }
-
-            _logger.LogError("Failed to update the lottery");
-            return new InternalServerErrorObjectResult("Update database exception");
+            await _mediator.Publish(notification);
+            return Ok();
         }
 
         /// <summary>
         /// 删除抽奖记录
         /// </summary>
-        /// <param name="lotteryDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "admin, tester"
         )]
-        public async Task<IActionResult> DeleteAsync([FromBody] LotteryForGetByIdDto lotteryDto)
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteLotteryRecordCommand request)
         {
-            var lottery = await _lotteryRepository.FindByIdAsync(lotteryDto.Id.Value);
-
-            #region Parameter validation
-            if (lottery is null)
-            {
-                return NotFound("Could not find the the lottery.");
-            }
-            #endregion
-
-            #region Database operations
-            _lotteryRepository.Remove(lottery);
-            var succeeded = await _lotteryRepository.SaveAsync();
-            #endregion
-
-            if (succeeded)
-            {
-                return Ok();
-            }
-            _logger.LogError("Failed to delete the lottery");
-            return new InternalServerErrorObjectResult("Update database exception");
+            await _mediator.Send(request);
+            return Ok();
         }
     }
 }

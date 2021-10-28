@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos.LotteryDtos
+namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class LotteryForGetByIdDto
+    public class DeleteLotteryRecordCommand : IRequest
     {
         /// <summary>
         /// 抽奖记录 ID
@@ -11,5 +15,6 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// <value></value>
         [Required]
         public Guid? Id { get; set; }
+
     }
 }

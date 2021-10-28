@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Entities;
+using System.Linq;
+using System.Threading.Tasks;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos.PrizeTierDtos
+namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 {
-    public class PrizeTierForCreateDto
+    public class UpdatePrizeTierCommand : IRequest
     {
-        /// <summary>
-        /// 奖品档次名称，如：一等奖、二等奖、安慰奖
-        /// </summary>
-        /// <value></value>
         [Required]
+        public Guid? Id { get; set; }
+
         public string Name { get; set; }
 
         /// <summary>
@@ -20,15 +20,17 @@ namespace EPlusActivities.API.Dtos.PrizeTierDtos
         /// <value></value>
         public int Percentage { get; set; }
 
-        [Required]
-        public Guid? ActivityId { get; set; }
-
-        public IEnumerable<Guid> PrizeItemIds { get; set; }
-
         /// <summary>
         /// 每日中奖上限  
         /// </summary>
         /// <value></value>
         public int? DailyLimit { get; set; }
+
+        [Required]
+        public Guid? ActivityId { get; set; }
+
+        public IEnumerable<Guid> PrizeItemIds { get; set; }
+    
+
     }
 }

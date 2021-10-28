@@ -41,7 +41,7 @@ namespace EPlusActivities.API.Application.Commands.CategoryCommands
             }
             #endregion
 
-            return new Unit();
+            return Unit.Value;
         }
     }
 }

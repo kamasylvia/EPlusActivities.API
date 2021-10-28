@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
             {
                 throw new RemoteServiceException("Failed to delete the file on the file server.");
             }
-            return new Unit();
+            return Unit.Value;
         }
     }
 }

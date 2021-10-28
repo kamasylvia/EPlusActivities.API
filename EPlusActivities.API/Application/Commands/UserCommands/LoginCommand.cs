@@ -6,11 +6,11 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class GetUserCommand : IRequest<UserDto>
+    public class LoginCommand : IRequest<UserDto>, INotification
     {
         [Required]
         public Guid? UserId { get; set; }
 
-        public ChannelCode ChannelCode { get; set; }
+        public string ChannelCode { get; set; }
     }
 }

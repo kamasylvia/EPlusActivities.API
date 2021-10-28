@@ -73,7 +73,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
                 throw new DatabaseUpdateException("Update database exception");
             }
 
-            return new Unit();
+            return Unit.Value;
         }
     }
 }

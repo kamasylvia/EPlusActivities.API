@@ -35,7 +35,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
                 throw new DatabaseUpdateException(result.ToString());
             }
 
-            return new Unit();
+            return Unit.Value;
         }
     }
 }

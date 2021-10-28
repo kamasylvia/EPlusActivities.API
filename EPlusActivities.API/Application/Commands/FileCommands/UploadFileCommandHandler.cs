@@ -25,7 +25,7 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
                 throw new RemoteServiceException("Failed to upload the file to the file server.");
             }
 
-            return new Unit();
+            return Unit.Value;
         }
     }
 }

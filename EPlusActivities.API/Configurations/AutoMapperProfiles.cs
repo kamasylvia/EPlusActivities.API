@@ -7,6 +7,9 @@ using EPlusActivities.API.Application.Commands.AttendanceCommands;
 using EPlusActivities.API.Application.Commands.BrandCommands;
 using EPlusActivities.API.Application.Commands.CategoryCommands;
 using EPlusActivities.API.Application.Commands.LotteryCommands;
+using EPlusActivities.API.Application.Commands.PrizeItemCommands;
+using EPlusActivities.API.Application.Commands.PrizeTierCommands;
+using EPlusActivities.API.Application.Commands.SmsCommands;
 using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
@@ -37,7 +40,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Dtos to Entities and vice versa.
-            CreateMap<SmsDto, ApplicationUser>()
+            CreateMap<GetVerificationCodeCommand, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(
                     dest => dest.NormalizedUserName,
@@ -108,7 +111,7 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.LotteryDisplay,
                     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
                 );
-            CreateMap<LotteryForUpdateDto, Lottery>();
+            CreateMap<UpdateLotteryRecordCommand, Lottery>();
             #endregion
 
 
@@ -205,14 +208,14 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.PrizeType,
                     opt => opt.MapFrom(src => src.PrizeType.ToString())
                 );
-            CreateMap<PrizeItemForCreateDto, PrizeItem>()
+            CreateMap<CreatePrizeItemCommand, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore())
                 .ForMember(
                     dest => dest.PrizeType,
                     opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType, true))
                 );
-            CreateMap<PrizeItemForUpdateDto, PrizeItem>()
+            CreateMap<UpdatePrizeItemCommand, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore())
                 .ForMember(
@@ -229,9 +232,9 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.PrizeItemIds,
                     opt => opt.MapFrom(src => src.PrizeTierPrizeItems.Select(x => x.PrizeItem.Id))
                 );
-            CreateMap<PrizeTierForCreateDto, PrizeTier>()
+            CreateMap<CreatePrizeTierCommand, PrizeTier>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore());
-            CreateMap<PrizeTierForUpdateDto, PrizeTier>()
+            CreateMap<UpdatePrizeTierCommand, PrizeTier>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore())
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
             #endregion

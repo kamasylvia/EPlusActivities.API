@@ -1,8 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos
+namespace EPlusActivities.API.Application.Commands.SmsCommands
 {
-    public class SmsDto
+    public class GetVerificationCodeCommand : IRequest
     {
         [Required]
         [Phone]

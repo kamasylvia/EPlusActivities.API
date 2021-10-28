@@ -39,7 +39,7 @@ namespace EPlusActivities.API.Application.Commands.BrandCommands
             }
             #endregion
 
-            return new Unit();
+            return Unit.Value;
         }
     }
 }

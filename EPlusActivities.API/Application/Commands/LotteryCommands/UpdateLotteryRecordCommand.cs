@@ -3,35 +3,35 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 
-namespace EPlusActivities.API.Dtos.LotteryDtos
+namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class LotteryRecordsForManagerRequest
+    public class UpdateLotteryRecordCommand : INotification
     {
         /// <summary>
-        /// 起始时间
-        /// </summary>
-        /// <value></value>
-        public DateTime? StartTime { get; set; }
-
-        /// <summary>
-        /// 结束时间
-        /// </summary>
-        /// <value></value>
-        public DateTime? EndTime { get; set; }
-
-        /// <summary>
-        /// 渠道
+        /// 抽奖记录 ID
         /// </summary>
         /// <value></value>
         [Required]
-        public string Channel { get; set; }
+        public Guid? Id { get; set; }
 
         /// <summary>
-        /// 活动号
+        /// 是否已领取
         /// </summary>
         /// <value></value>
-        [Required]
-        public string ActivityCode { get; set; }
+        public bool PickedUp { get; set; }
+
+        /// <summary>
+        /// 是否发放
+        /// </summary>
+        /// <value></value>
+        public bool Delivered { get; set; }
+
+        /// <summary>
+        /// 领取日期
+        /// </summary>
+        /// <value></value>
+        public DateTime? PickedUpTime { get; set; }
     }
 }

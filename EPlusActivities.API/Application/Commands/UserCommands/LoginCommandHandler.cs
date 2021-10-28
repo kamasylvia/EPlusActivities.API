@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Services.MemberService;
 using MediatR;
@@ -13,14 +14,14 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class GetUserCommandHandler
+    public class LoginCommandHandler
         : BaseCommandHandler,
-          IRequestHandler<GetUserCommand, UserDto>
+          IRequestHandler<LoginCommand, UserDto>
     {
         private readonly IMemberService _memberService;
         private readonly IMapper _mapper;
 
-        public GetUserCommandHandler(
+        public LoginCommandHandler(
             UserManager<ApplicationUser> userManager,
             IMapper mapper,
             IMemberService memberService
@@ -32,7 +33,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
         }
 
         public async Task<UserDto> Handle(
-            GetUserCommand request,
+            LoginCommand request,
             CancellationToken cancellationToken
         )
         {
@@ -49,7 +50,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
             {
                 var memberDto = await _memberService.GetMemberAsync(
                     user.PhoneNumber,
-                    request.ChannelCode
+                   Enum.Parse<ChannelCode>(request.ChannelCode, true)
                 );
                 user.IsMember = true;
                 user.MemberId = memberDto.Body.Content.MemberId;
