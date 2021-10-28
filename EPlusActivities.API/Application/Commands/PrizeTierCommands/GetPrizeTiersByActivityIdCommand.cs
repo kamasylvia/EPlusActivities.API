@@ -8,7 +8,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 {
-    public class GetPrizeTiersByActivityIdCommand:IRequest<IEnumerable<PrizeTierDto>>
+    public class GetPrizeTiersByActivityIdCommand : IRequest<IEnumerable<PrizeTierDto>>
     {
         [Required]
         public Guid? ActivityId { get; set; }

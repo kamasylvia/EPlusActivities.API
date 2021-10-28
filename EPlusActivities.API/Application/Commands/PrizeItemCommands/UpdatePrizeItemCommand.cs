@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using MediatR;
 
@@ -72,6 +72,5 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         /// </summary>
         /// <value></value>
         public int? Stock { get; set; }
-
     }
 }

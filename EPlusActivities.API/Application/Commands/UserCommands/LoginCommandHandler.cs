@@ -14,9 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class LoginCommandHandler
-        : BaseCommandHandler,
-          IRequestHandler<LoginCommand, UserDto>
+    public class LoginCommandHandler : BaseCommandHandler, IRequestHandler<LoginCommand, UserDto>
     {
         private readonly IMemberService _memberService;
         private readonly IMapper _mapper;
@@ -32,10 +30,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
         }
 
-        public async Task<UserDto> Handle(
-            LoginCommand request,
-            CancellationToken cancellationToken
-        )
+        public async Task<UserDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
@@ -50,7 +45,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
             {
                 var memberDto = await _memberService.GetMemberAsync(
                     user.PhoneNumber,
-                   Enum.Parse<ChannelCode>(request.ChannelCode, true)
+                    Enum.Parse<ChannelCode>(request.ChannelCode, true)
                 );
                 user.IsMember = true;
                 user.MemberId = memberDto.Body.Content.MemberId;

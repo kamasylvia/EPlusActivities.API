@@ -19,8 +19,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class JoinAvailableActivitiesCommandHandler
         : BaseCommandHandler,
-       IRequestHandler<JoinAvailableActivitiesCommand, IEnumerable<ActivityUserDto>>,
-        INotificationHandler<UserCommands.LoginCommand>
+          IRequestHandler<JoinAvailableActivitiesCommand, IEnumerable<ActivityUserDto>>,
+          INotificationHandler<UserCommands.LoginCommand>
     {
         public JoinAvailableActivitiesCommandHandler(
             IActivityRepository activityRepository,
@@ -41,8 +41,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 idGeneratorService,
                 activityService,
                 statementRepository
-            )
-        { }
+            ) { }
 
         public async Task<IEnumerable<ActivityUserDto>> Handle(
             JoinAvailableActivitiesCommand request,
@@ -65,7 +64,10 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             return _mapper.Map<IEnumerable<ActivityUserDto>>(newCreatedLinks);
         }
 
-        public async Task Handle(UserCommands.LoginCommand notification, CancellationToken cancellationToken)
+        public async Task Handle(
+            UserCommands.LoginCommand notification,
+            CancellationToken cancellationToken
+        )
         {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(notification.UserId.ToString());

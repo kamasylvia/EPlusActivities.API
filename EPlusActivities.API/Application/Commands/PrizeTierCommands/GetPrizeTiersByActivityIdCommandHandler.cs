@@ -12,13 +12,21 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 {
-    public class GetPrizeTiersByActivityIdCommandHandler : BaseCommandHandler, IRequestHandler<GetPrizeTiersByActivityIdCommand, IEnumerable<PrizeTierDto>>
+    public class GetPrizeTiersByActivityIdCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<GetPrizeTiersByActivityIdCommand, IEnumerable<PrizeTierDto>>
     {
-        public GetPrizeTiersByActivityIdCommandHandler(IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IPrizeItemRepository prizeItemRepository, IActivityRepository activityRepository, IMapper mapper) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper)
-        {
-        }
+        public GetPrizeTiersByActivityIdCommandHandler(
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IActivityRepository activityRepository,
+            IMapper mapper
+        ) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper) { }
 
-        public async Task<IEnumerable<PrizeTierDto>> Handle(GetPrizeTiersByActivityIdCommand request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<PrizeTierDto>> Handle(
+            GetPrizeTiersByActivityIdCommand request,
+            CancellationToken cancellationToken
+        )
         {
             var activity = await _activityRepository.FindByIdAsync(request.ActivityId.Value);
             if (activity is null)

@@ -13,13 +13,21 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 {
-    public class CreatePrizeTierCommandHandler : BaseCommandHandler, IRequestHandler<CreatePrizeTierCommand, PrizeTierDto>
+    public class CreatePrizeTierCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<CreatePrizeTierCommand, PrizeTierDto>
     {
-        public CreatePrizeTierCommandHandler(IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IPrizeItemRepository prizeItemRepository, IActivityRepository activityRepository, IMapper mapper) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper)
-        {
-        }
+        public CreatePrizeTierCommandHandler(
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IActivityRepository activityRepository,
+            IMapper mapper
+        ) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper) { }
 
-        public async Task<PrizeTierDto> Handle(CreatePrizeTierCommand request, CancellationToken cancellationToken)
+        public async Task<PrizeTierDto> Handle(
+            CreatePrizeTierCommand request,
+            CancellationToken cancellationToken
+        )
         {
             #region  Parameter validation
             var activity = await _activityRepository.FindByIdAsync(request.ActivityId.Value);
@@ -33,12 +41,16 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
             );
             if (prizeTiers.Select(pt => pt.Percentage).Sum() + request.Percentage > 100)
             {
-                throw new BadRequestException("The sum of percentages could not be greater than 100.");
+                throw new BadRequestException(
+                    "The sum of percentages could not be greater than 100."
+                );
             }
 
             if (activity.PrizeItemCount + request.PrizeItemIds.Count() > 10)
             {
-                throw new BadRequestException("Could not add more than 10 prize items in an activity.");
+                throw new BadRequestException(
+                    "Could not add more than 10 prize items in an activity."
+                );
             }
             #endregion
 

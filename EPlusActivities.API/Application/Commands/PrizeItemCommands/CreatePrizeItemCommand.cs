@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,7 +8,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
-    public class CreatePrizeItemCommand:IRequest<PrizeItemDto>
+    public class CreatePrizeItemCommand : IRequest<PrizeItemDto>
     {
         /// <summary>
         /// 奖品名
@@ -72,7 +72,5 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         /// </summary>
         /// <value></value>
         public int? Stock { get; set; }
-    
-        
     }
 }

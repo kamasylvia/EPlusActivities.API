@@ -13,13 +13,22 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
-    public class CreatePrizeItemCommandHandler : BaseCommandHandler, IRequestHandler<CreatePrizeItemCommand, PrizeItemDto>
+    public class CreatePrizeItemCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<CreatePrizeItemCommand, PrizeItemDto>
     {
-        public CreatePrizeItemCommandHandler(UserManager<ApplicationUser> userManager, IPrizeItemRepository prizeItemRepository, INameExistsRepository<Brand> brandRepository, INameExistsRepository<Category> categoryRepository, IMapper mapper) : base(userManager, prizeItemRepository, brandRepository, categoryRepository, mapper)
-        {
-        }
+        public CreatePrizeItemCommandHandler(
+            UserManager<ApplicationUser> userManager,
+            IPrizeItemRepository prizeItemRepository,
+            INameExistsRepository<Brand> brandRepository,
+            INameExistsRepository<Category> categoryRepository,
+            IMapper mapper
+        ) : base(userManager, prizeItemRepository, brandRepository, categoryRepository, mapper) { }
 
-        public async Task<PrizeItemDto> Handle(CreatePrizeItemCommand request, CancellationToken cancellationToken)
+        public async Task<PrizeItemDto> Handle(
+            CreatePrizeItemCommand request,
+            CancellationToken cancellationToken
+        )
         {
             #region New an entity
             var prizeItem = _mapper.Map<PrizeItem>(request);
@@ -31,10 +40,10 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
             await _prizeItemRepository.AddAsync(prizeItem);
             if (!await _prizeItemRepository.SaveAsync())
             {
-               throw new DatabaseUpdateException(); 
+                throw new DatabaseUpdateException();
             }
             #endregion
-            
+
             return _mapper.Map<PrizeItemDto>(prizeItem);
         }
     }

@@ -32,12 +32,11 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _categoryRepository =
                 categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
-
         }
         protected async Task<IEnumerable<PrizeItem>> FindByIdListAsync(IEnumerable<Guid> ids) =>
-             await ids.ToAsyncEnumerable()
-                 .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
-                 .ToListAsync();
+            await ids.ToAsyncEnumerable()
+                .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
+                .ToListAsync();
 
         protected async Task<Brand> GetBrandAsync(string brandName)
         {

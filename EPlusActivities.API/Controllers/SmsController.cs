@@ -29,7 +29,9 @@ namespace EPlusActivities.API.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> GetVerificationCodeAsync([FromBody] GetVerificationCodeCommand request)
+        public async Task<IActionResult> GetVerificationCodeAsync(
+            [FromBody] GetVerificationCodeCommand request
+        )
         {
             await _mediator.Send(request);
             return Ok();

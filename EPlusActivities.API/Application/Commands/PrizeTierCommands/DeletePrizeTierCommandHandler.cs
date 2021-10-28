@@ -11,13 +11,21 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 {
-    public class DeletePrizeTierCommandHandler : BaseCommandHandler, IRequestHandler<DeletePrizeTierCommand>
+    public class DeletePrizeTierCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<DeletePrizeTierCommand>
     {
-        public DeletePrizeTierCommandHandler(IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IPrizeItemRepository prizeItemRepository, IActivityRepository activityRepository, IMapper mapper) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper)
-        {
-        }
+        public DeletePrizeTierCommandHandler(
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IActivityRepository activityRepository,
+            IMapper mapper
+        ) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper) { }
 
-        public async Task<Unit> Handle(DeletePrizeTierCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(
+            DeletePrizeTierCommand request,
+            CancellationToken cancellationToken
+        )
         {
             var tier = await _prizeTierRepository.FindByIdAsync(request.Id.Value);
 

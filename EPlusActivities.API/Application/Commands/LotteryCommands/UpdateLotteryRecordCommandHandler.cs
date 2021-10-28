@@ -16,13 +16,45 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class UpdateLotteryRecordCommandHandler : BaseCommandHandler, INotificationHandler<UpdateLotteryRecordCommand>
+    public class UpdateLotteryRecordCommandHandler
+        : BaseCommandHandler,
+          INotificationHandler<UpdateLotteryRecordCommand>
     {
-        public UpdateLotteryRecordCommandHandler(ILotteryRepository lotteryRepository, UserManager<ApplicationUser> userManager, IActivityRepository activityRepository, IPrizeItemRepository prizeItemRepository, IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IMapper mapper, IFindByParentIdRepository<ActivityUser> activityUserRepository, IRepository<Coupon> couponResponseDto, ILotteryService lotteryService, IMemberService memberService, IIdGeneratorService idGeneratorService, IGeneralLotteryRecordsRepository generalLotteryRecordsRepository, IActivityService activityService) : base(lotteryRepository, userManager, activityRepository, prizeItemRepository, prizeTypeRepository, mapper, activityUserRepository, couponResponseDto, lotteryService, memberService, idGeneratorService, generalLotteryRecordsRepository, activityService)
-        {
-        }
+        public UpdateLotteryRecordCommandHandler(
+            ILotteryRepository lotteryRepository,
+            UserManager<ApplicationUser> userManager,
+            IActivityRepository activityRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IMapper mapper,
+            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IRepository<Coupon> couponResponseDto,
+            ILotteryService lotteryService,
+            IMemberService memberService,
+            IIdGeneratorService idGeneratorService,
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            IActivityService activityService
+        )
+            : base(
+                lotteryRepository,
+                userManager,
+                activityRepository,
+                prizeItemRepository,
+                prizeTypeRepository,
+                mapper,
+                activityUserRepository,
+                couponResponseDto,
+                lotteryService,
+                memberService,
+                idGeneratorService,
+                generalLotteryRecordsRepository,
+                activityService
+            ) { }
 
-        public async Task Handle(UpdateLotteryRecordCommand notification, CancellationToken cancellationToken)
+        public async Task Handle(
+            UpdateLotteryRecordCommand notification,
+            CancellationToken cancellationToken
+        )
         {
             var lottery = await _lotteryRepository.FindByIdAsync(notification.Id.Value);
 

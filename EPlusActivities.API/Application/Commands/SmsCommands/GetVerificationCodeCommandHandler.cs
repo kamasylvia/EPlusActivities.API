@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,13 +12,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.SmsCommands
 {
-    public class GetVerificationCodeCommandHandler : BaseCommandHandler, IRequestHandler<GetVerificationCodeCommand>
+    public class GetVerificationCodeCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<GetVerificationCodeCommand>
     {
-        public GetVerificationCodeCommandHandler(ISmsService smsService, UserManager<ApplicationUser> userManager, PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider) : base(smsService, userManager, phoneNumberTokenProvider)
-        {
-        }
+        public GetVerificationCodeCommandHandler(
+            ISmsService smsService,
+            UserManager<ApplicationUser> userManager,
+            PhoneNumberTokenProvider<ApplicationUser> phoneNumberTokenProvider
+        ) : base(smsService, userManager, phoneNumberTokenProvider) { }
 
-        public async Task<Unit> Handle(GetVerificationCodeCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(
+            GetVerificationCodeCommand request,
+            CancellationToken cancellationToken
+        )
         {
             var user = await _smsService.GetSmsUserAsync(request);
             var phoneNumber = request.PhoneNumber;

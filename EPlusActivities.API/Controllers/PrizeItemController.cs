@@ -39,7 +39,6 @@ namespace EPlusActivities.API.Controllers
             [FromQuery] GetPrizeItemByNameCommand request
         ) => Ok(await _mediator.Send(request));
 
-
         /// <summary>
         /// 通过奖品 ID 列表获取奖品列表
         /// </summary>
@@ -105,7 +104,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> UpdateAsync([FromBody] UpdatePrizeItemCommand request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdatePrizeItemCommand request) =>
+            Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 删除奖品
@@ -117,6 +117,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> DeleteAsync([FromBody] DeletePrizeItemCommand request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> DeleteAsync([FromBody] DeletePrizeItemCommand request) =>
+            Ok(await _mediator.Send(request));
     }
 }

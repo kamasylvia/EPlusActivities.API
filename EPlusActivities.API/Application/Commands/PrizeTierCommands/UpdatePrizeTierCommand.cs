@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -30,7 +30,5 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
         public Guid? ActivityId { get; set; }
 
         public IEnumerable<Guid> PrizeItemIds { get; set; }
-    
-
     }
 }

@@ -12,13 +12,22 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
-    public class DeletePrizeItemCommandHandler : BaseCommandHandler, IRequestHandler<DeletePrizeItemCommand>
+    public class DeletePrizeItemCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<DeletePrizeItemCommand>
     {
-        public DeletePrizeItemCommandHandler(UserManager<ApplicationUser> userManager, IPrizeItemRepository prizeItemRepository, INameExistsRepository<Brand> brandRepository, INameExistsRepository<Category> categoryRepository, IMapper mapper) : base(userManager, prizeItemRepository, brandRepository, categoryRepository, mapper)
-        {
-        }
+        public DeletePrizeItemCommandHandler(
+            UserManager<ApplicationUser> userManager,
+            IPrizeItemRepository prizeItemRepository,
+            INameExistsRepository<Brand> brandRepository,
+            INameExistsRepository<Category> categoryRepository,
+            IMapper mapper
+        ) : base(userManager, prizeItemRepository, brandRepository, categoryRepository, mapper) { }
 
-        public async Task<Unit> Handle(DeletePrizeItemCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(
+            DeletePrizeItemCommand request,
+            CancellationToken cancellationToken
+        )
         {
             var prizeItem = await _prizeItemRepository.FindByIdAsync(request.Id.Value);
 

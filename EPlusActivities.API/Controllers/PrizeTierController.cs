@@ -19,9 +19,7 @@ namespace EPlusActivities.API.Controllers
     {
         private readonly IMediator _mediator;
 
-        public PrizeTierController(
-            IMediator mediator
-        )
+        public PrizeTierController(IMediator mediator)
         {
             _mediator = mediator;
         }

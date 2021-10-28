@@ -11,7 +11,8 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                 table: "PrizeTiers",
                 nullable: false,
                 oldClrType: typeof(int),
-                oldType: "int");
+                oldType: "int"
+            );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -21,7 +22,8 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                 table: "PrizeTiers",
                 type: "int",
                 nullable: false,
-                oldClrType: typeof(double));
+                oldClrType: typeof(double)
+            );
         }
     }
 }

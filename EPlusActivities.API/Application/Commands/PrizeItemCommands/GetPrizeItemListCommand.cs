@@ -8,8 +8,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
-    public class GetPrizeItemListCommand:DtoForGetList, IRequest<IEnumerable<PrizeItemDto>>
+    public class GetPrizeItemListCommand : DtoForGetList, IRequest<IEnumerable<PrizeItemDto>>
     {
-        
     }
 }

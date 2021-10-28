@@ -11,13 +11,21 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 {
-    public class UpdatePrizeTierCommandHandler : BaseCommandHandler, IRequestHandler<UpdatePrizeTierCommand>
+    public class UpdatePrizeTierCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<UpdatePrizeTierCommand>
     {
-        public UpdatePrizeTierCommandHandler(IFindByParentIdRepository<PrizeTier> prizeTypeRepository, IPrizeItemRepository prizeItemRepository, IActivityRepository activityRepository, IMapper mapper) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper)
-        {
-        }
+        public UpdatePrizeTierCommandHandler(
+            IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IActivityRepository activityRepository,
+            IMapper mapper
+        ) : base(prizeTypeRepository, prizeItemRepository, activityRepository, mapper) { }
 
-        public async Task<Unit> Handle(UpdatePrizeTierCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(
+            UpdatePrizeTierCommand request,
+            CancellationToken cancellationToken
+        )
         {
             var prizeTier = await _prizeTierRepository.FindByIdAsync(request.Id.Value);
 
@@ -31,19 +39,18 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
                 request.ActivityId.Value
             );
             if (
-                prizeTypes
-                    .Where(pt => pt.Id != request.Id.Value)
-                    .Select(pt => pt.Percentage)
-                    .Sum() + request.Percentage
+                prizeTypes.Where(pt => pt.Id != request.Id.Value).Select(pt => pt.Percentage).Sum()
+                    + request.Percentage
                 > 100
             )
             {
-                throw new BadRequestException("The sum of percentages could not be greater than 100.");
+                throw new BadRequestException(
+                    "The sum of percentages could not be greater than 100."
+                );
             }
 
             var activity = prizeTier.Activity;
-            var countDiff =
-                request.PrizeItemIds.Count() - prizeTier.PrizeTierPrizeItems.Count();
+            var countDiff = request.PrizeItemIds.Count() - prizeTier.PrizeTierPrizeItems.Count();
             if (activity.PrizeItemCount + countDiff > 10)
             {
                 throw new BadRequestException("Could not add more than 10 prizes in an activity.");

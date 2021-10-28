@@ -122,7 +122,9 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<IActionResult> UpdateAsync([FromBody] UpdateLotteryRecordCommand notification)
+        public async Task<IActionResult> UpdateAsync(
+            [FromBody] UpdateLotteryRecordCommand notification
+        )
         {
             await _mediator.Publish(notification);
             return Ok();
