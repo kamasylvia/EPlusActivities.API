@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.PrizeItemCommands;
 using EPlusActivities.API.Application.Commands.PrizeTierCommands;
 using EPlusActivities.API.Dtos.PrizeTierDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.ActionResults;
-using EPlusActivities.API.Infrastructure.Filters;
-using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

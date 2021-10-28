@@ -1,13 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.SmsCommands;
-using EPlusActivities.API.Dtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Services.IdentityServer;
-using IdentityModel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

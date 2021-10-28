@@ -10,7 +10,6 @@ using EPlusActivities.API.Application.Commands.LotteryCommands;
 using EPlusActivities.API.Application.Commands.PrizeItemCommands;
 using EPlusActivities.API.Application.Commands.PrizeTierCommands;
 using EPlusActivities.API.Application.Commands.SmsCommands;
-using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Dtos.AddressDtos;

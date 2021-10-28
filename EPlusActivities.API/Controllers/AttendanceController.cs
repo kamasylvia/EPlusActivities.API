@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using EPlusActivities.API.Application.Commands.AttendanceCommands;
 using EPlusActivities.API.Dtos.AttendanceDtos;
-using EPlusActivities.API.Dtos.MemberDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.ActionResults;
-using EPlusActivities.API.Infrastructure.Enums;
-using EPlusActivities.API.Infrastructure.Filters;
-using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services.IdGeneratorService;
-using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

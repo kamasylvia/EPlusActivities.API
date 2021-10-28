@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using EPlusActivities.API.Application.Commands.CategoryCommands;
-using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Dtos.CategoryDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.ActionResults;
-using EPlusActivities.API.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.UserCommands;
 using EPlusActivities.API.Dtos.UserDtos;
-using EPlusActivities.API.Infrastructure.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.AddressCommands;
 using EPlusActivities.API.Dtos.AddressDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.ActionResults;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
