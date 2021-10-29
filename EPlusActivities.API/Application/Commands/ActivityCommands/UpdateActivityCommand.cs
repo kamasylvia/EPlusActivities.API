@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
@@ -52,6 +53,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         /// 活动展示类型
         /// </summary>
         /// <value>None, Roulette, Digging, Scratchcard</value>
+        [EnumDataType(typeof(LotteryDisplay))]
         public string LotteryDisplay { get; set; }
 
         /// <summary>

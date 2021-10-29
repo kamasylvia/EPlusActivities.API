@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.AttendanceDtos;
+using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.AttendanceCommands
@@ -14,6 +15,7 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
         /// 用户访问的渠道
         /// </summary>
         /// <value></value>
+        [EnumDataType(typeof(ChannelCode))]
         public string ChannelCode { get; set; }
 
         /// <summary>

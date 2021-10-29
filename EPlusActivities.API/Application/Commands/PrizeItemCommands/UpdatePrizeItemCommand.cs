@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
@@ -23,6 +24,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         /// 奖品类型，可选：Default, Credit, Coupon, Physical
         /// </summary>
         /// <value></value>
+        [EnumDataType(typeof(PrizeType))]
         public string PrizeType { get; set; }
 
         /// <summary>

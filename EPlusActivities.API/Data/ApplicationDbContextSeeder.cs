@@ -118,7 +118,8 @@ namespace EPlusActivities.API.Data
             {
                 StartTime = DateTime.MinValue,
                 EndTime = DateTime.MinValue,
-                ActivityCode = "a00000000000"
+                ActivityCode = "a00000000000",
+                Color = "#000000"
             };
             await context.Activities.AddAsync(activity);
             #endregion
