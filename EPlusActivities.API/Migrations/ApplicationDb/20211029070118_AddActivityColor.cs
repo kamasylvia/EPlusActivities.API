@@ -6,17 +6,12 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Color",
-                table: "Activities",
-                nullable: true);
+            migrationBuilder.AddColumn<string>(name: "Color", table: "Activities", nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Color",
-                table: "Activities");
+            migrationBuilder.DropColumn(name: "Color", table: "Activities");
         }
     }
 }

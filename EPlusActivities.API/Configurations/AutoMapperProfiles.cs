@@ -102,14 +102,14 @@ namespace EPlusActivities.API.Configuration
                 );
             CreateMap<GeneralLotteryRecords, LotteryForGetGeneralRecordsResponse>();
             CreateMap<DrawCommand, Lottery>();
-                // .ForMember(
-                //     dest => dest.ChannelCode,
-                //     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
-                // )
-                // .ForMember(
-                //     dest => dest.LotteryDisplay,
-                //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
-                // );
+            // .ForMember(
+            //     dest => dest.ChannelCode,
+            //     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
+            // )
+            // .ForMember(
+            //     dest => dest.LotteryDisplay,
+            //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
+            // );
             CreateMap<UpdateLotteryRecordCommand, Lottery>();
             #endregion
 
@@ -117,10 +117,10 @@ namespace EPlusActivities.API.Configuration
 
             #region Attendance
             CreateMap<AttendCommand, Attendance>();
-                // .ForMember(
-                //     dest => dest.ChannelCode,
-                //     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
-                // );
+            // .ForMember(
+            //     dest => dest.ChannelCode,
+            //     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
+            // );
             CreateMap<Attendance, AttendanceDto>()
                 .ForMember(
                     dest => dest.ChannelCode,
@@ -158,19 +158,19 @@ namespace EPlusActivities.API.Configuration
                                 )
                         )
                 );
-                // .ForMember(
-                //     dest => dest.LotteryDisplay,
-                //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
-                // )
-                // .ForMember(
-                //     dest => dest.ActivityType,
-                //     opt => opt.MapFrom(src => Enum.Parse<ActivityType>(src.ActivityType, true))
-                // );
+            // .ForMember(
+            //     dest => dest.LotteryDisplay,
+            //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
+            // )
+            // .ForMember(
+            //     dest => dest.ActivityType,
+            //     opt => opt.MapFrom(src => Enum.Parse<ActivityType>(src.ActivityType, true))
+            // );
             CreateMap<UpdateActivityCommand, Activity>();
-                // .ForMember(
-                //     dest => dest.LotteryDisplay,
-                //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
-                // );
+            // .ForMember(
+            //     dest => dest.LotteryDisplay,
+            //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
+            // );
             #endregion
 
 
@@ -210,17 +210,17 @@ namespace EPlusActivities.API.Configuration
             CreateMap<CreatePrizeItemCommand, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());
-                // .ForMember(
-                //     dest => dest.PrizeType,
-                //     opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType, true))
-                // );
+            // .ForMember(
+            //     dest => dest.PrizeType,
+            //     opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType, true))
+            // );
             CreateMap<UpdatePrizeItemCommand, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());
-                // .ForMember(
-                //     dest => dest.PrizeType,
-                //     opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType, true))
-                // );
+            // .ForMember(
+            //     dest => dest.PrizeType,
+            //     opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType, true))
+            // );
             #endregion
 
 
