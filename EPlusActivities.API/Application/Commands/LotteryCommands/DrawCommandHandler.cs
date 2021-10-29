@@ -52,7 +52,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 idGeneratorService,
                 generalLotteryRecordsRepository,
                 activityService
-            ) { }
+            )
+        { }
 
         public async Task<IEnumerable<LotteryDto>> Handle(
             DrawCommand request,
@@ -113,7 +114,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
             }
-            var channel = Enum.Parse<ChannelCode>(request.ChannelCode, true);
+            // var channel = Enum.Parse<ChannelCode>(request.ChannelCode, true);
+            var channel = request.ChannelCode;
             var generalRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
                 request.ActivityId.Value,
                 channel,

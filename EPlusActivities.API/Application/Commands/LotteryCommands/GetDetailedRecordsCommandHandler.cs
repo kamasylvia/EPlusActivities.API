@@ -68,7 +68,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 .Where(
                     lr =>
                         lr.IsLucky
-                        && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
+                        // && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
+                        && request.Channel == lr.ChannelCode
                         && !(request.StartTime > lr.DateTime)
                         && !(lr.DateTime > request.EndTime)
                 )

@@ -54,7 +54,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         /// </summary>
         /// <value>None, Roulette, Digging, Scratchcard</value>
         [EnumDataType(typeof(LotteryDisplay))]
-        public string LotteryDisplay { get; set; }
+        public LotteryDisplay LotteryDisplay { get; set; }
 
         /// <summary>
         /// 活动开始时间

@@ -62,7 +62,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         )
         {
             #region Parameter validation
-            var channel = Enum.Parse<ChannelCode>(request.Channel, true);
+            // var channel = Enum.Parse<ChannelCode>(request.Channel, true);
+            var channel = request.Channel;
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
             {

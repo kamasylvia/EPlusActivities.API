@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
@@ -34,6 +35,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         /// 渠道号
         /// </summary>
         /// <value></value>
-        public string Channel { get; set; }
+        [EnumDataType(typeof(ChannelCode))]
+        public ChannelCode Channel { get; set; }
     }
 }

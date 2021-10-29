@@ -18,7 +18,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         /// <value></value>
         [Required]
         [EnumDataType(typeof(ChannelCode))]
-        public string ChannelCode { get; set; }
+        public ChannelCode ChannelCode { get; set; }
 
         /// <summary>
         /// 活动展示类型，字符串不区分大小写。
@@ -27,7 +27,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         /// <value></value>
         [Required]
         [EnumDataType(typeof(LotteryDisplay))]
-        public string LotteryDisplay { get; set; }
+        public LotteryDisplay LotteryDisplay { get; set; }
 
         [Required]
         public Guid? UserId { get; set; }

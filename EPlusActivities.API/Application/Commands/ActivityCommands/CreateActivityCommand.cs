@@ -57,7 +57,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         /// <value></value>
         [Required]
         [EnumDataType(typeof(LotteryDisplay))]
-        public string LotteryDisplay { get; set; }
+        public LotteryDisplay LotteryDisplay { get; set; }
 
         /// <summary>
         /// 活动类型，字符串不区分大小写。
@@ -66,7 +66,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         /// <value></value>
         [Required]
         [EnumDataType(typeof(ActivityType))]
-        public string ActivityType { get; set; }
+        public ActivityType ActivityType { get; set; }
 
         /// <summary>
         /// 活动开始时间

@@ -16,7 +16,7 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
         /// </summary>
         /// <value></value>
         [EnumDataType(typeof(ChannelCode))]
-        public string ChannelCode { get; set; }
+        public ChannelCode ChannelCode { get; set; }
 
         /// <summary>
         /// 签到获得积分

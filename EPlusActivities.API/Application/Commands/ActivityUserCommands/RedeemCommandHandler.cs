@@ -41,7 +41,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 idGeneratorService,
                 activityService,
                 statementRepository
-            ) { }
+            )
+        { }
 
         public async Task<ActivityUserForRedeemDrawsResponseDto> Handle(
             RedeemCommand request,
@@ -60,7 +61,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            var channel = Enum.Parse<ChannelCode>(request.Channel, true);
+            // var channel = Enum.Parse<ChannelCode>(request.Channel, true);
+            var channel = request.Channel;
             var generalLotteryRecords = await _statementRepository.FindByDateAsync(
                 request.ActivityId.Value,
                 channel,

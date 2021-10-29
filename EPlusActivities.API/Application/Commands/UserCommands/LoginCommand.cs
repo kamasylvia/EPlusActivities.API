@@ -11,6 +11,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
         [Required]
         public Guid? UserId { get; set; }
 
-        public string ChannelCode { get; set; }
+        [EnumDataType(typeof(ChannelCode))]
+        public ChannelCode ChannelCode { get; set; }
     }
 }

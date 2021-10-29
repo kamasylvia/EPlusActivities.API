@@ -50,7 +50,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 idGeneratorService,
                 generalLotteryRecordsRepository,
                 activityService
-            ) { }
+            )
+        { }
 
         public async Task<FileDto> Handle(
             DownloadLotteryExcelCommand request,
@@ -67,7 +68,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 .Where(
                     lr =>
                         lr.IsLucky
-                        && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
+                        // && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
+                        && request.Channel == lr.ChannelCode
                         && !(request.StartTime > lr.DateTime)
                         && !(lr.DateTime > request.EndTime)
                 )
@@ -77,8 +79,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             #endregion
 
             var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
-                activity.Id.Value,
-                Enum.Parse<ChannelCode>(request.Channel, true),
+                activity.Id.Value, request.Channel,
+                // Enum.Parse<ChannelCode>(request.Channel, true),
                 request.StartTime,
                 request.EndTime
             );

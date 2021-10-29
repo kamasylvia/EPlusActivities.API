@@ -41,7 +41,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 idGeneratorService,
                 activityService,
                 statementRepository
-            ) { }
+            )
+        { }
 
         public async Task<IEnumerable<ActivityUserDto>> Handle(
             JoinAvailableActivitiesCommand request,
@@ -57,8 +58,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             #endregion
 
             var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
-                request.UserId.Value,
-                Enum.Parse<ChannelCode>(request.AvailableChannel, true)
+                request.UserId.Value, request.AvailableChannel
+            // Enum.Parse<ChannelCode>(request.AvailableChannel, true)
             );
 
             return _mapper.Map<IEnumerable<ActivityUserDto>>(newCreatedLinks);
@@ -78,8 +79,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             #endregion
 
             var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
-                notification.UserId.Value,
-                Enum.Parse<ChannelCode>(notification.ChannelCode, true)
+                notification.UserId.Value, notification.ChannelCode
+            // Enum.Parse<ChannelCode>(notification.ChannelCode, true)
             );
         }
     }

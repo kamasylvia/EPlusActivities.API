@@ -29,7 +29,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         /// </summary>
         /// <value></value>
         [EnumDataType(typeof(PrizeType))]
-        public string PrizeType { get; set; }
+        public PrizeType PrizeType { get; set; }
 
         /// <summary>
         /// 会员系统优惠券活动码

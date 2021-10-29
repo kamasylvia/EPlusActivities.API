@@ -45,7 +45,8 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
             {
                 var memberDto = await _memberService.GetMemberAsync(
                     user.PhoneNumber,
-                    Enum.Parse<ChannelCode>(request.ChannelCode, true)
+                    request.ChannelCode
+                // Enum.Parse<ChannelCode>(request.ChannelCode, true)
                 );
                 user.IsMember = true;
                 user.MemberId = memberDto.Body.Content.MemberId;

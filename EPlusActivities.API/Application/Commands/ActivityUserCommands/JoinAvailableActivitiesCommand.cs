@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
+using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
@@ -19,6 +20,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
         /// </summary>
         /// <value></value>
         [Required]
-        public string AvailableChannel { get; set; }
+        [EnumDataType(typeof(ChannelCode))]
+        public ChannelCode AvailableChannel { get; set; }
     }
 }
