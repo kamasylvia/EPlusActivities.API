@@ -48,7 +48,7 @@ namespace EPlusActivities.API
                     }
                 )
                 .AddJsonOptions(
-                    options => 
+                    options =>
                     {
                         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     }
