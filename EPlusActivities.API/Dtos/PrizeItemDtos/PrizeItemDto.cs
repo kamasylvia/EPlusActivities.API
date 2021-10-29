@@ -24,7 +24,8 @@ namespace EPlusActivities.API.Dtos.PrizeItemDtos
         /// 奖品类型，可选：Default, Credit, Coupon, Physical
         /// </summary>
         /// <value></value>
-        public string PrizeType { get; set; }
+        [EnumDataType(typeof(PrizeType))]
+        public PrizeType PrizeType { get; set; }
 
         /// <summary>
         /// 会员系统优惠券活动码

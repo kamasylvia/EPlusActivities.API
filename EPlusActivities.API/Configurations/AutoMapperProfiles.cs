@@ -68,21 +68,9 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Lottery
-            CreateMap<Lottery, LotteryDto>()
-                .ForMember(
-                    dest => dest.ChannelCode,
-                    opt => opt.MapFrom(src => src.ChannelCode.ToString())
-                )
-                .ForMember(
-                    dest => dest.LotteryDisplay,
-                    opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
-                );
+            CreateMap<Lottery, LotteryDto>();
             CreateMap<Lottery, LotteryRecordsForManagerResponse>()
                 .ForMember(dest => dest.DateTime, opt => opt.Ignore())
-                .ForMember(
-                    dest => dest.ChannelCode,
-                    opt => opt.MapFrom(src => src.ChannelCode.ToString())
-                )
                 .ForMember(
                     dest => dest.PhoneNumber,
                     opt => opt.MapFrom(src => src.User.PhoneNumber)
@@ -95,21 +83,9 @@ namespace EPlusActivities.API.Configuration
                 .ForMember(
                     dest => dest.PrizeTierName,
                     opt => opt.MapFrom(src => src.PrizeTier.Name)
-                )
-                .ForMember(
-                    dest => dest.PrizeType,
-                    opt => opt.MapFrom(src => src.PrizeItem.PrizeType.ToString())
                 );
             CreateMap<GeneralLotteryRecords, LotteryForGetGeneralRecordsResponse>();
             CreateMap<DrawCommand, Lottery>();
-            // .ForMember(
-            //     dest => dest.ChannelCode,
-            //     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
-            // )
-            // .ForMember(
-            //     dest => dest.LotteryDisplay,
-            //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
-            // );
             CreateMap<UpdateLotteryRecordCommand, Lottery>();
             #endregion
 
@@ -117,15 +93,7 @@ namespace EPlusActivities.API.Configuration
 
             #region Attendance
             CreateMap<AttendCommand, Attendance>();
-            // .ForMember(
-            //     dest => dest.ChannelCode,
-            //     opt => opt.MapFrom(src => Enum.Parse<ChannelCode>(src.ChannelCode, true))
-            // );
-            CreateMap<Attendance, AttendanceDto>()
-                .ForMember(
-                    dest => dest.ChannelCode,
-                    opt => opt.MapFrom(src => src.ChannelCode.ToString())
-                );
+            CreateMap<Attendance, AttendanceDto>();
             #endregion
 
 
@@ -138,14 +106,6 @@ namespace EPlusActivities.API.Configuration
                         opt.MapFrom(
                             src => src.AvailableChannels.Select(channel => channel.ToString())
                         )
-                )
-                // .ForMember(
-                //     dest => dest.LotteryDisplay,
-                //     opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
-                // )
-                .ForMember(
-                    dest => dest.ActivityType,
-                    opt => opt.MapFrom(src => src.ActivityType.ToString())
                 );
             CreateMap<CreateActivityCommand, Activity>()
                 .ForMember(
@@ -158,19 +118,7 @@ namespace EPlusActivities.API.Configuration
                                 )
                         )
                 );
-            // .ForMember(
-            //     dest => dest.LotteryDisplay,
-            //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
-            // )
-            // .ForMember(
-            //     dest => dest.ActivityType,
-            //     opt => opt.MapFrom(src => Enum.Parse<ActivityType>(src.ActivityType, true))
-            // );
             CreateMap<UpdateActivityCommand, Activity>();
-            // .ForMember(
-            //     dest => dest.LotteryDisplay,
-            //     opt => opt.MapFrom(src => Enum.Parse<LotteryDisplay>(src.LotteryDisplay, true))
-            // );
             #endregion
 
 
@@ -202,25 +150,13 @@ namespace EPlusActivities.API.Configuration
             #region PrizeItem
             CreateMap<PrizeItem, PrizeItemDto>()
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-                .ForMember(
-                    dest => dest.PrizeType,
-                    opt => opt.MapFrom(src => src.PrizeType.ToString())
-                );
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<CreatePrizeItemCommand, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());
-            // .ForMember(
-            //     dest => dest.PrizeType,
-            //     opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType, true))
-            // );
             CreateMap<UpdatePrizeItemCommand, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());
-            // .ForMember(
-            //     dest => dest.PrizeType,
-            //     opt => opt.MapFrom(src => Enum.Parse<PrizeType>(src.PrizeType, true))
-            // );
             #endregion
 
 

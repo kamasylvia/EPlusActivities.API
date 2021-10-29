@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.LotteryDtos
 {
@@ -23,7 +25,8 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// 抽奖渠道
         /// </summary>
         /// <value></value>
-        public string ChannelCode { get; set; }
+        [EnumDataType(typeof(ChannelCode))]
+        public ChannelCode ChannelCode { get; set; }
 
         /// <summary>
         /// 抽奖活动号
@@ -53,7 +56,8 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// 奖励类型
         /// </summary>
         /// <value></value>
-        public string PrizeType { get; set; }
+        [EnumDataType(typeof(PrizeType))]
+        public PrizeType PrizeType { get; set; }
 
         /// <summary>
         /// 中奖内容

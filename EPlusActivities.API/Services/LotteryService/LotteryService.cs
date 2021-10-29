@@ -207,7 +207,7 @@ namespace EPlusActivities.API.Services.LotteryService
 
                 // 抽奖渠道
                 var cellD = OpenXmlUtils.InsertCellInWorksheet("D", i + 3, worksheetPart);
-                cellD.CellValue = new CellValue(data[Convert.ToInt32(i)].ChannelCode);
+                cellD.CellValue = new CellValue(data[Convert.ToInt32(i)].ChannelCode.ToString());
                 cellD.DataType = new EnumValue<CellValues>(CellValues.String);
 
                 // 抽奖活动号
@@ -232,12 +232,12 @@ namespace EPlusActivities.API.Services.LotteryService
 
                 // 奖励类型
                 var cellI = OpenXmlUtils.InsertCellInWorksheet("I", i + 3, worksheetPart);
-                cellI.CellValue = new CellValue(data[Convert.ToInt32(i)].PrizeType);
+                cellI.CellValue = new CellValue(data[Convert.ToInt32(i)].PrizeType.ToString());
                 cellI.DataType = new EnumValue<CellValues>(CellValues.String);
 
                 // 中奖内容
                 var cellJ = OpenXmlUtils.InsertCellInWorksheet("J", i + 3, worksheetPart);
-                cellJ.CellValue = new CellValue(data[Convert.ToInt32(i)].PrizeType);
+                cellJ.CellValue = new CellValue(data[Convert.ToInt32(i)].PrizeType.ToString());
                 cellJ.DataType = new EnumValue<CellValues>(CellValues.String);
 
                 // 消耗积分

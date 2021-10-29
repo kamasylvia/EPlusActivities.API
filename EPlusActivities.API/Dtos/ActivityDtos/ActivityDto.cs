@@ -46,7 +46,7 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// </summary>
         /// <value></value>
         [EnumDataType(typeof(LotteryDisplay))]
-        public string LotteryDisplay { get; set; }
+        public LotteryDisplay LotteryDisplay { get; set; }
 
         /// <summary>
         /// 兑换一次抽奖所需积分，null 表示非抽奖活动
@@ -59,7 +59,8 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// 取值范围：Default, SingleAttendance, SequentialAttendance, Lottery
         /// </summary>
         /// <value></value>
-        public string ActivityType { get; set; }
+        [EnumDataType(typeof(ActivityType))]
+        public ActivityType ActivityType { get; set; }
 
         /// <summary>
         /// 活动开始时间
@@ -79,5 +80,15 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// </summary>
         /// <value></value>
         public string ActivityCode { get; set; }
+
+        /// <summary>
+        /// 背景色
+        /// </summary>
+        /// <value></value>
+        [RegularExpression(
+            "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$",
+            ErrorMessage = "Invalid color format"
+        )]
+        public string Color { get; set; }
     }
 }

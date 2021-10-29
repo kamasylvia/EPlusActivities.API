@@ -18,14 +18,16 @@ namespace EPlusActivities.API.Dtos.LotteryDtos
         /// 取值范围：Ngs, NgsPlaza, Alldays
         /// </summary>
         /// <value></value>
-        public string ChannelCode { get; set; }
+        [EnumDataType(typeof(ChannelCode))]
+        public ChannelCode ChannelCode { get; set; }
 
         /// <summary>
         /// 活动展示类型，字符串不区分大小写。
         /// 取值范围：None, Roulette, Digging, Scratchcard
         /// </summary>
         /// <value></value>
-        public string LotteryDisplay { get; set; }
+        [EnumDataType(typeof(LotteryDisplay))]
+        public LotteryDisplay LotteryDisplay { get; set; }
 
         /// <summary>
         /// 是否中奖
