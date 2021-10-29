@@ -49,7 +49,7 @@ namespace EPlusActivities.API.Entities
 
         public int PrizeItemCount { get; set; }
 
-        [RegularExpression("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", ErrorMessage = "Invalid color format")]
+        [RegularExpression("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$", ErrorMessage = "Invalid color format")]
         public string Color { get; set; }
 
         public virtual IEnumerable<Lottery> LotteryResults { get; set; }

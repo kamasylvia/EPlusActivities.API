@@ -67,5 +67,12 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         /// </summary>
         /// <value></value>
         public DateTime? EndTime { get; set; }
+
+        /// <summary>
+        /// 背景色
+        /// </summary>
+        /// <value></value>
+        [RegularExpression("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$", ErrorMessage = "Invalid color format")]
+        public string Color { get; set; }
     }
 }
