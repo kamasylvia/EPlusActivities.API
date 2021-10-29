@@ -139,10 +139,10 @@ namespace EPlusActivities.API.Configuration
                             src => src.AvailableChannels.Select(channel => channel.ToString())
                         )
                 )
-                .ForMember(
-                    dest => dest.LotteryDisplay,
-                    opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
-                )
+                // .ForMember(
+                //     dest => dest.LotteryDisplay,
+                //     opt => opt.MapFrom(src => src.LotteryDisplay.ToString())
+                // )
                 .ForMember(
                     dest => dest.ActivityType,
                     opt => opt.MapFrom(src => src.ActivityType.ToString())

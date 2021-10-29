@@ -45,6 +45,7 @@ namespace EPlusActivities.API.Dtos.ActivityDtos
         /// 取值范围：None, Roulette, Digging, Scratchcard
         /// </summary>
         /// <value></value>
+        [EnumDataType(typeof(LotteryDisplay))]
         public string LotteryDisplay { get; set; }
 
         /// <summary>

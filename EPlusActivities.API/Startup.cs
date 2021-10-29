@@ -1,23 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Filters;
-using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services.ActivityService;
-using EPlusActivities.API.Services.FileService;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
-using EPlusActivities.API.Services.LotteryService;
-using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -53,7 +47,14 @@ namespace EPlusActivities.API
                         options.Filters.Add<CustomActionFilterAttribute>();
                     }
                 )
+                .AddJsonOptions(
+                    options => 
+                    {
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    }
+                )
                 .AddDapr();
+
             services.AddLogging(
                 (builder) =>
                 {
