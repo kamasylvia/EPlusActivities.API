@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.ActivityDtos;
+using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
@@ -55,6 +56,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         /// </summary>
         /// <value></value>
         [Required]
+        [EnumDataType(typeof(LotteryDisplay))]
         public string LotteryDisplay { get; set; }
 
         /// <summary>
@@ -63,6 +65,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         /// </summary>
         /// <value></value>
         [Required]
+        [EnumDataType(typeof(ActivityType))]
         public string ActivityType { get; set; }
 
         /// <summary>
