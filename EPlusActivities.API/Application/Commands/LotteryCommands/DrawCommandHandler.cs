@@ -52,8 +52,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 idGeneratorService,
                 generalLotteryRecordsRepository,
                 activityService
-            )
-        { }
+            ) { }
 
         public async Task<IEnumerable<LotteryDto>> Handle(
             DrawCommand request,

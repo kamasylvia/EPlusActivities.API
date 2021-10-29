@@ -38,8 +38,7 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
                 idGeneratorService,
                 activityUserRepository,
                 memberService
-            )
-        { }
+            ) { }
 
         private bool IsSequential(DateTime? dateTime1, DateTime dateTime2) =>
             dateTime1.HasValue ? dateTime1.Value.AddDays(1).Date == dateTime2.Date : false;
@@ -99,7 +98,8 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
             };
 
             var memberForUpdateCreditResponseDto = await _memberService.UpdateCreditAsync(
-                request.UserId.Value, request.ChannelCode,
+                request.UserId.Value,
+                request.ChannelCode,
                 // Enum.Parse<ChannelCode>(request.ChannelCode, true),
                 memberForUpdateCreditRequestDto
             );

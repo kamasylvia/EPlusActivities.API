@@ -41,8 +41,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 idGeneratorService,
                 activityService,
                 statementRepository
-            )
-        { }
+            ) { }
 
         public async Task<ActivityUserForRedeemDrawsResponseDto> Handle(
             RedeemCommand request,

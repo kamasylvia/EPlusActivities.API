@@ -50,8 +50,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 idGeneratorService,
                 generalLotteryRecordsRepository,
                 activityService
-            )
-        { }
+            ) { }
 
         public async Task<FileDto> Handle(
             DownloadLotteryExcelCommand request,
@@ -79,7 +78,8 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             #endregion
 
             var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
-                activity.Id.Value, request.Channel,
+                activity.Id.Value,
+                request.Channel,
                 // Enum.Parse<ChannelCode>(request.Channel, true),
                 request.StartTime,
                 request.EndTime
