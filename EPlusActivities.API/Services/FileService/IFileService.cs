@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.FileCommands;
 using EPlusActivities.API.Dtos.FileDtos;
+using EPlusActivities.Grpc.Messages.FileService;
 
 namespace EPlusActivities.API.Services.FileService
 {
@@ -18,11 +19,11 @@ namespace EPlusActivities.API.Services.FileService
 
         Task<string> GetContentTypeByIdAsync(DownloadFileByIdCommand request);
 
-        Task<byte[]> DownloadFileByIdAsync(DownloadFileByIdCommand request);
+        Task<DownloadFileGrpcResponse> DownloadFileByIdAsync(DownloadFileByIdCommand request);
 
         Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyCommand request);
 
-        Task<byte[]> DownloadFileByKeyAsync(DownloadFileByKeyCommand request);
+        Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(DownloadFileByKeyCommand request);
 
         Task<IEnumerable<DownloadFilesByOwnerIdDto>> DownloadFilesByOwnerIdAsync(Guid ownerId);
     }

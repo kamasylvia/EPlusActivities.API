@@ -6,6 +6,7 @@ using EPlusActivities.API.Application.Commands.AddressCommands;
 using EPlusActivities.API.Application.Commands.AttendanceCommands;
 using EPlusActivities.API.Application.Commands.BrandCommands;
 using EPlusActivities.API.Application.Commands.CategoryCommands;
+using EPlusActivities.API.Application.Commands.FileCommands;
 using EPlusActivities.API.Application.Commands.LotteryCommands;
 using EPlusActivities.API.Application.Commands.PrizeItemCommands;
 using EPlusActivities.API.Application.Commands.PrizeTierCommands;
@@ -23,6 +24,8 @@ using EPlusActivities.API.Dtos.PrizeTierDtos;
 using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
+using EPlusActivities.Grpc.Messages.FileService;
+using Google.Protobuf;
 
 namespace EPlusActivities.API.Configuration
 {
@@ -124,7 +127,11 @@ namespace EPlusActivities.API.Configuration
 
 
             #region ActivityUser
-            CreateMap<ActivityUser, ActivityUserDto>();
+            CreateMap<ActivityUser, ActivityUserDto>()
+                .ForMember(
+                    dest => dest.RequiredCreditForRedeeming,
+                    opt => opt.MapFrom(src => src.Activity.RequiredCreditForRedeeming)
+                );
             CreateMap<ActivityUser, ActivityUserForRedeemDrawsResponseDto>();
             #endregion
 
@@ -197,6 +204,19 @@ namespace EPlusActivities.API.Configuration
                 );
             #endregion
 
+            #region File service
+            CreateMap<UploadFileCommand, UploadFileGrpcRequest>()
+                .ForMember(
+                    dest => dest.ContentType,
+                    opt => opt.MapFrom(src => src.FormFile.ContentType)
+                )
+                .ForMember(
+                    dest => dest.Content,
+                    opt => opt.MapFrom(src => ByteString.FromStream(src.FormFile.OpenReadStream()))
+                );
+            CreateMap<DownloadFileByKeyCommand, DownloadFileByKeyGrpcRequest>();
+            CreateMap<DownloadFileByIdCommand, DownloadFileByIdGrpcRequest>();
+            #endregion
 
             #endregion
         }

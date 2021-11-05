@@ -41,7 +41,7 @@ namespace EPlusActivities.API.Controllers
         )
         {
             var result = await _mediator.Send(request);
-            return File(result.FileContents, result.ContentType);
+            return File(result.Data.ToByteArray(), result.ContentType);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace EPlusActivities.API.Controllers
         )
         {
             var result = await _mediator.Send(request);
-            return File(result.FileStream, result.ContentType);
+            return File(result.Data.ToByteArray(), result.ContentType);
         }
 
         /// <summary>
@@ -83,6 +83,7 @@ namespace EPlusActivities.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
+        [DisableRequestSizeLimit]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"

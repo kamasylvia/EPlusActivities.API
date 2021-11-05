@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileService", "FileService\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPlusActivities.Test", "EPlusActivities.Test\EPlusActivities.Test.csproj", "{420AD03E-E35A-4357-9EAD-FFC1DFFD0D43}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedRescourse", "SharedRescourse\SharedRescourse.shproj", "{CB6ADC7E-F716-4285-A774-9BE4B80F6BCA}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class UploadFileCommand : IRequest
+    public record UploadFileCommand : IRequest
     {
         /// <summary>
         /// 文件拥有者的 ID，为保持唯一性，使用 Guid
@@ -27,5 +27,10 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
         /// <value></value>
         [Required]
         public IFormFile FormFile { get; set; }
+    }
+
+    public record UploadFileResponse
+    {
+        public bool Succeeded { get; set; }
     }
 }

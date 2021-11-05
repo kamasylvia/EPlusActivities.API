@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "EPlusActivities.Grpc.Messages.FileService";
+
+message DeleteFileByIdGrpcRequest
+{
+  string file_id = 1;
+}
+
+message DeleteFileByKeyGrpcRequest
+{
+  string owner_id = 1;
+  string key = 2;
+}
+
+message DeleteFileGrpcResponse
+{
+  bool succeeded = 1;
+}

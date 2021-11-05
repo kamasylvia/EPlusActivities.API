@@ -35,6 +35,12 @@ namespace EPlusActivities.API.Dtos.ActivityUserDtos
         public int? SequentialAttendanceDays { get; set; }
 
         /// <summary>
+        /// 兑换一次抽奖所需积分，null 表示非抽奖活动
+        /// </summary>
+        /// <value></value>
+        public int? RequiredCreditForRedeeming { get; set; }
+
+        /// <summary>
         /// 上次签到日期
         /// </summary>
         /// <value></value>

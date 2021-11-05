@@ -19,7 +19,7 @@ using Microsoft.Extensions.Logging;
 namespace FileService.Controllers
 {
     [ApiController]
-    [Route("choujiang/api/[controller]")]
+    [Route("api/[controller]")]
     public class FileController : Controller
     {
         private readonly string _fileStorageDirectory;
@@ -47,15 +47,20 @@ namespace FileService.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         [FileServiceActionFilterAttribute]
-        public async Task<IActionResult> UploadFileAsync(
-            [FromForm] UploadFileRequestDto requestDto
-        ) =>
-            requestDto.FormFile.Length > 0
-                ? await _fileStorageService.UploadFileAsync(requestDto)
-                    ? Ok()
-                    : new InternalServerErrorObjectResult("Internal Server Error")
-                : BadRequest("Could not upload an empty file.");
+        public async Task<IActionResult> UploadFileAsync([FromForm] UploadFileRequestDto requestDto)
+        {
+            System.Console.WriteLine("Enter upload controller");
+            return requestDto.FormFile.Length > 0
+              ? Ok(
+                    new UploadFileResponse
+                    {
+                        Succeeded = await _fileStorageService.UploadFileAsync(requestDto)
+                    }
+                )
+              : BadRequest("Could not upload an empty file.");
+        }
 
         [HttpGet("id")]
         public async Task<IActionResult> DownloadFileByFileIdAsync(

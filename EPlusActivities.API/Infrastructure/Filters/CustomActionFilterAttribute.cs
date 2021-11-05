@@ -23,6 +23,16 @@ namespace EPlusActivities.API.Infrastructure.Filters
                         Succeeded = true
                     };
                     break;
+                case OkResult okResult:
+                    context.Result = new ObjectResult(
+                        new ApiResult
+                        {
+                            StatusCode = okResult.StatusCode,
+                            Data = "Ok",
+                            Succeeded = true
+                        }
+                    );
+                    break;
                 default:
                     break;
             }

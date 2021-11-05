@@ -1,17 +1,19 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
+using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Data.Repositories;
 using FileService.Dtos.FileDtos;
 using FileService.Entities;
-using Microsoft.AspNetCore.Http;
+using FileService.Infrastructure.Attributes;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace FileService.Services.FileStorageService
 {
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class FileStorageService : IFileStorageService
     {
         private readonly string _fileStorageDirectory;
@@ -56,6 +58,34 @@ namespace FileService.Services.FileStorageService
 
             memoryStream.Position = 0;
             return memoryStream;
+        }
+
+        public async Task<bool> UploadFileAsync(UploadFileGrpcRequest request)
+        {
+            var appFile =
+                await _appFileRepository.FindByAlternateKeyAsync(
+                    Guid.Parse(request.OwnerId),
+                    request.Key
+                ) ?? _mapper.Map<AppFile>(request);
+
+            var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
+
+            if (File.Exists(appFile.FilePath))
+            {
+                File.Delete(appFile.FilePath);
+                appFile.FilePath = filePath;
+                _appFileRepository.Update(appFile);
+            }
+            else
+            {
+                appFile.FilePath = filePath;
+                await _appFileRepository.AddAsync(appFile);
+            }
+
+            using var stream = File.Create(filePath);
+            request.Content.WriteTo(stream);
+
+            return await _appFileRepository.SaveAsync();
         }
 
         public async Task<bool> UploadFileAsync(UploadFileRequestDto fileDto)

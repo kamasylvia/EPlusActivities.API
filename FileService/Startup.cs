@@ -1,23 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using FileService.Data;
-using FileService.Data.Repositories;
+using FileService.Extensions;
 using FileService.Services.FileStorageService;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace FileService
 {
@@ -34,6 +27,7 @@ namespace FileService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddGrpc();
 
             #region Swagger
             services.AddSwaggerGen(
@@ -57,16 +51,10 @@ namespace FileService
             );
             #endregion
 
-            #region AutoMapper
+            #region DI
+            services.AddCustomDependencies();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            #endregion
-
-            #region Services
-            services.AddScoped<IFileStorageService, FileStorageService>();
-            #endregion
-
-            #region Repositories
-            services.AddScoped<IAppFileRepository, AppFileRepository>();
+            services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
             #endregion
         }
 
@@ -96,6 +84,7 @@ namespace FileService
             app.UseEndpoints(
                 endpoints =>
                 {
+                    endpoints.MapGrpcService<FileStorageService>();
                     endpoints.MapControllers();
                 }
             );

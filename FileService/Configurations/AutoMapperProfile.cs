@@ -1,5 +1,6 @@
 using System.IO;
 using AutoMapper;
+using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Dtos.FileDtos;
 using FileService.Entities;
 
@@ -14,6 +15,7 @@ namespace FileService.Configurations
                     dest => dest.ContentType,
                     opt => opt.MapFrom(src => src.FormFile.ContentType)
                 );
+            CreateMap<UploadFileGrpcRequest, AppFile>();
             CreateMap<AppFile, GetFileByOwnerIdResponseDto>();
         }
     }
