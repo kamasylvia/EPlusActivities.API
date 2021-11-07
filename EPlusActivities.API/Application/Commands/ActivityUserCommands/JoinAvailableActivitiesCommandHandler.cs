@@ -81,7 +81,6 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
                 notification.UserId.Value,
                 notification.ChannelCode
-            // Enum.Parse<ChannelCode>(notification.ChannelCode, true)
             );
         }
     }

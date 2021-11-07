@@ -60,11 +60,9 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            // var channel = Enum.Parse<ChannelCode>(request.Channel, true);
-            var channel = request.Channel;
             var generalLotteryRecords = await _statementRepository.FindByDateAsync(
                 request.ActivityId.Value,
-                channel,
+                request.Channel,
                 DateTime.Today
             );
             var requireNewStatement = generalLotteryRecords is null;
@@ -74,7 +72,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 {
                     Activity = activity,
                     DateTime = DateTime.Today,
-                    Channel = channel,
+                    Channel = request.Channel,
                 };
             }
 
@@ -110,7 +108,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             #endregion
 
             #region Connect member server
-            var member = await _memberService.GetMemberAsync(user.PhoneNumber, channel);
+            var member = await _memberService.GetMemberAsync(user.PhoneNumber, request.Channel);
             var memberForUpdateCreditRequestDto = new MemberForUpdateCreditRequestDto
             {
                 memberId = member.Body.Content.MemberId,
@@ -121,7 +119,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             };
             var memberForUpdateCreditResponseDto = await _memberService.UpdateCreditAsync(
                 userId: request.UserId.Value,
-                channelCode: channel,
+                channelCode: request.Channel,
                 requestDto: memberForUpdateCreditRequestDto
             );
             #endregion
