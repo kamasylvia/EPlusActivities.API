@@ -30,7 +30,7 @@ services:
           - 52538:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs
-            - ./Settings/EplusActivities.appsettings.json:/app/appsettings.json
+            - ./Settings/EplusActivities.API/appsettings.json:/app/appsettings.json
             - ~/.aspnet/https:/root/.aspnet/https:ro
             - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
         restart: always
@@ -75,5 +75,5 @@ services:
             - fileservice-db
         volumes:
             - ./Logs/FileServiceLogs:/app/Logs
-            - ./Settings/FileService.appsettings.json:/app/appsettings.json
+            - ./Settings/FileService/appsettings.json:/app/appsettings.json
         restart: always
