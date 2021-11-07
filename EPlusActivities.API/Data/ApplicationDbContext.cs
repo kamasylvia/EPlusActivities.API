@@ -10,18 +10,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EPlusActivities.API.Data
 {
-    public class
-    ApplicationDbContext
-    :
-    IdentityDbContext<ApplicationUser,
-        ApplicationRole,
-        Guid,
-        IdentityUserClaim<Guid>,
-        ApplicationUserRole,
-        IdentityUserLogin<Guid>,
-        IdentityRoleClaim<Guid>,
-        IdentityUserToken<Guid>
-    >
+    public class ApplicationDbContext
+        : IdentityDbContext<
+              ApplicationUser,
+              ApplicationRole,
+              Guid,
+              IdentityUserClaim<Guid>,
+              ApplicationUserRole,
+              IdentityUserLogin<Guid>,
+              IdentityRoleClaim<Guid>,
+              IdentityUserToken<Guid>
+          >
     {
         public virtual DbSet<Address> Addresses { get; set; }
 
@@ -39,10 +38,7 @@ namespace EPlusActivities.API.Data
 
         public virtual DbSet<ActivityUser> ActivityUserLinks { get; set; }
 
-        public virtual DbSet<PrizeTierPrizeItem> PrizeTierPrizeItems
-        {
-            get; set;
-        }
+        public virtual DbSet<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
 
         public virtual DbSet<Lottery> LotteryResults { get; set; }
 
@@ -50,17 +46,10 @@ namespace EPlusActivities.API.Data
 
         public virtual DbSet<Coupon> Coupons { get; set; }
 
-        public virtual DbSet<GeneralLotteryRecords> GeneralLotteryRecords
-        {
-            get; set;
-        }
+        public virtual DbSet<GeneralLotteryRecords> GeneralLotteryRecords { get; set; }
 
-        public ApplicationDbContext(
-            DbContextOptions<ApplicationDbContext> options
-        ) :
-            base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -71,10 +60,7 @@ namespace EPlusActivities.API.Data
             // Add your customizations after calling base.OnModelCreating(builder);
 
             #region Set unique properties
-            builder
-                .Entity<ApplicationUser>()
-                .HasIndex(u => u.PhoneNumber)
-                .IsUnique();
+            builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
             builder.Entity<Activity>().HasIndex(a => a.ActivityCode).IsUnique();
 
             // builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
@@ -88,9 +74,7 @@ namespace EPlusActivities.API.Data
                 .Entity<PrizeTierPrizeItem>()
                 .HasKey(ptpi => new { ptpi.PrizeTierId, ptpi.PrizeItemId });
 
-            builder
-                .Entity<ActivityUser>()
-                .HasKey(lad => new { lad.ActivityId, lad.UserId });
+            builder.Entity<ActivityUser>().HasKey(lad => new { lad.ActivityId, lad.UserId });
 
             builder.Entity<Credit>().HasAlternateKey(c => c.SheetId);
             #endregion
@@ -101,14 +85,14 @@ namespace EPlusActivities.API.Data
             builder
                 .Entity<Activity>()
                 .Property(a => a.AvailableChannels)
-                .HasConversion(v =>
-                    string.Join(';', v.Select(e => e.ToString("D")).ToArray()),
-                v =>
-                    v
-                        .Split(new[] { ';' }, StringSplitOptions.TrimEntries)
-                        .Select(e => Enum.Parse(typeof(ChannelCode), e, true))
-                        .Cast<ChannelCode>()
-                        .ToList());
+                .HasConversion(
+                    v => string.Join(';', v.Select(e => e.ToString("D")).ToArray()),
+                    v =>
+                        v.Split(new[] { ';' }, StringSplitOptions.TrimEntries)
+                            .Select(e => Enum.Parse(typeof(ChannelCode), e, true))
+                            .Cast<ChannelCode>()
+                            .ToList()
+                );
             #endregion
         }
     }
