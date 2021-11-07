@@ -39,7 +39,7 @@ stages:
           inputs:
             SourceFolder: 'EPlusActivities.API'
             Contents: 'appsettings.json'
-            TargetFolder: 'Settings/EPlusActivites.API'
+            TargetFolder: 'Settings/EPlusActivities.API'
             OverWrite: true
         # Copy FileService/appsettings.json to Settings/FileService 
         - task: CopyFiles@2
