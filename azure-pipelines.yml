@@ -14,7 +14,7 @@ stages:
   - stage: Source
     displayName: Source code management
     jobs:
-    - job: Format and Release
+    - job: Format_and_Release
       displayName: Format source code and publish docker-compose required files to GitHub Release.
       pool:
         vmImage: ubuntu-latest
