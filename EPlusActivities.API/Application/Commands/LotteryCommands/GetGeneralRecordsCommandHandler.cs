@@ -62,8 +62,6 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         )
         {
             #region Parameter validation
-            // var channel = Enum.Parse<ChannelCode>(request.Channel, true);
-            var channel = request.Channel;
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
             {
@@ -71,7 +69,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             }
             var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
                 activity.Id.Value,
-                channel,
+                request.Channel,
                 request.StartTime,
                 request.EndTime
             );

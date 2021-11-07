@@ -60,6 +60,9 @@ namespace EPlusActivities.API.Services.LotteryService
                             case PrizeType.Credit:
                                 prizeContent = item.PrizeItem.Credit.ToString();
                                 break;
+                            case PrizeType.Physical:
+                                prizeContent = item.PrizeItem.Name;
+                                break;
                             default:
                                 break;
                         }
