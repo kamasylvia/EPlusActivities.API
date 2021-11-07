@@ -1,0 +1,79 @@
+version: "3.4"
+
+services:
+    eplusactivities-db:
+        image: mysql:8.0.25
+        container_name: mysql-eplusactivities
+        ports:
+          - 30303:3306 
+        environment:
+            MYSQL_DATABASE: EPlusActivities
+            MYSQL_USER: ngs
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_PASSWORD: 123456
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        volumes:
+            - ./MySQL/EPlusActivities:/var/lib/mysql
+        restart: always
+
+    eplusactivities-api:
+        image: kamasylvia/eplusactivities:20211107
+        container_name: EplusActivities.API
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://+:80
+        depends_on:
+            - eplusactivities-db
+        links:
+            - eplusactivities-db
+        ports:
+          - 52538:80
+        volumes:
+            - ./Logs/ApiLogs:/app/Logs
+            - ./Settings/EplusActivities.API/appsettings.json:/app/appsettings.json
+            - ~/.aspnet/https:/root/.aspnet/https:ro
+            - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+        restart: always
+
+    nginx:
+        image: nginx
+        container_name: nginx
+        ports:
+            - 52537:52537
+        links:
+            - "eplusactivities-api"
+        volumes:
+            - ./Nginx/conf.d:/etc/nginx/conf.d
+            - ./html:/usr/share/nginx/html
+            - ./Logs/NginxLogs:/var/log/nginx
+        restart: always
+
+    fileservice-db:
+        image: mysql:8.0.25
+        container_name: mysql-fileservice
+        ports:
+          - 30304:3306 
+        environment:
+            MYSQL_DATABASE: FileService
+            MYSQL_USER: ngs
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_PASSWORD: 123456
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        volumes:
+            - ./MySQL/FileService:/var/lib/mysql
+        restart: always
+
+    fileservice:
+        image: kamasylvia/fileservice:20211027
+        container_name: FileService
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://+:80
+        links:
+            - fileservice-db
+        depends_on:
+            - fileservice-db
+        volumes:
+            - ./Logs/FileServiceLogs:/app/Logs
+            - ./Settings/FileService/appsettings.json:/app/appsettings.json
+        restart: always
