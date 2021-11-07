@@ -40,7 +40,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 
             if (prizeTiers.Count() <= 0)
             {
-                throw new NotFoundException("Could not find any prize types.");
+                throw new NotFoundException("Could not find any prize tier.");
             }
 
             return _mapper.Map<IEnumerable<PrizeTierDto>>(prizeTiers);

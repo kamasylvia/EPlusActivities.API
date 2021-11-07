@@ -32,7 +32,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
             #region Parameter validation
             if (prizeTier is null)
             {
-                throw new NotFoundException("Could not find the prize type.");
+                throw new NotFoundException("Could not find the prize tier.");
             }
 
             var prizeTypes = await _prizeTierRepository.FindByParentIdAsync(

@@ -31,7 +31,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
             var prizeTier = await _prizeTierRepository.FindByIdAsync(request.Id.Value);
             if (prizeTier is null)
             {
-                throw new NotFoundException("Could not find the prize type.");
+                throw new NotFoundException("Could not find the prize tier.");
             }
             return _mapper.Map<PrizeTierDto>(prizeTier);
         }

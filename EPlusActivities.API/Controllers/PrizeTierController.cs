@@ -35,7 +35,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeTierDto>> GetByIdAsync(
-            [FromQuery] GetPrizeItemByIdCommand request
+            [FromQuery] GetPrizeTierByIdCommand request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
