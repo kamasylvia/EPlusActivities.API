@@ -34,7 +34,7 @@ namespace EPlusActivities.API.Entities
         public IEnumerable<ChannelCode> AvailableChannels { get; set; }
 
         // 活动类型：签到、连续签到、抽奖
-        public ActivityType ActivityType { get; set; }
+        public virtual ActivityType ActivityType { get; set; }
 
         // 抽奖展示类型
         public LotteryDisplay LotteryDisplay { get; set; }

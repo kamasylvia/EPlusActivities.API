@@ -11,8 +11,8 @@ namespace EPlusActivities.API.Entities
         // 这个属性在签到抽奖中是无效的，留给将来版本
         public bool Used { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
-        public PrizeItem PrizeItem { get; set; }
+        public virtual PrizeItem PrizeItem { get; set; }
     }
 }

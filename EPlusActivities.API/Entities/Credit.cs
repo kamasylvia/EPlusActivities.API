@@ -28,7 +28,7 @@ namespace EPlusActivities.API.Entities
         // 更新积分理由
         public string Reason { get; set; }
 
-        // 交易流水，
+        // 交易流水
         public string SheetId { get; set; }
 
         // 积分变更流水

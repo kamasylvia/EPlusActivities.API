@@ -38,7 +38,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<ActivityUser>> FindByParentIdAsync(Guid userId) =>
             await _context.ActivityUserLinks
                 .Include(au => au.Activity)
-                .ThenInclude(a => a.RequiredCreditForRedeeming)
                 .AsAsyncEnumerable()
                 .Where(activityUser => activityUser.UserId == userId)
                 .ToListAsync();

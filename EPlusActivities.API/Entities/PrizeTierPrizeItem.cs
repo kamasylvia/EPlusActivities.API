@@ -8,10 +8,10 @@ namespace EPlusActivities.API.Entities
     {
         public Guid? PrizeItemId { get; set; }
 
-        public PrizeItem PrizeItem { get; set; }
+        public virtual PrizeItem PrizeItem { get; set; }
 
         public Guid? PrizeTierId { get; set; }
 
-        public PrizeTier PrizeTier { get; set; }
+        public virtual PrizeTier PrizeTier { get; set; }
     }
 }
