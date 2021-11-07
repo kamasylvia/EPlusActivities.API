@@ -8,25 +8,29 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
         {
             migrationBuilder.DropIndex(
                 name: "IX_GeneralLotteryRecords_DateTime",
-                table: "GeneralLotteryRecords");
+                table: "GeneralLotteryRecords"
+            );
 
             migrationBuilder.AddUniqueConstraint(
                 name: "AK_GeneralLotteryRecords_Channel_DateTime",
                 table: "GeneralLotteryRecords",
-                columns: new[] { "Channel", "DateTime" });
+                columns: new[] { "Channel", "DateTime" }
+            );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropUniqueConstraint(
                 name: "AK_GeneralLotteryRecords_Channel_DateTime",
-                table: "GeneralLotteryRecords");
+                table: "GeneralLotteryRecords"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_GeneralLotteryRecords_DateTime",
                 table: "GeneralLotteryRecords",
                 column: "DateTime",
-                unique: true);
+                unique: true
+            );
         }
     }
 }
