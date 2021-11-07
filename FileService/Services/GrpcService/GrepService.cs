@@ -46,6 +46,26 @@ namespace FileService.Services.GrpcService
                         )
                     );
                     break;
+                case "DownloadFileById":
+                    response.Data = Any.Pack(
+                        await _mediator.Send(
+                            new DownloadFileByIdCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<DownloadFileByIdGrpcRequest>()
+                            }
+                        )
+                    );
+                    break;
+                case "DownloadFilesByOwnerId":
+                    // response.Data = Any.Pack(
+                    //     await _mediator.Send(
+                    //         new DownloadFilesByOwnerIdCommand
+                    //         {
+                    //             GrpcRequest = request.Data.Unpack<DownloadFilesByOwnerIdGrpcRequest>()
+                    //         }
+                    //     )
+                    // );
+                    break;
                 default:
                     break;
             }

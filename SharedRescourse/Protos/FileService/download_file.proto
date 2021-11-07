@@ -23,3 +23,8 @@ message DownloadFileGrpcResponse
   bytes data = 1;
   string content_type = 2;
 }
+
+message DownloadFilesGrpcResponse
+{
+  repeated DownloadFileGrpcResponse files = 1;
+}

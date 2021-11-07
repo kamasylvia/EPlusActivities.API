@@ -11,14 +11,15 @@ namespace FileService.Data.Repositories
     {
         public AppFileRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<AppFile> FindByAlternateKeyAsync(Guid ownerId, string key)
-        {
-            return await _context.Files.SingleOrDefaultAsync(
-                file => file.OwnerId.Value == ownerId && file.Key == key
-            );
-        }
+        public async Task<AppFile> FindByAlternateKeyAsync(Guid ownerId, string key) =>
+            await _context.Files
+                .AsAsyncQueryable()
+                .SingleOrDefaultAsync(file => file.OwnerId.Value == ownerId && file.Key == key);
 
         public async Task<IEnumerable<AppFile>> FindByOwnerIdAsync(Guid ownerId) =>
-            await _context.Files.Where(file => file.OwnerId.Value == ownerId).ToListAsync();
+            await _context.Files
+                .AsAsyncQueryable()
+                .Where(file => file.OwnerId.Value == ownerId)
+                .ToListAsync();
     }
 }
