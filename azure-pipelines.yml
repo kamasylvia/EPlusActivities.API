@@ -23,6 +23,18 @@ stages:
           persistCredentials: true
         - task: CopyFiles@2
           inputs:
+            SourceFolder: 'EPlusActivities.API'
+            Contents: 'appsettings.json'
+            TargetFolder: 'Settings/EPlusActivites.API'
+            OverWrite: true
+        - task: CopyFiles@2
+          inputs:
+            SourceFolder: 'FileService'
+            Contents: 'appsettings.json'
+            TargetFolder: 'Settings/FileService'
+            OverWrite: true
+        - task: CopyFiles@2
+          inputs:
             Contents: |
               docker-compose.yml
               Settings/**
