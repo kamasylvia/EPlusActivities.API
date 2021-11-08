@@ -56,7 +56,7 @@ namespace EPlusActivities.API.Controllers
         /// <summary>
         /// 获取活动列表
         /// </summary>
-        /// <param name="activityDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("list")]
         [Authorize(

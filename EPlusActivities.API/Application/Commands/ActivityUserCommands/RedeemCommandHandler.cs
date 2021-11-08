@@ -89,15 +89,15 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             _activityService.UpdateDailyLimitsAsync(user, activityUser);
 
             // 超过每日兑换限制
-            if (!(activityUser.TodayUsedRedempion + request.Count <= activity.DailyRedemptionLimit))
+            if (!(activityUser.TodayUsedRedempion + request.Count > activity.DailyRedemptionLimit))
+            {
+                activityUser.TodayUsedRedempion += request.Count;
+            }
+            else
             {
                 throw new BadRequestException(
                     "Sorry, the user had already achieved the daily maximum number of redemption of this activity."
                 );
-            }
-            else
-            {
-                activityUser.TodayUsedRedempion += request.Count;
             }
 
             var cost = activity.RequiredCreditForRedeeming * request.Count;

@@ -19,7 +19,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
         /// 获奖概率
         /// </summary>
         /// <value></value>
-        public int Percentage { get; set; }
+        public double Percentage { get; set; }
 
         [Required]
         public Guid? ActivityId { get; set; }

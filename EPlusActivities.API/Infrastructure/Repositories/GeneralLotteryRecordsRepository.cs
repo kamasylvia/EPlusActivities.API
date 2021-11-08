@@ -25,6 +25,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         ) =>
             await _context.GeneralLotteryRecords
                 .Include(s => s.Activity)
+                .AsAsyncEnumerable()
                 .SingleOrDefaultAsync(
                     s =>
                         s.Activity.Id == activityId
@@ -40,9 +41,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         ) =>
             await _context.GeneralLotteryRecords
                 .Include(s => s.Activity)
+                .AsAsyncEnumerable()
                 .Where(
                     s =>
-                        s.Activity.Id == activityId
+                        s.Activity.Id.Value == activityId
                         && s.Channel == channel
                         && !(startTime > s.DateTime)
                         && !(s.DateTime > endTime)
