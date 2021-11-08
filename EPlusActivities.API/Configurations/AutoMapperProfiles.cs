@@ -159,9 +159,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region PrizeItem
-            CreateMap<PrizeItem, PrizeItemDto>()
-                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
+            CreateMap<PrizeItem, PrizeItemDto>();
             CreateMap<CreatePrizeItemCommand, PrizeItem>()
                 .ForMember(dest => dest.Brand, opt => opt.Ignore())
                 .ForMember(dest => dest.Category, opt => opt.Ignore());

@@ -47,14 +47,12 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         /// 奖品种类
         /// </summary>
         /// <value></value>
-        [Required]
         public string CategoryName { get; set; }
 
         /// <summary>
         /// 奖品品牌
         /// </summary>
         /// <value></value>
-        [Required]
         public string BrandName { get; set; }
 
         /// <summary>

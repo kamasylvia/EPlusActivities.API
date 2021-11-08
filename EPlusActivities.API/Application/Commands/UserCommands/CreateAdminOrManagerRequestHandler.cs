@@ -30,7 +30,11 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
 
             user = new ApplicationUser { UserName = request.UserName };
             var result = await _userManager.CreateAsync(user, request.Password);
-            result = await _userManager.AddToRoleAsync(user, request.Role.ToUpper());
+            if (!result.Succeeded)
+            {
+                throw new DatabaseUpdateException(result.ToString());
+            }
+            result = await _userManager.AddToRoleAsync(user, request.Role);
             if (!result.Succeeded)
             {
                 throw new DatabaseUpdateException(result.ToString());

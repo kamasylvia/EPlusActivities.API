@@ -32,8 +32,14 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         {
             #region New an entity
             var prizeItem = _mapper.Map<PrizeItem>(request);
-            prizeItem.Brand = await GetBrandAsync(request.BrandName);
-            prizeItem.Category = await GetCategoryAsync(request.CategoryName);
+            if (!string.IsNullOrEmpty(request.BrandName))
+            {
+                prizeItem.Brand = await GetBrandAsync(request.BrandName);
+            }
+            if (!string.IsNullOrEmpty(request.CategoryName))
+            {
+                prizeItem.Category = await GetCategoryAsync(request.CategoryName);
+            }
             #endregion
 
             #region Database operations
@@ -44,7 +50,11 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
             }
             #endregion
 
-            return _mapper.Map<PrizeItemDto>(prizeItem);
+            var result = _mapper.Map<PrizeItemDto>(prizeItem);
+            result.BrandName = prizeItem?.Brand?.Name;
+            result.CategoryName = prizeItem?.Category?.Name;
+
+            return result;
         }
     }
 }
