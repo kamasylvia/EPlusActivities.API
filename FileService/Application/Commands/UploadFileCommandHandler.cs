@@ -5,12 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.Configuration;
 using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Data.Repositories;
 using FileService.Entities;
 using FileService.Services.FileStorageService;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Commands

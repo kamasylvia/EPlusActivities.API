@@ -49,16 +49,9 @@ namespace FileService
             #endregion
 
             #region DI
-            #region Services
-            //services.AddScoped<IFileStorageService, FileStorageService>();
-            #endregion
-
-            #region Repositories
-            //services.AddScoped<IAppFileRepository, AppFileRepository>();
-            #endregion
+            services.AddCustomDependencies();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddCustomDependencies();
             #endregion
         }
 
@@ -88,7 +81,7 @@ namespace FileService
             app.UseEndpoints(
                 endpoints =>
                 {
-                    endpoints.MapGrpcService<FileStorageService>();
+                    // endpoints.MapGrpcService<FileStorageService>();
                     endpoints.MapControllers();
                 }
             );

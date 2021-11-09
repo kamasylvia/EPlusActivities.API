@@ -48,6 +48,22 @@ stages:
             Contents: 'appsettings.json'
             TargetFolder: 'Settings/FileService'
             OverWrite: true
+        # Before git commands, be sure your account's default identity is set
+        - task: CmdLine@2
+          continueOnError: true
+          inputs:
+            script: |
+              git config --global user.email "zhangyue.dev@outlook.com"
+              git config --global user.name "kamasylvia"
+        # Push formatted code back to remote repository
+        - task: CmdLine@2
+          continueOnError: true
+          inputs:
+            script: |
+              git checkout $(Build.SourceBranchName)
+              git add -A
+              git commit --allow-empty -m "Format source code with CSharpier [skip ci]"
+              git push
         # Copy required files to ArchiveFolder
         - task: CopyFiles@2
           inputs:
@@ -81,22 +97,6 @@ stages:
             isDraft: true
             changeLogCompareToRelease: 'lastFullRelease'
             changeLogType: 'commitBased'
-        # Before git commands, be sure your account's default identity is set
-        - task: CmdLine@2
-          continueOnError: true
-          inputs:
-            script: |
-              git config --global user.email "zhangyue.dev@outlook.com"
-              git config --global user.name "kamasylvia"
-        # Push formatted code back to remote repository
-        - task: CmdLine@2
-          continueOnError: true
-          inputs:
-            script: |
-              git checkout $(Build.SourceBranchName)
-              git add -A
-              git commit --allow-empty -m "Format source code with CSharpier [skip ci]"
-              git push
   - stage: Deploy
     displayName: Deploy to production
     jobs:

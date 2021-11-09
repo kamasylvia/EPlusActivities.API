@@ -2,13 +2,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.Configuration;
 using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Data.Repositories;
 using FileService.Infrastructure.Exceptions;
 using FileService.Services.FileStorageService;
 using Google.Protobuf;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Commands
