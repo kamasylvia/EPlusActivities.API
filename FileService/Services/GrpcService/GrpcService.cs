@@ -28,42 +28,43 @@ namespace FileService.Services.GrpcService
             {
                 case "UploadFile":
                     response.Data = Any.Pack(
-                       await _mediator.Send(
-                           new UploadFileCommand
-                           {
-                               GrpcRequest = request.Data.Unpack<UploadFileGrpcRequest>()
-                           }
-                       )
+                        await _mediator.Send(
+                            new UploadFileCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<UploadFileGrpcRequest>()
+                            }
+                        )
                     );
                     break;
                 case "DownloadFileByKey":
                     response.Data = Any.Pack(
-                       await _mediator.Send(
-                           new DownloadFileByKeyCommand
-                           {
-                               GrpcRequest = request.Data.Unpack<DownloadFileByKeyGrpcRequest>()
-                           }
-                       )
+                        await _mediator.Send(
+                            new DownloadFileByKeyCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<DownloadFileByKeyGrpcRequest>()
+                            }
+                        )
                     );
                     break;
                 case "DownloadFileById":
                     response.Data = Any.Pack(
-                       await _mediator.Send(
-                           new DownloadFileByIdCommand
-                           {
-                               GrpcRequest = request.Data.Unpack<DownloadFileByIdGrpcRequest>()
-                           }
-                       )
+                        await _mediator.Send(
+                            new DownloadFileByIdCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<DownloadFileByIdGrpcRequest>()
+                            }
+                        )
                     );
                     break;
                 case "DownloadFilesByOwnerId":
                     response.Data = Any.Pack(
-                       await _mediator.Send(
-                           new DownloadFilesByOwnerIdCommand
-                           {
-                               GrpcRequest = request.Data.Unpack<DownloadFilesByOwnerIdGrpcRequest>()
-                           }
-                       )
+                        await _mediator.Send(
+                            new DownloadFilesByOwnerIdCommand
+                            {
+                                GrpcRequest =
+                                    request.Data.Unpack<DownloadFilesByOwnerIdGrpcRequest>()
+                            }
+                        )
                     );
                     break;
                 default:
