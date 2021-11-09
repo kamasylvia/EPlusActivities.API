@@ -20,8 +20,8 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
             CancellationToken cancellationToken
         )
         {
-           var mapped = _mapper.Map<Grpc.Messages.FileService.UploadFileGrpcRequest>(request); 
-           System.Console.WriteLine($"Content-Type = {mapped.ContentType}");
+            var mapped = _mapper.Map<Grpc.Messages.FileService.UploadFileGrpcRequest>(request);
+            System.Console.WriteLine($"Content-Type = {mapped.ContentType}");
             if (!await _fileService.UploadFileAsync(request))
             {
                 throw new RemoteServiceException("Failed to upload the file to the file server.");
