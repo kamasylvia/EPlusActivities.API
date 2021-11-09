@@ -13,11 +13,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Commands
 {
-    public class
-    UploadFileCommandHandler
-    :
-    BaseCommandHandler,
-    IRequestHandler<UploadFileCommand, UploadFileGrpcResponse>
+    public class UploadFileCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<UploadFileCommand, UploadFileGrpcResponse>
     {
         public UploadFileCommandHandler(
             IConfiguration configuration,
@@ -25,19 +23,12 @@ namespace FileService.Application.Commands
             IAppFileRepository fileRepository,
             ILogger<FileStorageService> logger,
             IMapper mapper
-        ) :
-            base(
-                configuration,
-                fileStorageService,
-                fileRepository,
-                logger,
-                mapper
-            )
-        {
-        }
+        ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
-        public async Task<UploadFileGrpcResponse>
-        Handle(UploadFileCommand command, CancellationToken cancellationToken)
+        public async Task<UploadFileGrpcResponse> Handle(
+            UploadFileCommand command,
+            CancellationToken cancellationToken
+        )
         {
             var appFile =
                 await _fileRepository.FindByAlternateKeyAsync(

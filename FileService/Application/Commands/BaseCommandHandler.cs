@@ -20,12 +20,12 @@ namespace FileService.Application.Commands
         protected readonly IMapper _mapper;
         protected readonly string _fileStorageDirectory;
         public BaseCommandHandler(
-             IConfiguration configuration,
-             IFileStorageService fileStorageService,
-             IAppFileRepository fileRepository,
-             ILogger<FileStorageService> logger,
-             IMapper mapper
-         )
+            IConfiguration configuration,
+            IFileStorageService fileStorageService,
+            IAppFileRepository fileRepository,
+            ILogger<FileStorageService> logger,
+            IMapper mapper
+        )
         {
             _configuration =
                 configuration ?? throw new ArgumentNullException(nameof(configuration));
