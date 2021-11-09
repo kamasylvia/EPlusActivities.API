@@ -9,11 +9,11 @@ using MediatR;
 
 namespace FileService.Services.GrpcService
 {
-    public class GrepService : Dapr.AppCallback.Autogen.Grpc.v1.AppCallback.AppCallbackBase
+    public class GrpcService : Dapr.AppCallback.Autogen.Grpc.v1.AppCallback.AppCallbackBase
     {
         private readonly IMediator _mediator;
 
-        public GrepService(IMediator mediator)
+        public GrpcService(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }

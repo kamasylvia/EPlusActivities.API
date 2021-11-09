@@ -3,7 +3,7 @@ using System.Reflection;
 using FileService.Data;
 using FileService.Data.Repositories;
 using FileService.Extensions;
-using FileService.Services.FileStorageService;
+using FileService.Services.GrpcService;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -81,7 +81,7 @@ namespace FileService
             app.UseEndpoints(
                 endpoints =>
                 {
-                    // endpoints.MapGrpcService<FileStorageService>();
+                    endpoints.MapGrpcService<GrpcService>();
                     endpoints.MapControllers();
                 }
             );
