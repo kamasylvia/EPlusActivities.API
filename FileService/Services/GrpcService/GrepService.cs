@@ -57,14 +57,14 @@ namespace FileService.Services.GrpcService
                     );
                     break;
                 case "DownloadFilesByOwnerId":
-                    // response.Data = Any.Pack(
-                    //     await _mediator.Send(
-                    //         new DownloadFilesByOwnerIdCommand
-                    //         {
-                    //             GrpcRequest = request.Data.Unpack<DownloadFilesByOwnerIdGrpcRequest>()
-                    //         }
-                    //     )
-                    // );
+                    response.Data = Any.Pack(
+                        await _mediator.Send(
+                            new DownloadFilesByOwnerIdCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<DownloadFilesByOwnerIdGrpcRequest>()
+                            }
+                        )
+                    );
                     break;
                 default:
                     break;

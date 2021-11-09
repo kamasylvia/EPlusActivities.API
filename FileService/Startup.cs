@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using FileService.Data;
+using FileService.Data.Repositories;
 using FileService.Extensions;
 using FileService.Services.FileStorageService;
 using MediatR;
@@ -38,10 +39,6 @@ namespace FileService
             );
             #endregion
 
-            #region HttpClientFactory
-            services.AddHttpClient();
-            #endregion
-
             #region Database
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
@@ -52,9 +49,16 @@ namespace FileService
             #endregion
 
             #region DI
-            services.AddCustomDependencies();
+            #region Services
+            //services.AddScoped<IFileStorageService, FileStorageService>();
+            #endregion
+
+            #region Repositories
+            //services.AddScoped<IAppFileRepository, AppFileRepository>();
+            #endregion
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddCustomDependencies();
             #endregion
         }
 

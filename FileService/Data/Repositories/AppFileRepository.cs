@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FileService.Entities;
+using FileService.Infrastructure.Attributes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FileService.Data.Repositories
 {
+    [CustomDependency(ServiceLifetime.Scoped)]
     public class AppFileRepository : RepositoryBase<AppFile>, IAppFileRepository
     {
         public AppFileRepository(ApplicationDbContext context) : base(context) { }

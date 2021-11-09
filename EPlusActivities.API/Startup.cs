@@ -80,7 +80,6 @@ namespace EPlusActivities.API
                 );
             }
 
-            services.AddHttpClient();
             services.AddHttpContextAccessor();
 
             services.AddSwaggerGen(

@@ -28,9 +28,4 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
         [Required]
         public IFormFile FormFile { get; set; }
     }
-
-    public record UploadFileResponse
-    {
-        public bool Succeeded { get; set; }
-    }
 }
