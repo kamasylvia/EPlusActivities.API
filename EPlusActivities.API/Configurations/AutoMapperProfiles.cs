@@ -218,8 +218,10 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.Content,
                     opt => opt.MapFrom(src => ByteString.FromStream(src.FormFile.OpenReadStream()))
                 );
+            CreateMap<DownloadFileByFileIdCommand, DownloadFileByFileIdGrpcRequest>();
             CreateMap<DownloadFileByKeyCommand, DownloadFileByKeyGrpcRequest>();
-            CreateMap<DownloadFileByIdCommand, DownloadFileByIdGrpcRequest>();
+            CreateMap<DeleteFileByFileIdCommand, DeleteFileByFileIdGrpcRequest>();
+            CreateMap<DeleteFileByKeyCommand, DeleteFileByKeyGrpcRequest>();
             #endregion
 
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using FileService.Data;
-using FileService.Data.Repositories;
 using FileService.Extensions;
 using FileService.Services.GrpcService;
 using MediatR;
@@ -11,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace FileService
 {
@@ -27,17 +25,8 @@ namespace FileService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            // services.AddControllers();
             services.AddGrpc();
-
-            #region Swagger
-            services.AddSwaggerGen(
-                c =>
-                {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "FileService", Version = "v1" });
-                }
-            );
-            #endregion
 
             #region Database
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
@@ -66,23 +55,19 @@ namespace FileService
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(
-                    c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FileService v1")
-                );
             }
 
             // app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            // app.UseAuthorization();
 
             app.UseEndpoints(
                 endpoints =>
                 {
                     endpoints.MapGrpcService<GrpcService>();
-                    endpoints.MapControllers();
+                    // endpoints.MapControllers();
                 }
             );
         }

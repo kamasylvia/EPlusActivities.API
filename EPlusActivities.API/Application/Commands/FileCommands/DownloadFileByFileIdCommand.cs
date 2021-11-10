@@ -9,7 +9,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class DownloadFileByIdCommand : IRequest<DownloadFileGrpcResponse>
+    public class DownloadFileByFileIdCommand : IRequest<DownloadFileGrpcResponse>
     {
         /// <summary>
         /// 文件 ID

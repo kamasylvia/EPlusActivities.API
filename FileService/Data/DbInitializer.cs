@@ -29,19 +29,8 @@ namespace FileService.Data
             {
                 var context =
                     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-                if (environment.IsDevelopment())
-                {
-                    var deleted = context.Database.EnsureDeleted();
-                    System.Console.WriteLine($"The old database is deleted: {deleted}");
-                    var created = context.Database.EnsureCreated();
-                    System.Console.WriteLine($"The new database is created: {created}");
-                }
-
-                if (environment.IsProduction())
-                {
-                    context.Database.Migrate();
-                }
+                    
+                context.Database.Migrate();
 
                 // Look for any Data.
                 if (context.Files.Any())

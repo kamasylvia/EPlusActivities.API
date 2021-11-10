@@ -7,8 +7,8 @@ using MediatR;
 
 namespace FileService.Application.Commands
 {
-    public class DownloadFilesByOwnerIdCommand : IRequest<DownloadFilesGrpcResponse>
+    public class DeleteFileByFileIdCommand : IRequest<DeleteFileGrpcResponse>
     {
-        public DownloadFilesByOwnerIdGrpcRequest GrpcRequest { get; set; }
+        public DeleteFileByFileIdGrpcRequest GrpcRequest { get; set; }
     }
 }

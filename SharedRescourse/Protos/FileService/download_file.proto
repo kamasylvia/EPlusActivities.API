@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option csharp_namespace = "EPlusActivities.Grpc.Messages.FileService";
 
-message DownloadFileByIdGrpcRequest
+message DownloadFileByFileIdGrpcRequest
 {
   string file_id = 1;
 }
@@ -13,18 +13,8 @@ message DownloadFileByKeyGrpcRequest
   string key = 2;
 }
 
-message DownloadFilesByOwnerIdGrpcRequest
-{
-  string owner_id = 1;
-}
-
 message DownloadFileGrpcResponse
 {
   bytes data = 1;
   string content_type = 2;
-}
-
-message DownloadFilesGrpcResponse
-{
-  repeated DownloadFileGrpcResponse files = 1;
 }

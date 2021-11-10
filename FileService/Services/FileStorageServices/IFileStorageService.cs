@@ -1,16 +1,16 @@
 using System.IO;
 using System.Threading.Tasks;
+using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Dtos.FileDtos;
+using FileService.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace FileService.Services.FileStorageService
 {
     public interface IFileStorageService
     {
-        Task<bool> UploadFileAsync(UploadFileRequestDto fileDto);
+        Task<MemoryStream> DownloadFileAsync(AppFile appFile);
 
-        Task<MemoryStream> DownloadFileAsync(string filePath);
-
-        bool DeleteFile(string filePath);
+        bool DeleteFile(AppFile appFile);
     }
 }

@@ -36,6 +36,16 @@ namespace FileService.Services.GrpcService
                         )
                     );
                     break;
+                case "DownloadFileByFileId":
+                    response.Data = Any.Pack(
+                        await _mediator.Send(
+                            new DownloadFileByFileIdCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<DownloadFileByFileIdGrpcRequest>()
+                            }
+                        )
+                    );
+                    break;
                 case "DownloadFileByKey":
                     response.Data = Any.Pack(
                         await _mediator.Send(
@@ -46,23 +56,24 @@ namespace FileService.Services.GrpcService
                         )
                     );
                     break;
-                case "DownloadFileById":
+                case "DeleteFileByFileId":
                     response.Data = Any.Pack(
                         await _mediator.Send(
-                            new DownloadFileByIdCommand
+                            new DeleteFileByFileIdCommand
                             {
-                                GrpcRequest = request.Data.Unpack<DownloadFileByIdGrpcRequest>()
+                                GrpcRequest =
+                                    request.Data.Unpack<DeleteFileByFileIdGrpcRequest>()
                             }
                         )
                     );
                     break;
-                case "DownloadFilesByOwnerId":
+                case "DeleteFileByKey":
                     response.Data = Any.Pack(
                         await _mediator.Send(
-                            new DownloadFilesByOwnerIdCommand
+                            new DeleteFileByKeyCommand
                             {
                                 GrpcRequest =
-                                    request.Data.Unpack<DownloadFilesByOwnerIdGrpcRequest>()
+                                    request.Data.Unpack<DeleteFileByKeyGrpcRequest>()
                             }
                         )
                     );

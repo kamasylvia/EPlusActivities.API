@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.FileDtos;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Services.FileService;
 using EPlusActivities.Grpc.Messages.FileService;
@@ -23,6 +18,15 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
         public async Task<DownloadFileGrpcResponse> Handle(
             DownloadFileByKeyCommand request,
             CancellationToken cancellationToken
-        ) => await _fileService.DownloadFileByKeyAsync(request);
+        )
+        {
+            var response = await _fileService.DownloadFileByKeyAsync(request);
+            if (response.Data.IsEmpty)
+            {
+                throw new RemoteServiceException("Could not find the file.");
+            }
+
+            return response;
+        }
     }
 }

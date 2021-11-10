@@ -20,7 +20,7 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
             CancellationToken cancellationToken
         )
         {
-            if (!await _fileService.UploadFileAsync(request))
+            if (!(await _fileService.UploadFileAsync(request)).Succeeded)
             {
                 throw new RemoteServiceException("Failed to upload the file to the file server.");
             }

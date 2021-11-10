@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option csharp_namespace = "EPlusActivities.Grpc.Messages.FileService";
 
-message DeleteFileByIdGrpcRequest
+message DeleteFileByFileIdGrpcRequest
 {
   string file_id = 1;
 }

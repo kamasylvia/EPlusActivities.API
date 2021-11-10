@@ -1,19 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Client;
 using EPlusActivities.API.Application.Commands.FileCommands;
-using EPlusActivities.API.Dtos.FileDtos;
 using EPlusActivities.API.Infrastructure.Attributes;
-using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.Grpc.Messages.FileService;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,189 +40,53 @@ namespace EPlusActivities.API.Services.FileService
             _fileServiceAppId = _configuration["Dapr:FileService"];
         }
 
-        public async Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(
-            DownloadFileByKeyCommand request
-        )
-        {
-            var response = await _daprClient.InvokeMethodGrpcAsync<
-                DownloadFileByKeyGrpcRequest,
-                DownloadFileGrpcResponse
-            >(
-                _fileServiceAppId,
-                "DownloadFileByKey",
-                _mapper.Map<DownloadFileByKeyGrpcRequest>(request)
-            );
-            if (response.Data.IsEmpty)
-            {
-                throw new RemoteServiceException("Could not find the file in the FileService.");
-            }
-            return response;
-        }
+        public async Task<UploadFileGrpcResponse> UploadFileAsync(UploadFileCommand request) => await _daprClient.InvokeMethodGrpcAsync<
+                    UploadFileGrpcRequest,
+                    UploadFileGrpcResponse
+                >(_fileServiceAppId, "UploadFile", _mapper.Map<UploadFileGrpcRequest>(request));
 
-        public async Task<string> GetContentTypeByKeyAsync(DownloadFileByKeyCommand request) =>
-            await _daprClient.InvokeMethodAsync<DownloadFileByKeyCommand, string>(
-                HttpMethod.Get,
-                _fileServiceAppId,
-                "file/content-type/key",
-                request
-            );
-        /*
-        {
-            var uriBuilder = new UriBuilder(
-                scheme: _configuration["FileServiceUriBuilder:Scheme"],
-                host: _configuration["FileServiceUriBuilder:Host"],
-                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
-                pathValue: "api/file/content-type/key"
-            );
-
-            var requestUrl = QueryHelpers.AddQueryString(
-                uriBuilder.Uri.ToString(),
-                new Dictionary<string, string>
-                {
-                    ["OwnerId"] = request.OwnerId.ToString(),
-                    ["Key"] = request.Key
-                }
-            );
-
-            return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
-        }
-        */
-
-        public async Task<DownloadFileGrpcResponse> DownloadFileByIdAsync(
-            DownloadFileByIdCommand request
-        ) =>
-            // await _daprClient.InvokeMethodAsync<DownloadFileByIdCommand, byte[]>(
-            //     HttpMethod.Get,
-            //     _fileServiceAppId,
-            //     "file/id",
-            //     request
-            // );
-            await _daprClient.InvokeMethodGrpcAsync<
-                DownloadFileByIdGrpcRequest,
+        public async Task<DownloadFileGrpcResponse> DownloadFileByFileIdAsync(
+            DownloadFileByFileIdCommand request
+        ) => await _daprClient.InvokeMethodGrpcAsync<
+                DownloadFileByFileIdGrpcRequest,
                 DownloadFileGrpcResponse
             >(
                 _fileServiceAppId,
                 "DownloadFileByFileId",
-                _mapper.Map<DownloadFileByIdGrpcRequest>(request)
-            );
-        /*
-        {
-            var uriBuilder = new UriBuilder(
-                scheme: _configuration["FileServiceUriBuilder:Scheme"],
-                host: _configuration["FileServiceUriBuilder:Host"],
-                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
-                pathValue: "api/file/id"
+                _mapper.Map<DownloadFileByFileIdGrpcRequest>(request)
             );
 
-            var requestUrl = QueryHelpers.AddQueryString(
-                uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["FileId"] = request.FileId.ToString() }
-            );
+        public async Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(
+            DownloadFileByKeyCommand request
+        ) => await _daprClient.InvokeMethodGrpcAsync<
+                    DownloadFileByKeyGrpcRequest,
+                    DownloadFileGrpcResponse
+                >(
+                    _fileServiceAppId,
+                    "DownloadFileByKey",
+                    _mapper.Map<DownloadFileByKeyGrpcRequest>(request)
+                );
 
-            return await _httpClientFactory.CreateClient().GetByteArrayAsync(requestUrl);
-        }
-        */
+        public async Task<DeleteFileGrpcResponse> DeleteFileByFileIdAsync(
+            DeleteFileByFileIdCommand request
+        ) => await _daprClient.InvokeMethodGrpcAsync<
+                    DeleteFileByFileIdGrpcRequest,
+                    DeleteFileGrpcResponse
+                >(
+                    _fileServiceAppId,
+                    "DeleteFileByFileId",
+                    _mapper.Map<DeleteFileByFileIdGrpcRequest>(request)
+                );
 
-        public async Task<string> GetContentTypeByIdAsync(DownloadFileByIdCommand request) =>
-            await _daprClient.InvokeMethodAsync<DownloadFileByIdCommand, string>(
-                HttpMethod.Get,
-                _fileServiceAppId,
-                "file/content-type/id",
-                request
-            );
-        /*
-        {
-            var uriBuilder = new UriBuilder(
-                scheme: _configuration["FileServiceUriBuilder:Scheme"],
-                host: _configuration["FileServiceUriBuilder:Host"],
-                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
-                pathValue: "api/file/content-type/id"
-            );
-
-            var requestUrl = QueryHelpers.AddQueryString(
-                uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["FileId"] = request.FileId.ToString() }
-            );
-
-            return await _httpClientFactory.CreateClient().GetStringAsync(requestUrl);
-        }
-        */
-
-        public async Task<bool> UploadFileAsync(UploadFileCommand request) =>
-            (
-                await _daprClient.InvokeMethodGrpcAsync<
-                    UploadFileGrpcRequest,
-                    UploadFileGrpcResponse
-                >(_fileServiceAppId, "UploadFile", _mapper.Map<UploadFileGrpcRequest>(request))
-            ).Succeeded;
-
-        public async Task<bool> DeleteFileByIdAsync(DeleteFileByIdCommand request) =>
-            await _daprClient.InvokeMethodAsync<DeleteFileByIdCommand, bool>(
-                HttpMethod.Delete,
-                _fileServiceAppId,
-                "api/file",
-                request
-            );
-        /*
-        {
-            var uriBuilder = new UriBuilder(
-                scheme: _configuration["FileServiceUriBuilder:Scheme"],
-                host: _configuration["FileServiceUriBuilder:Host"],
-                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
-                pathValue: "api/file/id"
-            );
-
-            var requestUrl = QueryHelpers.AddQueryString(
-                uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["FileId"] = requestDto.FileId.ToString() }
-            );
-
-            var response = await _httpClientFactory.CreateClient().DeleteAsync(requestUrl);
-            return response.IsSuccessStatusCode;
-        }
-        */
-
-        public async Task<bool> DeleteFileByKeyAsync(DeleteFileByKeyCommand request)
-        {
-            var uriBuilder = new UriBuilder(
-                scheme: _configuration["FileServiceUriBuilder:Scheme"],
-                host: _configuration["FileServiceUriBuilder:Host"],
-                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
-                pathValue: "api/file/key"
-            );
-
-            var requestUrl = QueryHelpers.AddQueryString(
-                uriBuilder.Uri.ToString(),
-                new Dictionary<string, string>
-                {
-                    ["OwnerId"] = request.OwnerId.ToString(),
-                    ["Key"] = request.Key
-                }
-            );
-
-            var response = await _httpClientFactory.CreateClient().DeleteAsync(requestUrl);
-            return response.IsSuccessStatusCode;
-        }
-
-        public async Task<IEnumerable<DownloadFilesByOwnerIdDto>> DownloadFilesByOwnerIdAsync(
-            Guid ownerId
-        )
-        {
-            var uriBuilder = new UriBuilder(
-                scheme: _configuration["FileServiceUriBuilder:Scheme"],
-                host: _configuration["FileServiceUriBuilder:Host"],
-                port: Convert.ToInt32(_configuration["FileServiceUriBuilder:Port"]),
-                pathValue: "api/file/ownerId"
-            );
-
-            var requestUrl = QueryHelpers.AddQueryString(
-                uriBuilder.Uri.ToString(),
-                new Dictionary<string, string> { ["OwnerId"] = ownerId.ToString() }
-            );
-
-            return await _httpClientFactory
-                .CreateClient()
-                .GetFromJsonAsync<IEnumerable<DownloadFilesByOwnerIdDto>>(requestUrl);
-        }
+        public async Task<DeleteFileGrpcResponse> DeleteFileByKeyAsync(
+            DeleteFileByKeyCommand request
+        ) => await _daprClient.InvokeMethodGrpcAsync<
+                    DeleteFileByKeyGrpcRequest,
+                    DeleteFileGrpcResponse
+                >(
+                    _fileServiceAppId,
+                    "DeleteFileByKey",
+                    _mapper.Map<DeleteFileByKeyGrpcRequest>(request)
+                );
     }
 }

@@ -38,11 +38,11 @@
 
   - [x] 抽奖活动周期
   - [x] 展示类型（转盘，挖宝，刮刮卡）
-  - [ ] 抽奖界面背景更换
+  - [x] 抽奖界面背景更换
   - [x] 抽奖用户规则定义（每用户每天可抽奖次数，每用户活动期内可抽奖数据）
   - [x] 抽奖次数规则
   - [x] 积分兑换抽奖次数
-  - [ ] 参加外部活动兑换抽奖活动
+  - [x] 参加外部活动兑换抽奖活动
   - [x] 奖品维护最多十个奖品（积分奖品，会员优惠券奖品，实物奖品），每个奖品都有对应的权重及库存维护。
   - [x] 保存活动并生成活动码
 
@@ -83,26 +83,23 @@ docker run -itd --name mysql-test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mys
 ```
 git clone https://github.com/kamasylvia/EPlusActivities.API.git
 ```
+7. 安装 [Dapr](https://docs.microsoft.com/zh-cn/dotnet/architecture/dapr-for-net-developers/getting-started)
+8. 初始化 Dapr
+```sh
+dapr init
+```
 
 # 运行本项目
 
 ## .NET SDK（MySQL 用 docker 版）
 
 - `cd` 到解决方案目录(该目录含有 `.sln` 文件) 执行
-  - 开发环境：
-    - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
-    - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Development`
-  - 生产环境：
-    - `dotnet watch run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
-    - 或 `dotnet run -p EPlusActivities.API --launch-profile EPlusActivities.API-Production`
-- 或 `cd` 到项目目录（该目录含有 `.csproj` 文件） 执行
-  - 开发环境：
-    - `dotnet watch run --launch-profile EPlusActivities.API-Development`
-    - 或 `dotnet run --launch-profile EPlusActivities.API-Development`
-  - 生产环境：
-    - `dotnet watch run --launch-profile EPlusActivities.API-Production`
-    - 或 `dotnet run --launch-profile EPlusActivities.API-Production`
+```sh
+$ dapr run --app-id EPlusActivities --app-port 52537 -- dotnet run -p EPlusActivities.API
+$ dapr run --app-id FileService --app-port 52500 --app-protocol grpc -- dotnet run -p FileService
+```
 - 开发环境下，项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 http://localhost:52537/swagger/index.html
+- 生产环境使用 docker-compose
 
 ## docker-compose
 
@@ -112,6 +109,7 @@ git clone https://github.com/kamasylvia/EPlusActivities.API.git
 ### 注意
 
 - 因为有反向代理，比如 nginx，容器内的项目是没有开 https 的。
+- dapr grpc server 暂时关闭 HTTP/2.0 的 mTLS 验证。
 
 # 测试流程
 

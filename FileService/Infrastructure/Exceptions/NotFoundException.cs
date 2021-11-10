@@ -1,14 +1,16 @@
 using System;
+using Grpc.Core;
 
 namespace FileService.Infrastructure.Exceptions
 {
-    public class NotFoundException : CustomBaseException
+    public class NotFoundException : RpcException
     {
-        public NotFoundException() { }
+        public NotFoundException() : base(new Status(StatusCode.NotFound, "Some requested entity (e.g., file or directory) was not found. "))
+        {
+        }
 
-        public NotFoundException(string message) : base(message) { }
-
-        public NotFoundException(string message, Exception innerException)
-            : base(message, innerException) { }
+        public NotFoundException(string message) : base(new Status(StatusCode.NotFound, message))
+        {
+        }
     }
 }

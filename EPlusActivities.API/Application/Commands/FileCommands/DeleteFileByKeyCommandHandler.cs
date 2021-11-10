@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -22,7 +19,7 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
             CancellationToken cancellationToken
         )
         {
-            if (!await _fileService.DeleteFileByKeyAsync(request))
+            if (!(await _fileService.DeleteFileByKeyAsync(request)).Succeeded)
             {
                 throw new RemoteServiceException("Failed to delete the file on the file server.");
             }

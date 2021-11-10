@@ -7,7 +7,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class DeleteFileByIdCommand : IRequest
+    public class DeleteFileByFileIdCommand : IRequest
     {
         /// <summary>
         /// 文件 ID

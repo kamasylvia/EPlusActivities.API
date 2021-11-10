@@ -10,19 +10,19 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class DeleteFileByIdCommandHandler
+    public class DeleteFileByFileIdCommandHandler
         : BaseCommandHandler,
-          IRequestHandler<DeleteFileByIdCommand>
+          IRequestHandler<DeleteFileByFileIdCommand>
     {
-        public DeleteFileByIdCommandHandler(IMapper mapper, IFileService fileService)
+        public DeleteFileByFileIdCommandHandler(IMapper mapper, IFileService fileService)
             : base(mapper, fileService) { }
 
         public async Task<Unit> Handle(
-            DeleteFileByIdCommand request,
+            DeleteFileByFileIdCommand request,
             CancellationToken cancellationToken
         )
         {
-            if (!await _fileService.DeleteFileByIdAsync(request))
+            if (!(await _fileService.DeleteFileByFileIdAsync(request)).Succeeded)
             {
                 throw new RemoteServiceException("Failed to delete the file on the file server.");
             }

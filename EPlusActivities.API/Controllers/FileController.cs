@@ -36,8 +36,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<IActionResult> DownloadFileByIdAsync(
-            [FromQuery] DownloadFileByIdCommand request
+        public async Task<IActionResult> DownloadFileByFileIdAsync(
+            [FromQuery] DownloadFileByFileIdCommand request
         )
         {
             var result = await _mediator.Send(request);
@@ -67,7 +67,8 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("ownerId")]
+        /*
+        [HttpGet("files/ownerId")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -76,6 +77,7 @@ namespace EPlusActivities.API.Controllers
             ActionResult<IEnumerable<DownloadFilesByOwnerIdDto>>
         > DownloadFilesByOwnerIdAsync([FromQuery] DownloadFilesByOwnerIdCommand request) =>
             Ok(await _mediator.Send(request));
+        */
 
         /// <summary>
         /// 上传文件
@@ -105,7 +107,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> DeleteFileByIdAsync(
-            [FromQuery] DeleteFileByIdCommand request
+            [FromQuery] DeleteFileByFileIdCommand request
         )
         {
             await _mediator.Send(request);

@@ -8,25 +8,25 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class DownloadFileByIdCommandHandler
+    public class DownloadFileByFileIdCommandHandler
         : BaseCommandHandler,
-          IRequestHandler<DownloadFileByIdCommand, DownloadFileGrpcResponse>
+          IRequestHandler<DownloadFileByFileIdCommand, DownloadFileGrpcResponse>
     {
-        public DownloadFileByIdCommandHandler(IMapper mapper, IFileService fileService)
+        public DownloadFileByFileIdCommandHandler(IMapper mapper, IFileService fileService)
             : base(mapper, fileService) { }
 
         public async Task<DownloadFileGrpcResponse> Handle(
-            DownloadFileByIdCommand request,
+            DownloadFileByFileIdCommand request,
             CancellationToken cancellationToken
         )
         {
-            var downloadFileGrpcResponse = await _fileService.DownloadFileByIdAsync(request);
-            if (downloadFileGrpcResponse.Data.IsEmpty)
+            var response = await _fileService.DownloadFileByFileIdAsync(request);
+            if (response.Data.IsEmpty)
             {
                 throw new RemoteServiceException("Could not find the file.");
             }
 
-            return downloadFileGrpcResponse;
+            return response;
         }
     }
 }

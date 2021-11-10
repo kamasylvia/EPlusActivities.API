@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -15,11 +13,11 @@ using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Commands
 {
-    public class DownloadFileByIdCommandHandler
+    public class DownloadFileByFileIdCommandHandler
         : BaseCommandHandler,
-          IRequestHandler<DownloadFileByIdCommand, DownloadFileGrpcResponse>
+          IRequestHandler<DownloadFileByFileIdCommand, DownloadFileGrpcResponse>
     {
-        public DownloadFileByIdCommandHandler(
+        public DownloadFileByFileIdCommandHandler(
             IConfiguration configuration,
             IFileStorageService fileStorageService,
             IAppFileRepository fileRepository,
@@ -28,17 +26,17 @@ namespace FileService.Application.Commands
         ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
         public async Task<DownloadFileGrpcResponse> Handle(
-            DownloadFileByIdCommand command,
+            DownloadFileByFileIdCommand command,
             CancellationToken cancellationToken
         )
         {
-            var file = await _fileRepository.FindByIdAsync(command.GrpcRequest.FileId);
+            var file = await _fileRepository.FindByIdAsync(Guid.Parse(command.GrpcRequest.FileId));
             if (file is null)
             {
                 throw new NotFoundException("Could not find the file.");
             }
 
-            using var memoryStream = await _fileStorageService.DownloadFileAsync(file.FilePath);
+            using var memoryStream = await _fileStorageService.DownloadFileAsync(file);
             return new DownloadFileGrpcResponse
             {
                 ContentType = file.ContentType,

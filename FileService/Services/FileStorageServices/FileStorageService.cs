@@ -35,11 +35,11 @@ namespace FileService.Services.FileStorageService
             Directory.CreateDirectory(_fileStorageDirectory);
         }
 
-        public bool DeleteFile(string filePath)
+        public bool DeleteFile(AppFile appFile)
         {
             try
             {
-                File.Delete(filePath);
+                File.Delete(appFile.FilePath);
                 return true;
             }
             catch (System.Exception)
@@ -48,82 +48,16 @@ namespace FileService.Services.FileStorageService
             }
         }
 
-        public async Task<MemoryStream> DownloadFileAsync(string filePath)
+        public async Task<MemoryStream> DownloadFileAsync(AppFile appFile)
         {
             var memoryStream = new MemoryStream();
-            using (var stream = new FileStream(filePath, FileMode.Open))
+            using (var stream = new FileStream(appFile.FilePath, FileMode.Open))
             {
                 await stream.CopyToAsync(memoryStream);
             }
 
             memoryStream.Position = 0;
             return memoryStream;
-        }
-
-        public async Task<bool> UploadFileAsync(UploadFileGrpcRequest request)
-        {
-            var appFile =
-                await _appFileRepository.FindByAlternateKeyAsync(
-                    Guid.Parse(request.OwnerId),
-                    request.Key
-                ) ?? _mapper.Map<AppFile>(request);
-
-            var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
-
-            if (File.Exists(appFile.FilePath))
-            {
-                File.Delete(appFile.FilePath);
-                appFile.FilePath = filePath;
-                _appFileRepository.Update(appFile);
-            }
-            else
-            {
-                appFile.FilePath = filePath;
-                await _appFileRepository.AddAsync(appFile);
-            }
-
-            using var stream = File.Create(filePath);
-            request.Content.WriteTo(stream);
-
-            return await _appFileRepository.SaveAsync();
-        }
-
-        public async Task<bool> UploadFileAsync(UploadFileRequestDto fileDto)
-        {
-            try
-            {
-                var appFile =
-                    await _appFileRepository.FindByAlternateKeyAsync(
-                        fileDto.OwnerId.Value,
-                        fileDto.Key
-                    ) ?? _mapper.Map<AppFile>(fileDto);
-
-                var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
-
-                if (File.Exists(appFile.FilePath))
-                {
-                    File.Delete(appFile.FilePath);
-                    appFile.FilePath = filePath;
-                    _appFileRepository.Update(appFile);
-                }
-                else
-                {
-                    appFile.FilePath = filePath;
-                    await _appFileRepository.AddAsync(appFile);
-                }
-
-                using (var stream = File.Create(filePath))
-                {
-                    await fileDto.FormFile.CopyToAsync(stream);
-                }
-
-                return await _appFileRepository.SaveAsync();
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return false;
-            }
         }
     }
 }

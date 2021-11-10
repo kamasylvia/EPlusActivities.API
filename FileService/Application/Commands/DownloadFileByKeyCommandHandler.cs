@@ -37,10 +37,10 @@ namespace FileService.Application.Commands
 
             if (file is null)
             {
-                return null;
+                throw new NotFoundException("Could not find the file.");
             }
 
-            using var memoryStream = await _fileStorageService.DownloadFileAsync(file.FilePath);
+            using var memoryStream = await _fileStorageService.DownloadFileAsync(file);
             return new DownloadFileGrpcResponse
             {
                 ContentType = file.ContentType,

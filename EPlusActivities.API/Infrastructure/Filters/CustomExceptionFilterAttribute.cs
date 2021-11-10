@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Dapr.Client;
 using EPlusActivities.API.Infrastructure.ActionResults;
 using EPlusActivities.API.Infrastructure.Exceptions;
+using Grpc.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -59,6 +59,26 @@ namespace EPlusActivities.API.Infrastructure.Filters
                     apiResult.Errors = string.IsNullOrEmpty(ex.Message)
                         ? "Conflict error."
                         : ex.Message;
+                    break;
+                case InvocationException ex:
+                    switch (ex.InnerException)
+                    {
+                        case RpcException rpcEx:
+                            switch (rpcEx.StatusCode)
+                            {
+                                case StatusCode.NotFound:
+                                    apiResult.StatusCode = StatusCodes.Status404NotFound;
+                                    apiResult.Errors = string.IsNullOrEmpty(ex.Message)
+                                        ? "Could not find the entity."
+                                        : rpcEx.Message;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     apiResult.StatusCode = StatusCodes.Status500InternalServerError;
