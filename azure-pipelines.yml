@@ -94,7 +94,7 @@ stages:
             tagSource: 'gitTag'
             tagPattern: '[Rr]elease-v[1-9]*\S*' # required 
             assets: '$(Build.ArtifactStagingDirectory)/*.zip'
-            isDraft: true
+            # isDraft: true
             changeLogCompareToRelease: 'lastFullRelease'
             changeLogType: 'commitBased'
   - stage: Deploy
