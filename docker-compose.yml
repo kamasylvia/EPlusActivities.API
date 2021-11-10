@@ -3,9 +3,9 @@ version: "3.4"
 services:
     eplusactivities-db:
         image: mysql:8.0.25
-        container_name: mysql-eplusactivities
+        container_name: MySQL-EPlusActivities
         ports:
-          - 30303:3306 
+            - 30303:3306
         environment:
             MYSQL_DATABASE: EPlusActivities
             MYSQL_USER: ngs
@@ -28,12 +28,31 @@ services:
         links:
             - eplusactivities-db
         ports:
-          - 52538:80
+            - 52538:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs
             - ./Settings/EplusActivities.API/appsettings.json:/app/appsettings.json
             - ~/.aspnet/https:/root/.aspnet/https:ro
             - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+        restart: always
+    eplusactivities-sidecar:
+        image: daprio/daprd:edge
+        container_name: EplusActivities-Sidecar
+        command:
+            [
+                "./daprd",
+                "-app-id",
+                "EPlusActivities",
+                "-app-port",
+                "80",
+                "-components-path",
+                "/components",
+            ]
+        volumes:
+            - ./components/:/components
+        depends_on:
+            - "eplusactivities-api"
+        network_mode: service:eplusactivities-api
         restart: always
 
     nginx:
@@ -51,9 +70,9 @@ services:
 
     fileservice-db:
         image: mysql:8.0.25
-        container_name: mysql-fileservice
+        container_name: MySQL-FileService
         ports:
-          - 30304:3306 
+            - 30304:3306
         environment:
             MYSQL_DATABASE: FileService
             MYSQL_USER: ngs
@@ -70,7 +89,9 @@ services:
         container_name: FileService
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
-            - ASPNETCORE_URLS=http://+:80
+            - ASPNETCORE_URLS=http://+:52500
+        ports:
+            - 50002:50002
         links:
             - fileservice-db
         depends_on:
@@ -78,4 +99,28 @@ services:
         volumes:
             - ./Logs/FileServiceLogs:/app/Logs
             - ./Settings/FileService/appsettings.json:/app/appsettings.json
+            - ./FileStorage:/app/FileStorage
+        restart: always
+    fileservice-sidecar:
+        image: daprio/daprd:edge
+        container_name: FileService-Sidecar
+        command:
+            [
+                "./daprd",
+                "-app-id",
+                "FileService",
+                "-app-port",
+                "52500",
+                "-dapr-grpc-port",
+                "50002",
+                "-app-protocol",
+                "grpc",
+                "-components-path",
+                "/components",
+            ]
+        volumes:
+            - ./components/:/components
+        depends_on:
+            - "fileservice"
+        network_mode: service:fileservice
         restart: always
