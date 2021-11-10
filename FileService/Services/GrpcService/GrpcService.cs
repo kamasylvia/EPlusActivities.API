@@ -61,8 +61,7 @@ namespace FileService.Services.GrpcService
                         await _mediator.Send(
                             new DeleteFileByFileIdCommand
                             {
-                                GrpcRequest =
-                                    request.Data.Unpack<DeleteFileByFileIdGrpcRequest>()
+                                GrpcRequest = request.Data.Unpack<DeleteFileByFileIdGrpcRequest>()
                             }
                         )
                     );
@@ -72,8 +71,7 @@ namespace FileService.Services.GrpcService
                         await _mediator.Send(
                             new DeleteFileByKeyCommand
                             {
-                                GrpcRequest =
-                                    request.Data.Unpack<DeleteFileByKeyGrpcRequest>()
+                                GrpcRequest = request.Data.Unpack<DeleteFileByKeyGrpcRequest>()
                             }
                         )
                     );

@@ -29,7 +29,7 @@ namespace FileService.Data
             {
                 var context =
                     serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    
+
                 context.Database.Migrate();
 
                 // Look for any Data.

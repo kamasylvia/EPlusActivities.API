@@ -12,13 +12,22 @@ using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Commands
 {
-    public class DeleteFileByFileIdCommandHandler : BaseCommandHandler, IRequestHandler<DeleteFileByFileIdCommand, DeleteFileGrpcResponse>
+    public class DeleteFileByFileIdCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<DeleteFileByFileIdCommand, DeleteFileGrpcResponse>
     {
-        public DeleteFileByFileIdCommandHandler(IConfiguration configuration, IFileStorageService fileStorageService, IAppFileRepository fileRepository, ILogger<FileStorageService> logger, IMapper mapper) : base(configuration, fileStorageService, fileRepository, logger, mapper)
-        {
-        }
+        public DeleteFileByFileIdCommandHandler(
+            IConfiguration configuration,
+            IFileStorageService fileStorageService,
+            IAppFileRepository fileRepository,
+            ILogger<FileStorageService> logger,
+            IMapper mapper
+        ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
-        public async Task<DeleteFileGrpcResponse> Handle(DeleteFileByFileIdCommand request, CancellationToken cancellationToken)
+        public async Task<DeleteFileGrpcResponse> Handle(
+            DeleteFileByFileIdCommand request,
+            CancellationToken cancellationToken
+        )
         {
             var file = await _fileRepository.FindByIdAsync(Guid.Parse(request.GrpcRequest.FileId));
             if (file is null)
@@ -28,7 +37,11 @@ namespace FileService.Application.Commands
 
             _fileRepository.Remove(file);
 
-            return new DeleteFileGrpcResponse { Succeeded = _fileStorageService.DeleteFile(file) && await _fileRepository.SaveAsync() };
+            return new DeleteFileGrpcResponse
+            {
+                Succeeded =
+                    _fileStorageService.DeleteFile(file) && await _fileRepository.SaveAsync()
+            };
         }
     }
 }

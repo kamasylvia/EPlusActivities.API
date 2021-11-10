@@ -40,14 +40,17 @@ namespace EPlusActivities.API.Services.FileService
             _fileServiceAppId = _configuration["Dapr:FileService"];
         }
 
-        public async Task<UploadFileGrpcResponse> UploadFileAsync(UploadFileCommand request) => await _daprClient.InvokeMethodGrpcAsync<
-                    UploadFileGrpcRequest,
-                    UploadFileGrpcResponse
-                >(_fileServiceAppId, "UploadFile", _mapper.Map<UploadFileGrpcRequest>(request));
+        public async Task<UploadFileGrpcResponse> UploadFileAsync(UploadFileCommand request) =>
+            await _daprClient.InvokeMethodGrpcAsync<UploadFileGrpcRequest, UploadFileGrpcResponse>(
+                _fileServiceAppId,
+                "UploadFile",
+                _mapper.Map<UploadFileGrpcRequest>(request)
+            );
 
         public async Task<DownloadFileGrpcResponse> DownloadFileByFileIdAsync(
             DownloadFileByFileIdCommand request
-        ) => await _daprClient.InvokeMethodGrpcAsync<
+        ) =>
+            await _daprClient.InvokeMethodGrpcAsync<
                 DownloadFileByFileIdGrpcRequest,
                 DownloadFileGrpcResponse
             >(
@@ -58,35 +61,38 @@ namespace EPlusActivities.API.Services.FileService
 
         public async Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(
             DownloadFileByKeyCommand request
-        ) => await _daprClient.InvokeMethodGrpcAsync<
-                    DownloadFileByKeyGrpcRequest,
-                    DownloadFileGrpcResponse
-                >(
-                    _fileServiceAppId,
-                    "DownloadFileByKey",
-                    _mapper.Map<DownloadFileByKeyGrpcRequest>(request)
-                );
+        ) =>
+            await _daprClient.InvokeMethodGrpcAsync<
+                DownloadFileByKeyGrpcRequest,
+                DownloadFileGrpcResponse
+            >(
+                _fileServiceAppId,
+                "DownloadFileByKey",
+                _mapper.Map<DownloadFileByKeyGrpcRequest>(request)
+            );
 
         public async Task<DeleteFileGrpcResponse> DeleteFileByFileIdAsync(
             DeleteFileByFileIdCommand request
-        ) => await _daprClient.InvokeMethodGrpcAsync<
-                    DeleteFileByFileIdGrpcRequest,
-                    DeleteFileGrpcResponse
-                >(
-                    _fileServiceAppId,
-                    "DeleteFileByFileId",
-                    _mapper.Map<DeleteFileByFileIdGrpcRequest>(request)
-                );
+        ) =>
+            await _daprClient.InvokeMethodGrpcAsync<
+                DeleteFileByFileIdGrpcRequest,
+                DeleteFileGrpcResponse
+            >(
+                _fileServiceAppId,
+                "DeleteFileByFileId",
+                _mapper.Map<DeleteFileByFileIdGrpcRequest>(request)
+            );
 
         public async Task<DeleteFileGrpcResponse> DeleteFileByKeyAsync(
             DeleteFileByKeyCommand request
-        ) => await _daprClient.InvokeMethodGrpcAsync<
-                    DeleteFileByKeyGrpcRequest,
-                    DeleteFileGrpcResponse
-                >(
-                    _fileServiceAppId,
-                    "DeleteFileByKey",
-                    _mapper.Map<DeleteFileByKeyGrpcRequest>(request)
-                );
+        ) =>
+            await _daprClient.InvokeMethodGrpcAsync<
+                DeleteFileByKeyGrpcRequest,
+                DeleteFileGrpcResponse
+            >(
+                _fileServiceAppId,
+                "DeleteFileByKey",
+                _mapper.Map<DeleteFileByKeyGrpcRequest>(request)
+            );
     }
 }

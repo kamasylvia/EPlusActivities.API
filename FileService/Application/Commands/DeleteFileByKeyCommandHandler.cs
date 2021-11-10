@@ -14,16 +14,25 @@ using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Commands
 {
-    public class DeleteFileByKeyCommandHandler : BaseCommandHandler, IRequestHandler<DeleteFileByKeyCommand, DeleteFileGrpcResponse>
+    public class DeleteFileByKeyCommandHandler
+        : BaseCommandHandler,
+          IRequestHandler<DeleteFileByKeyCommand, DeleteFileGrpcResponse>
     {
-        public DeleteFileByKeyCommandHandler(IConfiguration configuration, IFileStorageService fileStorageService, IAppFileRepository fileRepository, ILogger<FileStorageService> logger, IMapper mapper) : base(configuration, fileStorageService, fileRepository, logger, mapper)
-        {
-        }
+        public DeleteFileByKeyCommandHandler(
+            IConfiguration configuration,
+            IFileStorageService fileStorageService,
+            IAppFileRepository fileRepository,
+            ILogger<FileStorageService> logger,
+            IMapper mapper
+        ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
-        public async Task<DeleteFileGrpcResponse> Handle(DeleteFileByKeyCommand request, CancellationToken cancellationToken)
+        public async Task<DeleteFileGrpcResponse> Handle(
+            DeleteFileByKeyCommand request,
+            CancellationToken cancellationToken
+        )
         {
             var file = await _fileRepository.FindByAlternateKeyAsync(
-               Guid.Parse(request.GrpcRequest.OwnerId),
+                Guid.Parse(request.GrpcRequest.OwnerId),
                 request.GrpcRequest.Key
             );
             if (file is null)
@@ -33,7 +42,11 @@ namespace FileService.Application.Commands
 
             _fileRepository.Remove(file);
 
-            return new DeleteFileGrpcResponse { Succeeded = _fileStorageService.DeleteFile(file) && await _fileRepository.SaveAsync() };
+            return new DeleteFileGrpcResponse
+            {
+                Succeeded =
+                    _fileStorageService.DeleteFile(file) && await _fileRepository.SaveAsync()
+            };
         }
     }
 }
