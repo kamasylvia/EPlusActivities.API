@@ -49,7 +49,7 @@ namespace EPlusActivities.API.Infrastructure.Filters
                         : ex.Message;
                     break;
                 case RemoteServiceException ex:
-                    apiResult.StatusCode = StatusCodes.Status502BadGateway;
+                    apiResult.StatusCode = StatusCodes.Status503ServiceUnavailable;
                     apiResult.Errors = string.IsNullOrEmpty(ex.Message)
                         ? "Remote service error."
                         : ex.Message;
@@ -77,6 +77,10 @@ namespace EPlusActivities.API.Infrastructure.Filters
                             }
                             break;
                         default:
+                            apiResult.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                            apiResult.Errors = string.IsNullOrEmpty(ex.Message)
+                                ? "Remote service is unavailbale."
+                                : ex.Message;
                             break;
                     }
                     break;
