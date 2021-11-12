@@ -1,10 +1,14 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Entities
 {
     public class ActivityUser
     {
+        // 渠道号
+        public ChannelCode Channel { get; set; }
+
         // 全活动周期已抽奖次数
         public int UsedDraws { get; set; }
 
