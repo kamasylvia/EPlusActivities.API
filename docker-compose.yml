@@ -18,7 +18,7 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211111
+        image: kamasylvia/eplusactivities:20211112
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
