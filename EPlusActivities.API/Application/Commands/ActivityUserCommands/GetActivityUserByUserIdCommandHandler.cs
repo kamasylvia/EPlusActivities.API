@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -24,7 +22,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             IActivityRepository activityRepository,
             IMemberService memberService,
             UserManager<ApplicationUser> userManager,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
@@ -55,7 +53,12 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             #endregion
 
             return _mapper.Map<IEnumerable<ActivityUserDto>>(
-                await _activityUserRepository.FindByParentIdAsync(request.UserId.Value)
+                await _activityService.GetAvailableActivityUserLinksAsync(
+                    request.UserId.Value,
+                    request.AvailableChannel,
+                    request.StartTime,
+                    request.EndTime
+                )
             );
         }
     }

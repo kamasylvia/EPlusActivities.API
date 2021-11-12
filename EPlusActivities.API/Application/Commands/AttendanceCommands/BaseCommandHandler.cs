@@ -16,7 +16,7 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
         protected readonly IMapper _mapper;
         protected readonly IAttendanceRepository _attendanceRepository;
         protected readonly UserManager<ApplicationUser> _userManager;
-        protected readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
+        protected readonly IActivityUserRepository _activityUserRepository;
         protected readonly IActivityRepository _activityRepository;
         protected readonly IIdGeneratorService _idGeneratorService;
         protected readonly IMemberService _memberService;
@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
             IMapper mapper,
             IActivityRepository activityRepository,
             IIdGeneratorService idGeneratorService,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             IMemberService memberService
         )
         {

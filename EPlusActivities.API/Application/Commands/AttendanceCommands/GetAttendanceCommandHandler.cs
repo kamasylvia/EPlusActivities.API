@@ -25,7 +25,7 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
             IMapper mapper,
             IActivityRepository activityRepository,
             IIdGeneratorService idGeneratorService,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             IMemberService memberService
         )
             : base(

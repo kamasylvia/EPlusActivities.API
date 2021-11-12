@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         protected readonly UserManager<ApplicationUser> _userManager;
         protected readonly IActivityRepository _activityRepository;
         protected readonly IPrizeItemRepository _prizeItemRepository;
-        protected readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
+        protected readonly IActivityUserRepository _activityUserRepository;
         protected readonly IRepository<Coupon> _couponRepository;
         protected readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
         protected readonly ILotteryService _lotteryService;
@@ -37,7 +37,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             IPrizeItemRepository prizeItemRepository,
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IMapper mapper,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             IRepository<Coupon> couponResponseDto,
             ILotteryService lotteryService,
             IMemberService memberService,

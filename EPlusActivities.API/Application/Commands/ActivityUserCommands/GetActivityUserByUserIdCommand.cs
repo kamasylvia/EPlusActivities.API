@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
@@ -11,6 +11,10 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
     {
         [Required]
         public Guid? UserId { get; set; }
+
+        public DateTime? StartTime { get; set; }
+
+        public DateTime? EndTime { get; set; }
 
         /// <summary>
         /// 用户访问的渠道，字符串不区分大小写。

@@ -18,13 +18,13 @@ namespace EPlusActivities.API.Services.ActivityService
     {
         private readonly IActivityRepository _activityRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
+        private readonly IActivityUserRepository _activityUserRepository;
         private readonly ILogger<ActivityService> _logger;
         private readonly IMapper _mapper;
         public ActivityService(
             IActivityRepository activityRepository,
             UserManager<ApplicationUser> userManager,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             ILogger<ActivityService> logger,
             IMapper mapper
         )
@@ -79,9 +79,11 @@ namespace EPlusActivities.API.Services.ActivityService
                 );
         }
 
-        public async Task<IEnumerable<ActivityUser>> BindUserWithActivities(
+        public async Task<IEnumerable<ActivityUser>> GetAvailableActivityUserLinksAsync(
             Guid userId,
-            IEnumerable<Guid> activityIds
+            ChannelCode channel,
+            DateTime? startTime = null,
+            DateTime? endTime = null
         )
         {
             var result = new List<ActivityUser>();
@@ -92,7 +94,31 @@ namespace EPlusActivities.API.Services.ActivityService
                 return result;
             }
 
-            var existedLinks = await _activityUserRepository.FindByParentIdAsync(userId);
+            return (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
+                au =>
+                    !(au.Activity.StartTime > (startTime ?? DateTime.Now.Date))
+                    && !((endTime ?? DateTime.Now.Date) > au.Activity.EndTime)
+                    && au.Channel == channel
+            );
+        }
+
+        public async Task<IEnumerable<ActivityUser>> BindUserWithActivities(
+            Guid userId,
+            IEnumerable<Guid> activityIds,
+            ChannelCode channel
+        )
+        {
+            var result = new List<ActivityUser>();
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null)
+            {
+                _logger.LogError("用户不存在");
+                return result;
+            }
+
+            var existedLinks = (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
+                au => au.Channel == channel
+            );
             var unBoundActivityIds = activityIds.Except(
                 existedLinks.Select(activityUser => activityUser.ActivityId.Value)
             );
@@ -102,7 +128,12 @@ namespace EPlusActivities.API.Services.ActivityService
                 var activity = await _activityRepository.FindByIdAsync(activityId);
                 if (activity is not null)
                 {
-                    var activityUser = new ActivityUser { User = user, Activity = activity };
+                    var activityUser = new ActivityUser
+                    {
+                        User = user,
+                        Activity = activity,
+                        Channel = channel
+                    };
                     result.Add(activityUser);
                     await _activityUserRepository.AddAsync(activityUser);
                 }
@@ -119,16 +150,17 @@ namespace EPlusActivities.API.Services.ActivityService
 
         public async Task<IEnumerable<ActivityUser>> BindUserWithAvailableActivities(
             Guid userId,
-            ChannelCode availableChannel
+            ChannelCode channel
         ) =>
             await BindUserWithActivities(
                 userId,
                 (
                     await GetAvailableActivitiesAsync(
-                        new List<ChannelCode> { availableChannel },
+                        new List<ChannelCode> { channel },
                         DateTime.Now.Date
                     )
-                ).Select(activity => activity.Id.Value)
+                ).Select(activity => activity.Id.Value),
+                channel
             );
     }
 }

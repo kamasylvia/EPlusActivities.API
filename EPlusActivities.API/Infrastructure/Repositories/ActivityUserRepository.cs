@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
+using EPlusActivities.API.Infrastructure.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
     [CustomDependency(ServiceLifetime.Scoped)]
-    public class ActivityUserRepository
-        : RepositoryBase<ActivityUser>,
-          IFindByParentIdRepository<ActivityUser>
+    public class ActivityUserRepository : RepositoryBase<ActivityUser>, IActivityUserRepository
     {
         public ActivityUserRepository(ApplicationDbContext context) : base(context) { }
 
@@ -35,11 +34,17 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                         && activityUser.UserId.Value == (Guid)keyValues[1]
                 );
 
-        public async Task<IEnumerable<ActivityUser>> FindByParentIdAsync(Guid userId) =>
+        public async Task<IEnumerable<ActivityUser>> FindByUserIdAsync(Guid userId) =>
             await _context.ActivityUserLinks
                 .Include(au => au.Activity)
                 .AsAsyncEnumerable()
-                .Where(activityUser => activityUser.UserId == userId)
+                .Where(au => au.UserId == userId)
+                .ToListAsync();
+
+        public async Task<IEnumerable<ActivityUser>> FindByActivityIdAsync(Guid activityId) =>
+            await _context.ActivityUserLinks
+                .AsAsyncQueryable()
+                .Where(au => au.ActivityId == activityId)
                 .ToListAsync();
     }
 }

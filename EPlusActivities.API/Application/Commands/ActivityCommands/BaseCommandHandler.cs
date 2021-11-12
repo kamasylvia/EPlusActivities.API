@@ -16,7 +16,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         protected readonly IMemberService _memberService;
         protected readonly UserManager<ApplicationUser> _userManager;
         protected readonly IIdGeneratorService _idGeneratorService;
-        protected readonly IFindByParentIdRepository<ActivityUser> _activityUserRepository;
+        protected readonly IActivityUserRepository _activityUserRepository;
         protected readonly ILotteryRepository _lotteryRepository;
         protected readonly IMapper _mapper;
         protected readonly IActivityService _activityService;
@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
             IActivityRepository activityRepository,
             UserManager<ApplicationUser> userManager,
             IIdGeneratorService idGeneratorService,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             ILotteryRepository lotteryRepository,
             IMapper mapper,
             IActivityService activityService,

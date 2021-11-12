@@ -32,7 +32,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             IPrizeItemRepository prizeItemRepository,
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IMapper mapper,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             IRepository<Coupon> couponResponseDto,
             ILotteryService lotteryService,
             IMemberService memberService,

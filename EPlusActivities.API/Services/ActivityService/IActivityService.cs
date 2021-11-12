@@ -20,9 +20,17 @@ namespace EPlusActivities.API.Services.ActivityService
             DateTime? endTime = null
         );
 
+        Task<IEnumerable<ActivityUser>> GetAvailableActivityUserLinksAsync(
+            Guid userId,
+            ChannelCode channel,
+            DateTime? startTime = null,
+            DateTime? endTime = null
+        );
+
         Task<IEnumerable<ActivityUser>> BindUserWithActivities(
             Guid userId,
-            IEnumerable<Guid> activityIds
+            IEnumerable<Guid> activityIds,
+            ChannelCode channel
         );
 
         Task<IEnumerable<ActivityUser>> BindUserWithAvailableActivities(

@@ -24,7 +24,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             IActivityRepository activityRepository,
             IMemberService memberService,
             UserManager<ApplicationUser> userManager,
-            IFindByParentIdRepository<ActivityUser> activityUserRepository,
+            IActivityUserRepository activityUserRepository,
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
