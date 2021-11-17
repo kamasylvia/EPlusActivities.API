@@ -1,6 +1,10 @@
 version: "3.4"
 
 services:
+    redis:
+        image: redis:alpine
+        # ports:
+        # - "5379:6379"
     eplusactivities-db:
         image: mysql:8.0.25
         container_name: MySQL-EPlusActivities
@@ -48,11 +52,11 @@ services:
                 "-components-path",
                 "/components",
                 # "-config",
-                # "/config.yaml",
+                # "/configurations/config.yaml",
             ]
         volumes:
             - ./Dapr/Components/:/components
-            - ./Dapr/config.yaml/:/config.yaml
+            - ./Dapr/Configurations/:/configurations
         depends_on:
             - "eplusactivities-api"
         network_mode: service:eplusactivities-api
@@ -121,11 +125,11 @@ services:
                 "-components-path",
                 "/components",
                 # "-config",
-                # "/config.yaml",
+                # "/configurations/config.yaml",
             ]
         volumes:
             - ./Dapr/Components/:/components
-            - ./Dapr/config.yaml/:/config.yaml
+            - ./Dapr/Configurations/:/configurations
         depends_on:
             - "fileservice"
         network_mode: service:fileservice

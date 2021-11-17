@@ -16,13 +16,13 @@ namespace EPlusActivities.API.Actors
     public class ActivityUserActor : Actor, IActivityUserActor
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ActivityService _activityService;
+        private readonly IActivityService _activityService;
         private readonly IMapper _mapper;
 
         public ActivityUserActor(
             ActorHost host,
             UserManager<ApplicationUser> userManager,
-            ActivityService activityService,
+            IActivityService activityService,
             IMapper mapper
         ) : base(host)
         {
