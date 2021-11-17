@@ -135,7 +135,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed PrizeItems
-            var prizeItem = new PrizeItem("Seed") { Brand = brand, Category = category, };
+            var prizeItem = new PrizeItem("无奖") { PrizeType = Infrastructure.Enums.PrizeType.None };
             await context.PrizeItems.AddAsync(prizeItem);
             #endregion
 

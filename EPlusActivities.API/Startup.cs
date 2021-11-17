@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using EPlusActivities.API.Actors;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Extensions;
@@ -54,6 +56,20 @@ namespace EPlusActivities.API
                     }
                 )
                 .AddDapr();
+
+            services.AddActors(
+                options =>
+                {
+                    var jsonSerializerOptions = new JsonSerializerOptions()
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    options.JsonSerializerOptions = jsonSerializerOptions;
+                    options.Actors.RegisterActor<ActivityUserActor>();
+                }
+            );
 
             services.AddLogging(
                 (builder) =>
@@ -268,7 +284,7 @@ namespace EPlusActivities.API
                 );
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -286,6 +302,7 @@ namespace EPlusActivities.API
             app.UseEndpoints(
                 endpoints =>
                 {
+                    endpoints.MapActorsHandlers();
                     endpoints.MapControllers();
                 }
             );

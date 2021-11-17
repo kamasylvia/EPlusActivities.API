@@ -18,7 +18,7 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211112
+        image: kamasylvia/eplusactivities:20211117
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
@@ -47,9 +47,12 @@ services:
                 "80",
                 "-components-path",
                 "/components",
+                # "-config",
+                # "/config.yaml",
             ]
         volumes:
-            - ./components/:/components
+            - ./Dapr/Components/:/components
+            - ./Dapr/config.yaml/:/config.yaml
         depends_on:
             - "eplusactivities-api"
         network_mode: service:eplusactivities-api
@@ -117,9 +120,12 @@ services:
                 "grpc",
                 "-components-path",
                 "/components",
+                # "-config",
+                # "/config.yaml",
             ]
         volumes:
-            - ./components/:/components
+            - ./Dapr/Components/:/components
+            - ./Dapr/config.yaml/:/config.yaml
         depends_on:
             - "fileservice"
         network_mode: service:fileservice

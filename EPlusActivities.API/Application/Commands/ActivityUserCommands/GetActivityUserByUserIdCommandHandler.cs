@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Actors;
+using EPlusActivities.API.Application.Commands.UserCommands;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
@@ -18,6 +22,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
         : BaseCommandHandler,
           IRequestHandler<GetActivityUserByUserIdCommand, IEnumerable<ActivityUserDto>>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public GetActivityUserByUserIdCommandHandler(
             IActivityRepository activityRepository,
             IMemberService memberService,
@@ -26,7 +32,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IGeneralLotteryRecordsRepository statementRepository
+            IGeneralLotteryRecordsRepository statementRepository,
+            IActorProxyFactory actorProxyFactory
         )
             : base(
                 activityRepository,
@@ -37,29 +44,26 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 idGeneratorService,
                 activityService,
                 statementRepository
-            ) { }
+            )
+        {
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+        }
 
         public async Task<IEnumerable<ActivityUserDto>> Handle(
             GetActivityUserByUserIdCommand request,
             CancellationToken cancellationToken
         )
         {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user is null)
-            {
-                throw new NotFoundException("Could not find the user.");
-            }
-            #endregion
-
-            return _mapper.Map<IEnumerable<ActivityUserDto>>(
-                await _activityService.GetAvailableActivityUserLinksAsync(
-                    request.UserId.Value,
-                    request.AvailableChannel,
-                    request.StartTime,
-                    request.EndTime
-                )
+            var actor = _actorProxyFactory.CreateActorProxy<IActivityUserActor>(
+                new ActorId(request.UserId.ToString() + request.AvailableChannel.ToString()),
+                nameof(ActivityUserActor)
             );
+            return await actor.BindUserWithAvailableActivitiesAsync(
+                new LoginCommand { UserId = request.UserId, ChannelCode = request.AvailableChannel }
+            )
+              ? await actor.GetActivitiesByUserIdAsync(request)
+              : new List<ActivityUserDto>();
         }
     }
 }

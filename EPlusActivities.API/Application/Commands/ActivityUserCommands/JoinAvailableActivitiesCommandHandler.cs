@@ -1,8 +1,10 @@
-using System.Collections.Generic;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.ActivityUserDtos;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Actors;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -16,9 +18,10 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class JoinAvailableActivitiesCommandHandler
         : BaseCommandHandler,
-          IRequestHandler<JoinAvailableActivitiesCommand, IEnumerable<ActivityUserDto>>,
           INotificationHandler<UserCommands.LoginCommand>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public JoinAvailableActivitiesCommandHandler(
             IActivityRepository activityRepository,
             IMemberService memberService,
@@ -27,7 +30,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IGeneralLotteryRecordsRepository statementRepository
+            IGeneralLotteryRecordsRepository statementRepository,
+            IActorProxyFactory actorProxyFactory
         )
             : base(
                 activityRepository,
@@ -38,28 +42,10 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 idGeneratorService,
                 activityService,
                 statementRepository
-            ) { }
-
-        public async Task<IEnumerable<ActivityUserDto>> Handle(
-            JoinAvailableActivitiesCommand request,
-            CancellationToken cancellationToken
-        )
+            )
         {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user is null)
-            {
-                throw new NotFoundException("Could not find the user.");
-            }
-            #endregion
-
-            var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
-                request.UserId.Value,
-                request.AvailableChannel
-            // Enum.Parse<ChannelCode>(request.AvailableChannel, true)
-            );
-
-            return _mapper.Map<IEnumerable<ActivityUserDto>>(newCreatedLinks);
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task Handle(
@@ -75,10 +61,14 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             }
             #endregion
 
-            var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
-                notification.UserId.Value,
-                notification.ChannelCode
-            );
+            await _actorProxyFactory
+                .CreateActorProxy<IActivityUserActor>(
+                    new ActorId(
+                        notification.UserId.ToString() + notification.ChannelCode.ToString()
+                    ),
+                    nameof(ActivityUserActor)
+                )
+                .BindUserWithAvailableActivitiesAsync(notification);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace EPlusActivities.API.Infrastructure.Enums
     /// </summary>
     public enum PrizeType
     {
-        Default,
+        None,
         // 积分
         Credit,
         // 优惠券
