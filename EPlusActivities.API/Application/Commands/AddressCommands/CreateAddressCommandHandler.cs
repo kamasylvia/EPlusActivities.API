@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.AddressCommands
 {
     public class CreateAddressCommandHandler
-        : BaseCommandHandler,
+        : AddressRequestHandlerBase,
           IRequestHandler<CreateAddressCommand, AddressDto>
     {
         public CreateAddressCommandHandler(

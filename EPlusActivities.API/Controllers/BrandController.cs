@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.BrandCommands;
+using EPlusActivities.API.Application.Queries.BrandQueries;
 using EPlusActivities.API.Dtos.BrandDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,7 +38,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<BrandDto>> GetByIdAsync(
-            [FromQuery] GetBrandByIdCommand request
+            [FromQuery] GetBrandByIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<BrandDto>> GetByNameAsync(
-            [FromQuery] GetBrandByNameCommand request
+            [FromQuery] GetBrandByNameQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetBrandListAsync(
-            [FromQuery] GetBrandListCommand request
+            [FromQuery] GetBrandListQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace EPlusActivities.API.Controllers
             Roles = "manager, tester"
         )]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetByContainedNameAsync(
-            [FromBody] GetBrandByContainedNameCommand request
+            [FromBody] GetBrandByContainedNameQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

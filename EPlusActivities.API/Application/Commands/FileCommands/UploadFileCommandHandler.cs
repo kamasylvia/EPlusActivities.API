@@ -10,7 +10,9 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class UploadFileCommandHandler : BaseCommandHandler, IRequestHandler<UploadFileCommand>
+    public class UploadFileCommandHandler
+        : FileRequestHandlerBase,
+          IRequestHandler<UploadFileCommand>
     {
         public UploadFileCommandHandler(IMapper mapper, IFileService fileService)
             : base(mapper, fileService) { }

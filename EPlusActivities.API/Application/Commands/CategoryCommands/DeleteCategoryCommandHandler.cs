@@ -12,7 +12,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.CategoryCommands
 {
     public class DeleteCategoryCommandHandler
-        : BaseCommandHandler,
+        : CategoryRequestHandlerBase,
           IRequestHandler<DeleteCategoryCommand>
     {
         public DeleteCategoryCommandHandler(

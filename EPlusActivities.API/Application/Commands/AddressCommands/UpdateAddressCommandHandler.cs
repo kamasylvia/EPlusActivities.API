@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.AddressCommands
 {
     public class UpdateAddressCommandHandler
-        : BaseCommandHandler,
+        : AddressRequestHandlerBase,
           IRequestHandler<UpdateAddressCommand>
     {
         public UpdateAddressCommandHandler(

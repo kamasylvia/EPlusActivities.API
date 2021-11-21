@@ -12,7 +12,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
 {
     public class UpdatePrizeTierCommandHandler
-        : BaseCommandHandler,
+        : PrizeTierRequestHandlerBase,
           IRequestHandler<UpdatePrizeTierCommand>
     {
         public UpdatePrizeTierCommandHandler(

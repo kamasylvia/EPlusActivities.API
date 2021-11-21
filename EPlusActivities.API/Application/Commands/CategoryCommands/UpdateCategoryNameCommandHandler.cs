@@ -13,7 +13,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.CategoryCommands
 {
     public class UpdateCategoryNameCommandHandler
-        : BaseCommandHandler,
+        : CategoryRequestHandlerBase,
           IRequestHandler<UpdateCategoryNameCommand>
     {
         public UpdateCategoryNameCommandHandler(

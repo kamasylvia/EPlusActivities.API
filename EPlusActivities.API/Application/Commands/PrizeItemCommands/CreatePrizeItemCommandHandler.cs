@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
     public class CreatePrizeItemCommandHandler
-        : BaseCommandHandler,
+        : PrizeItemRequestHandlerBase,
           IRequestHandler<CreatePrizeItemCommand, PrizeItemDto>
     {
         public CreatePrizeItemCommandHandler(

@@ -8,7 +8,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
     public class DeleteFileByKeyCommandHandler
-        : BaseCommandHandler,
+        : FileRequestHandlerBase,
           IRequestHandler<DeleteFileByKeyCommand>
     {
         public DeleteFileByKeyCommandHandler(IMapper mapper, IFileService fileService)

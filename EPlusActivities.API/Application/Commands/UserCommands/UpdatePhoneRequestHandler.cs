@@ -1,19 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
-using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class UpdatePhoneCommandHandler : BaseCommandHandler, IRequestHandler<UpdatePhoneCommand>
+    public class UpdatePhoneCommandHandler
+        : UserRequestHandlerBase,
+          IRequestHandler<UpdatePhoneCommand>
     {
         public UpdatePhoneCommandHandler(UserManager<ApplicationUser> userManager)
             : base(userManager) { }

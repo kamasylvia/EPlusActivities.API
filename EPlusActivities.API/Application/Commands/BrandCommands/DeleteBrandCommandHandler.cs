@@ -11,7 +11,9 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.BrandCommands
 {
-    public class DeleteBrandCommandHandler : BaseCommandHandler, IRequestHandler<DeleteBrandCommand>
+    public class DeleteBrandCommandHandler
+        : BrandRequestHandlerBase,
+          IRequestHandler<DeleteBrandCommand>
     {
         public DeleteBrandCommandHandler(
             INameExistsRepository<Brand> brandRepository,

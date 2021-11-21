@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
     public class DeleteActivityCommandHandler
-        : BaseCommandHandler,
+        : ActivityRequestHandlerBase,
           IRequestHandler<DeleteActivityCommand>
     {
         public DeleteActivityCommandHandler(

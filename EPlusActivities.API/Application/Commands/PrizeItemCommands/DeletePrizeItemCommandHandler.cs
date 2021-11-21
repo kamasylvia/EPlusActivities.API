@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
     public class DeletePrizeItemCommandHandler
-        : BaseCommandHandler,
+        : PrizeItemRequestHandlerBase,
           IRequestHandler<DeletePrizeItemCommand>
     {
         public DeletePrizeItemCommandHandler(

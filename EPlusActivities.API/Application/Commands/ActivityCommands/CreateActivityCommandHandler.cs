@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
     public class CreateActivityCommandHandler
-        : BaseCommandHandler,
+        : ActivityRequestHandlerBase,
           IRequestHandler<CreateActivityCommand, ActivityDto>
     {
         public CreateActivityCommandHandler(

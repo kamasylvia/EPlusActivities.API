@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.PrizeItemCommands;
+using EPlusActivities.API.Application.Queries.PrizeItemQueries;
 using EPlusActivities.API.Dtos.PrizeItemDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,7 +37,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetByNameAsync(
-            [FromQuery] GetPrizeItemByNameCommand request
+            [FromQuery] GetPrizeItemByNameQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeItemDto>> GetByIdsAsync(
-            [FromQuery] GetPrizeItemGroupCommand request
+            [FromQuery] GetPrizeItemGroupQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeItemDto>> GetByIdAsync(
-            [FromQuery] GetPrizeItemByIdCommand request
+            [FromQuery] GetPrizeItemByIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<PrizeItemDto>>> GetItemListAsync(
-            [FromQuery] GetPrizeItemListCommand request
+            [FromQuery] GetPrizeItemListQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

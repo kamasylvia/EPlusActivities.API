@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.CategoryCommands;
+using EPlusActivities.API.Application.Queries.CategoryQueries;
 using EPlusActivities.API.Dtos.CategoryDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,7 +35,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<CategoryDto>> GetByIdAsync(
-            [FromQuery] GetCategoryByIdCommand request
+            [FromQuery] GetCategoryByIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<CategoryDto>> GetByNameAsync(
-            [FromQuery] GetCategoryByNameCommand request
+            [FromQuery] GetCategoryByNameQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetByContainedNameAsync(
-            [FromQuery] GetCategoryByContainedNameCommand request
+            [FromQuery] GetCategoryByContainedNameQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoryListAsync(
-            [FromQuery] GetCategoryListCommand request
+            [FromQuery] GetCategoryListQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

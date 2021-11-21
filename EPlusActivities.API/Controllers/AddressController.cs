@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.AddressCommands;
+using EPlusActivities.API.Application.Queries.AddressQueries;
 using EPlusActivities.API.Dtos.AddressDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,7 +37,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetByUserIdAsync(
-            [FromQuery] GetAddressListByUserIdCommand request
+            [FromQuery] GetAddressListByUserIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<AddressDto>> GetByIdAsync(
-            [FromQuery] GetAddressCommand request
+            [FromQuery] GetAddressQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

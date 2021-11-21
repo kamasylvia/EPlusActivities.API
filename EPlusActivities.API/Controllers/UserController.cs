@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.UserCommands;
+using EPlusActivities.API.Application.Queries.UserQueries;
 using EPlusActivities.API.Dtos.UserDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -55,7 +56,7 @@ namespace EPlusActivities.API.Controllers
             Roles = "manager, tester"
         )]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync(
-            [FromQuery] GetUserListCommand request
+            [FromQuery] GetUserListQuery request
         ) => Ok(await _mediator.Send<IEnumerable<UserDto>>(request));
 
         /// <summary>

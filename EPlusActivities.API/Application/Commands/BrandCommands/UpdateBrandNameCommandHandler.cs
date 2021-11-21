@@ -12,7 +12,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.BrandCommands
 {
     public class UpdateBrandNameCommandHandler
-        : BaseCommandHandler,
+        : BrandRequestHandlerBase,
           IRequestHandler<UpdateBrandNameCommand>
     {
         public UpdateBrandNameCommandHandler(

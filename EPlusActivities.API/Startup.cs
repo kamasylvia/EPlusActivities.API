@@ -299,10 +299,13 @@ namespace EPlusActivities.API
 
             app.UseAuthorization();
 
+            app.UseCloudEvents();
+
             app.UseEndpoints(
                 endpoints =>
                 {
                     endpoints.MapActorsHandlers();
+                    endpoints.MapSubscribeHandler();
                     endpoints.MapControllers();
                 }
             );

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -17,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
     public class DeleteLotteryRecordCommandHandler
-        : BaseCommandHandler,
+        : LotteryRequestHandlerBase,
           IRequestHandler<DeleteLotteryRecordCommand>
     {
         public DeleteLotteryRecordCommandHandler(

@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.FileCommands;
-using EPlusActivities.API.Dtos.FileDtos;
+using EPlusActivities.API.Application.Queries.FileQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +36,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> DownloadFileByFileIdAsync(
-            [FromQuery] DownloadFileByFileIdCommand request
+            [FromQuery] DownloadFileByFileIdQuery request
         )
         {
             var result = await _mediator.Send(request);
@@ -55,7 +54,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> DownloadFileByKeyAsync(
-            [FromQuery] DownloadFileByKeyCommand request
+            [FromQuery] DownloadFileByKeyQuery request
         )
         {
             var result = await _mediator.Send(request);

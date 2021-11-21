@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.ActivityUserCommands;
+using EPlusActivities.API.Application.Queries.ActivityUserQueries;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,7 +36,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<ActivityUserDto>> GetByIdAsync(
-            [FromQuery] GetActivityUserCommand request
+            [FromQuery] GetActivityUserQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<ActivityUserDto>>> GetByUserIdAsync(
-            [FromQuery] GetActivityUserByUserIdCommand request
+            [FromQuery] GetActivityUserByUserIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

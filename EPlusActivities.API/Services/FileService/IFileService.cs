@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.FileCommands;
+using EPlusActivities.API.Application.Queries.FileQueries;
 using EPlusActivities.Grpc.Messages.FileService;
 
 namespace EPlusActivities.API.Services.FileService
@@ -12,10 +13,8 @@ namespace EPlusActivities.API.Services.FileService
 
         Task<DeleteFileGrpcResponse> DeleteFileByKeyAsync(DeleteFileByKeyCommand request);
 
-        Task<DownloadFileGrpcResponse> DownloadFileByFileIdAsync(
-            DownloadFileByFileIdCommand request
-        );
+        Task<DownloadFileGrpcResponse> DownloadFileByFileIdAsync(DownloadFileByFileIdQuery request);
 
-        Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(DownloadFileByKeyCommand request);
+        Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(DownloadFileByKeyQuery request);
     }
 }

@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
     public class UpdateLotteryRecordCommandHandler
-        : BaseCommandHandler,
+        : LotteryRequestHandlerBase,
           INotificationHandler<UpdateLotteryRecordCommand>
     {
         public UpdateLotteryRecordCommandHandler(

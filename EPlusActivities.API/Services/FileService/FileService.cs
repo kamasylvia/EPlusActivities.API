@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Client;
 using EPlusActivities.API.Application.Commands.FileCommands;
+using EPlusActivities.API.Application.Queries.FileQueries;
 using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.Grpc.Messages.FileService;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +49,7 @@ namespace EPlusActivities.API.Services.FileService
             );
 
         public async Task<DownloadFileGrpcResponse> DownloadFileByFileIdAsync(
-            DownloadFileByFileIdCommand request
+            DownloadFileByFileIdQuery request
         ) =>
             await _daprClient.InvokeMethodGrpcAsync<
                 DownloadFileByFileIdGrpcRequest,
@@ -60,7 +61,7 @@ namespace EPlusActivities.API.Services.FileService
             );
 
         public async Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(
-            DownloadFileByKeyCommand request
+            DownloadFileByKeyQuery request
         ) =>
             await _daprClient.InvokeMethodGrpcAsync<
                 DownloadFileByKeyGrpcRequest,

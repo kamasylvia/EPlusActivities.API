@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
     public class DrawCommandHandler
-        : BaseCommandHandler,
+        : LotteryRequestHandlerBase,
           IRequestHandler<DrawCommand, IEnumerable<LotteryDto>>
     {
         public DrawCommandHandler(

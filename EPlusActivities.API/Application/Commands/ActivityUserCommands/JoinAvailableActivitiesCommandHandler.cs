@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class JoinAvailableActivitiesCommandHandler
-        : BaseCommandHandler,
+        : ActivityUserRequestHandlerBase,
           INotificationHandler<UserCommands.LoginCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;

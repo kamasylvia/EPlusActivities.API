@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using EPlusActivities.API.Application.Commands.PrizeItemCommands;
 using EPlusActivities.API.Application.Commands.PrizeTierCommands;
+using EPlusActivities.API.Application.Queries.PrizeTierQueries;
 using EPlusActivities.API.Dtos.PrizeTierDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,7 +35,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeTierDto>> GetByIdAsync(
-            [FromQuery] GetPrizeTierByIdCommand request
+            [FromQuery] GetPrizeTierByIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<PrizeTierDto>> GetByActivityIdAsync(
-            [FromQuery] GetPrizeTiersByActivityIdCommand request
+            [FromQuery] GetPrizeTiersByActivityIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

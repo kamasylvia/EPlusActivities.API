@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.LotteryCommands;
+using EPlusActivities.API.Application.Queries.LotteryQueries;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,7 +38,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
-            [FromQuery] GetLotteryRecordsByUserIdCommand request
+            [FromQuery] GetLotteryRecordsByUserIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
-            [FromQuery] GetWinningRecordsByUserIdCommand request
+            [FromQuery] GetWinningRecordsByUserIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace EPlusActivities.API.Controllers
             Roles = "manager, tester"
         )]
         public async Task<ActionResult<LotteryRecordsForManagerResponse>> GetDetailedRecordsAsync(
-            [FromQuery] GetDetailedRecordsCommand request
+            [FromQuery] GetDetailedRecordsQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -95,7 +96,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<
             ActionResult<IEnumerable<LotteryForGetGeneralRecordsResponse>>
-        > GetGeneralRecordsAsync([FromQuery] GetGeneralRecordsCommand request) =>
+        > GetGeneralRecordsAsync([FromQuery] GetGeneralRecordsQuery request) =>
             Ok(await _mediator.Send(request));
 
         /// <summary>

@@ -11,7 +11,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
     public class DeleteFileByFileIdCommandHandler
-        : BaseCommandHandler,
+        : FileRequestHandlerBase,
           IRequestHandler<DeleteFileByFileIdCommand>
     {
         public DeleteFileByFileIdCommandHandler(IMapper mapper, IFileService fileService)

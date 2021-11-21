@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -18,7 +16,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.AttendanceCommands
 {
     public class AttendCommandHandler
-        : BaseCommandHandler,
+        : AttendanceRequestHandlerBase,
           IRequestHandler<AttendCommand, AttendanceDto>
     {
         public AttendCommandHandler(

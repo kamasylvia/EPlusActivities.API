@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class BindActivityAndUserCommandHandler
-        : BaseCommandHandler,
+        : ActivityUserRequestHandlerBase,
           IRequestHandler<BindActivityAndUserCommand>
     {
         public BindActivityAndUserCommandHandler(

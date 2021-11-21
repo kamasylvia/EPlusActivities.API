@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.ActivityCommands;
+using EPlusActivities.API.Application.Queries.ActivityQueries;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,13 +37,13 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<ActivityDto>> GetAsync(
-            [FromQuery] GetActivityCommand request
+            [FromQuery] GetActivityQuery request
         ) => await _mediator.Send(request);
 
         /// <summary>
         /// 根据活动号获取活动信息
         /// </summary>
-        /// <param name="activityDto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("code")]
         [Authorize(
@@ -50,7 +51,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<ActivityDto>> GetByActivityCodeAsync(
-            [FromQuery] GetActivityByCodeCommand request
+            [FromQuery] GetActivityByCodeQuery request
         ) => await _mediator.Send(request);
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<ActionResult<IEnumerable<ActivityDto>>> GetActivityListAsync(
-            [FromQuery] GetActivityListCommand request
+            [FromQuery] GetActivityListQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

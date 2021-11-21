@@ -7,10 +7,10 @@ using EPlusActivities.API.Application.Commands.AttendanceCommands;
 using EPlusActivities.API.Application.Commands.BrandCommands;
 using EPlusActivities.API.Application.Commands.CategoryCommands;
 using EPlusActivities.API.Application.Commands.FileCommands;
+using EPlusActivities.API.Application.Queries.FileQueries;
 using EPlusActivities.API.Application.Commands.LotteryCommands;
 using EPlusActivities.API.Application.Commands.PrizeItemCommands;
 using EPlusActivities.API.Application.Commands.PrizeTierCommands;
-using EPlusActivities.API.Application.Commands.SmsCommands;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Dtos.AddressDtos;
@@ -26,6 +26,7 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.Grpc.Messages.FileService;
 using Google.Protobuf;
+using EPlusActivities.API.Application.Queries.SmsQueries;
 
 namespace EPlusActivities.API.Configuration
 {
@@ -42,7 +43,7 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Dtos to Entities and vice versa.
-            CreateMap<GetVerificationCodeCommand, ApplicationUser>()
+            CreateMap<GetVerificationCodeQuery, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(
                     dest => dest.NormalizedUserName,
@@ -218,8 +219,8 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.Content,
                     opt => opt.MapFrom(src => ByteString.FromStream(src.FormFile.OpenReadStream()))
                 );
-            CreateMap<DownloadFileByFileIdCommand, DownloadFileByFileIdGrpcRequest>();
-            CreateMap<DownloadFileByKeyCommand, DownloadFileByKeyGrpcRequest>();
+            CreateMap<DownloadFileByFileIdQuery, DownloadFileByFileIdGrpcRequest>();
+            CreateMap<DownloadFileByKeyQuery, DownloadFileByKeyGrpcRequest>();
             CreateMap<DeleteFileByFileIdCommand, DeleteFileByFileIdGrpcRequest>();
             CreateMap<DeleteFileByKeyCommand, DeleteFileByKeyGrpcRequest>();
             #endregion

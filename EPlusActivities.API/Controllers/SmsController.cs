@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using EPlusActivities.API.Application.Commands.SmsCommands;
+using EPlusActivities.API.Application.Queries.SmsQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ namespace EPlusActivities.API.Controllers
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> GetVerificationCodeAsync(
-            [FromBody] GetVerificationCodeCommand request
+            [FromBody] GetVerificationCodeQuery request
         )
         {
             await _mediator.Send(request);

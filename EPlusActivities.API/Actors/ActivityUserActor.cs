@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Actors.Runtime;
-using EPlusActivities.API.Application.Commands.ActivityUserCommands;
+using EPlusActivities.API.Application.Queries.ActivityUserQueries;
 using EPlusActivities.API.Application.Commands.UserCommands;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Entities;
@@ -33,7 +33,7 @@ namespace EPlusActivities.API.Actors
         }
 
         public async Task<IEnumerable<ActivityUserDto>> GetActivitiesByUserIdAsync(
-            GetActivityUserByUserIdCommand request
+            GetActivityUserByUserIdQuery request
         )
         {
             #region Parameter validation

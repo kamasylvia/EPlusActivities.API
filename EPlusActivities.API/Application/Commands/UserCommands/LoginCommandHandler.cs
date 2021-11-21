@@ -14,7 +14,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
-    public class LoginCommandHandler : BaseCommandHandler, IRequestHandler<LoginCommand, UserDto>
+    public class LoginCommandHandler
+        : UserRequestHandlerBase,
+          IRequestHandler<LoginCommand, UserDto>
     {
         private readonly IMemberService _memberService;
         private readonly IMapper _mapper;

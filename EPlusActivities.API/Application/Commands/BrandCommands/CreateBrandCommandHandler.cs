@@ -13,7 +13,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.BrandCommands
 {
     public class CreateBrandCommandHandler
-        : BaseCommandHandler,
+        : BrandRequestHandlerBase,
           IRequestHandler<CreateBrandCommand, BrandDto>
     {
         public CreateBrandCommandHandler(

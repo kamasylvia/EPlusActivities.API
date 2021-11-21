@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
     public class UpdateActivityCommandHandler
-        : BaseCommandHandler,
+        : ActivityRequestHandlerBase,
           IRequestHandler<UpdateActivityCommand>
     {
         public UpdateActivityCommandHandler(

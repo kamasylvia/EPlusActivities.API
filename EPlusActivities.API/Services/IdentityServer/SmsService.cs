@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Application.Commands.SmsCommands;
+using EPlusActivities.API.Application.Queries.SmsQueries;
 using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
@@ -38,7 +38,7 @@ namespace EPlusActivities.API.Services.IdentityServer
                 httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
-        public async Task<ApplicationUser> GetSmsUserAsync(GetVerificationCodeCommand smsDto)
+        public async Task<ApplicationUser> GetSmsUserAsync(GetVerificationCodeQuery smsDto)
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(
                 x => x.PhoneNumber == smsDto.PhoneNumber
