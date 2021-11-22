@@ -24,7 +24,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             await _actorProxyFactory
                 .CreateActorProxy<IActivityUserActor>(
                     new ActorId(
-                        command.ActivityId.Value.ToString() + command.UserId.Value.ToString()
+                        command.ActivityId.ToString() + command.UserId.ToString()
                     ),
                     nameof(ActivityUserActor)
                 )

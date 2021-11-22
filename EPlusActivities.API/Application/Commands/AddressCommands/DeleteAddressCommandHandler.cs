@@ -1,46 +1,39 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Exceptions;
-using EPlusActivities.API.Infrastructure.Repositories;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.AddressActors;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.AddressCommands
 {
     public class DeleteAddressCommandHandler
-        : AddressRequestHandlerBase,
+        :
           IRequestHandler<DeleteAddressCommand>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public DeleteAddressCommandHandler(
-            UserManager<ApplicationUser> userManager,
-            IFindByParentIdRepository<Address> addressRepository,
-            IMapper mapper
-        ) : base(userManager, addressRepository, mapper) { }
+            IActorProxyFactory actorProxyFactory
+        )
+        {
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+        }
 
         public async Task<Unit> Handle(
-            DeleteAddressCommand request,
+            DeleteAddressCommand command,
             CancellationToken cancellationToken
         )
         {
-            var address = await _addressRepository.FindByIdAsync(request.Id.Value);
-
-            #region Parameter validation
-            if (address is null)
-            {
-                throw new NotFoundException("Could not find the address.");
-            }
-            #endregion
-
-            #region Database operations
-            _addressRepository.Remove(address);
-            if (!await _addressRepository.SaveAsync())
-            {
-                throw new DatabaseUpdateException();
-            }
-            #endregion
-
+            await _actorProxyFactory
+       .CreateActorProxy<IAddressActor>(
+           new ActorId(
+               command.Id.ToString()
+           ),
+           nameof(AddressActor)
+       )
+       .DeleteAddress(command);
             return Unit.Value;
         }
     }

@@ -38,7 +38,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 .CreateActorProxy<IActivityUserActor>(
                     new ActorId(
                         command.ActivityId.Value.ToString()
-                            + command.UserId.Value.ToString()
+                            + command.UserId.ToString()
                             + command.Channel.ToString()
                     ),
                     nameof(ActivityUserActor)

@@ -5,9 +5,11 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using EPlusActivities.API.Application.Actors.ActivityActors;
 using EPlusActivities.API.Application.Actors.ActivityUserActors;
+using EPlusActivities.API.Application.Actors.AddressActors;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Extensions;
+using EPlusActivities.API.Infrastructure.DependencyInjection;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Services.IdentityServer;
 using EPlusActivities.API.Services.IdGeneratorService;
@@ -58,28 +60,6 @@ namespace EPlusActivities.API
                 )
                 .AddDapr();
 
-            services.AddActors(
-                options =>
-                {
-                    var jsonSerializerOptions = new JsonSerializerOptions()
-                    {
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    options.JsonSerializerOptions = jsonSerializerOptions;
-                    options.Actors.RegisterActor<ActivityUserActor>();
-                    options.Actors.RegisterActor<ActivityActor>();
-                }
-            );
-
-            services.AddLogging(
-                (builder) =>
-                {
-                    builder.AddSerilog(dispose: true);
-                }
-            );
-
             if (Environment.IsDevelopment())
             {
                 services.AddCors(
@@ -100,21 +80,14 @@ namespace EPlusActivities.API
 
             services.AddHttpContextAccessor();
 
-            services.AddSwaggerGen(
-                c =>
-                {
-                    c.SwaggerDoc(
-                        "v1",
-                        new OpenApiInfo { Title = "EPlusActivities.API", Version = "v1" }
-                    );
-                    c.IncludeXmlComments(
-                        Path.Combine(
-                            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                            "EPlusActivities.API.xml"
-                        )
-                    );
-                }
-            );
+            // Actors
+            services.AddAppActors();
+
+            // Swagger
+            services.AddAppSwagger();
+
+            // Serilog
+            services.AddAppLogging();
 
             // 数据库配置系统应用用户数据上下文
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
@@ -122,19 +95,11 @@ namespace EPlusActivities.API
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services.AddDbContext<ApplicationDbContext>(
-                options =>
-                    options.UseMySql(
-                        connectionString,
-                        o => o.ServerVersion(new Version(8, 0, 25), ServerType.MySql)
-                    )
-            );
+            // 数据库和 IdentityServer4 
+            services.AddDbAndIS4(connectionString, migrationsAssembly, Environment.IsDevelopment());
 
-            // 启用 Identity 服务 添加指定的用户和角色类型的默认标识系统配置
-            services
-                .AddIdentity<ApplicationUser, ApplicationRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            // 权限验证策略
+            services.AddAppAuthentication();
 
             // 启用自定义依赖，包括仓储和服务
             services.AddCustomDependencies();
@@ -144,127 +109,6 @@ namespace EPlusActivities.API
                 new IdGeneratorService(
                     new IdGeneratorOptions(1) { WorkerIdBitLength = 1, SeqBitLength = 3 }
                 )
-            );
-
-            // IdentityServer 4
-            var builder = services
-                .AddIdentityServer(
-                    options =>
-                    {
-                        options.Events.RaiseErrorEvents = true;
-                        options.Events.RaiseInformationEvents = true;
-                        options.Events.RaiseFailureEvents = true;
-                        options.Events.RaiseSuccessEvents = true;
-
-                        // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
-                        options.EmitStaticAudienceClaim = true;
-                    }
-                ) // .AddTestUsers(TestUsers.Users)
-                .AddAspNetIdentity<ApplicationUser>() // SMS Validator
-                .AddExtensionGrantValidator<SmsGrantValidator>();
-
-            // InMemory Mode
-            // not recommended for production - you need to store your key material somewhere secure
-            builder.AddDeveloperSigningCredential();
-            if (Environment.IsDevelopment())
-            {
-                builder
-                    .AddInMemoryIdentityResources(Config.IdentityResources)
-                    .AddInMemoryApiScopes(Config.ApiScopes)
-                    .AddInMemoryApiResources(Config.ApiResources)
-                    .AddInMemoryClients(Config.Clients);
-            }
-            else
-            {
-                // Db Mode
-                // this adds the config data from DB (clients, resources, CORS)
-                builder
-                    .AddConfigurationStore(
-                        options =>
-                        {
-                            options.ConfigureDbContext = builder =>
-                                builder.UseMySql(
-                                    connectionString,
-                                    sql => sql.MigrationsAssembly(migrationsAssembly)
-                                );
-                        }
-                    ) // this adds the operational data from DB (codes, tokens, consents)
-                    .AddOperationalStore(
-                        options =>
-                        {
-                            options.ConfigureDbContext = builder =>
-                                builder.UseMySql(
-                                    connectionString,
-                                    sql => sql.MigrationsAssembly(migrationsAssembly)
-                                );
-
-                            // this enables automatic token cleanup. this is optional.
-                            options.EnableTokenCleanup = true;
-                        }
-                    );
-            }
-
-            // 受保护的 API 设置
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-                    options =>
-                    {
-                        //IdentityServer地址
-                        options.Authority = Environment.IsDevelopment()
-                            ? "http://localhost:52537"
-                            : "http://localhost:80";
-
-                        //对应Idp中ApiResource的Name
-                        options.Audience = "eplus.api";
-
-                        //不使用https
-                        options.RequireHttpsMetadata = false;
-
-                        options.TokenValidationParameters.ValidateIssuer = false;
-                    }
-                );
-
-            //基于策略授权
-            services.AddAuthorization(
-                options =>
-                {
-                    options.AddPolicy(
-                        "CustomerPolicy",
-                        builder =>
-                        {
-                            builder.RequireRole("customer, tester");
-                        }
-                    );
-                    options.AddPolicy(
-                        "ManagerPolicy",
-                        builder =>
-                        {
-                            builder.RequireRole("manager", "admin", "tester");
-                        }
-                    );
-                    options.AddPolicy(
-                        "AdminPolicy",
-                        builder =>
-                        {
-                            builder.RequireRole("admin", "tester");
-                        }
-                    );
-                    options.AddPolicy(
-                        "TesterPolicy",
-                        builder =>
-                        {
-                            builder.RequireRole("tester");
-                        }
-                    );
-                    options.AddPolicy(
-                        "AllRoles",
-                        builder =>
-                        {
-                            builder.RequireRole("admin", "manager", "customer", "tester");
-                        }
-                    );
-                }
             );
 
             // AutoMapper

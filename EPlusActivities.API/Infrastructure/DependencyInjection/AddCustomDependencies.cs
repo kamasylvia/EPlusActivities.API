@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using EPlusActivities.API.Infrastructure.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EPlusActivities.API.Extensions
+namespace EPlusActivities.API.Infrastructure.DependencyInjection
 {
-    public static class IServiceCollectionDependencyInjectionExtension
+    public static partial class ServiceCollectionDependencyInjection
     {
         public static void AddCustomDependencies(this IServiceCollection services)
         {
@@ -64,5 +64,7 @@ namespace EPlusActivities.API.Extensions
                                 }
                             )
                 );
+    
+        
     }
 }
