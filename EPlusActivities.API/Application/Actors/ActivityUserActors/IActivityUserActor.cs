@@ -15,5 +15,6 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             GetActivityUserByUserIdQuery request
         );
         Task<bool> BindUserWithAvailableActivitiesAsync(LoginQuery request);
+        Task<ActivityUserForRedeemDrawsResponseDto> Redeem(RedeemCommand command);
     }
 }
