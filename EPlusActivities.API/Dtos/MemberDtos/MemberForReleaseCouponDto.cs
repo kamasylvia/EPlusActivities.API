@@ -1,24 +1,24 @@
 namespace EPlusActivities.API.Dtos.MemberDtos
 {
-    public class MemberForReleaseCouponRequestDto
+    public record MemberForReleaseCouponRequestDto
     {
         public string couponActiveCode { get; set; }
         public string memberId { get; set; }
         public int qty { get; set; }
         public string reason { get; set; }
     }
-    public class MemberForReleaseCouponResponseDto
+    public record MemberForReleaseCouponResponseDto
     {
         public HeaderDto Header { get; set; }
         public BodyForReleaseCouponDto Body { get; set; }
     }
 
-    public class BodyForReleaseCouponDto
+    public record BodyForReleaseCouponDto
     {
         public ContentForReleaseCouponDto Content { get; set; }
     }
 
-    public class ContentForReleaseCouponDto
+    public record ContentForReleaseCouponDto
     {
         public string HideCouponCode { get; set; }
     }

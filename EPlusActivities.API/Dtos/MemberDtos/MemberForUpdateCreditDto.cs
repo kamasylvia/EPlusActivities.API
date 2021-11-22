@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Infrastructure.Enums;
+﻿using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.MemberDtos
 {
-    public class MemberForUpdateCreditRequestDto
+    public record MemberForUpdateCreditRequestDto
     {
         public string memberId { get; set; }
 
@@ -16,19 +15,19 @@ namespace EPlusActivities.API.Dtos.MemberDtos
         public CreditUpdateType updateType { get; set; }
     }
 
-    public class MemberForUpdateCreditResponseDto
+    public record MemberForUpdateCreditResponseDto
     {
         public HeaderDto Header { get; set; }
 
         public BodyForUpdateCreditDto Body { get; set; }
     }
 
-    public class BodyForUpdateCreditDto
+    public record BodyForUpdateCreditDto
     {
         public ContentForUpdateCreditDto Content { get; set; }
     }
 
-    public class ContentForUpdateCreditDto
+    public record ContentForUpdateCreditDto
     {
         public string MemberId { get; set; }
 

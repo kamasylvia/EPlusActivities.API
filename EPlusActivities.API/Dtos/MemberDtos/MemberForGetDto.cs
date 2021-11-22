@@ -1,18 +1,18 @@
 namespace EPlusActivities.API.Dtos.MemberDtos
 {
-    public class MemberForGetDto
+    public record MemberForGetDto
     {
         public HeaderDto Header { get; set; }
 
         public BodyForGetDto Body { get; set; }
     }
 
-    public class BodyForGetDto
+    public record BodyForGetDto
     {
         public ContentForGetDto Content { get; set; }
     }
 
-    public class ContentForGetDto
+    public record ContentForGetDto
     {
         public string MemberId { get; set; }
 

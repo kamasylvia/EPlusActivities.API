@@ -1,10 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.AttendanceDtos
 {
-    public class AttendanceDto
+    public record AttendanceDto
     {
         [Required]
         public Guid? Id { get; set; }

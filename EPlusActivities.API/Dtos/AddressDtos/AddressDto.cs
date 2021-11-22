@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Dtos.AddressDtos
 {
-    public class AddressDto
+    public record AddressDto
     {
         [Required]
         public Guid? Id { get; set; }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.UserDtos
 {

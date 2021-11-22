@@ -2,7 +2,7 @@
 
 namespace EPlusActivities.API.Dtos.ActivityUserDtos
 {
-    public class ActivityUserDto
+    public record ActivityUserDto
     {
         /// <summary>
         /// 全活动周期已抽奖次数

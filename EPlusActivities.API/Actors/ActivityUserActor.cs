@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Actors.Runtime;
 using EPlusActivities.API.Application.Queries.ActivityUserQueries;
-using EPlusActivities.API.Application.Commands.UserCommands;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Services.ActivityService;
 using Microsoft.AspNetCore.Identity;
+using EPlusActivities.API.Application.Queries.UserQueries;
 
 namespace EPlusActivities.API.Actors
 {
@@ -58,7 +58,7 @@ namespace EPlusActivities.API.Actors
               : new List<ActivityUserDto>();
         }
 
-        public async Task<bool> BindUserWithAvailableActivitiesAsync(LoginCommand request)
+        public async Task<bool> BindUserWithAvailableActivitiesAsync(LoginQuery request)
         {
             var bound = (await StateManager.TryGetStateAsync<bool>("bound")).Value;
             if (!bound)

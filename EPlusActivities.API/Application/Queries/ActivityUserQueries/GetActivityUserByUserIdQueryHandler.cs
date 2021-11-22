@@ -6,7 +6,7 @@ using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using EPlusActivities.API.Actors;
-using EPlusActivities.API.Application.Commands.UserCommands;
+using EPlusActivities.API.Application.Queries.UserQueries;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -60,7 +60,7 @@ namespace EPlusActivities.API.Application.Queries.ActivityUserQueries
                 nameof(ActivityUserActor)
             );
             return await actor.BindUserWithAvailableActivitiesAsync(
-                new LoginCommand { UserId = request.UserId, ChannelCode = request.AvailableChannel }
+                new LoginQuery { UserId = request.UserId, ChannelCode = request.AvailableChannel }
             )
               ? await actor.GetActivitiesByUserIdAsync(request)
               : new List<ActivityUserDto>();

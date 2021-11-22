@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.Dtos.PrizeTierDtos
 {
-    public class PrizeTierDto
+    public record PrizeTierDto
     {
         [Required]
         public Guid Id { get; set; }

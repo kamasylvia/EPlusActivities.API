@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.Dtos.BrandDtos
 {
-    public class BrandDto
+    public record BrandDto
     {
         [Required]
         public Guid? Id { get; set; }

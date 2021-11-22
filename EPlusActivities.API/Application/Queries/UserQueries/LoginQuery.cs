@@ -4,9 +4,9 @@ using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.UserCommands
+namespace EPlusActivities.API.Application.Queries.UserQueries
 {
-    public class LoginCommand : IRequest<UserDto>, INotification
+    public class LoginQuery : IRequest<UserDto>, INotification
     {
         [Required]
         public Guid? UserId { get; set; }

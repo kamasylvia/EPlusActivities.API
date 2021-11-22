@@ -4,7 +4,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.PrizeItemDtos
 {
-    public class PrizeItemDto
+    public record PrizeItemDto
     {
         /// <summary>
         /// 奖品 ID

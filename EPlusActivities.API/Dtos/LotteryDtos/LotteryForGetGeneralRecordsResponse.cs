@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EPlusActivities.API.Dtos.LotteryDtos
 {
-    public class LotteryForGetGeneralRecordsResponse
+    public record LotteryForGetGeneralRecordsResponse
     {
         /// <summary>
         /// 日期

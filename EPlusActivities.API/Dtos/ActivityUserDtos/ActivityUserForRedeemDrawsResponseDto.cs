@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EPlusActivities.API.Dtos.ActivityUserDtos
 {
-    public class ActivityUserForRedeemDrawsResponseDto
+    public record ActivityUserForRedeemDrawsResponseDto
     {
         [Required]
         public Guid? ActivityId { get; set; }

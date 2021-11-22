@@ -1,27 +1,24 @@
 using System;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 
-namespace EPlusActivities.API.Application.Commands.UserCommands
+namespace EPlusActivities.API.Application.Queries.UserQueries
 {
-    public class LoginCommandHandler
+    public class LoginQueryHandler
         : UserRequestHandlerBase,
-          IRequestHandler<LoginCommand, UserDto>
+          IRequestHandler<LoginQuery, UserDto>
     {
         private readonly IMemberService _memberService;
         private readonly IMapper _mapper;
 
-        public LoginCommandHandler(
+        public LoginQueryHandler(
             UserManager<ApplicationUser> userManager,
             IMapper mapper,
             IMemberService memberService
@@ -32,7 +29,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
         }
 
-        public async Task<UserDto> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());

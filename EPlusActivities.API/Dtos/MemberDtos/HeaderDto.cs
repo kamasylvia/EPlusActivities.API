@@ -1,6 +1,6 @@
 namespace EPlusActivities.API.Dtos.MemberDtos
 {
-    public class HeaderDto
+    public record HeaderDto
     {
         public string Code { get; set; }
 

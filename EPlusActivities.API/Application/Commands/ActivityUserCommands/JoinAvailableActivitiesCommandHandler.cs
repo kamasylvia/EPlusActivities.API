@@ -5,6 +5,7 @@ using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using EPlusActivities.API.Actors;
+using EPlusActivities.API.Application.Queries.UserQueries;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -18,7 +19,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class JoinAvailableActivitiesCommandHandler
         : ActivityUserRequestHandlerBase,
-          INotificationHandler<UserCommands.LoginCommand>
+          INotificationHandler<LoginQuery>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
@@ -49,7 +50,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
         }
 
         public async Task Handle(
-            UserCommands.LoginCommand notification,
+            LoginQuery notification,
             CancellationToken cancellationToken
         )
         {

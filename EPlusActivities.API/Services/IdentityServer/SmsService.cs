@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Application.Queries.SmsQueries;
-using EPlusActivities.API.Dtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
 using IdentityServer4.Models;
