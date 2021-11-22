@@ -30,7 +30,8 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
         private readonly IMapper _mapper;
         private readonly IActivityRepository _activityRepository;
 
-        public ActivityActor(ActorHost host,
+        public ActivityActor(
+            ActorHost host,
             IMemberService memberService,
             IActivityRepository activityRepository,
             UserManager<ApplicationUser> userManager,

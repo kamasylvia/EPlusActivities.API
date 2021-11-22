@@ -21,15 +21,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
-    public class CreateActivityCommandHandler
-        :
-          IRequestHandler<CreateActivityCommand, ActivityDto>
+    public class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, ActivityDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public CreateActivityCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public CreateActivityCommandHandler(IActorProxyFactory actorProxyFactory)
         {
             _actorProxyFactory = actorProxyFactory;
         }
@@ -47,12 +43,11 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
             #endregion
 
             return await _actorProxyFactory
-                     .CreateActorProxy<IActivityActor>(
-                         new ActorId(
-                             command.Name + command.StartTime.ToString()
-                         ),
-                         nameof(ActivityActor)
-                     ).CreateActivity(command);
+                .CreateActorProxy<IActivityActor>(
+                    new ActorId(command.Name + command.StartTime.ToString()),
+                    nameof(ActivityActor)
+                )
+                .CreateActivity(command);
         }
     }
 }
