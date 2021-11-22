@@ -11,9 +11,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Queries.UserQueries
 {
-    public class LoginQueryHandler
-        : UserRequestHandlerBase,
-          IRequestHandler<LoginQuery, UserDto>
+    public class LoginQueryHandler : UserRequestHandlerBase, IRequestHandler<LoginQuery, UserDto>
     {
         private readonly IMemberService _memberService;
         private readonly IMapper _mapper;

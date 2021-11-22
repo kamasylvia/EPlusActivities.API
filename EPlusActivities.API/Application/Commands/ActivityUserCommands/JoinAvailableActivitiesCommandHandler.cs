@@ -49,10 +49,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
-        public async Task Handle(
-            LoginQuery notification,
-            CancellationToken cancellationToken
-        )
+        public async Task Handle(LoginQuery notification, CancellationToken cancellationToken)
         {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(notification.UserId.ToString());
