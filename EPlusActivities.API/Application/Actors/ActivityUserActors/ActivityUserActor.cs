@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -42,19 +42,23 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             IGeneralLotteryRecordsRepository statementRepository
         ) : base(host)
         {
-            _activityRepository = activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
-            _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _activityRepository =
+                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
+            _memberService =
+                memberService ?? throw new ArgumentNullException(nameof(memberService));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _activityUserRepository = activityUserRepository;
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
-            _statementRepository = statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
+            _statementRepository =
+                statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _idGeneratorService = idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
+            _idGeneratorService =
+                idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
         }
 
-       public async Task BindActivityAndUser(BindActivityAndUserCommand command)
-       {
+        public async Task BindActivityAndUser(BindActivityAndUserCommand command)
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(command.UserId.Value.ToString());
             if (user is null)
@@ -89,7 +93,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
                 throw new DatabaseUpdateException();
             }
             #endregion
-       }
+        }
         public async Task<IEnumerable<ActivityUserDto>> GetActivitiesByUserIdAsync(
             GetActivityUserByUserIdQuery request
         )
