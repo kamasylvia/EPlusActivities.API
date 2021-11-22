@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -83,6 +82,43 @@ namespace EPlusActivities.API.Application.Actors.AddressActors
 
             #region Database operations
             _addressRepository.Remove(address);
+            if (!await _addressRepository.SaveAsync())
+            {
+                throw new DatabaseUpdateException();
+            }
+            #endregion
+        }
+
+        public async Task UpdateAddress(UpdateAddressCommand command)
+        {
+            var address = await _addressRepository.FindByIdAsync(command.Id.Value);
+
+            #region Parameter validation
+            if (address is null)
+            {
+                throw new NotFoundException("Could not find the address.");
+            }
+
+            var user = await _userManager.FindByIdAsync(command.UserId.ToString());
+            if (user is null)
+            {
+                throw new NotFoundException("Could not find the user.");
+            }
+            #endregion
+
+            #region Database operations
+            if (command.IsDefault)
+            {
+                var addresses = await _addressRepository.FindByParentIdAsync(command.UserId.Value);
+                if (addresses.Count() > 0)
+                {
+                    var oldDefaultAddress = addresses.Single(x => x.IsDefault);
+                    oldDefaultAddress.IsDefault = false;
+                    _addressRepository.Update(oldDefaultAddress);
+                }
+            }
+
+            _addressRepository.Update(_mapper.Map<UpdateAddressCommand, Address>(command, address));
             if (!await _addressRepository.SaveAsync())
             {
                 throw new DatabaseUpdateException();

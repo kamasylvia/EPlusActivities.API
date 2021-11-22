@@ -12,5 +12,6 @@ namespace EPlusActivities.API.Application.Actors.AddressActors
     {
         Task<AddressDto> CreateAddress(CreateAddressCommand command);
         Task DeleteAddress(DeleteAddressCommand command);
+        Task UpdateAddress(UpdateAddressCommand command);
     }
 }

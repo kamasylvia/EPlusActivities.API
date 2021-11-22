@@ -2,6 +2,7 @@ using System.Text.Json;
 using EPlusActivities.API.Application.Actors.ActivityActors;
 using EPlusActivities.API.Application.Actors.ActivityUserActors;
 using EPlusActivities.API.Application.Actors.AddressActors;
+using EPlusActivities.API.Application.Actors.AttendanceActors;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.DependencyInjection
@@ -23,6 +24,7 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                     options.Actors.RegisterActor<ActivityUserActor>();
                     options.Actors.RegisterActor<ActivityActor>();
                     options.Actors.RegisterActor<AddressActor>();
+                    options.Actors.RegisterActor<AttendanceActor>();
                 }
             );
     }

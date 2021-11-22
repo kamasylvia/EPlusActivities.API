@@ -23,7 +23,7 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211122
+        image: kamasylvia/eplusactivities:20211123
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
@@ -34,7 +34,7 @@ services:
         links:
             - eplusactivities-db
         # ports:
-        #     - 52539:80
+        #     - 52538:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs:ro
             - ./Settings/EplusActivities.API/appsettings.json:/app/appsettings.json
