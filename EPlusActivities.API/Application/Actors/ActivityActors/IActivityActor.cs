@@ -9,6 +9,6 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
     {
         Task<ActivityDto> CreateActivity(CreateActivityCommand command);
         Task DeleteActivity(DeleteActivityCommand command);
-        Task<ActivityDto> UpdateActivity(UpdateActivityCommand command);
+        Task UpdateActivity(UpdateActivityCommand command);
     }
 }
