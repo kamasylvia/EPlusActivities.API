@@ -18,17 +18,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
-    public class DeleteActivityCommandHandler
-        :
-          IRequestHandler<DeleteActivityCommand>
+    public class DeleteActivityCommandHandler : IRequestHandler<DeleteActivityCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public DeleteActivityCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public DeleteActivityCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -37,12 +34,11 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         )
         {
             await _actorProxyFactory
-                     .CreateActorProxy<IActivityActor>(
-                         new ActorId(
-                             command.Id.Value.ToString()
-                         ),
-                         nameof(ActivityActor)
-                     ).DeleteActivity(command);
+                .CreateActorProxy<IActivityActor>(
+                    new ActorId(command.Id.Value.ToString()),
+                    nameof(ActivityActor)
+                )
+                .DeleteActivity(command);
             return Unit.Value;
         }
     }

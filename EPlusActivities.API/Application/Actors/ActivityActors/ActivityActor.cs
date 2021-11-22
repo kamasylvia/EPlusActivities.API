@@ -64,7 +64,6 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
 
         public async Task<ActivityDto> CreateActivity(CreateActivityCommand command)
         {
-
             #region Database operations
             var activity = _mapper.Map<Activity>(command);
             if (

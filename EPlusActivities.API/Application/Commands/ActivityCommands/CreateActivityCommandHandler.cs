@@ -16,7 +16,8 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
 
         public CreateActivityCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<ActivityDto> Handle(
