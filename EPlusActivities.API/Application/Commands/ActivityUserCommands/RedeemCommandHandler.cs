@@ -20,26 +20,26 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class RedeemCommandHandler
-        :
-          IRequestHandler<RedeemCommand, ActivityUserForRedeemDrawsResponseDto>
+        : IRequestHandler<RedeemCommand, ActivityUserForRedeemDrawsResponseDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public RedeemCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public RedeemCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<ActivityUserForRedeemDrawsResponseDto> Handle(
             RedeemCommand command,
             CancellationToken cancellationToken
-        )
-        => await _actorProxyFactory
+        ) =>
+            await _actorProxyFactory
                 .CreateActorProxy<IActivityUserActor>(
                     new ActorId(
-                        command.ActivityId.Value.ToString() + command.UserId.Value.ToString() + command.Channel.ToString()
+                        command.ActivityId.Value.ToString()
+                            + command.UserId.Value.ToString()
+                            + command.Channel.ToString()
                     ),
                     nameof(ActivityUserActor)
                 )

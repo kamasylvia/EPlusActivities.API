@@ -7,15 +7,11 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
-    public class BindActivityAndUserCommandHandler
-        :
-          IRequestHandler<BindActivityAndUserCommand>
+    public class BindActivityAndUserCommandHandler : IRequestHandler<BindActivityAndUserCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public BindActivityAndUserCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public BindActivityAndUserCommandHandler(IActorProxyFactory actorProxyFactory)
         {
             _actorProxyFactory = actorProxyFactory;
         }
@@ -26,13 +22,13 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
         )
         {
             await _actorProxyFactory
-                            .CreateActorProxy<IActivityUserActor>(
-                                new ActorId(
-                                    command.ActivityId.Value.ToString() + command.UserId.Value.ToString()
-                                ),
-                                nameof(ActivityUserActor)
-                            )
-                            .BindActivityAndUser(command);
+                .CreateActorProxy<IActivityUserActor>(
+                    new ActorId(
+                        command.ActivityId.Value.ToString() + command.UserId.Value.ToString()
+                    ),
+                    nameof(ActivityUserActor)
+                )
+                .BindActivityAndUser(command);
             return Unit.Value;
         }
     }

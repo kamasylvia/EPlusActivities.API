@@ -8,17 +8,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
-    public class UpdateActivityCommandHandler
-        :
-          IRequestHandler<UpdateActivityCommand>
+    public class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public UpdateActivityCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public UpdateActivityCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -27,12 +24,11 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
         )
         {
             await _actorProxyFactory
-                     .CreateActorProxy<IActivityActor>(
-                         new ActorId(
-                             command.Id.Value.ToString()
-                         ),
-                         nameof(ActivityActor)
-                     ).UpdateActivity(command);
+                .CreateActorProxy<IActivityActor>(
+                    new ActorId(command.Id.Value.ToString()),
+                    nameof(ActivityActor)
+                )
+                .UpdateActivity(command);
             return Unit.Value;
         }
     }
