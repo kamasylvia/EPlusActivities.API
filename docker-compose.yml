@@ -31,8 +31,8 @@ services:
             - eplusactivities-db
         links:
             - eplusactivities-db
-        ports:
-            - 52538:80
+        # ports:
+        #     - 52539:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs
             - ./Settings/EplusActivities.API/appsettings.json:/app/appsettings.json
