@@ -42,26 +42,26 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             ) { }
 
         public async Task<Unit> Handle(
-            BindActivityAndUserCommand request,
+            BindActivityAndUserCommand command,
             CancellationToken cancellationToken
         )
         {
             #region Parameter validation
-            var user = await _userManager.FindByIdAsync(request.UserId.Value.ToString());
+            var user = await _userManager.FindByIdAsync(command.UserId.Value.ToString());
             if (user is null)
             {
                 throw new NotFoundException("Could not find the user.");
             }
 
-            var activity = await _activityRepository.FindByIdAsync(request.ActivityId.Value);
+            var activity = await _activityRepository.FindByIdAsync(command.ActivityId.Value);
             if (activity is null)
             {
                 throw new NotFoundException("Could not find the activity.");
             }
 
             var activityUser = await _activityUserRepository.FindByIdAsync(
-                request.ActivityId.Value,
-                request.UserId.Value
+                command.ActivityId.Value,
+                command.UserId.Value
             );
             if (activityUser is not null)
             {
