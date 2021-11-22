@@ -1,7 +1,11 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.ActivityActors;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -15,58 +19,30 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
     public class DeleteActivityCommandHandler
-        : ActivityRequestHandlerBase,
+        :
           IRequestHandler<DeleteActivityCommand>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public DeleteActivityCommandHandler(
-            IMemberService memberService,
-            IActivityRepository activityRepository,
-            UserManager<ApplicationUser> userManager,
-            IIdGeneratorService idGeneratorService,
-            IActivityUserRepository activityUserRepository,
-            ILotteryRepository lotteryRepository,
-            IMapper mapper,
-            IActivityService activityService,
-            ILotteryService lotteryService
+            IActorProxyFactory actorProxyFactory
         )
-            : base(
-                memberService,
-                activityRepository,
-                userManager,
-                idGeneratorService,
-                activityUserRepository,
-                lotteryRepository,
-                mapper,
-                activityService,
-                lotteryService
-            ) { }
+        {
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+        }
 
         public async Task<Unit> Handle(
-            DeleteActivityCommand request,
+            DeleteActivityCommand command,
             CancellationToken cancellationToken
         )
         {
-            var activity = await _activityRepository.FindByIdAsync(request.Id.Value);
-
-            #region Parameter validation
-            if (activity is null)
-            {
-                throw new NotFoundException("Could not find the activity.");
-            }
-            #endregion
-
-            #region Database operations
-            var lotteries = await _lotteryRepository.FindByActivityIdAsync(request.Id.Value);
-            await lotteries
-                .ToAsyncEnumerable()
-                .ForEachAsync(lottery => _lotteryRepository.Remove(lottery));
-            _activityRepository.Remove(activity);
-            if (!await _activityRepository.SaveAsync())
-            {
-                throw new DatabaseUpdateException();
-            }
-            #endregion
-
+            await _actorProxyFactory
+                     .CreateActorProxy<IActivityActor>(
+                         new ActorId(
+                             command.Id.Value.ToString()
+                         ),
+                         nameof(ActivityActor)
+                     ).DeleteActivity(command);
             return Unit.Value;
         }
     }

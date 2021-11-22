@@ -64,12 +64,6 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
 
         public async Task<ActivityDto> CreateActivity(CreateActivityCommand command)
         {
-            #region Parameter validation
-            if (command.StartTime > command.EndTime)
-            {
-                throw new BadRequestException("The EndTime could not be less than the StartTime.");
-            }
-            #endregion
 
             #region Database operations
             var activity = _mapper.Map<Activity>(command);
@@ -103,9 +97,28 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
             return _mapper.Map<ActivityDto>(activity);
         }
 
-        public Task DeleteActivity(DeleteActivityCommand command)
+        public async Task DeleteActivity(DeleteActivityCommand command)
         {
-            throw new NotImplementedException();
+            var activity = await _activityRepository.FindByIdAsync(command.Id.Value);
+
+            #region Parameter validation
+            if (activity is null)
+            {
+                throw new NotFoundException("Could not find the activity.");
+            }
+            #endregion
+
+            #region Database operations
+            var lotteries = await _lotteryRepository.FindByActivityIdAsync(command.Id.Value);
+            await lotteries
+                .ToAsyncEnumerable()
+                .ForEachAsync(lottery => _lotteryRepository.Remove(lottery));
+            _activityRepository.Remove(activity);
+            if (!await _activityRepository.SaveAsync())
+            {
+                throw new DatabaseUpdateException();
+            }
+            #endregion
         }
 
         public Task<ActivityDto> UpdateActivity(UpdateActivityCommand command)

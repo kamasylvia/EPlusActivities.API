@@ -3,7 +3,8 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using EPlusActivities.API.Actors;
+using EPlusActivities.API.Application.Actors.ActivityActors;
+using EPlusActivities.API.Application.Actors.ActivityUserActors;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Extensions;
@@ -68,6 +69,7 @@ namespace EPlusActivities.API
 
                     options.JsonSerializerOptions = jsonSerializerOptions;
                     options.Actors.RegisterActor<ActivityUserActor>();
+                    options.Actors.RegisterActor<ActivityActor>();
                 }
             );
 

@@ -39,7 +39,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<UserDto>> GetAsync([FromQuery] LoginCommand request)
+        public async Task<ActionResult<UserDto>> GetAsync([FromQuery] LoginQuery request)
         {
             await _mediator.Publish(request);
             return Ok(await _mediator.Send(request));
