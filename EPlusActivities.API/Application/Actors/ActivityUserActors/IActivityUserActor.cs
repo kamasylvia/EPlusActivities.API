@@ -5,7 +5,7 @@ using EPlusActivities.API.Application.Queries.ActivityUserQueries;
 using EPlusActivities.API.Application.Queries.UserQueries;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 
-namespace EPlusActivities.API.Actors
+namespace EPlusActivities.API.Application.Actors.ActivityUserActors
 {
     public interface IActivityUserActor : IActor
     {

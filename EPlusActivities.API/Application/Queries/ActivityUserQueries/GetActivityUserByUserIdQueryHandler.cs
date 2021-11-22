@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
-using EPlusActivities.API.Actors;
+using EPlusActivities.API.Application.Actors.ActivityUserActors;
 using EPlusActivities.API.Application.Queries.UserQueries;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Entities;

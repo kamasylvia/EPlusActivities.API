@@ -11,7 +11,7 @@ using EPlusActivities.API.Services.ActivityService;
 using Microsoft.AspNetCore.Identity;
 using EPlusActivities.API.Application.Queries.UserQueries;
 
-namespace EPlusActivities.API.Actors
+namespace EPlusActivities.API.Application.Actors.ActivityUserActors
 {
     public class ActivityUserActor : Actor, IActivityUserActor
     {

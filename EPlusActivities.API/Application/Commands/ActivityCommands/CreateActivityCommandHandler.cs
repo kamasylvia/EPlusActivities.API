@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.ActivityActors;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -19,74 +22,37 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
     public class CreateActivityCommandHandler
-        : ActivityRequestHandlerBase,
+        :
           IRequestHandler<CreateActivityCommand, ActivityDto>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public CreateActivityCommandHandler(
-            IMemberService memberService,
-            IActivityRepository activityRepository,
-            UserManager<ApplicationUser> userManager,
-            IIdGeneratorService idGeneratorService,
-            IActivityUserRepository activityUserRepository,
-            ILotteryRepository lotteryRepository,
-            IMapper mapper,
-            IActivityService activityService,
-            ILotteryService lotteryService
+            IActorProxyFactory actorProxyFactory
         )
-            : base(
-                memberService,
-                activityRepository,
-                userManager,
-                idGeneratorService,
-                activityUserRepository,
-                lotteryRepository,
-                mapper,
-                activityService,
-                lotteryService
-            ) { }
+        {
+            _actorProxyFactory = actorProxyFactory;
+        }
 
         public async Task<ActivityDto> Handle(
-            CreateActivityCommand request,
+            CreateActivityCommand command,
             CancellationToken cancellationToken
         )
         {
             #region Parameter validation
-            if (request.StartTime > request.EndTime)
+            if (command.StartTime > command.EndTime)
             {
                 throw new BadRequestException("The EndTime could not be less than the StartTime.");
             }
             #endregion
 
-            #region Database operations
-            var activity = _mapper.Map<Activity>(request);
-            if (
-                activity.ActivityType
-                is ActivityType.SingleAttendance
-                    or ActivityType.SequentialAttendance
-            )
-            {
-                activity.PrizeTiers = new List<PrizeTier>()
-                {
-                    new PrizeTier("Attendance") { Percentage = 100 }
-                };
-            }
-
-            var activityCode = _idGeneratorService.NextId().ToString().ToCharArray();
-            var replacedChar = Convert.ToChar(
-                Convert.ToInt32('a' + char.GetNumericValue(activityCode.FirstOrDefault()))
-            );
-            activityCode[0] = replacedChar;
-            activity.ActivityCode = new string(activityCode);
-
-            activity.AvailableChannels = activity.AvailableChannels.Append(ChannelCode.Test);
-            await _activityRepository.AddAsync(activity);
-            if (!await _activityRepository.SaveAsync())
-            {
-                throw new DatabaseUpdateException();
-            }
-            #endregion
-
-            return _mapper.Map<ActivityDto>(activity);
+            return await _actorProxyFactory
+                     .CreateActorProxy<IActivityActor>(
+                         new ActorId(
+                             command.Name + command.StartTime.ToString()
+                         ),
+                         nameof(ActivityActor)
+                     ).CreateActivity(command);
         }
     }
 }
