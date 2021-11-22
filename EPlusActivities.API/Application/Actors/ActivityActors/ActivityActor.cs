@@ -120,9 +120,32 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
             #endregion
         }
 
-        public Task<ActivityDto> UpdateActivity(UpdateActivityCommand command)
+        public async Task UpdateActivity(UpdateActivityCommand command)
         {
-            throw new NotImplementedException();
+            var activity = await _activityRepository.FindByIdAsync(command.Id.Value);
+
+            #region Parameter validation
+            if (activity is null)
+            {
+                throw new NotFoundException("Could not find the activity.");
+            }
+
+            if (command.StartTime > command.EndTime)
+            {
+                throw new BadRequestException("The EndTime could not be less than the StartTime.");
+            }
+            #endregion
+
+            #region Database operations
+            _activityRepository.Update(
+                _mapper.Map<UpdateActivityCommand, Activity>(command, activity)
+            );
+            #endregion
+
+            if (!await _activityRepository.SaveAsync())
+            {
+                throw new DatabaseUpdateException("Update database exception");
+            }
         }
     }
 }

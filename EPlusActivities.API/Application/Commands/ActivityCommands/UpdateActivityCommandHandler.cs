@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.ActivityActors;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -17,62 +20,30 @@ using Microsoft.AspNetCore.Identity;
 namespace EPlusActivities.API.Application.Commands.ActivityCommands
 {
     public class UpdateActivityCommandHandler
-        : ActivityRequestHandlerBase,
+        :
           IRequestHandler<UpdateActivityCommand>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public UpdateActivityCommandHandler(
-            IMemberService memberService,
-            IActivityRepository activityRepository,
-            UserManager<ApplicationUser> userManager,
-            IIdGeneratorService idGeneratorService,
-            IActivityUserRepository activityUserRepository,
-            ILotteryRepository lotteryRepository,
-            IMapper mapper,
-            IActivityService activityService,
-            ILotteryService lotteryService
+            IActorProxyFactory actorProxyFactory
         )
-            : base(
-                memberService,
-                activityRepository,
-                userManager,
-                idGeneratorService,
-                activityUserRepository,
-                lotteryRepository,
-                mapper,
-                activityService,
-                lotteryService
-            ) { }
+        {
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+        }
 
         public async Task<Unit> Handle(
-            UpdateActivityCommand request,
+            UpdateActivityCommand command,
             CancellationToken cancellationToken
         )
         {
-            var activity = await _activityRepository.FindByIdAsync(request.Id.Value);
-
-            #region Parameter validation
-            if (activity is null)
-            {
-                throw new NotFoundException("Could not find the activity.");
-            }
-
-            if (request.StartTime > request.EndTime)
-            {
-                throw new BadRequestException("The EndTime could not be less than the StartTime.");
-            }
-            #endregion
-
-            #region Database operations
-            _activityRepository.Update(
-                _mapper.Map<UpdateActivityCommand, Activity>(request, activity)
-            );
-            #endregion
-
-            if (!await _activityRepository.SaveAsync())
-            {
-                throw new DatabaseUpdateException("Update database exception");
-            }
-
+            await _actorProxyFactory
+                     .CreateActorProxy<IActivityActor>(
+                         new ActorId(
+                             command.Id.Value.ToString()
+                         ),
+                         nameof(ActivityActor)
+                     ).UpdateActivity(command);
             return Unit.Value;
         }
     }
