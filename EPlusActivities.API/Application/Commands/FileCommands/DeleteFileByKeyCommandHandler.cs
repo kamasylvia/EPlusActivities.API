@@ -1,28 +1,37 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using EPlusActivities.API.Infrastructure.Exceptions;
-using EPlusActivities.API.Services.FileService;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.FileActors;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
     public class DeleteFileByKeyCommandHandler
-        : FileRequestHandlerBase,
+        :
           IRequestHandler<DeleteFileByKeyCommand>
     {
-        public DeleteFileByKeyCommandHandler(IMapper mapper, IFileService fileService)
-            : base(mapper, fileService) { }
+        private readonly IActorProxyFactory _actorProxyFactory;
+
+        public DeleteFileByKeyCommandHandler(IActorProxyFactory actorProxyFactory)
+        {
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+        }
 
         public async Task<Unit> Handle(
-            DeleteFileByKeyCommand request,
+            DeleteFileByKeyCommand command,
             CancellationToken cancellationToken
         )
         {
-            if (!(await _fileService.DeleteFileByKeyAsync(request)).Succeeded)
-            {
-                throw new RemoteServiceException("Failed to delete the file on the file server.");
-            }
+            await _actorProxyFactory
+                           .CreateActorProxy<IFileActor>(
+                               new ActorId(
+                                   command.OwnerId + command.Key
+                               ),
+                               nameof(FileActor)
+                           )
+                           .DeleteFileByKey(command);
             return Unit.Value;
         }
     }

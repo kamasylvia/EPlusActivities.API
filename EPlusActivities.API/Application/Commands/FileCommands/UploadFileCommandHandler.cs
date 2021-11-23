@@ -1,32 +1,37 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using EPlusActivities.API.Infrastructure.Exceptions;
-using EPlusActivities.API.Services.FileService;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.FileActors;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
     public class UploadFileCommandHandler
-        : FileRequestHandlerBase,
+        :
           IRequestHandler<UploadFileCommand>
     {
-        public UploadFileCommandHandler(IMapper mapper, IFileService fileService)
-            : base(mapper, fileService) { }
+        private readonly IActorProxyFactory _actorProxyFactory;
+
+        public UploadFileCommandHandler(IActorProxyFactory actorProxyFactory)
+        {
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+        }
 
         public async Task<Unit> Handle(
-            UploadFileCommand request,
+            UploadFileCommand command,
             CancellationToken cancellationToken
         )
         {
-            if (!(await _fileService.UploadFileAsync(request)).Succeeded)
-            {
-                throw new RemoteServiceException("Failed to upload the file to the file server.");
-            }
-
+            await _actorProxyFactory
+                           .CreateActorProxy<IFileActor>(
+                               new ActorId(
+                                   command.OwnerId + command.Key
+                               ),
+                               nameof(FileActor)
+                           )
+                           .UploadFile(command);
             return Unit.Value;
         }
     }
