@@ -1,46 +1,39 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Exceptions;
-using EPlusActivities.API.Infrastructure.Repositories;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.BrandActors;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.BrandCommands
 {
     public class DeleteBrandCommandHandler
-        : BrandRequestHandlerBase,
+        :
           IRequestHandler<DeleteBrandCommand>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public DeleteBrandCommandHandler(
-            INameExistsRepository<Brand> brandRepository,
-            IMapper mapper
-        ) : base(brandRepository, mapper) { }
+            IActorProxyFactory actorProxyFactory
+        )
+        {
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+        }
 
         public async Task<Unit> Handle(
-            DeleteBrandCommand request,
+            DeleteBrandCommand command,
             CancellationToken cancellationToken
         )
         {
-            #region Parameter validation
-            if (!await _brandRepository.ExistsAsync(request.Id.Value))
-            {
-                throw new NotFoundException($"Could not find the brand.");
-            }
-            #endregion
-
-            #region Database operations
-            var brand = await _brandRepository.FindByIdAsync(request.Id.Value);
-            _brandRepository.Remove(brand);
-            if (!await _brandRepository.SaveAsync())
-            {
-                throw new DatabaseUpdateException();
-            }
-            #endregion
-
+            await _actorProxyFactory
+                .CreateActorProxy<IBrandActor>(
+                    new ActorId(
+                        command.Id.ToString()
+                    ),
+                    nameof(BrandActor)
+                )
+                .DeleteBrand(command);
             return Unit.Value;
         }
     }
