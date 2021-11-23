@@ -9,17 +9,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.AttendanceCommands
 {
-    public class AttendCommandHandler
-        :
-          IRequestHandler<AttendCommand, AttendanceDto>
+    public class AttendCommandHandler : IRequestHandler<AttendCommand, AttendanceDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public AttendCommandHandler(
-            IActorProxyFactory actorProxyFactory
-            )
+        public AttendCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         private bool IsSequential(DateTime? dateTime1, DateTime dateTime2) =>
@@ -30,9 +27,7 @@ namespace EPlusActivities.API.Application.Commands.AttendanceCommands
         ) =>
             await _actorProxyFactory
                 .CreateActorProxy<IAttendanceActor>(
-                    new ActorId(
-                        command.UserId.ToString()
-                    ),
+                    new ActorId(command.UserId.ToString()),
                     nameof(AttendanceActor)
                 )
                 .Attend(command);

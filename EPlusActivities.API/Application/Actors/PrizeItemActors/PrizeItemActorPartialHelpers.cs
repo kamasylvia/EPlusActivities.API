@@ -29,6 +29,5 @@ namespace EPlusActivities.API.Application.Actors.PrizeItemActors
             }
             return category;
         }
-
     }
 }

@@ -8,16 +8,13 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.CategoryCommands
 {
-    public class UpdateCategoryCommandHandler
-        :
-          IRequestHandler<UpdateCategoryCommand>
+    public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
-        public UpdateCategoryCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public UpdateCategoryCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -26,13 +23,11 @@ namespace EPlusActivities.API.Application.Commands.CategoryCommands
         )
         {
             await _actorProxyFactory
-                           .CreateActorProxy<ICategoryActor>(
-                               new ActorId(
-                                   command.Id.ToString()
-                               ),
-                               nameof(CategoryActor)
-                           )
-                           .UpdateCategory(command);
+                .CreateActorProxy<ICategoryActor>(
+                    new ActorId(command.Id.ToString()),
+                    nameof(CategoryActor)
+                )
+                .UpdateCategory(command);
             return Unit.Value;
         }
     }

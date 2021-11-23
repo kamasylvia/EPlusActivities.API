@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ using EPlusActivities.API.Infrastructure.Exceptions;
 
 namespace EPlusActivities.API.Application.Actors.LotteryActors
 {
-    public partial class LotteryActor 
+    public partial class LotteryActor
     {
         public async Task<IEnumerable<LotteryDto>> Draw(DrawCommand command)
         {

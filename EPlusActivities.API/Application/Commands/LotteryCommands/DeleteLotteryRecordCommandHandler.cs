@@ -7,9 +7,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class DeleteLotteryRecordCommandHandler
-        : 
-          IRequestHandler<DeleteLotteryRecordCommand>
+    public class DeleteLotteryRecordCommandHandler : IRequestHandler<DeleteLotteryRecordCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
@@ -24,13 +22,11 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         )
         {
             await _actorProxyFactory
-                           .CreateActorProxy<ILotteryActor>(
-                               new ActorId(
-                                   command.Id.ToString()
-                               ),
-                               nameof(LotteryActor)
-                           )
-                           .DeleteLotteryRecord(command);
+                .CreateActorProxy<ILotteryActor>(
+                    new ActorId(command.Id.ToString()),
+                    nameof(LotteryActor)
+                )
+                .DeleteLotteryRecord(command);
             return Unit.Value;
         }
     }

@@ -18,8 +18,9 @@ namespace EPlusActivities.API.Application.Actors.AddressActors
         private readonly IFindByParentIdRepository<Address> _addressRepository;
         private readonly IMapper _mapper;
 
-        public AddressActor(ActorHost host,
-                    UserManager<ApplicationUser> userManager,
+        public AddressActor(
+            ActorHost host,
+            UserManager<ApplicationUser> userManager,
             IFindByParentIdRepository<Address> addressRepository,
             IMapper mapper
         ) : base(host)

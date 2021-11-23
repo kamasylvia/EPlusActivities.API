@@ -8,17 +8,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
-    public class DeletePrizeItemCommandHandler
-        :
-          IRequestHandler<DeletePrizeItemCommand>
+    public class DeletePrizeItemCommandHandler : IRequestHandler<DeletePrizeItemCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public DeletePrizeItemCommandHandler(
-            IActorProxyFactory actorProxyFactory
-)
+        public DeletePrizeItemCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -27,12 +24,11 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         )
         {
             await _actorProxyFactory
-          .CreateActorProxy<IPrizeItemActor>(
-              new ActorId(
-                  command.Id.ToString()
-              ),
-              nameof(PrizeItemActor)
-          ).DeletePrizeItem(command);
+                .CreateActorProxy<IPrizeItemActor>(
+                    new ActorId(command.Id.ToString()),
+                    nameof(PrizeItemActor)
+                )
+                .DeletePrizeItem(command);
             return Unit.Value;
         }
     }

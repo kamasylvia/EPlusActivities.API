@@ -95,7 +95,7 @@ namespace EPlusActivities.API
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            // 数据库和 IdentityServer4 
+            // 数据库和 IdentityServer4
             services.AddDbAndIS4(connectionString, migrationsAssembly, Environment.IsDevelopment());
 
             // 权限验证策略

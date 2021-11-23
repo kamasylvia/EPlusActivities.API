@@ -35,8 +35,8 @@ namespace EPlusActivities.API.Application
         }
 
         protected async Task<IEnumerable<PrizeItem>> FindByIdListAsync(IEnumerable<Guid> ids) =>
-       await ids.ToAsyncEnumerable()
-           .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
-           .ToListAsync();
+            await ids.ToAsyncEnumerable()
+                .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
+                .ToListAsync();
     }
 }

@@ -43,6 +43,5 @@ namespace EPlusActivities.API.Application.Actors.FileActors
                 throw new RemoteServiceException("Failed to delete the file on the file server.");
             }
         }
-
     }
 }

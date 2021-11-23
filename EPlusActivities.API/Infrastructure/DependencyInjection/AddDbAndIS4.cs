@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Services.IdentityServer;
@@ -10,9 +10,14 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace EPlusActivities.API.Infrastructure.DependencyInjection
 {
-    public static partial class ServiceCollectionDependencyInjection 
+    public static partial class ServiceCollectionDependencyInjection
     {
-        public static void AddDbAndIS4(this IServiceCollection services, string connectionString, string migrationsAssembly, bool isDevelopment)
+        public static void AddDbAndIS4(
+            this IServiceCollection services,
+            string connectionString,
+            string migrationsAssembly,
+            bool isDevelopment
+        )
         {
             services.AddDbContext<ApplicationDbContext>(
                 options =>

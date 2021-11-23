@@ -15,7 +15,8 @@ namespace EPlusActivities.API.Application.Actors.CategoryActors
         private readonly INameExistsRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
 
-        public CategoryActor(ActorHost host,
+        public CategoryActor(
+            ActorHost host,
             INameExistsRepository<Category> categoryRepository,
             IMapper mapper
         ) : base(host)

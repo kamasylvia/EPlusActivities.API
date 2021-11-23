@@ -103,9 +103,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> UpdateNameAsync(
-            [FromBody] UpdateCategoryCommand request
-        )
+        public async Task<IActionResult> UpdateNameAsync([FromBody] UpdateCategoryCommand request)
         {
             await _mediator.Send(request);
             return Ok();

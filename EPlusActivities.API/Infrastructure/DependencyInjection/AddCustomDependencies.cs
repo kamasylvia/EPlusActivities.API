@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using EPlusActivities.API.Infrastructure.Attributes;
@@ -64,7 +64,5 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                                 }
                             )
                 );
-    
-        
     }
 }

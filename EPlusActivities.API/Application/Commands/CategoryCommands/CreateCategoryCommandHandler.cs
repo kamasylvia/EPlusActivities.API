@@ -9,29 +9,22 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.CategoryCommands
 {
-    public class CreateCategoryCommandHandler
-        :
-          IRequestHandler<CreateCategoryCommand, CategoryDto>
+    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public CreateCategoryCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public CreateCategoryCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<CategoryDto> Handle(
             CreateCategoryCommand command,
             CancellationToken cancellationToken
-        ) => await _actorProxyFactory
-                .CreateActorProxy<ICategoryActor>(
-                    new ActorId(
-                        command.Name
-                    ),
-                    nameof(CategoryActor)
-                )
+        ) =>
+            await _actorProxyFactory
+                .CreateActorProxy<ICategoryActor>(new ActorId(command.Name), nameof(CategoryActor))
                 .CreateCategory(command);
     }
 }

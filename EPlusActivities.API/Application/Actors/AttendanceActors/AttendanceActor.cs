@@ -25,7 +25,8 @@ namespace EPlusActivities.API.Application.Actors.AttendanceActors
         private readonly IAttendanceRepository _attendanceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AttendanceActor(ActorHost host,
+        public AttendanceActor(
+            ActorHost host,
             IAttendanceRepository attendanceRepository,
             UserManager<ApplicationUser> userManager,
             IMapper mapper,
@@ -51,7 +52,7 @@ namespace EPlusActivities.API.Application.Actors.AttendanceActors
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
         private bool IsSequential(DateTime? dateTime1, DateTime dateTime2) =>
-             dateTime1.HasValue ? dateTime1.Value.AddDays(1).Date == dateTime2.Date : false;
+            dateTime1.HasValue ? dateTime1.Value.AddDays(1).Date == dateTime2.Date : false;
         public async Task<AttendanceDto> Attend(AttendCommand command)
         {
             #region Parameter validation

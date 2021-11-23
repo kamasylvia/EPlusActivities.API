@@ -9,17 +9,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.AddressCommands
 {
-    public class CreateAddressCommandHandler
-        :
-          IRequestHandler<CreateAddressCommand, AddressDto>
+    public class CreateAddressCommandHandler : IRequestHandler<CreateAddressCommand, AddressDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public CreateAddressCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public CreateAddressCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<AddressDto> Handle(
@@ -28,9 +25,7 @@ namespace EPlusActivities.API.Application.Commands.AddressCommands
         ) =>
             await _actorProxyFactory
                 .CreateActorProxy<IAddressActor>(
-                    new ActorId(
-                        command.UserId.ToString()
-                    ),
+                    new ActorId(command.UserId.ToString()),
                     nameof(AddressActor)
                 )
                 .CreateAddress(command);

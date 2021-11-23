@@ -10,15 +10,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class DrawCommandHandler
-        :
-          IRequestHandler<DrawCommand, IEnumerable<LotteryDto>>
+    public class DrawCommandHandler : IRequestHandler<DrawCommand, IEnumerable<LotteryDto>>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
         public DrawCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<IEnumerable<LotteryDto>> Handle(
@@ -26,12 +25,10 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             CancellationToken cancellationToken
         ) =>
             await _actorProxyFactory
-                           .CreateActorProxy<ILotteryActor>(
-                               new ActorId(
-                                   command.UserId.ToString() + command.ActivityId.ToString()
-                               ),
-                               nameof(LotteryActor)
-                           )
-                           .Draw(command);
+                .CreateActorProxy<ILotteryActor>(
+                    new ActorId(command.UserId.ToString() + command.ActivityId.ToString()),
+                    nameof(LotteryActor)
+                )
+                .Draw(command);
     }
 }

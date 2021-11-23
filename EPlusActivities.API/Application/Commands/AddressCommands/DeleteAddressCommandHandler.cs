@@ -8,17 +8,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.AddressCommands
 {
-    public class DeleteAddressCommandHandler
-        :
-          IRequestHandler<DeleteAddressCommand>
+    public class DeleteAddressCommandHandler : IRequestHandler<DeleteAddressCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public DeleteAddressCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public DeleteAddressCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -27,13 +24,11 @@ namespace EPlusActivities.API.Application.Commands.AddressCommands
         )
         {
             await _actorProxyFactory
-       .CreateActorProxy<IAddressActor>(
-           new ActorId(
-               command.Id.ToString()
-           ),
-           nameof(AddressActor)
-       )
-       .DeleteAddress(command);
+                .CreateActorProxy<IAddressActor>(
+                    new ActorId(command.Id.ToString()),
+                    nameof(AddressActor)
+                )
+                .DeleteAddress(command);
             return Unit.Value;
         }
     }

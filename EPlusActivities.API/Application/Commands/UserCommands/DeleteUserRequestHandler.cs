@@ -1,40 +1,31 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Exceptions;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.UserActors;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.UserCommands
 {
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        public DeleteUserCommandHandler(UserManager<ApplicationUser> userManager)
+        private readonly IActorProxyFactory _actorProxyFactory;
+
+        public DeleteUserCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
-            DeleteUserCommand request,
+            DeleteUserCommand command,
             CancellationToken cancellationToken
         )
         {
-            #region Parameter validation
-            var user = await _userManager.FindByIdAsync(request.Id.ToString());
-            if (user is null)
-            {
-                throw new NotFoundException("Could not find the user.");
-            }
-            #endregion
-
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-            {
-                throw new DatabaseUpdateException(result.ToString());
-            }
-
+            await _actorProxyFactory
+                .CreateActorProxy<IUserActor>(new ActorId(command.Id.ToString()), nameof(UserActor))
+                .DeleteUser(command);
             return Unit.Value;
         }
     }

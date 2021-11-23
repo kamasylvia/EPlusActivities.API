@@ -9,7 +9,6 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
 {
     public static partial class ServiceCollectionDependencyInjection
     {
-        
         public static void AddAppActors(this IServiceCollection services) =>
             services.AddActors(
                 options =>

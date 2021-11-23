@@ -9,14 +9,14 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
     public class UpdateLotteryRecordCommandHandler
-        : 
-          INotificationHandler<UpdateLotteryRecordCommand>
+        : INotificationHandler<UpdateLotteryRecordCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
         public UpdateLotteryRecordCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task Handle(
@@ -24,12 +24,10 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             CancellationToken cancellationToken
         ) =>
             await _actorProxyFactory
-                           .CreateActorProxy<ILotteryActor>(
-                               new ActorId(
-                                   command.Id.ToString()
-                               ),
-                               nameof(LotteryActor)
-                           )
-                           .UpdateLotteryRecord(command);
+                .CreateActorProxy<ILotteryActor>(
+                    new ActorId(command.Id.ToString()),
+                    nameof(LotteryActor)
+                )
+                .UpdateLotteryRecord(command);
     }
 }

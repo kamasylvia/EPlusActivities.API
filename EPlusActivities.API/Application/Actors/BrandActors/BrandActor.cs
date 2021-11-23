@@ -17,7 +17,11 @@ namespace EPlusActivities.API.Application.Actors.BrandActors
         private readonly INameExistsRepository<Brand> _brandRepository;
         private readonly IMapper _mapper;
 
-        public BrandActor(ActorHost host, INameExistsRepository<Brand> brandRepository, IMapper mapper) : base(host)
+        public BrandActor(
+            ActorHost host,
+            INameExistsRepository<Brand> brandRepository,
+            IMapper mapper
+        ) : base(host)
         {
             _brandRepository =
                 brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
@@ -46,7 +50,6 @@ namespace EPlusActivities.API.Application.Actors.BrandActors
             #endregion
 
             return _mapper.Map<BrandDto>(brand);
-
         }
 
         public async Task DeleteBrand(DeleteBrandCommand command)

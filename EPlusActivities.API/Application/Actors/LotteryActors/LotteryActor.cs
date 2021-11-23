@@ -27,7 +27,8 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
         private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
         private readonly IActivityService _activityService;
 
-        public LotteryActor(ActorHost host,
+        public LotteryActor(
+            ActorHost host,
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -41,22 +42,34 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
             IIdGeneratorService idGeneratorService,
             IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
             IActivityService activityService
-
         ) : base(host)
         {
-            _lotteryRepository = lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
+            _lotteryRepository =
+                lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _activityRepository = activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
-            _prizeItemRepository = prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
-            _prizeTypeRepository = prizeTypeRepository ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
+            _activityRepository =
+                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
+            _prizeItemRepository =
+                prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
+            _prizeTypeRepository =
+                prizeTypeRepository ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _activityUserRepository = activityUserRepository ?? throw new ArgumentNullException(nameof(activityUserRepository));
-            _couponRepository = couponResponseDto ?? throw new ArgumentNullException(nameof(couponResponseDto));
-            _lotteryService = lotteryService ?? throw new ArgumentNullException(nameof(lotteryService));
-            _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
-            _idGeneratorService = idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
-            _generalLotteryRecordsRepository = generalLotteryRecordsRepository ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
-            _activityService = activityService ?? throw new ArgumentNullException(nameof(activityService));
+            _activityUserRepository =
+                activityUserRepository
+                ?? throw new ArgumentNullException(nameof(activityUserRepository));
+            _couponRepository =
+                couponResponseDto ?? throw new ArgumentNullException(nameof(couponResponseDto));
+            _lotteryService =
+                lotteryService ?? throw new ArgumentNullException(nameof(lotteryService));
+            _memberService =
+                memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _idGeneratorService =
+                idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
+            _generalLotteryRecordsRepository =
+                generalLotteryRecordsRepository
+                ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
+            _activityService =
+                activityService ?? throw new ArgumentNullException(nameof(activityService));
         }
     }
 }

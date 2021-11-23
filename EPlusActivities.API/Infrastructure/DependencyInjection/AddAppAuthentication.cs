@@ -1,8 +1,8 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.DependencyInjection
 {
-    public static partial class ServiceCollectionDependencyInjection 
+    public static partial class ServiceCollectionDependencyInjection
     {
         public static void AddAppAuthentication(this IServiceCollection services) =>
             //基于策略授权
@@ -46,6 +46,5 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                     );
                 }
             );
-        
     }
 }

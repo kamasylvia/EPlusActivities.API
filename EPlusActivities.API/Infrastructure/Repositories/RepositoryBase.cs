@@ -17,9 +17,11 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public virtual async Task AddAsync(T item) => await _context.Set<T>().AddAsync(item);
 
-        public virtual async Task AddRangeAsync(IEnumerable<T> items) => await _context.Set<T>().AddRangeAsync(items);
-        
-        public virtual async Task AddRangeAsync(params T[] items) => await _context.Set<T>().AddRangeAsync(items);
+        public virtual async Task AddRangeAsync(IEnumerable<T> items) =>
+            await _context.Set<T>().AddRangeAsync(items);
+
+        public virtual async Task AddRangeAsync(params T[] items) =>
+            await _context.Set<T>().AddRangeAsync(items);
 
         public virtual async Task<bool> ExistsAsync(params object[] keyValues) =>
             (await FindByIdAsync(keyValues)) is null;

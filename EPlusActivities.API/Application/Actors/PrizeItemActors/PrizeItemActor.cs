@@ -21,19 +21,22 @@ namespace EPlusActivities.API.Application.Actors.PrizeItemActors
         private readonly INameExistsRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
 
-        public PrizeItemActor(ActorHost host,
+        public PrizeItemActor(
+            ActorHost host,
             UserManager<ApplicationUser> userManager,
             IPrizeItemRepository prizeItemRepository,
             INameExistsRepository<Brand> brandRepository,
             INameExistsRepository<Category> categoryRepository,
             IMapper mapper
-        
         ) : base(host)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _prizeItemRepository = prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
-            _brandRepository = brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
-            _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
+            _prizeItemRepository =
+                prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
+            _brandRepository =
+                brandRepository ?? throw new ArgumentNullException(nameof(brandRepository));
+            _categoryRepository =
+                categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -62,7 +65,7 @@ namespace EPlusActivities.API.Application.Actors.PrizeItemActors
             var result = _mapper.Map<PrizeItemDto>(prizeItem);
             result.BrandName = prizeItem?.Brand?.Name;
             result.CategoryName = prizeItem?.Category?.Name;
-            
+
             return result;
         }
 

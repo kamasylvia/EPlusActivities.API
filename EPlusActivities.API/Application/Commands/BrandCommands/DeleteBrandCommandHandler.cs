@@ -8,17 +8,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.BrandCommands
 {
-    public class DeleteBrandCommandHandler
-        :
-          IRequestHandler<DeleteBrandCommand>
+    public class DeleteBrandCommandHandler : IRequestHandler<DeleteBrandCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public DeleteBrandCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public DeleteBrandCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -28,9 +25,7 @@ namespace EPlusActivities.API.Application.Commands.BrandCommands
         {
             await _actorProxyFactory
                 .CreateActorProxy<IBrandActor>(
-                    new ActorId(
-                        command.Id.ToString()
-                    ),
+                    new ActorId(command.Id.ToString()),
                     nameof(BrandActor)
                 )
                 .DeleteBrand(command);

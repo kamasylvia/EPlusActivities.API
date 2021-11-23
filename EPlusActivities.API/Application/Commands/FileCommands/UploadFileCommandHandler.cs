@@ -8,15 +8,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class UploadFileCommandHandler
-        :
-          IRequestHandler<UploadFileCommand>
+    public class UploadFileCommandHandler : IRequestHandler<UploadFileCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
         public UploadFileCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -25,13 +24,11 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
         )
         {
             await _actorProxyFactory
-                           .CreateActorProxy<IFileActor>(
-                               new ActorId(
-                                   command.OwnerId + command.Key
-                               ),
-                               nameof(FileActor)
-                           )
-                           .UploadFile(command);
+                .CreateActorProxy<IFileActor>(
+                    new ActorId(command.OwnerId + command.Key),
+                    nameof(FileActor)
+                )
+                .UploadFile(command);
             return Unit.Value;
         }
     }

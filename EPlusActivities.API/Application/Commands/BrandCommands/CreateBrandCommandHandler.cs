@@ -9,17 +9,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.BrandCommands
 {
-    public class CreateBrandCommandHandler
-        :
-          IRequestHandler<CreateBrandCommand, BrandDto>
+    public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, BrandDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public CreateBrandCommandHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public CreateBrandCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<BrandDto> Handle(
@@ -27,12 +24,7 @@ namespace EPlusActivities.API.Application.Commands.BrandCommands
             CancellationToken cancellationToken
         ) =>
             await _actorProxyFactory
-                .CreateActorProxy<IBrandActor>(
-                    new ActorId(
-                        command.Name
-                    ),
-                    nameof(BrandActor)
-                )
+                .CreateActorProxy<IBrandActor>(new ActorId(command.Name), nameof(BrandActor))
                 .CreateBrand(command);
     }
 }

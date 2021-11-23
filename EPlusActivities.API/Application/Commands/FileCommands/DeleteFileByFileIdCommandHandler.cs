@@ -8,15 +8,14 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.FileCommands
 {
-    public class DeleteFileByFileIdCommandHandler
-        :
-          IRequestHandler<DeleteFileByFileIdCommand>
+    public class DeleteFileByFileIdCommandHandler : IRequestHandler<DeleteFileByFileIdCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
         public DeleteFileByFileIdCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task<Unit> Handle(
@@ -25,13 +24,11 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
         )
         {
             await _actorProxyFactory
-                           .CreateActorProxy<IFileActor>(
-                               new ActorId(
-                                   command.FileId.ToString()
-                               ),
-                               nameof(FileActor)
-                           )
-                           .DeleteFileByFileId(command);
+                .CreateActorProxy<IFileActor>(
+                    new ActorId(command.FileId.ToString()),
+                    nameof(FileActor)
+                )
+                .DeleteFileByFileId(command);
             return Unit.Value;
         }
     }
