@@ -9,6 +9,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
     {
         Task AddAsync(T item);
 
+        Task AddRangeAsync(IEnumerable<T> items);
+
+        Task AddRangeAsync(params T[] items);
+
         void Remove(T item);
 
         void Update(T item);
