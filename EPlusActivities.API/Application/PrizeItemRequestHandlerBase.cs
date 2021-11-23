@@ -33,31 +33,10 @@ namespace EPlusActivities.API.Application
             _categoryRepository =
                 categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
         }
+
         protected async Task<IEnumerable<PrizeItem>> FindByIdListAsync(IEnumerable<Guid> ids) =>
-            await ids.ToAsyncEnumerable()
-                .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
-                .ToListAsync();
-
-        protected async Task<Brand> GetBrandAsync(string brandName)
-        {
-            var brand = await _brandRepository.FindByNameAsync(brandName);
-            if (brand is null)
-            {
-                brand = new Brand(brandName);
-                await _brandRepository.AddAsync(brand);
-            }
-            return brand;
-        }
-
-        protected async Task<Category> GetCategoryAsync(string categoryName)
-        {
-            var category = await _categoryRepository.FindByNameAsync(categoryName);
-            if (category is null)
-            {
-                category = new Category(categoryName);
-                await _categoryRepository.AddAsync(category);
-            }
-            return category;
-        }
+       await ids.ToAsyncEnumerable()
+           .SelectAwait(async id => await _prizeItemRepository.FindByIdAsync(id))
+           .ToListAsync();
     }
 }

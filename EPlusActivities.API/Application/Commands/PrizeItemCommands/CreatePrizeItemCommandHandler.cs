@@ -1,60 +1,35 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.PrizeItemActors;
 using EPlusActivities.API.Dtos.PrizeItemDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Exceptions;
-using EPlusActivities.API.Infrastructure.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
 {
     public class CreatePrizeItemCommandHandler
-        : PrizeItemRequestHandlerBase,
+        :
           IRequestHandler<CreatePrizeItemCommand, PrizeItemDto>
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
+
         public CreatePrizeItemCommandHandler(
-            UserManager<ApplicationUser> userManager,
-            IPrizeItemRepository prizeItemRepository,
-            INameExistsRepository<Brand> brandRepository,
-            INameExistsRepository<Category> categoryRepository,
-            IMapper mapper
-        ) : base(userManager, prizeItemRepository, brandRepository, categoryRepository, mapper) { }
-
-        public async Task<PrizeItemDto> Handle(
-            CreatePrizeItemCommand request,
-            CancellationToken cancellationToken
-        )
+            IActorProxyFactory actorProxyFactory
+)
         {
-            #region New an entity
-            var prizeItem = _mapper.Map<PrizeItem>(request);
-            if (!string.IsNullOrEmpty(request.BrandName))
-            {
-                prizeItem.Brand = await GetBrandAsync(request.BrandName);
-            }
-            if (!string.IsNullOrEmpty(request.CategoryName))
-            {
-                prizeItem.Category = await GetCategoryAsync(request.CategoryName);
-            }
-            #endregion
-
-            #region Database operations
-            await _prizeItemRepository.AddAsync(prizeItem);
-            if (!await _prizeItemRepository.SaveAsync())
-            {
-                throw new DatabaseUpdateException();
-            }
-            #endregion
-
-            var result = _mapper.Map<PrizeItemDto>(prizeItem);
-            result.BrandName = prizeItem?.Brand?.Name;
-            result.CategoryName = prizeItem?.Category?.Name;
-
-            return result;
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
+        public async Task<PrizeItemDto> Handle(
+            CreatePrizeItemCommand command,
+            CancellationToken cancellationToken
+        ) => await _actorProxyFactory
+                   .CreateActorProxy<IPrizeItemActor>(
+                       new ActorId(
+                           command.Name
+                       ),
+                       nameof(PrizeItemActor)
+                   ).CreatePrizeItem(command);
     }
 }
