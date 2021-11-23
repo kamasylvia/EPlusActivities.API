@@ -12,6 +12,6 @@ namespace EPlusActivities.API.Application.Actors.BrandActors
     {
         Task<BrandDto> CreateBrand(CreateBrandCommand command);
         Task DeleteBrand(DeleteBrandCommand command);
-        Task UpdateBrandName(UpdateBrandNameCommand command);
+        Task UpdateBrandName(UpdateBrandCommand command);
     }
 }

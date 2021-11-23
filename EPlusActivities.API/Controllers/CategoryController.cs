@@ -104,7 +104,7 @@ namespace EPlusActivities.API.Controllers
             Roles = "manager, tester"
         )]
         public async Task<IActionResult> UpdateNameAsync(
-            [FromBody] UpdateCategoryNameCommand request
+            [FromBody] UpdateCategoryCommand request
         )
         {
             await _mediator.Send(request);

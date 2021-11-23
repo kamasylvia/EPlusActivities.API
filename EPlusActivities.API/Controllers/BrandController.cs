@@ -107,7 +107,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> UpdateNameAsync([FromBody] UpdateBrandNameCommand request)
+        public async Task<IActionResult> UpdateNameAsync([FromBody] UpdateBrandCommand request)
         {
             await _mediator.Send(request);
             return Ok();

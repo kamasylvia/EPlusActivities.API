@@ -68,7 +68,7 @@ namespace EPlusActivities.API.Application.Actors.BrandActors
             #endregion
         }
 
-        public async Task UpdateBrandName(UpdateBrandNameCommand command)
+        public async Task UpdateBrandName(UpdateBrandCommand command)
         {
             #region Parameter validation
             if (!await _brandRepository.ExistsAsync(command.Id.Value))
@@ -79,7 +79,7 @@ namespace EPlusActivities.API.Application.Actors.BrandActors
 
             #region Database operations
             var brand = await _brandRepository.FindByIdAsync(command.Id.Value);
-            brand = _mapper.Map<UpdateBrandNameCommand, Brand>(command, brand);
+            brand = _mapper.Map<UpdateBrandCommand, Brand>(command, brand);
             _brandRepository.Update(brand);
             if (!await _brandRepository.SaveAsync())
             {

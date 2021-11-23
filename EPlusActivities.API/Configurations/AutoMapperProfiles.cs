@@ -145,7 +145,7 @@ namespace EPlusActivities.API.Configuration
             #region Brand
             CreateMap<Brand, BrandDto>();
             CreateMap<CreateBrandCommand, Brand>();
-            CreateMap<UpdateBrandNameCommand, Brand>();
+            CreateMap<UpdateBrandCommand, Brand>();
             #endregion
 
 
@@ -154,7 +154,7 @@ namespace EPlusActivities.API.Configuration
             CreateMap<Category, CategoryDto>()
                 .ReverseMap();
             CreateMap<CreateCategoryCommand, Category>();
-            CreateMap<UpdateCategoryNameCommand, Category>();
+            CreateMap<UpdateCategoryCommand, Category>();
             #endregion
 
 

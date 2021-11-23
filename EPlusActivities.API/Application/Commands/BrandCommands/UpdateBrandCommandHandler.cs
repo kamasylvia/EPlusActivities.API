@@ -8,13 +8,13 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.BrandCommands
 {
-    public class UpdateBrandNameCommandHandler
+    public class UpdateBrandCommandHandler
         :
-          IRequestHandler<UpdateBrandNameCommand>
+          IRequestHandler<UpdateBrandCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public UpdateBrandNameCommandHandler(
+        public UpdateBrandCommandHandler(
             IActorProxyFactory actorProxyFactory
         )
         {
@@ -22,7 +22,7 @@ namespace EPlusActivities.API.Application.Commands.BrandCommands
         }
 
         public async Task<Unit> Handle(
-            UpdateBrandNameCommand command,
+            UpdateBrandCommand command,
             CancellationToken cancellationToken
         )
         {

@@ -8,12 +8,12 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.CategoryCommands
 {
-    public class DeleteCategoryCommandHandler
+    public class UpdateCategoryCommandHandler
         :
-          IRequestHandler<DeleteCategoryCommand>
+          IRequestHandler<UpdateCategoryCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
-        public DeleteCategoryCommandHandler(
+        public UpdateCategoryCommandHandler(
             IActorProxyFactory actorProxyFactory
         )
         {
@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Application.Commands.CategoryCommands
         }
 
         public async Task<Unit> Handle(
-            DeleteCategoryCommand command,
+            UpdateCategoryCommand command,
             CancellationToken cancellationToken
         )
         {
@@ -32,7 +32,7 @@ namespace EPlusActivities.API.Application.Commands.CategoryCommands
                                ),
                                nameof(CategoryActor)
                            )
-                           .DeleteCategory(command);
+                           .UpdateCategory(command);
             return Unit.Value;
         }
     }

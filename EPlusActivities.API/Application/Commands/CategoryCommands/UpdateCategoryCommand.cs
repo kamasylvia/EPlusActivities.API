@@ -7,7 +7,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.CategoryCommands
 {
-    public class UpdateCategoryNameCommand : IRequest
+    public class UpdateCategoryCommand : IRequest
     {
         /// <summary>
         /// 分类 ID
