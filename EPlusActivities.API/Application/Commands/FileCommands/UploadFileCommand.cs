@@ -19,6 +19,7 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
         /// </summary>
         /// <value></value>
         [Required]
+        [RegularExpression("[ -~]*")] 
         public string Key { get; set; }
 
         /// <summary>
