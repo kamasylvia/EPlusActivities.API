@@ -32,9 +32,9 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public virtual async Task<T> FindByIdAsync(params object[] keyValues) =>
             await _context.Set<T>().FindAsync(keyValues);
 
-        public void Remove(T item) => _context.Set<T>().Remove(item);
+        public virtual void Remove(T item) => _context.Set<T>().Remove(item);
 
-        public async Task<bool> SaveAsync() => await _context.SaveChangesAsync() >= 0;
+        public virtual async Task<bool> SaveAsync() => await _context.SaveChangesAsync() >= 0;
 
         public virtual void Update(T item) => _context.Set<T>().Update(item);
     }

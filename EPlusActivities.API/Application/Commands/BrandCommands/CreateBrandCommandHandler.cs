@@ -24,7 +24,7 @@ namespace EPlusActivities.API.Application.Commands.BrandCommands
             CancellationToken cancellationToken
         ) =>
             await _actorProxyFactory
-                .CreateActorProxy<IBrandActor>(new ActorId(command.Name), nameof(BrandActor))
+                .CreateActorProxy<IBrandActor>(new ActorId("CreateBrand"), nameof(BrandActor))
                 .CreateBrand(command);
     }
 }

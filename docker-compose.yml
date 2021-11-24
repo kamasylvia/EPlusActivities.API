@@ -23,7 +23,7 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211123
+        image: kamasylvia/eplusactivities:20211124
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
@@ -53,6 +53,8 @@ services:
                 "EPlusActivities",
                 "-app-port",
                 "80",
+                "-dapr-http-port",
+                "3500",
                 "-placement-host-address",
                 "placement:50006",
                 "-components-path",

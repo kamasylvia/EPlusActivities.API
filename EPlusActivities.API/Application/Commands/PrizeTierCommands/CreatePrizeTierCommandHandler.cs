@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
         ) =>
             await _actorProxyFactory
                 .CreateActorProxy<IPrizeTierActor>(
-                    new ActorId(command.ActivityId + command.Name),
+                    new ActorId(command.ActivityId.ToString()),
                     nameof(PrizeTierActor)
                 )
                 .CreatePrizeTier(command);

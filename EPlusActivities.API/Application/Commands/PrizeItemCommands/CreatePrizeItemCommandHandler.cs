@@ -25,7 +25,7 @@ namespace EPlusActivities.API.Application.Commands.PrizeItemCommands
         ) =>
             await _actorProxyFactory
                 .CreateActorProxy<IPrizeItemActor>(
-                    new ActorId(command.Name),
+                    new ActorId("CreatePrizeItem"),
                     nameof(PrizeItemActor)
                 )
                 .CreatePrizeItem(command);

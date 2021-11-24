@@ -24,7 +24,10 @@ namespace EPlusActivities.API.Application.Commands.CategoryCommands
             CancellationToken cancellationToken
         ) =>
             await _actorProxyFactory
-                .CreateActorProxy<ICategoryActor>(new ActorId(command.Name), nameof(CategoryActor))
+                .CreateActorProxy<ICategoryActor>(
+                    new ActorId("CreateCategory"),
+                    nameof(CategoryActor)
+                )
                 .CreateCategory(command);
     }
 }
