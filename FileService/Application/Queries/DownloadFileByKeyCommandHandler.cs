@@ -11,10 +11,10 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FileService.Application.Commands
+namespace FileService.Application.Queries
 {
     public class DownloadFileByKeyCommandHandler
-        : BaseCommandHandler,
+        : HandlerBase,
           IRequestHandler<DownloadFileByKeyCommand, DownloadFileGrpcResponse>
     {
         public DownloadFileByKeyCommandHandler(

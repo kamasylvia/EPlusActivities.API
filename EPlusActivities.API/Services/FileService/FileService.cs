@@ -95,5 +95,29 @@ namespace EPlusActivities.API.Services.FileService
                 "DeleteFileByKey",
                 _mapper.Map<DeleteFileByKeyGrpcRequest>(request)
             );
+
+        public async Task<DownloadStaticFileGrpcResponse> DownloadStaticFileByFileIdAsync(
+            DownloadFileByFileIdQuery request
+        ) =>
+            await _daprClient.InvokeMethodGrpcAsync<
+                DownloadFileByFileIdGrpcRequest,
+                DownloadStaticFileGrpcResponse
+            >(
+                _fileServiceAppId,
+                "DownloadStaticFileByFileId",
+                _mapper.Map<DownloadFileByFileIdGrpcRequest>(request)
+            );
+
+        public async Task<DownloadStaticFileGrpcResponse> DownloadStaticFileByKeyAsync(
+            DownloadFileByKeyQuery request
+        ) =>
+            await _daprClient.InvokeMethodGrpcAsync<
+                DownloadFileByKeyGrpcRequest,
+                DownloadStaticFileGrpcResponse
+            >(
+                _fileServiceAppId,
+                "DownloadStaticFileByKey",
+                _mapper.Map<DownloadFileByKeyGrpcRequest>(request)
+            );
     }
 }

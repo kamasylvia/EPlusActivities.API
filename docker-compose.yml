@@ -92,13 +92,13 @@ services:
         restart: always
 
     fileservice:
-        image: kamasylvia/fileservice:20211110
+        image: kamasylvia/fileservice:20211129
         container_name: FileService
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
             - ASPNETCORE_URLS=http://+:52500
         ports:
-            - 50002:50002
+            - 52500:52500
         links:
             - fileservice-db
         depends_on:
@@ -108,6 +108,7 @@ services:
             - ./Logs/FileServiceLogs:/app/Logs:ro
             - ./Settings/FileService/appsettings.json:/app/appsettings.json
             - ./FileStorage:/app/FileStorage
+            - ./StaticFileStorage:/app/wwwroot
         networks:
             - network-dapr
         restart: always

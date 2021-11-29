@@ -6,17 +6,18 @@ using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Data.Repositories;
 using FileService.Infrastructure.Exceptions;
 using FileService.Services.FileStorageService;
+using Google.Protobuf;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FileService.Application.Commands
+namespace FileService.Application.Queries
 {
-    public class DeleteFileByKeyCommandHandler
+    public class DownloadStaticFileByFileIdCommandHandler
         : HandlerBase,
-          IRequestHandler<DeleteFileByKeyCommand, DeleteFileGrpcResponse>
+          IRequestHandler<DownloadStaticFileByFileIdCommand, DownloadStaticFileGrpcResponse>
     {
-        public DeleteFileByKeyCommandHandler(
+        public DownloadStaticFileByFileIdCommandHandler(
             IConfiguration configuration,
             IFileStorageService fileStorageService,
             IAppFileRepository fileRepository,
@@ -24,26 +25,20 @@ namespace FileService.Application.Commands
             IMapper mapper
         ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
-        public async Task<DeleteFileGrpcResponse> Handle(
-            DeleteFileByKeyCommand request,
+        public async Task<DownloadStaticFileGrpcResponse> Handle(
+            DownloadStaticFileByFileIdCommand command,
             CancellationToken cancellationToken
         )
         {
-            var file = await _fileRepository.FindByAlternateKeyAsync(
-                Guid.Parse(request.GrpcRequest.OwnerId),
-                request.GrpcRequest.Key
-            );
+            var file = await _fileRepository.FindByIdAsync(Guid.Parse(command.GrpcRequest.FileId));
             if (file is null)
             {
                 throw new NotFoundException("Could not find the file.");
             }
 
-            _fileRepository.Remove(file);
-
-            return new DeleteFileGrpcResponse
+            return new DownloadStaticFileGrpcResponse
             {
-                Succeeded =
-                    _fileStorageService.DeleteFile(file) && await _fileRepository.SaveAsync()
+                Url = file.FilePath
             };
         }
     }

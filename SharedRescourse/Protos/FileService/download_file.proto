@@ -18,3 +18,9 @@ message DownloadFileGrpcResponse
   bytes data = 1;
   string content_type = 2;
 }
+
+message DownloadStaticFileGrpcResponse
+{
+  string url = 1;
+  string content_type = 2;
+}

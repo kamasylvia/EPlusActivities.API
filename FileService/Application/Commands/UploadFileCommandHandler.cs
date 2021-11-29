@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace FileService.Application.Commands
 {
     public class UploadFileCommandHandler
-        : BaseCommandHandler,
+        : HandlerBase,
           IRequestHandler<UploadFileCommand, UploadFileGrpcResponse>
     {
         public UploadFileCommandHandler(
@@ -35,7 +35,7 @@ namespace FileService.Application.Commands
                     Guid.Parse(command.GrpcRequest.OwnerId),
                     command.GrpcRequest.Key
                 ) ?? _mapper.Map<AppFile>(command.GrpcRequest);
-            var filePath = Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
+            var filePath = command.GrpcRequest.IsStatic ? Path.Combine(_staticStorageDirectory, Path.GetRandomFileName() + Path.GetExtension(command.GrpcRequest.FileName)) : Path.Combine(_fileStorageDirectory, Path.GetRandomFileName());
             if (File.Exists(appFile.FilePath))
             {
                 File.Delete(appFile.FilePath);

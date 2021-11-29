@@ -6,17 +6,18 @@ using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Data.Repositories;
 using FileService.Infrastructure.Exceptions;
 using FileService.Services.FileStorageService;
+using Google.Protobuf;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FileService.Application.Commands
+namespace FileService.Application.Queries
 {
-    public class DeleteFileByKeyCommandHandler
+    public class DownloadStaticFileByKeyCommandHandler
         : HandlerBase,
-          IRequestHandler<DeleteFileByKeyCommand, DeleteFileGrpcResponse>
+          IRequestHandler<DownloadStaticFileByKeyCommand, DownloadStaticFileGrpcResponse>
     {
-        public DeleteFileByKeyCommandHandler(
+        public DownloadStaticFileByKeyCommandHandler(
             IConfiguration configuration,
             IFileStorageService fileStorageService,
             IAppFileRepository fileRepository,
@@ -24,27 +25,22 @@ namespace FileService.Application.Commands
             IMapper mapper
         ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
-        public async Task<DeleteFileGrpcResponse> Handle(
-            DeleteFileByKeyCommand request,
+        public async Task<DownloadStaticFileGrpcResponse> Handle(
+            DownloadStaticFileByKeyCommand command,
             CancellationToken cancellationToken
         )
         {
             var file = await _fileRepository.FindByAlternateKeyAsync(
-                Guid.Parse(request.GrpcRequest.OwnerId),
-                request.GrpcRequest.Key
+                Guid.Parse(command.GrpcRequest.OwnerId),
+                command.GrpcRequest.Key
             );
+
             if (file is null)
             {
                 throw new NotFoundException("Could not find the file.");
             }
 
-            _fileRepository.Remove(file);
-
-            return new DeleteFileGrpcResponse
-            {
-                Succeeded =
-                    _fileStorageService.DeleteFile(file) && await _fileRepository.SaveAsync()
-            };
+            return new DownloadStaticFileGrpcResponse { Url = file.FilePath };
         }
     }
 }

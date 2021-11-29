@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dapr.Client.Autogen.Grpc.v1;
 using EPlusActivities.Grpc.Messages.FileService;
 using FileService.Application.Commands;
+using FileService.Application.Queries;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
@@ -50,6 +51,26 @@ namespace FileService.Services.GrpcService
                     response.Data = Any.Pack(
                         await _mediator.Send(
                             new DownloadFileByKeyCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<DownloadFileByKeyGrpcRequest>()
+                            }
+                        )
+                    );
+                    break;
+                case "DownloadStaticFileByFileId":
+                    response.Data = Any.Pack(
+                        await _mediator.Send(
+                            new DownloadStaticFileByFileIdCommand
+                            {
+                                GrpcRequest = request.Data.Unpack<DownloadFileByFileIdGrpcRequest>()
+                            }
+                        )
+                    );
+                    break;
+                case "DownloadStaticFileByKey":
+                    response.Data = Any.Pack(
+                        await _mediator.Send(
+                            new DownloadStaticFileByKeyCommand
                             {
                                 GrpcRequest = request.Data.Unpack<DownloadFileByKeyGrpcRequest>()
                             }

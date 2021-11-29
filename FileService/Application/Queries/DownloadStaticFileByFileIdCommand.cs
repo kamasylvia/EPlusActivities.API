@@ -1,9 +1,9 @@
 using EPlusActivities.Grpc.Messages.FileService;
 using MediatR;
 
-namespace FileService.Application.Commands
+namespace FileService.Application.Queries
 {
-    public class DownloadFileByFileIdCommand : IRequest<DownloadFileGrpcResponse>
+    public class DownloadStaticFileByFileIdCommand : IRequest<DownloadStaticFileGrpcResponse>
     {
         public DownloadFileByFileIdGrpcRequest GrpcRequest { get; set; }
     }

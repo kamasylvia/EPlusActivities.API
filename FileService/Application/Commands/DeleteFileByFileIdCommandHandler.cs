@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace FileService.Application.Commands
 {
     public class DeleteFileByFileIdCommandHandler
-        : BaseCommandHandler,
+        : HandlerBase,
           IRequestHandler<DeleteFileByFileIdCommand, DeleteFileGrpcResponse>
     {
         public DeleteFileByFileIdCommandHandler(

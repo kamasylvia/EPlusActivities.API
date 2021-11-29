@@ -1,17 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using FileService.Data.Repositories;
 using FileService.Services.FileStorageService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FileService.Application.Commands
+namespace FileService.Application
 {
-    public abstract class BaseCommandHandler
+    public abstract class HandlerBase
     {
         protected readonly IConfiguration _configuration;
         protected readonly IFileStorageService _fileStorageService;
@@ -19,7 +16,9 @@ namespace FileService.Application.Commands
         private readonly ILogger<FileStorageService> _logger;
         protected readonly IMapper _mapper;
         protected readonly string _fileStorageDirectory;
-        public BaseCommandHandler(
+        protected readonly string _staticStorageDirectory;
+
+        public HandlerBase(
             IConfiguration configuration,
             IFileStorageService fileStorageService,
             IAppFileRepository fileRepository,
@@ -37,6 +36,7 @@ namespace FileService.Application.Commands
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileStorageDirectory = configuration["FileStorageDirectory"];
             Directory.CreateDirectory(_fileStorageDirectory);
+            _staticStorageDirectory = "wwwroot/images";
         }
     }
 }

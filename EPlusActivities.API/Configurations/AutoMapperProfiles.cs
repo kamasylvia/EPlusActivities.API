@@ -215,6 +215,7 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.ContentType,
                     opt => opt.MapFrom(src => src.FormFile.ContentType)
                 )
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FormFile.FileName))
                 .ForMember(
                     dest => dest.Content,
                     opt => opt.MapFrom(src => ByteString.FromStream(src.FormFile.OpenReadStream()))

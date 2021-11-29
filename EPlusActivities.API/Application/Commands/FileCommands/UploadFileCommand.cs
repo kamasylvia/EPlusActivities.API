@@ -19,8 +19,15 @@ namespace EPlusActivities.API.Application.Commands.FileCommands
         /// </summary>
         /// <value></value>
         [Required]
-        [RegularExpression("[ -~]*")] 
+        [RegularExpression("[ -~]*")]
         public string Key { get; set; }
+
+        /// <summary>
+        /// 是否为静态文件。静态文件返回 URL，非静态文件返回文件流以供下载。
+        /// </summary>
+        /// <value></value>
+        [Required]
+        public bool IsStatic { get; set; }
 
         /// <summary>
         /// 使用 Http 协议发送的文件
