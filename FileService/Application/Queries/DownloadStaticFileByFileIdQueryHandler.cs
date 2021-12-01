@@ -36,10 +36,7 @@ namespace FileService.Application.Queries
                 throw new NotFoundException("Could not find the file.");
             }
 
-            return new DownloadStaticFileGrpcResponse
-            {
-                Url = file.FilePath
-            };
+            return new DownloadStaticFileGrpcResponse { Url = file.FilePath };
         }
     }
 }

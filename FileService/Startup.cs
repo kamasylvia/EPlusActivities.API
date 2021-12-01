@@ -59,11 +59,13 @@ namespace FileService
 
             // app.UseHttpsRedirection();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                ServeUnknownFileTypes = true,
-                DefaultContentType = "image/png"
-            });
+            app.UseStaticFiles(
+                new StaticFileOptions
+                {
+                    ServeUnknownFileTypes = true,
+                    DefaultContentType = "image/png"
+                }
+            );
 
             app.UseRouting();
 

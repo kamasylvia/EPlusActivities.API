@@ -31,7 +31,8 @@ namespace EPlusActivities.API.Services.IdentityServer
                     "eplus.api",
                     "E+ 小程序签到抽奖活动 API",
                     new string[] { JwtClaimTypes.Role }
-                ) {
+                )
+                {
                     Scopes = { "eplus.test.scope" }
                 }
             };

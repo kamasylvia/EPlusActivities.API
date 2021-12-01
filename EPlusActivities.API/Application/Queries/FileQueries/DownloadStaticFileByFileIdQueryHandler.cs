@@ -8,7 +8,8 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.FileQueries
 {
-    public class DownloadStaticFileByFileIdQueryHandler : IRequestHandler<DownloadStaticFileByFileIdQuery, DownloadStaticFileGrpcResponse>
+    public class DownloadStaticFileByFileIdQueryHandler
+        : IRequestHandler<DownloadStaticFileByFileIdQuery, DownloadStaticFileGrpcResponse>
     {
         private readonly IFileService _fileService;
 
@@ -17,7 +18,10 @@ namespace EPlusActivities.API.Application.Queries.FileQueries
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
         }
 
-        public async Task<DownloadStaticFileGrpcResponse> Handle(DownloadStaticFileByFileIdQuery query, CancellationToken cancellationToken)
+        public async Task<DownloadStaticFileGrpcResponse> Handle(
+            DownloadStaticFileByFileIdQuery query,
+            CancellationToken cancellationToken
+        )
         {
             var response = await _fileService.DownloadStaticFileByFileIdAsync(query);
             if (string.IsNullOrEmpty(response.Url))

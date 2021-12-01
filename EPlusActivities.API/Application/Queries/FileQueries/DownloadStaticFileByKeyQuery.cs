@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.Grpc.Messages.FileService;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.FileQueries
 {
-    public class DownloadStaticFileByKeyQuery:IRequest<DownloadStaticFileGrpcResponse>
+    public class DownloadStaticFileByKeyQuery : IRequest<DownloadStaticFileGrpcResponse>
     {
         /// <summary>
         /// 文件拥有者的 ID，为保持唯一性，使用 Guid
