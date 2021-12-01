@@ -95,8 +95,15 @@ dapr init
 
 - `cd` 到解决方案目录(该目录含有 `.sln` 文件) 执行
 ```sh
-$ dapr run --app-id EPlusActivities --app-port 52537 --dapr-http-port 3500 --components-path Dapr/Components-Dev -- dotnet watch run --project EPlusActivities.API
-$ dapr run --app-id FileService --app-port 52500 --app-protocol grpc --components-path Dapr/Components -- dotnet run --project FileService
+$ python3 run.py
+```
+如果需要 `watch` 模式：
+```sh
+$ python3 run.py -w
+```
+或
+```sh
+$ python3 run.py --watch
 ```
 - 开发环境下，项目运行后，浏览器会自动打开 Swagger，如果没打开或关掉了，请手动打开 http://localhost:52537/swagger/index.html
 - 生产环境使用 docker-compose

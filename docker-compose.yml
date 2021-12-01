@@ -23,7 +23,7 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211130
+        image: kamasylvia/eplusactivities:20211201
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
@@ -92,7 +92,7 @@ services:
         restart: always
 
     fileservice:
-        image: kamasylvia/fileservice:20211129
+        image: kamasylvia/fileservice:20211201
         container_name: FileService
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
@@ -122,8 +122,8 @@ services:
                 "FileService",
                 "-app-port",
                 "52500",
-                "-dapr-grpc-port",
-                "50002",
+                # "-dapr-grpc-port",
+                # "50002",
                 "-app-protocol",
                 "grpc",
                 "-placement-host-address",
