@@ -33,8 +33,6 @@ services:
             - placement
         links:
             - eplusactivities-db
-        # ports:
-        #     - 52538:80
         volumes:
             - ./Logs/ApiLogs:/app/Logs:ro
             - ./Settings/EplusActivities.API/appsettings.json:/app/appsettings.json
@@ -122,8 +120,6 @@ services:
                 "FileService",
                 "-app-port",
                 "52500",
-                # "-dapr-grpc-port",
-                # "50002",
                 "-app-protocol",
                 "grpc",
                 "-placement-host-address",

@@ -5,6 +5,7 @@ using EPlusActivities.API.Application.Commands.ActivityUserCommands;
 using EPlusActivities.API.Application.Queries.ActivityUserQueries;
 using EPlusActivities.API.Application.Queries.UserQueries;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
+using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Application.Actors.ActivityUserActors
 {
@@ -14,7 +15,9 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
         Task<IEnumerable<ActivityUserDto>> GetActivitiesByUserIdAsync(
             GetActivityUserByUserIdQuery request
         );
-        Task<bool> BindUserWithAvailableActivitiesAsync(LoginQuery request);
+        Task<IEnumerable<ActivityUserDto>> BindUserWithAvailableActivitiesAsync(
+            BindAvailableActivitiesCommand request
+        );
         Task<ActivityUserForRedeemDrawsResponseDto> Redeem(RedeemCommand command);
     }
 }

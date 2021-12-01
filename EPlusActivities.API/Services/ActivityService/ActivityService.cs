@@ -135,9 +135,9 @@ namespace EPlusActivities.API.Services.ActivityService
                         Channel = channel
                     };
                     result.Add(activityUser);
-                    await _activityUserRepository.AddAsync(activityUser);
                 }
             }
+            await _activityUserRepository.AddRangeAsync(result);
             var dbResult = await _activityUserRepository.SaveAsync();
 
             if (!dbResult)
@@ -145,6 +145,7 @@ namespace EPlusActivities.API.Services.ActivityService
                 _logger.LogError("绑定用户和活动失败。");
             }
 
+            result.AddRange(existedLinks);
             return result;
         }
 

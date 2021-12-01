@@ -97,11 +97,11 @@ dapr init
 ```sh
 $ python3 run.py
 ```
-如果需要 `watch` 模式：
+- 如果需要 `watch` 模式：
 ```sh
 $ python3 run.py -w
 ```
-或
+- 或
 ```sh
 $ python3 run.py --watch
 ```

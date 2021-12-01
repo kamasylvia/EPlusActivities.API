@@ -54,7 +54,7 @@ namespace EPlusActivities.API.Controllers
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
-        /// 绑定活动和用户，该 API 必须在签到和抽奖 API 之前被调用，否则无法判断用户参与的是哪个活动。
+        /// 绑定单个活动和用户，该 API 必须在签到和抽奖 API 之前被调用，否则无法判断用户参与的是哪个活动。
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -63,7 +63,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "customer, tester"
         )]
-        public async Task<IActionResult> JoinAsync([FromBody] BindActivityAndUserCommand request)
+        public async Task<IActionResult> BindAsync([FromBody] BindActivityAndUserCommand request)
         {
             await _mediator.Send(request);
             return Ok();
@@ -74,13 +74,13 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("bindAvailable")]
+        [HttpPost("bindingAvailableActivities")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "customer, tester"
         )]
-        public async Task<ActionResult<IEnumerable<ActivityUserDto>>> JoinAvailableActivities(
-            [FromBody] JoinAvailableActivitiesCommand request
+        public async Task<ActionResult<IEnumerable<ActivityUserDto>>> BindAvailableActivities(
+            [FromBody] BindAvailableActivitiesCommand request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>

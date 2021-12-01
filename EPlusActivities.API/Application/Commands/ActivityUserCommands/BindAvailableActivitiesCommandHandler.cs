@@ -1,32 +1,35 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using EPlusActivities.API.Application.Actors.ActivityUserActors;
-using EPlusActivities.API.Application.Queries.UserQueries;
+using EPlusActivities.API.Dtos.ActivityUserDtos;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
-    public class JoinAvailableActivitiesCommandHandler : INotificationHandler<LoginQuery>
+    public class BindAvailableActivitiesCommandHandler
+        : IRequestHandler<BindAvailableActivitiesCommand, IEnumerable<ActivityUserDto>>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public JoinAvailableActivitiesCommandHandler(IActorProxyFactory actorProxyFactory)
+        public BindAvailableActivitiesCommandHandler(IActorProxyFactory actorProxyFactory)
         {
             _actorProxyFactory =
                 actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
-        public async Task Handle(LoginQuery notification, CancellationToken cancellationToken) =>
+        public async Task<IEnumerable<ActivityUserDto>> Handle(
+            BindAvailableActivitiesCommand command,
+            CancellationToken cancellationToken
+        ) =>
             await _actorProxyFactory
                 .CreateActorProxy<IActivityUserActor>(
-                    new ActorId(
-                        notification.UserId.ToString() + notification.ChannelCode.ToString()
-                    ),
+                    new ActorId(command.UserId.ToString() + command.ChannelCode.ToString()),
                     nameof(ActivityUserActor)
                 )
-                .BindUserWithAvailableActivitiesAsync(notification);
+                .BindUserWithAvailableActivitiesAsync(command);
     }
 }

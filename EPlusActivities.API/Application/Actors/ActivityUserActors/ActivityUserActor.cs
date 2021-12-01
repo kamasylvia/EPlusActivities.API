@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Actors.Runtime;
+using EPlusActivities.API.Application.Commands.ActivityUserCommands;
 using EPlusActivities.API.Application.Queries.ActivityUserQueries;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
-using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Exceptions;
-using EPlusActivities.API.Services.ActivityService;
-using Microsoft.AspNetCore.Identity;
-using EPlusActivities.API.Application.Queries.UserQueries;
-using EPlusActivities.API.Application.Commands.ActivityUserCommands;
-using EPlusActivities.API.Infrastructure.Repositories;
-using EPlusActivities.API.Services.MemberService;
-using EPlusActivities.API.Services.IdGeneratorService;
-using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Dtos.MemberDtos;
+using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
+using EPlusActivities.API.Infrastructure.Exceptions;
+using EPlusActivities.API.Infrastructure.Repositories;
+using EPlusActivities.API.Services.ActivityService;
+using EPlusActivities.API.Services.IdGeneratorService;
+using EPlusActivities.API.Services.MemberService;
+using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Actors.ActivityUserActors
 {
@@ -94,6 +93,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             }
             #endregion
         }
+
         public async Task<IEnumerable<ActivityUserDto>> GetActivitiesByUserIdAsync(
             GetActivityUserByUserIdQuery request
         )
@@ -104,23 +104,21 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             {
                 throw new NotFoundException("Could not find the user.");
             }
-
-            var bound = (await StateManager.TryGetStateAsync<bool>("bound")).Value;
             #endregion
 
-            return bound
-              ? _mapper.Map<IEnumerable<ActivityUserDto>>(
-                    await _activityService.GetAvailableActivityUserLinksAsync(
-                        request.UserId.Value,
-                        request.AvailableChannel,
-                        request.StartTime,
-                        request.EndTime
-                    )
+            return _mapper.Map<IEnumerable<ActivityUserDto>>(
+                await _activityService.GetAvailableActivityUserLinksAsync(
+                    request.UserId.Value,
+                    request.AvailableChannel,
+                    request.StartTime,
+                    request.EndTime
                 )
-              : new List<ActivityUserDto>();
+            );
         }
 
-        public async Task<bool> BindUserWithAvailableActivitiesAsync(LoginQuery command)
+        public async Task<IEnumerable<ActivityUserDto>> BindUserWithAvailableActivitiesAsync(
+            BindAvailableActivitiesCommand command
+        )
         {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(command.UserId.ToString());
@@ -130,22 +128,14 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             }
             #endregion
 
-            var bound = (await StateManager.TryGetStateAsync<bool>("bound")).Value;
-            if (!bound)
-            {
-                bound = await StateManager.AddOrUpdateStateAsync(
-                    "bound",
-                    true,
-                    (key, currentState) => true
-                );
-
-                var newCreatedLinks = await _activityService.BindUserWithAvailableActivities(
+            return _mapper.Map<IEnumerable<ActivityUserDto>>(
+                await _activityService.BindUserWithAvailableActivities(
                     command.UserId.Value,
                     command.ChannelCode
-                );
-            }
-            return bound;
+                )
+            );
         }
+
         public async Task<ActivityUserForRedeemDrawsResponseDto> Redeem(RedeemCommand command)
         {
             #region Parameter validation

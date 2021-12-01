@@ -7,7 +7,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
-    public class JoinAvailableActivitiesCommand : IRequest<IEnumerable<ActivityUserDto>>
+    public class BindAvailableActivitiesCommand : IRequest<IEnumerable<ActivityUserDto>>
     {
         [Required]
         public Guid? UserId { get; set; }
@@ -19,6 +19,6 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
         /// <value></value>
         [Required]
         [EnumDataType(typeof(ChannelCode))]
-        public ChannelCode AvailableChannel { get; set; }
+        public ChannelCode ChannelCode { get; set; }
     }
 }

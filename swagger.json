@@ -1,0 +1,4459 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "EPlusActivities.API",
+    "version": "v1"
+  },
+  "paths": {
+    "/choujiang/api/Activity": {
+      "get": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "获取活动信息",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "活动 ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "活动 ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "创建活动",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActivityCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActivityCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActivityCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "修改活动信息",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateActivityCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateActivityCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateActivityCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "删除活动",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteActivityCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteActivityCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteActivityCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Activity/code": {
+      "get": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "根据活动号获取活动信息",
+        "parameters": [
+          {
+            "name": "ActivityCode",
+            "in": "query",
+            "description": "活动码",
+            "schema": {
+              "type": "string",
+              "description": "活动码",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Activity/list": {
+      "get": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "获取活动列表",
+        "parameters": [
+          {
+            "name": "IsAvailable",
+            "in": "query",
+            "description": "是否正在进行",
+            "schema": {
+              "type": "boolean",
+              "description": "是否正在进行"
+            }
+          },
+          {
+            "name": "StartTime",
+            "in": "query",
+            "description": "活动开始时间",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "活动开始时间",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "EndTime",
+            "in": "query",
+            "description": "活动结束时间，不传或传 null 表示至今。",
+            "schema": {
+              "type": "string",
+              "description": "活动结束时间，不传或传 null 表示至今。",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "AvailableChannels",
+            "in": "query",
+            "description": "允许参加该活动的渠道，字符串不区分大小写。\r\n取值范围：Ngs, NgsPlaza, Alldays",
+            "schema": {
+              "type": "string",
+              "description": "允许参加该活动的渠道，字符串不区分大小写。\r\n取值范围：Ngs, NgsPlaza, Alldays",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/ActivityUser": {
+      "get": {
+        "tags": [
+          "ActivityUser"
+        ],
+        "summary": "获取活动和用户的绑定关系",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ActivityId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityUserDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityUserDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityUserDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ActivityUser"
+        ],
+        "summary": "绑定单个活动和用户，该 API 必须在签到和抽奖 API 之前被调用，否则无法判断用户参与的是哪个活动。",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindActivityAndUserCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindActivityAndUserCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindActivityAndUserCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/ActivityUser/activities": {
+      "get": {
+        "tags": [
+          "ActivityUser"
+        ],
+        "summary": "获取某个用户正在参与的活动",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "StartTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "EndTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "AvailableChannel",
+            "in": "query",
+            "description": "用户访问的渠道，字符串不区分大小写。\r\n取值范围：Ngs, NgsPlaza, Alldays",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ChannelCode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityUserDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityUserDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityUserDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/ActivityUser/bindingAvailableActivities": {
+      "post": {
+        "tags": [
+          "ActivityUser"
+        ],
+        "summary": "为某个用户绑定所有可参加的活动",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindAvailableActivitiesCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindAvailableActivitiesCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindAvailableActivitiesCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityUserDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityUserDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityUserDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/ActivityUser/redeeming": {
+      "patch": {
+        "tags": [
+          "ActivityUser"
+        ],
+        "summary": "用户积分兑换抽奖次数",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityUserForRedeemDrawsResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityUserForRedeemDrawsResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityUserForRedeemDrawsResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Address/list": {
+      "get": {
+        "tags": [
+          "Address"
+        ],
+        "summary": "获得指定用户的所有地址",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddressDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddressDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddressDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Address": {
+      "get": {
+        "tags": [
+          "Address"
+        ],
+        "summary": "获取地址信息",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "地址 ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "地址 ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Address"
+        ],
+        "summary": "新建地址",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAddressCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAddressCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAddressCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Address"
+        ],
+        "summary": "更新地址",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAddressCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAddressCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAddressCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Address"
+        ],
+        "summary": "删除地址",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAddressCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAddressCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAddressCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Attendance/user": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "获取指定用户某个时间段内的签到记录",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ActivityId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "StartDate",
+            "in": "query",
+            "description": "起始时间",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "起始时间",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "EndDate",
+            "in": "query",
+            "description": "结束时间，null 表示至今",
+            "schema": {
+              "type": "string",
+              "description": "结束时间，null 表示至今",
+              "format": "date-time",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttendanceDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttendanceDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttendanceDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Attendance": {
+      "get": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "获取单个签到记录的信息",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "签到 ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "签到 ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "summary": "签到",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Brand": {
+      "get": {
+        "tags": [
+          "Brand"
+        ],
+        "summary": "根据 ID 获取品牌",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "品牌 Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "品牌 Id",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Brand"
+        ],
+        "summary": "创建品牌",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBrandCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBrandCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBrandCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Brand"
+        ],
+        "summary": "删除品牌",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBrandCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBrandCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBrandCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Brand/name": {
+      "get": {
+        "tags": [
+          "Brand"
+        ],
+        "summary": "根据品牌名获取品牌",
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "description": "品牌名称",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "品牌名称"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Brand"
+        ],
+        "summary": "修改品牌名称",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBrandCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBrandCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBrandCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Brand/list": {
+      "get": {
+        "tags": [
+          "Brand"
+        ],
+        "summary": "获取品牌列表",
+        "parameters": [
+          {
+            "name": "PageIndex",
+            "in": "query",
+            "description": "第几页",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "description": "第几页",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "每页多少个",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer",
+              "description": "每页多少个",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BrandDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BrandDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BrandDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Brand/search": {
+      "get": {
+        "tags": [
+          "Brand"
+        ],
+        "summary": "根据关键字查找品牌",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetBrandByContainedNameQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetBrandByContainedNameQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetBrandByContainedNameQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BrandDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BrandDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BrandDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Category": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "根据 ID 获取分类",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "分类 ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "分类 ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "创建奖品分类",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "删除奖品分类",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteCategoryCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteCategoryCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteCategoryCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Category/name": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "根据名称获取分类",
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "description": "分类名称",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "分类名称"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "修改分类名称",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Category/search": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "根据关键字查找分类",
+        "parameters": [
+          {
+            "name": "Keyword",
+            "in": "query",
+            "description": "分类名称中包含的关键字",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "分类名称中包含的关键字"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Category/list": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "获取奖品分类列表",
+        "parameters": [
+          {
+            "name": "PageIndex",
+            "in": "query",
+            "description": "第几页",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "description": "第几页",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "每页多少个",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer",
+              "description": "每页多少个",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/File/id": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "summary": "通过文件 ID 获取文件",
+        "parameters": [
+          {
+            "name": "FileId",
+            "in": "query",
+            "description": "文件 ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件 ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "File"
+        ],
+        "summary": "根据文件 ID 删除文件",
+        "parameters": [
+          {
+            "name": "FileId",
+            "in": "query",
+            "description": "文件 ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件 ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/File/static/id": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "summary": "通过文件 ID 获取静态文件",
+        "parameters": [
+          {
+            "name": "FileId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/File/key": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "summary": "通过文件所有者和关键字获取文件",
+        "parameters": [
+          {
+            "name": "OwnerId",
+            "in": "query",
+            "description": "文件拥有者的 ID，为保持唯一性，使用 Guid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件拥有者的 ID，为保持唯一性，使用 Guid",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Key",
+            "in": "query",
+            "description": "文件关键字，与 OwnerId 搭配可确定需要查找的文件",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件关键字，与 OwnerId 搭配可确定需要查找的文件"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "File"
+        ],
+        "summary": "根据文件所有者和关键字删除文件",
+        "parameters": [
+          {
+            "name": "OwnerId",
+            "in": "query",
+            "description": "文件拥有者的 ID，为保持唯一性，使用 Guid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件拥有者的 ID，为保持唯一性，使用 Guid",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Key",
+            "in": "query",
+            "description": "文件关键字，与 OwnerId 搭配可确定需要查找的文件",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件关键字，与 OwnerId 搭配可确定需要查找的文件"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/File/static/key": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "summary": "通过文件所有者和关键字获取静态文件",
+        "parameters": [
+          {
+            "name": "OwnerId",
+            "in": "query",
+            "description": "文件拥有者的 ID，为保持唯一性，使用 Guid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件拥有者的 ID，为保持唯一性，使用 Guid",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Key",
+            "in": "query",
+            "description": "文件关键字，与 OwnerId 搭配可确定需要查找的文件",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "文件关键字，与 OwnerId 搭配可确定需要查找的文件"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/File": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "summary": "上传文件",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "FormFile",
+                  "IsStatic",
+                  "Key",
+                  "OwnerId"
+                ],
+                "type": "object",
+                "properties": {
+                  "OwnerId": {
+                    "type": "string",
+                    "description": "文件拥有者的 ID，为保持唯一性，使用 Guid",
+                    "format": "uuid"
+                  },
+                  "Key": {
+                    "pattern": "[ -~]*",
+                    "type": "string",
+                    "description": "文件关键字，与 OwnerId 搭配可确定需要查找的文件"
+                  },
+                  "IsStatic": {
+                    "type": "boolean",
+                    "description": "是否为静态文件。静态文件返回 URL，非静态文件返回文件流以供下载。"
+                  },
+                  "FormFile": {
+                    "type": "string",
+                    "description": "使用 Http 协议发送的文件",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "OwnerId": {
+                  "style": "form"
+                },
+                "Key": {
+                  "style": "form"
+                },
+                "IsStatic": {
+                  "style": "form"
+                },
+                "FormFile": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Lottery/customer/lottery-records": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "获取某个用户的抽奖记录",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Lottery/customer/lucky-records": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "获取某个用户的中奖记录",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Lottery/manager/detailed-records": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "管理员根据活动号查询中奖记录报表",
+        "parameters": [
+          {
+            "name": "StartTime",
+            "in": "query",
+            "description": "起始时间",
+            "schema": {
+              "type": "string",
+              "description": "起始时间",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "EndTime",
+            "in": "query",
+            "description": "结束时间",
+            "schema": {
+              "type": "string",
+              "description": "结束时间",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "Channel",
+            "in": "query",
+            "description": "渠道",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ChannelCode"
+            }
+          },
+          {
+            "name": "ActivityCode",
+            "in": "query",
+            "description": "活动号",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "活动号"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LotteryRecordsForManagerResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LotteryRecordsForManagerResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LotteryRecordsForManagerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Lottery/manager/excel": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "管理员根据活动号下载中奖记录报表",
+        "parameters": [
+          {
+            "name": "StartTime",
+            "in": "query",
+            "description": "起始时间",
+            "schema": {
+              "type": "string",
+              "description": "起始时间",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "EndTime",
+            "in": "query",
+            "description": "结束时间",
+            "schema": {
+              "type": "string",
+              "description": "结束时间",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "Channel",
+            "in": "query",
+            "description": "渠道",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ChannelCode"
+            }
+          },
+          {
+            "name": "ActivityCode",
+            "in": "query",
+            "description": "活动号",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "活动号"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Lottery/manager/general-records": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "根据活动号和日期查询抽奖数、中奖数、兑换数",
+        "parameters": [
+          {
+            "name": "StartTime",
+            "in": "query",
+            "description": "开始日期",
+            "schema": {
+              "type": "string",
+              "description": "开始日期",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "EndTime",
+            "in": "query",
+            "description": "结束日期",
+            "schema": {
+              "type": "string",
+              "description": "结束日期",
+              "format": "date-time",
+              "nullable": true
+            }
+          },
+          {
+            "name": "ActivityCode",
+            "in": "query",
+            "description": "活动号",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "活动号"
+            }
+          },
+          {
+            "name": "Channel",
+            "in": "query",
+            "description": "渠道号",
+            "schema": {
+              "$ref": "#/components/schemas/ChannelCode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryForGetGeneralRecordsResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryForGetGeneralRecordsResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryForGetGeneralRecordsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Lottery": {
+      "post": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "抽奖",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrawCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrawCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrawCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LotteryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "更新抽奖记录",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLotteryRecordCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLotteryRecordCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLotteryRecordCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "删除抽奖记录",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteLotteryRecordCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteLotteryRecordCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteLotteryRecordCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/PrizeItem/name": {
+      "get": {
+        "tags": [
+          "PrizeItem"
+        ],
+        "summary": "通过奖品名获取奖品",
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizeItemDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizeItemDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizeItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/PrizeItem/group": {
+      "get": {
+        "tags": [
+          "PrizeItem"
+        ],
+        "summary": "通过奖品 ID 列表获取奖品列表",
+        "parameters": [
+          {
+            "name": "Ids",
+            "in": "query",
+            "description": "奖品 ID 列表",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "奖品 ID 列表"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/PrizeItem": {
+      "get": {
+        "tags": [
+          "PrizeItem"
+        ],
+        "summary": "通过奖品 ID 获取奖品",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PrizeItem"
+        ],
+        "summary": "新建奖品",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeItemCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeItemCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeItemCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeItemDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PrizeItem"
+        ],
+        "summary": "修改奖品",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrizeItemCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrizeItemCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrizeItemCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PrizeItem"
+        ],
+        "summary": "删除奖品",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePrizeItemCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePrizeItemCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePrizeItemCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/PrizeItem/list": {
+      "get": {
+        "tags": [
+          "PrizeItem"
+        ],
+        "summary": "获取奖品列表",
+        "parameters": [
+          {
+            "name": "PageIndex",
+            "in": "query",
+            "description": "第几页",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "description": "第几页",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "每页多少个",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer",
+              "description": "每页多少个",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizeItemDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizeItemDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizeItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/PrizeTier": {
+      "get": {
+        "tags": [
+          "PrizeTier"
+        ],
+        "summary": "获取奖品档次",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PrizeTier"
+        ],
+        "summary": "新建奖品档次",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeTierCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeTierCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeTierCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PrizeTier"
+        ],
+        "summary": "修改奖品档次",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrizeTierCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrizeTierCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrizeTierCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PrizeTier"
+        ],
+        "summary": "删除奖品档次，删除后其所属的活动会自动更新奖品数量。",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePrizeTierCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePrizeTierCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePrizeTierCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/PrizeTier/activity": {
+      "get": {
+        "tags": [
+          "PrizeTier"
+        ],
+        "summary": "获取某个活动的所有奖品档次",
+        "parameters": [
+          {
+            "name": "ActivityId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeTierDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/Sms": {
+      "post": {
+        "tags": [
+          "Sms"
+        ],
+        "summary": "获取验证码",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetVerificationCodeQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetVerificationCodeQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetVerificationCodeQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/Test": {
+      "get": {
+        "tags": [
+          "Test"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/User": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "获取用户信息",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ChannelCode",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ChannelCode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "新建管理员账户",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdminOrManagerCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdminOrManagerCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdminOrManagerCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "删除账户",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/choujiang/api/User/list": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "获取用户列表。",
+        "parameters": [
+          {
+            "name": "Role",
+            "in": "query",
+            "description": "角色。大小写不敏感。",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "角色。大小写不敏感。"
+            }
+          },
+          {
+            "name": "PageIndex",
+            "in": "query",
+            "description": "第几页",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "description": "第几页",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "每页多少个",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer",
+              "description": "每页多少个",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/choujiang/api/User/phonenumber": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "修改手机号",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePhoneCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePhoneCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePhoneCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LotteryDisplay": {
+        "enum": [
+          "None",
+          "Roulette",
+          "Digging",
+          "Scratchcard"
+        ],
+        "type": "string"
+      },
+      "ActivityType": {
+        "enum": [
+          "Default",
+          "SingleAttendance",
+          "SequentialAttendance",
+          "Lottery"
+        ],
+        "type": "string"
+      },
+      "ActivityDto": {
+        "required": [
+          "id",
+          "name",
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "活动 ID",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "活动名"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "全活动周期抽奖次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "dailyLimit": {
+            "type": "integer",
+            "description": "每日抽奖次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "availableChannels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "允许参加该活动的渠道，字符串不区分大小写。\r\n取值范围：Ngs, NgsPlaza, Alldays",
+            "nullable": true
+          },
+          "lotteryDisplay": {
+            "$ref": "#/components/schemas/LotteryDisplay"
+          },
+          "requiredCreditForRedeeming": {
+            "type": "integer",
+            "description": "兑换一次抽奖所需积分，null 表示非抽奖活动",
+            "format": "int32",
+            "nullable": true
+          },
+          "activityType": {
+            "$ref": "#/components/schemas/ActivityType"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "活动开始时间",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "活动结束时间，不传或传 null 表示至今。",
+            "format": "date-time",
+            "nullable": true
+          },
+          "activityCode": {
+            "type": "string",
+            "description": "生成的活动码。",
+            "nullable": true
+          },
+          "color": {
+            "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$",
+            "type": "string",
+            "description": "背景色",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateActivityCommand": {
+        "required": [
+          "activityType",
+          "availableChannels",
+          "lotteryDisplay",
+          "name",
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "活动名"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "全活动周期抽奖次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "dailyDrawLimit": {
+            "type": "integer",
+            "description": "每日抽奖次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "dailyRedemptionLimit": {
+            "type": "integer",
+            "description": "每日兑换次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "requiredCreditForRedeeming": {
+            "type": "integer",
+            "description": "兑换一次抽奖所需积分，null 表示非抽奖活动",
+            "format": "int32",
+            "nullable": true
+          },
+          "availableChannels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "允许参加该活动的渠道，字符串不区分大小写。\r\n取值范围：Ngs, NgsPlaza, Alldays"
+          },
+          "lotteryDisplay": {
+            "$ref": "#/components/schemas/LotteryDisplay"
+          },
+          "activityType": {
+            "$ref": "#/components/schemas/ActivityType"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "活动开始时间",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "活动结束时间，不传或传 null 表示至今。",
+            "format": "date-time",
+            "nullable": true
+          },
+          "color": {
+            "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$",
+            "type": "string",
+            "description": "背景色",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateActivityCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "活动名",
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "description": "全活动周期抽奖次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "dailyDrawLimit": {
+            "type": "integer",
+            "description": "每日抽奖次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "dailyRedemptionLimit": {
+            "type": "integer",
+            "description": "每日兑换次数上限，null 表示无限。",
+            "format": "int32",
+            "nullable": true
+          },
+          "requiredCreditForRedeeming": {
+            "type": "integer",
+            "description": "兑换一次抽奖所需积分，null 表示非抽奖活动",
+            "format": "int32",
+            "nullable": true
+          },
+          "availableChannels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "允许参加该活动的渠道。字符串不区分大小写。",
+            "nullable": true
+          },
+          "lotteryDisplay": {
+            "$ref": "#/components/schemas/LotteryDisplay"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "活动开始时间",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endTime": {
+            "type": "string",
+            "description": "活动结束时间",
+            "format": "date-time",
+            "nullable": true
+          },
+          "color": {
+            "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$",
+            "type": "string",
+            "description": "背景色",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteActivityCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "活动 ID",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ActivityUserDto": {
+        "type": "object",
+        "properties": {
+          "usedDraws": {
+            "type": "integer",
+            "description": "全活动周期已抽奖次数",
+            "format": "int32"
+          },
+          "todayUsedDraws": {
+            "type": "integer",
+            "description": "当天已抽奖次数",
+            "format": "int32"
+          },
+          "remainingDraws": {
+            "type": "integer",
+            "description": "剩余抽奖次数，null 表示无限",
+            "format": "int32"
+          },
+          "attendanceDays": {
+            "type": "integer",
+            "description": "签到天数，非签到活动中用 null 表示",
+            "format": "int32",
+            "nullable": true
+          },
+          "sequentialAttendanceDays": {
+            "type": "integer",
+            "description": "连续签到天数，非签到活动中用 null 表示",
+            "format": "int32",
+            "nullable": true
+          },
+          "requiredCreditForRedeeming": {
+            "type": "integer",
+            "description": "兑换一次抽奖所需积分，null 表示非抽奖活动",
+            "format": "int32",
+            "nullable": true
+          },
+          "lastAttendanceDate": {
+            "type": "string",
+            "description": "上次签到日期",
+            "format": "date-time",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BindActivityAndUserCommand": {
+        "required": [
+          "activityId",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChannelCode": {
+        "enum": [
+          "Ngs",
+          "NgsPlaza",
+          "Alldays",
+          "Test"
+        ],
+        "type": "string"
+      },
+      "BindAvailableActivitiesCommand": {
+        "required": [
+          "channelCode",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "channelCode": {
+            "$ref": "#/components/schemas/ChannelCode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RedeemCommand": {
+        "required": [
+          "activityId",
+          "channel",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/ChannelCode"
+          },
+          "count": {
+            "type": "integer",
+            "description": "兑换几次",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "description": "原因",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ActivityUserForRedeemDrawsResponseDto": {
+        "required": [
+          "activityId",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "remainingDraws": {
+            "type": "integer",
+            "description": "剩余抽奖次数",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AddressDto": {
+        "required": [
+          "id",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recipient": {
+            "type": "string",
+            "nullable": true
+          },
+          "recipientPhoneNumber": {
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string",
+            "format": "tel",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "province": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "detailedAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAddressCommand": {
+        "required": [
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "recipient": {
+            "type": "string",
+            "description": "收件人",
+            "nullable": true
+          },
+          "recipientPhoneNumber": {
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string",
+            "description": "收件人手机号",
+            "format": "tel",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "区县",
+            "nullable": true
+          },
+          "province": {
+            "type": "string",
+            "description": "省、自治区、直辖市",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "description": "市",
+            "nullable": true
+          },
+          "detailedAddress": {
+            "type": "string",
+            "description": "具体地址",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "description": "邮编",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "是否为默认地址"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAddressCommand": {
+        "required": [
+          "id",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recipient": {
+            "type": "string",
+            "description": "收件人",
+            "nullable": true
+          },
+          "recipientPhoneNumber": {
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string",
+            "description": "收件人手机号",
+            "format": "tel",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "区县",
+            "nullable": true
+          },
+          "province": {
+            "type": "string",
+            "description": "省、自治区、直辖市",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "description": "市",
+            "nullable": true
+          },
+          "detailedAddress": {
+            "type": "string",
+            "description": "具体地址",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "description": "邮编",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "是否为默认地址"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteAddressCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "地址 ID",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttendanceDto": {
+        "required": [
+          "activityId",
+          "date",
+          "id",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "description": "签到日期",
+            "format": "date-time"
+          },
+          "channelCode": {
+            "type": "string",
+            "description": "用户访问的渠道，字符串不区分大小写。\r\n取值范围：Ngs, NgsPlaza, Alldays",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttendCommand": {
+        "required": [
+          "activityId",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "channelCode": {
+            "$ref": "#/components/schemas/ChannelCode"
+          },
+          "earnedCredits": {
+            "type": "integer",
+            "description": "签到获得积分",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "description": "更新积分原因",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BrandDto": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateBrandCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteBrandCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateBrandCommand": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetBrandByContainedNameQuery": {
+        "required": [
+          "keyword"
+        ],
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "品牌名称中包含的关键字"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryDto": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCategoryCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "奖品种类名称"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteCategoryCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "奖品分类 ID",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateCategoryCommand": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "分类 ID",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "新名称"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LotteryDto": {
+        "required": [
+          "activityId",
+          "id",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "抽奖记录 ID",
+            "format": "uuid"
+          },
+          "channelCode": {
+            "$ref": "#/components/schemas/ChannelCode"
+          },
+          "lotteryDisplay": {
+            "$ref": "#/components/schemas/LotteryDisplay"
+          },
+          "isLucky": {
+            "type": "boolean",
+            "description": "是否中奖"
+          },
+          "pickedUp": {
+            "type": "boolean",
+            "description": "是否已领取奖品"
+          },
+          "delivered": {
+            "type": "boolean",
+            "description": "奖品是否发放"
+          },
+          "pickedUpTime": {
+            "type": "string",
+            "description": "领取奖品日期，null 表示未领取",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateTime": {
+            "type": "string",
+            "description": "抽奖日期",
+            "format": "date-time",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prizeItemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "prizeTierId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrizeType": {
+        "enum": [
+          "None",
+          "Credit",
+          "Coupon",
+          "Physical"
+        ],
+        "type": "string",
+        "description": "奖品种类：分为虚拟奖品和实体奖品。"
+      },
+      "LotteryRecordsForManagerResponse": {
+        "type": "object",
+        "properties": {
+          "dateTime": {
+            "type": "string",
+            "description": "日期时间",
+            "format": "date-time",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "用户手机号",
+            "nullable": true
+          },
+          "channelCode": {
+            "$ref": "#/components/schemas/ChannelCode"
+          },
+          "activityCode": {
+            "type": "string",
+            "description": "抽奖活动号",
+            "nullable": true
+          },
+          "activityName": {
+            "type": "string",
+            "description": "抽奖活动名称",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "description": "用户 ID",
+            "format": "uuid"
+          },
+          "prizeTierName": {
+            "type": "string",
+            "description": "中奖名称",
+            "nullable": true
+          },
+          "prizeType": {
+            "$ref": "#/components/schemas/PrizeType"
+          },
+          "prizeContent": {
+            "type": "string",
+            "description": "中奖内容",
+            "nullable": true
+          },
+          "usedCredit": {
+            "type": "integer",
+            "description": "消耗积分",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LotteryForGetGeneralRecordsResponse": {
+        "type": "object",
+        "properties": {
+          "dateTime": {
+            "type": "string",
+            "description": "日期",
+            "format": "date-time"
+          },
+          "draws": {
+            "type": "integer",
+            "description": "抽奖总数",
+            "format": "int32"
+          },
+          "winners": {
+            "type": "integer",
+            "description": "中奖总数",
+            "format": "int32"
+          },
+          "redemption": {
+            "type": "integer",
+            "description": "兑换总数",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrawCommand": {
+        "required": [
+          "activityId",
+          "channelCode",
+          "lotteryDisplay",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "channelCode": {
+            "$ref": "#/components/schemas/ChannelCode"
+          },
+          "lotteryDisplay": {
+            "$ref": "#/components/schemas/LotteryDisplay"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "count": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "description": "连续抽奖次数",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateLotteryRecordCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "抽奖记录 ID",
+            "format": "uuid"
+          },
+          "pickedUp": {
+            "type": "boolean",
+            "description": "是否已领取"
+          },
+          "delivered": {
+            "type": "boolean",
+            "description": "是否发放"
+          },
+          "pickedUpTime": {
+            "type": "string",
+            "description": "领取日期",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteLotteryRecordCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "抽奖记录 ID",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrizeItemDto": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "奖品 ID",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "奖品名"
+          },
+          "prizeType": {
+            "$ref": "#/components/schemas/PrizeType"
+          },
+          "couponActiveCode": {
+            "type": "string",
+            "description": "会员系统优惠券活动码",
+            "nullable": true
+          },
+          "credit": {
+            "type": "integer",
+            "description": "积分奖品，null 表示非积分奖品",
+            "format": "int32",
+            "nullable": true
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "奖品种类",
+            "nullable": true
+          },
+          "brandName": {
+            "type": "string",
+            "description": "奖品品牌",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "奖品单价",
+            "format": "double",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "奖品数量",
+            "format": "int32"
+          },
+          "stock": {
+            "type": "integer",
+            "description": "奖品库存",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePrizeItemCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "奖品名"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "奖品数量",
+            "format": "int32"
+          },
+          "prizeType": {
+            "$ref": "#/components/schemas/PrizeType"
+          },
+          "couponActiveCode": {
+            "type": "string",
+            "description": "会员系统优惠券活动码",
+            "nullable": true
+          },
+          "credit": {
+            "type": "integer",
+            "description": "积分奖品，null 表示非积分奖品",
+            "format": "int32",
+            "nullable": true
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "奖品种类",
+            "nullable": true
+          },
+          "brandName": {
+            "type": "string",
+            "description": "奖品品牌",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "奖品单价",
+            "format": "double",
+            "nullable": true
+          },
+          "requiredCredit": {
+            "type": "integer",
+            "description": "所需积分",
+            "format": "int32"
+          },
+          "stock": {
+            "type": "integer",
+            "description": "奖品库存",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePrizeItemCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "奖品 ID",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "奖品名",
+            "nullable": true
+          },
+          "prizeType": {
+            "$ref": "#/components/schemas/PrizeType"
+          },
+          "couponActiveCode": {
+            "type": "string",
+            "description": "会员系统优惠券活动码",
+            "nullable": true
+          },
+          "credit": {
+            "type": "integer",
+            "description": "积分奖品，null 表示非积分奖品",
+            "format": "int32",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "奖品数量",
+            "format": "int32"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "奖品种类",
+            "nullable": true
+          },
+          "brandName": {
+            "type": "string",
+            "description": "奖品品牌",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "奖品单价",
+            "format": "double",
+            "nullable": true
+          },
+          "requiredCredit": {
+            "type": "integer",
+            "description": "所需积分",
+            "format": "int32"
+          },
+          "stock": {
+            "type": "integer",
+            "description": "奖品库存",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeletePrizeItemCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrizeTierDto": {
+        "required": [
+          "activityId",
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "奖品档次名称，如：一等奖、二等奖、安慰奖"
+          },
+          "percentage": {
+            "type": "integer",
+            "description": "中奖概率",
+            "format": "int32"
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dailyLimit": {
+            "type": "integer",
+            "description": "每日中奖上限",
+            "format": "int32",
+            "nullable": true
+          },
+          "todayWinnerCount": {
+            "type": "integer",
+            "description": "今日中奖人数",
+            "format": "int32"
+          },
+          "prizeItemIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePrizeTierCommand": {
+        "required": [
+          "activityId",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "奖品档次名称，如：一等奖、二等奖、安慰奖"
+          },
+          "percentage": {
+            "type": "number",
+            "description": "获奖概率",
+            "format": "double"
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prizeItemIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "dailyLimit": {
+            "type": "integer",
+            "description": "每日中奖上限",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePrizeTierCommand": {
+        "required": [
+          "activityId",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "percentage": {
+            "type": "integer",
+            "description": "获奖概率",
+            "format": "int32"
+          },
+          "dailyLimit": {
+            "type": "integer",
+            "description": "每日中奖上限",
+            "format": "int32",
+            "nullable": true
+          },
+          "activityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prizeItemIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeletePrizeTierCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetVerificationCodeQuery": {
+        "required": [
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string",
+            "format": "tel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserDto": {
+        "required": [
+          "id",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "用户 ID",
+            "format": "uuid"
+          },
+          "phoneNumber": {
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string",
+            "description": "手机号",
+            "format": "tel"
+          },
+          "isMember": {
+            "type": "boolean",
+            "description": "是否会员"
+          },
+          "memberId": {
+            "type": "string",
+            "description": "会员 ID",
+            "nullable": true
+          },
+          "credit": {
+            "type": "integer",
+            "description": "积分",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAdminOrManagerCommand": {
+        "required": [
+          "password",
+          "role",
+          "userName"
+        ],
+        "type": "object",
+        "properties": {
+          "userName": {
+            "maxLength": 32,
+            "minLength": 0,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 32,
+            "minLength": 6,
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteUserCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePhoneCommand": {
+        "required": [
+          "id",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "phoneNumber": {
+            "maxLength": 11,
+            "minLength": 11,
+            "type": "string",
+            "format": "tel"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
