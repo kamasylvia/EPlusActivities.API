@@ -13,11 +13,11 @@ using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Queries
 {
-    public class DownloadStaticFileByFileIdCommandHandler
+    public class DownloadFileByFileIdQueryHandler
         : HandlerBase,
-          IRequestHandler<DownloadStaticFileByFileIdCommand, DownloadStaticFileGrpcResponse>
+          IRequestHandler<DownloadFileByFileIdQuery, DownloadFileGrpcResponse>
     {
-        public DownloadStaticFileByFileIdCommandHandler(
+        public DownloadFileByFileIdQueryHandler(
             IConfiguration configuration,
             IFileStorageService fileStorageService,
             IAppFileRepository fileRepository,
@@ -25,8 +25,8 @@ namespace FileService.Application.Queries
             IMapper mapper
         ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
-        public async Task<DownloadStaticFileGrpcResponse> Handle(
-            DownloadStaticFileByFileIdCommand command,
+        public async Task<DownloadFileGrpcResponse> Handle(
+            DownloadFileByFileIdQuery command,
             CancellationToken cancellationToken
         )
         {
@@ -36,9 +36,11 @@ namespace FileService.Application.Queries
                 throw new NotFoundException("Could not find the file.");
             }
 
-            return new DownloadStaticFileGrpcResponse
+            using var memoryStream = await _fileStorageService.DownloadFileAsync(file);
+            return new DownloadFileGrpcResponse
             {
-                Url = file.FilePath
+                ContentType = file.ContentType,
+                Data = ByteString.FromStream(memoryStream)
             };
         }
     }

@@ -97,7 +97,7 @@ namespace EPlusActivities.API.Services.FileService
             );
 
         public async Task<DownloadStaticFileGrpcResponse> DownloadStaticFileByFileIdAsync(
-            DownloadFileByFileIdQuery request
+            DownloadStaticFileByFileIdQuery request
         ) =>
             await _daprClient.InvokeMethodGrpcAsync<
                 DownloadFileByFileIdGrpcRequest,
@@ -109,7 +109,7 @@ namespace EPlusActivities.API.Services.FileService
             );
 
         public async Task<DownloadStaticFileGrpcResponse> DownloadStaticFileByKeyAsync(
-            DownloadFileByKeyQuery request
+            DownloadStaticFileByKeyQuery request
         ) =>
             await _daprClient.InvokeMethodGrpcAsync<
                 DownloadFileByKeyGrpcRequest,

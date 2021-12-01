@@ -3,7 +3,7 @@ using MediatR;
 
 namespace FileService.Application.Queries
 {
-    public class DownloadFileByKeyCommand : IRequest<DownloadFileGrpcResponse>
+    public class DownloadStaticFileByKeyQuery : IRequest<DownloadStaticFileGrpcResponse>
     {
         public DownloadFileByKeyGrpcRequest GrpcRequest { get; set; }
     }

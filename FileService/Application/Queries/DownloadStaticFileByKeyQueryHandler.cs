@@ -13,11 +13,11 @@ using Microsoft.Extensions.Logging;
 
 namespace FileService.Application.Queries
 {
-    public class DownloadStaticFileByKeyCommandHandler
+    public class DownloadStaticFileByKeyQueryHandler
         : HandlerBase,
-          IRequestHandler<DownloadStaticFileByKeyCommand, DownloadStaticFileGrpcResponse>
+          IRequestHandler<DownloadStaticFileByKeyQuery, DownloadStaticFileGrpcResponse>
     {
-        public DownloadStaticFileByKeyCommandHandler(
+        public DownloadStaticFileByKeyQueryHandler(
             IConfiguration configuration,
             IFileStorageService fileStorageService,
             IAppFileRepository fileRepository,
@@ -26,7 +26,7 @@ namespace FileService.Application.Queries
         ) : base(configuration, fileStorageService, fileRepository, logger, mapper) { }
 
         public async Task<DownloadStaticFileGrpcResponse> Handle(
-            DownloadStaticFileByKeyCommand command,
+            DownloadStaticFileByKeyQuery command,
             CancellationToken cancellationToken
         )
         {

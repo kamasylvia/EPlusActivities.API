@@ -40,7 +40,7 @@ namespace FileService.Services.GrpcService
                 case "DownloadFileByFileId":
                     response.Data = Any.Pack(
                         await _mediator.Send(
-                            new DownloadFileByFileIdCommand
+                            new DownloadFileByFileIdQuery
                             {
                                 GrpcRequest = request.Data.Unpack<DownloadFileByFileIdGrpcRequest>()
                             }
@@ -50,7 +50,7 @@ namespace FileService.Services.GrpcService
                 case "DownloadFileByKey":
                     response.Data = Any.Pack(
                         await _mediator.Send(
-                            new DownloadFileByKeyCommand
+                            new DownloadFileByKeyQuery
                             {
                                 GrpcRequest = request.Data.Unpack<DownloadFileByKeyGrpcRequest>()
                             }
@@ -60,7 +60,7 @@ namespace FileService.Services.GrpcService
                 case "DownloadStaticFileByFileId":
                     response.Data = Any.Pack(
                         await _mediator.Send(
-                            new DownloadStaticFileByFileIdCommand
+                            new DownloadStaticFileByFileIdQuery
                             {
                                 GrpcRequest = request.Data.Unpack<DownloadFileByFileIdGrpcRequest>()
                             }
@@ -70,7 +70,7 @@ namespace FileService.Services.GrpcService
                 case "DownloadStaticFileByKey":
                     response.Data = Any.Pack(
                         await _mediator.Send(
-                            new DownloadStaticFileByKeyCommand
+                            new DownloadStaticFileByKeyQuery
                             {
                                 GrpcRequest = request.Data.Unpack<DownloadFileByKeyGrpcRequest>()
                             }

@@ -18,11 +18,11 @@ namespace EPlusActivities.API.Services.FileService
         Task<DownloadFileGrpcResponse> DownloadFileByKeyAsync(DownloadFileByKeyQuery request);
 
         Task<DownloadStaticFileGrpcResponse> DownloadStaticFileByFileIdAsync(
-            DownloadFileByFileIdQuery request
+            DownloadStaticFileByFileIdQuery request
         );
 
         Task<DownloadStaticFileGrpcResponse> DownloadStaticFileByKeyAsync(
-            DownloadFileByKeyQuery request
+            DownloadStaticFileByKeyQuery request
         );
     }
 }

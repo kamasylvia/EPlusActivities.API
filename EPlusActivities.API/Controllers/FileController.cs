@@ -42,6 +42,21 @@ namespace EPlusActivities.API.Controllers
             var result = await _mediator.Send(request);
             return File(result.Data.ToByteArray(), result.ContentType);
         }
+        
+        /// <summary>
+        /// 通过文件 ID 获取静态文件
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet("static/id")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<IActionResult> DownloadStaticFileByFileIdAsync(
+            [FromQuery] DownloadStaticFileByFileIdQuery request
+        ) =>
+            Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 通过文件所有者和关键字获取文件
@@ -60,6 +75,21 @@ namespace EPlusActivities.API.Controllers
             var result = await _mediator.Send(request);
             return File(result.Data.ToByteArray(), result.ContentType);
         }
+
+        /// <summary>
+        /// 通过文件所有者和关键字获取静态文件
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet("static/key")]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Policy = "AllRoles"
+        )]
+        public async Task<IActionResult> DownloadStaticFileByKeyAsync(
+            [FromQuery] DownloadStaticFileByKeyQuery request
+        ) =>
+            Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 获取某个所有者的全部文件
