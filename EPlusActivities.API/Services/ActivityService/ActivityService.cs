@@ -57,7 +57,7 @@ namespace EPlusActivities.API.Services.ActivityService
         ) =>
             (await _activityRepository.FindActivitiesAsync(startTime, endTime)).Where(
                 activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0
-            );
+            ).OrderBy(activity => activity.StartTime);
 
         public async Task<IEnumerable<Activity>> GetAvailableActivitiesAsync(
             IEnumerable<ChannelCode> availableChannels,
@@ -72,26 +72,12 @@ namespace EPlusActivities.API.Services.ActivityService
             var activitiesAtEndTime = await _activityRepository.FindAvailableActivitiesAsync(
                 endTime ?? DateTime.Now.Date
             );
-            /*
-            System.Console.WriteLine(
-                $"availableChannels = {JsonSerializer.Serialize(availableChannels)}"
-            );
-            System.Console.WriteLine(
-                $"activitiesAtStartTime = {JsonSerializer.Serialize(activitiesAtStartTime)}"
-            );
-            System.Console.WriteLine(
-                $"activitiesAtEndTime = {JsonSerializer.Serialize(activitiesAtEndTime)}"
-            );
-            System.Console.WriteLine(
-                $"availableActivities = {JsonSerializer.Serialize(activitiesAtStartTime.Union(activitiesAtEndTime).Where(activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0))}"
-            );
-            */
 
             return activitiesAtStartTime
                 .Union(activitiesAtEndTime)
                 .Where(
                     activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0
-                );
+                ).OrderBy(activity => activity.StartTime);
         }
 
         public async Task<IEnumerable<ActivityUser>> GetAvailableActivityUserLinksAsync(
@@ -109,26 +95,12 @@ namespace EPlusActivities.API.Services.ActivityService
                 return result;
             }
 
-#if DEBUG
-            // System.Console.WriteLine(
-            //     $"_activityUserRepository.FindByUserIdAsync(userId) = {JsonSerializer.Serialize(await _activityUserRepository.FindByUserIdAsync(userId))}"
-            // );
-            var temp = (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
-                au =>
-                    !(au.Activity.StartTime > (startTime ?? DateTime.Today))
-                    && !((endTime ?? DateTime.Today) > au.Activity.EndTime)
-            // && au.Channel == channel
-            );
-            System.Console.WriteLine($"channel = {channel}");
-            System.Console.WriteLine(temp.Count());
-#endif
-
             return (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
                 au =>
                     !(au.Activity.StartTime > (startTime ?? DateTime.Today))
                     && !((endTime ?? DateTime.Today) > au.Activity.EndTime)
                     && au.Channel == channel
-            );
+            ).OrderBy(au => au.Activity.StartTime);
         }
 
         public async Task<IEnumerable<ActivityUser>> BindUserWithActivities(
@@ -137,10 +109,6 @@ namespace EPlusActivities.API.Services.ActivityService
             ChannelCode channel
         )
         {
-#if DEBUG
-            System.Console.WriteLine("Enter BindUserWithActivities");
-#endif
-
             var result = new List<ActivityUser>();
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)
@@ -149,30 +117,14 @@ namespace EPlusActivities.API.Services.ActivityService
                 return result;
             }
 
-#if DEBUG
-            System.Console.WriteLine("Before existedLinks");
-#endif
-
             var existedLinks = (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
                 au => au.Channel == channel
             );
 
-#if DEBUG
-            // System.Console.WriteLine($"esistedLinks = {JsonSerializer.Serialize(existedLinks)}");
-#endif
-
-#if DEBUG
-            System.Console.WriteLine("Before unBoundActivityIds");
-#endif
             var unBoundActivityIds = activityIds.Except(
                 existedLinks.Select(activityUser => activityUser.ActivityId.Value)
             );
 
-#if DEBUG
-            System.Console.WriteLine(
-                $"unBoundActivityIds = {JsonSerializer.Serialize(unBoundActivityIds)}"
-            );
-#endif
 
             foreach (var activityId in unBoundActivityIds)
             {
@@ -205,7 +157,7 @@ namespace EPlusActivities.API.Services.ActivityService
             Guid userId,
             ChannelCode channel
         ) =>
-            await BindUserWithActivities(
+            (await BindUserWithActivities(
                 userId,
                 (
                     await GetAvailableActivitiesAsync(
@@ -214,6 +166,6 @@ namespace EPlusActivities.API.Services.ActivityService
                     )
                 ).Select(activity => activity.Id.Value),
                 channel
-            );
+            )).OrderBy(au => au.Activity.StartTime);
     }
 }
