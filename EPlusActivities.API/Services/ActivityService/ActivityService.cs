@@ -117,7 +117,7 @@ namespace EPlusActivities.API.Services.ActivityService
                 au =>
                     !(au.Activity.StartTime > (startTime ?? DateTime.Today))
                     && !((endTime ?? DateTime.Today) > au.Activity.EndTime)
-                    // && au.Channel == channel
+            // && au.Channel == channel
             );
             System.Console.WriteLine($"channel = {channel}");
             System.Console.WriteLine(temp.Count());

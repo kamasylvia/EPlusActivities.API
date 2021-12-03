@@ -30,7 +30,8 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
         private readonly IActivityService _activityService;
 
         public LotteryActor(
-            ActorHost host,IActorProxyFactory actorProxyFactory,
+            ActorHost host,
+            IActorProxyFactory actorProxyFactory,
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,

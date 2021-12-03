@@ -35,7 +35,8 @@ namespace EPlusActivities.API.Application
         )
         {
             _generalLotteryRecordsRepository =
-                generalLotteryRecordsRepository ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
+                generalLotteryRecordsRepository
+                ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =

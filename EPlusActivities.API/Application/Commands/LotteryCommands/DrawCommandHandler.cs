@@ -21,7 +21,9 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.LotteryCommands
 {
-    public class DrawCommandHandler :LotteryRequestHandlerBase, IRequestHandler<DrawCommand, IEnumerable<LotteryDto>>
+    public class DrawCommandHandler
+        : LotteryRequestHandlerBase,
+          IRequestHandler<DrawCommand, IEnumerable<LotteryDto>>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
@@ -31,9 +33,36 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
         //         actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         // }
 
-        public DrawCommandHandler(ILotteryRepository lotteryRepository, Microsoft.AspNetCore.Identity.UserManager<Entities.ApplicationUser> userManager, IActivityRepository activityRepository, IPrizeItemRepository prizeItemRepository, IFindByParentIdRepository<Entities.PrizeTier> prizeTypeRepository, IMapper mapper, IActivityUserRepository activityUserRepository, IRepository<Entities.Coupon> couponResponseDto, ILotteryService lotteryService, IMemberService memberService, IIdGeneratorService idGeneratorService, IGeneralLotteryRecordsRepository generalLotteryRecordsRepository, IActivityService activityService) : base(lotteryRepository, userManager, activityRepository, prizeItemRepository, prizeTypeRepository, mapper, activityUserRepository, couponResponseDto, lotteryService, memberService, idGeneratorService, generalLotteryRecordsRepository, activityService)
-        {
-        }
+        public DrawCommandHandler(
+            ILotteryRepository lotteryRepository,
+            Microsoft.AspNetCore.Identity.UserManager<Entities.ApplicationUser> userManager,
+            IActivityRepository activityRepository,
+            IPrizeItemRepository prizeItemRepository,
+            IFindByParentIdRepository<Entities.PrizeTier> prizeTypeRepository,
+            IMapper mapper,
+            IActivityUserRepository activityUserRepository,
+            IRepository<Entities.Coupon> couponResponseDto,
+            ILotteryService lotteryService,
+            IMemberService memberService,
+            IIdGeneratorService idGeneratorService,
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            IActivityService activityService
+        )
+            : base(
+                lotteryRepository,
+                userManager,
+                activityRepository,
+                prizeItemRepository,
+                prizeTypeRepository,
+                mapper,
+                activityUserRepository,
+                couponResponseDto,
+                lotteryService,
+                memberService,
+                idGeneratorService,
+                generalLotteryRecordsRepository,
+                activityService
+            ) { }
 
         public async Task<IEnumerable<LotteryDto>> Handle(
             DrawCommand command,
@@ -48,8 +77,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 )
                 .Draw(command);
         */
-       {
-
+        {
 #if DEBUG
             System.Console.WriteLine("进入抽奖方法");
 #endif
@@ -169,7 +197,9 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                                     updateType = CreditUpdateType.Addition
                                 }
                             );
-                            user.Credit = updateCreditResponseDto?.Body?.Content?.NewPoints ?? user.Credit + lottery.PrizeItem.Credit.Value;
+                            user.Credit =
+                                updateCreditResponseDto?.Body?.Content?.NewPoints
+                                ?? user.Credit + lottery.PrizeItem.Credit.Value;
                             break;
                         case PrizeType.Coupon:
                             var couponResponseDto = await _memberService.ReleaseCouponAsync(
@@ -236,8 +266,6 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 throw new DatabaseUpdateException(userUpdateResult.ToString());
             }
 
-
-
 #if DEBUG
             System.Console.WriteLine("After _userManager.UpdateAsync");
 #endif
@@ -256,7 +284,6 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             #endregion
 
             return response;
-
-       }
+        }
     }
 }

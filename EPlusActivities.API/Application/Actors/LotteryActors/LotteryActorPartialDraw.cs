@@ -136,7 +136,9 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
                                     updateType = CreditUpdateType.Addition
                                 }
                             );
-                            user.Credit = updateCreditResponseDto?.Body?.Content?.NewPoints ?? user.Credit + lottery.PrizeItem.Credit.Value;
+                            user.Credit =
+                                updateCreditResponseDto?.Body?.Content?.NewPoints
+                                ?? user.Credit + lottery.PrizeItem.Credit.Value;
                             break;
                         case PrizeType.Coupon:
                             var couponResponseDto = await _memberService.ReleaseCouponAsync(
@@ -202,8 +204,6 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
             {
                 throw new DatabaseUpdateException(userUpdateResult.ToString());
             }
-
-
 
 #if DEBUG
             System.Console.WriteLine("After _userManager.UpdateAsync");

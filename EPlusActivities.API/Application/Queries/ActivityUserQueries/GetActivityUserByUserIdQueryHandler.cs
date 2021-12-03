@@ -27,7 +27,8 @@ namespace EPlusActivities.API.Application.Queries.ActivityUserQueries
             IActorProxyFactory actorProxyFactory,
             UserManager<ApplicationUser> userManager,
             IActivityService activityService,
-            IMapper mapper)
+            IMapper mapper
+        )
         {
             _actorProxyFactory =
                 actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
@@ -50,7 +51,6 @@ namespace EPlusActivities.API.Application.Queries.ActivityUserQueries
             .GetActivitiesByUserIdAsync(request);
             */
         {
-
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
@@ -67,8 +67,6 @@ namespace EPlusActivities.API.Application.Queries.ActivityUserQueries
                     request.EndTime
                 )
             );
-
         }
-
     }
 }

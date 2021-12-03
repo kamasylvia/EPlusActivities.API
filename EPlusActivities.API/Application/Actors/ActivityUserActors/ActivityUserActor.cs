@@ -37,7 +37,8 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
         private readonly IIdGeneratorService _idGeneratorService;
 
         public ActivityUserActor(
-            ActorHost host, IActorProxyFactory actorProxyFactory,
+            ActorHost host,
+            IActorProxyFactory actorProxyFactory,
             IActivityRepository activityRepository,
             IMemberService memberService,
             UserManager<ApplicationUser> userManager,
@@ -49,7 +50,8 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             IGeneralLotteryRecordsRepository statementRepository
         ) : base(host)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
             _activityRepository =
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
             _memberService =

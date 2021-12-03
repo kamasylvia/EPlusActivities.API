@@ -19,7 +19,8 @@ using MediatR;
 namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
 {
     public class RedeemCommandHandler
-        :ActivityUserRequestHandlerBase, IRequestHandler<RedeemCommand, ActivityUserForRedeemDrawsResponseDto>
+        : ActivityUserRequestHandlerBase,
+          IRequestHandler<RedeemCommand, ActivityUserForRedeemDrawsResponseDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
@@ -37,9 +38,18 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IGeneralLotteryRecordsRepository generalLotteryRecords) : base(activityRepository, memberService, userManager, activityUserRepository, mapper, idGeneratorService, activityService, generalLotteryRecords)
-        {
-        }
+            IGeneralLotteryRecordsRepository generalLotteryRecords
+        )
+            : base(
+                activityRepository,
+                memberService,
+                userManager,
+                activityUserRepository,
+                mapper,
+                idGeneratorService,
+                activityService,
+                generalLotteryRecords
+            ) { }
 
         public async Task<ActivityUserForRedeemDrawsResponseDto> Handle(
             RedeemCommand command,
@@ -221,7 +231,6 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             #endregion
 
             return _mapper.Map<ActivityUserForRedeemDrawsResponseDto>(activityUser);
-
         }
     }
 }
