@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -13,6 +14,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
 {
     public partial class LotteryActor : Actor, ILotteryActor
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
         private readonly ILotteryRepository _lotteryRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityRepository _activityRepository;
@@ -28,7 +30,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
         private readonly IActivityService _activityService;
 
         public LotteryActor(
-            ActorHost host,
+            ActorHost host,IActorProxyFactory actorProxyFactory,
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -44,6 +46,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
             IActivityService activityService
         ) : base(host)
         {
+            _actorProxyFactory = actorProxyFactory;
             _lotteryRepository =
                 lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapr.Actors;
+using EPlusActivities.API.Application.Actors.UserActors;
 using EPlusActivities.API.Application.Commands.LotteryCommands;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
@@ -15,6 +17,10 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
     {
         public async Task<IEnumerable<LotteryDto>> Draw(DrawCommand command)
         {
+#if DEBUG
+            System.Console.WriteLine("进入抽奖方法");
+#endif
+
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(command.UserId.ToString());
             if (user is null)
@@ -69,7 +75,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
                     "Sorry, the user had already achieved the daily maximum number of draws of this activity."
                 );
             }
-            // var channel = Enum.Parse<ChannelCode>(request.ChannelCode, true);
+
             var channel = command.ChannelCode;
             var generalRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
                 command.ActivityId.Value,
@@ -130,13 +136,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
                                     updateType = CreditUpdateType.Addition
                                 }
                             );
-                            user.Credit += lottery.PrizeItem.Credit.Value;
-                            if (user.Credit != updateCreditResponseDto.Body.Content.NewPoints)
-                            {
-                                throw new RemoteServiceException(
-                                    "Local credits did not equal to the points on Member Service."
-                                );
-                            }
+                            user.Credit = updateCreditResponseDto?.Body?.Content?.NewPoints ?? user.Credit + lottery.PrizeItem.Credit.Value;
                             break;
                         case PrizeType.Coupon:
                             var couponResponseDto = await _memberService.ReleaseCouponAsync(
@@ -188,11 +188,26 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
             #endregion
 
             #region Database operations
+
+#if DEBUG
+            System.Console.WriteLine("Before _userManager.UpdateAsync");
+#endif
+
+            // await _actorProxyFactory
+            //     .CreateActorProxy<IUserActor>(new ActorId(user.Id.ToString()), nameof(UserActor))
+            //     .UpdateAsync(user);
+
             var userUpdateResult = await _userManager.UpdateAsync(user);
             if (!userUpdateResult.Succeeded)
             {
                 throw new DatabaseUpdateException(userUpdateResult.ToString());
             }
+
+
+
+#if DEBUG
+            System.Console.WriteLine("After _userManager.UpdateAsync");
+#endif
 
             if (requireNewStatement)
                 await _generalLotteryRecordsRepository.AddAsync(generalRecords);

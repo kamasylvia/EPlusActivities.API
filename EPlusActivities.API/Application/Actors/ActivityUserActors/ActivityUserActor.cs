@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Dapr.Actors;
+using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
+using EPlusActivities.API.Application.Actors.UserActors;
 using EPlusActivities.API.Application.Commands.ActivityUserCommands;
 using EPlusActivities.API.Application.Queries.ActivityUserQueries;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
@@ -15,22 +19,25 @@ using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Application.Actors.ActivityUserActors
 {
     public class ActivityUserActor : Actor, IActivityUserActor
     {
+        private readonly IActorProxyFactory _actorProxyFactory;
         private readonly IActivityRepository _activityRepository;
         private readonly IMemberService _memberService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityService _activityService;
-        private readonly IGeneralLotteryRecordsRepository _statementRepository;
+        private readonly ILogger<ActivityUserActor> _logger;
+        private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
         private readonly IActivityUserRepository _activityUserRepository;
         private readonly IMapper _mapper;
         private readonly IIdGeneratorService _idGeneratorService;
 
         public ActivityUserActor(
-            ActorHost host,
+            ActorHost host, IActorProxyFactory actorProxyFactory,
             IActivityRepository activityRepository,
             IMemberService memberService,
             UserManager<ApplicationUser> userManager,
@@ -38,9 +45,11 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
+            ILogger<ActivityUserActor> logger,
             IGeneralLotteryRecordsRepository statementRepository
         ) : base(host)
         {
+            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
             _activityRepository =
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
             _memberService =
@@ -49,7 +58,8 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             _activityUserRepository = activityUserRepository;
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
-            _statementRepository =
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _generalLotteryRecordsRepository =
                 statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _idGeneratorService =
@@ -138,6 +148,10 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
 
         public async Task<ActivityUserForRedeemDrawsResponseDto> Redeem(RedeemCommand command)
         {
+#if DEBUG
+            System.Console.WriteLine("进入兑换方法");
+#endif
+
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(command.UserId.ToString());
             if (user is null)
@@ -145,16 +159,25 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
                 throw new NotFoundException("Could not find the user.");
             }
 
-            var activity = await _activityRepository.FindByIdAsync(command.ActivityId.Value);
+            var activity = await _activityRepository.FindByIdAsync(command.ActivityId);
             if (activity is null)
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            var generalLotteryRecords = await _statementRepository.FindByDateAsync(
+
+#if DEBUG
+            System.Console.WriteLine("断点 1");
+#endif
+
+            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
                 command.ActivityId.Value,
                 command.Channel,
                 DateTime.Today
             );
+
+#if DEBUG
+            System.Console.WriteLine("断点 2");
+#endif
             var requireNewStatement = generalLotteryRecords is null;
             if (requireNewStatement)
             {
@@ -165,18 +188,27 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
                     Channel = command.Channel,
                 };
             }
+#if DEBUG
+            System.Console.WriteLine("断点 3");
+#endif
 
             var activityUser = await _activityUserRepository.FindByIdAsync(
-                command.ActivityId.Value,
-                command.UserId.Value
+                command.ActivityId,
+                command.UserId
             );
             if (activityUser is null)
             {
                 throw new NotFoundException("Could not find the ActivityUser link.");
             }
+#if DEBUG
+            System.Console.WriteLine("断点 4");
+#endif
 
             // 今日没登陆过的用户，每日兑换次数清零
             _activityService.UpdateDailyLimitsAsync(user, activityUser);
+#if DEBUG
+            System.Console.WriteLine("断点 5");
+#endif
 
             // 超过每日兑换限制
             if (!(activityUser.TodayUsedRedempion + command.Count > activity.DailyRedemptionLimit))
@@ -189,6 +221,9 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
                     "Sorry, the user had already achieved the daily maximum number of redemption of this activity."
                 );
             }
+#if DEBUG
+            System.Console.WriteLine("断点 6");
+#endif
 
             var cost = activity.RequiredCreditForRedeeming * command.Count;
             if (cost > user.Credit)
@@ -213,9 +248,21 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
                 requestDto: memberForUpdateCreditRequestDto
             );
             #endregion
+#if DEBUG
+            System.Console.WriteLine("断点 7");
+#endif
 
             #region Update the user's credit
             user.Credit = memberForUpdateCreditResponseDto.Body.Content.NewPoints;
+
+#if DEBUG
+            System.Console.WriteLine("Before _userManager.UpdateAsync");
+#endif
+
+            // await _actorProxyFactory
+            //     .CreateActorProxy<IUserActor>(new ActorId(user.Id.ToString()), nameof(UserActor))
+            //     .UpdateAsync(user);
+
             var updateUserResult = await _userManager.UpdateAsync(user);
             if (!updateUserResult.Succeeded)
             {
@@ -223,24 +270,43 @@ namespace EPlusActivities.API.Application.Actors.ActivityUserActors
             }
             #endregion
 
+#if DEBUG
+            System.Console.WriteLine("After _userManager.UpdateAsync");
+#endif
+
             #region Update ActivityUser link
             activityUser.RemainingDraws += command.Count;
             generalLotteryRecords.Redemption += command.Count;
+#if DEBUG
+            System.Console.WriteLine("断点 9");
+#endif
 
             _activityUserRepository.Update(activityUser);
+#if DEBUG
+            System.Console.WriteLine("断点 10");
+#endif
             if (requireNewStatement)
             {
-                await _statementRepository.AddAsync(generalLotteryRecords);
+                await _generalLotteryRecordsRepository.AddAsync(generalLotteryRecords);
+#if DEBUG
+                System.Console.WriteLine("断点 11");
+#endif
             }
             else
             {
-                _statementRepository.Update(generalLotteryRecords);
+                _generalLotteryRecordsRepository.Update(generalLotteryRecords);
+#if DEBUG
+                System.Console.WriteLine("断点 12");
+#endif
             }
 
             if (!await _activityUserRepository.SaveAsync())
             {
                 throw new DatabaseUpdateException("Update database exception");
             }
+#if DEBUG
+            System.Console.WriteLine("断点 13");
+#endif
             #endregion
 
             return _mapper.Map<ActivityUserForRedeemDrawsResponseDto>(activityUser);

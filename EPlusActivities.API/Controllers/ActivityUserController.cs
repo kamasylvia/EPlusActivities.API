@@ -88,7 +88,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPatch("redeeming")]
+        [HttpPost("redeeming")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "customer, tester"

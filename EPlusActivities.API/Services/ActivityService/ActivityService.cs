@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Entities;
@@ -71,6 +72,20 @@ namespace EPlusActivities.API.Services.ActivityService
             var activitiesAtEndTime = await _activityRepository.FindAvailableActivitiesAsync(
                 endTime ?? DateTime.Now.Date
             );
+            /*
+            System.Console.WriteLine(
+                $"availableChannels = {JsonSerializer.Serialize(availableChannels)}"
+            );
+            System.Console.WriteLine(
+                $"activitiesAtStartTime = {JsonSerializer.Serialize(activitiesAtStartTime)}"
+            );
+            System.Console.WriteLine(
+                $"activitiesAtEndTime = {JsonSerializer.Serialize(activitiesAtEndTime)}"
+            );
+            System.Console.WriteLine(
+                $"availableActivities = {JsonSerializer.Serialize(activitiesAtStartTime.Union(activitiesAtEndTime).Where(activity => activity.AvailableChannels.Intersect(availableChannels).Count() > 0))}"
+            );
+            */
 
             return activitiesAtStartTime
                 .Union(activitiesAtEndTime)
@@ -94,10 +109,24 @@ namespace EPlusActivities.API.Services.ActivityService
                 return result;
             }
 
+#if DEBUG
+            // System.Console.WriteLine(
+            //     $"_activityUserRepository.FindByUserIdAsync(userId) = {JsonSerializer.Serialize(await _activityUserRepository.FindByUserIdAsync(userId))}"
+            // );
+            var temp = (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
+                au =>
+                    !(au.Activity.StartTime > (startTime ?? DateTime.Today))
+                    && !((endTime ?? DateTime.Today) > au.Activity.EndTime)
+                    // && au.Channel == channel
+            );
+            System.Console.WriteLine($"channel = {channel}");
+            System.Console.WriteLine(temp.Count());
+#endif
+
             return (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
                 au =>
-                    !(au.Activity.StartTime > (startTime ?? DateTime.Now.Date))
-                    && !((endTime ?? DateTime.Now.Date) > au.Activity.EndTime)
+                    !(au.Activity.StartTime > (startTime ?? DateTime.Today))
+                    && !((endTime ?? DateTime.Today) > au.Activity.EndTime)
                     && au.Channel == channel
             );
         }
@@ -108,6 +137,10 @@ namespace EPlusActivities.API.Services.ActivityService
             ChannelCode channel
         )
         {
+#if DEBUG
+            System.Console.WriteLine("Enter BindUserWithActivities");
+#endif
+
             var result = new List<ActivityUser>();
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)
@@ -116,12 +149,30 @@ namespace EPlusActivities.API.Services.ActivityService
                 return result;
             }
 
+#if DEBUG
+            System.Console.WriteLine("Before existedLinks");
+#endif
+
             var existedLinks = (await _activityUserRepository.FindByUserIdAsync(userId)).Where(
                 au => au.Channel == channel
             );
+
+#if DEBUG
+            // System.Console.WriteLine($"esistedLinks = {JsonSerializer.Serialize(existedLinks)}");
+#endif
+
+#if DEBUG
+            System.Console.WriteLine("Before unBoundActivityIds");
+#endif
             var unBoundActivityIds = activityIds.Except(
                 existedLinks.Select(activityUser => activityUser.ActivityId.Value)
             );
+
+#if DEBUG
+            System.Console.WriteLine(
+                $"unBoundActivityIds = {JsonSerializer.Serialize(unBoundActivityIds)}"
+            );
+#endif
 
             foreach (var activityId in unBoundActivityIds)
             {
@@ -137,6 +188,7 @@ namespace EPlusActivities.API.Services.ActivityService
                     result.Add(activityUser);
                 }
             }
+
             await _activityUserRepository.AddRangeAsync(result);
             var dbResult = await _activityUserRepository.SaveAsync();
 

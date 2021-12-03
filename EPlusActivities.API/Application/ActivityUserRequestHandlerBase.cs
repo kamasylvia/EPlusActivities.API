@@ -20,7 +20,7 @@ namespace EPlusActivities.API.Application
         protected readonly IMapper _mapper;
         protected readonly IActivityUserRepository _activityUserRepository;
         protected readonly IIdGeneratorService _idGeneratorService;
-        protected readonly IGeneralLotteryRecordsRepository _statementRepository;
+        protected readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
         protected readonly IActivityService _activityService;
 
         protected ActivityUserRequestHandlerBase(
@@ -31,11 +31,11 @@ namespace EPlusActivities.API.Application
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IGeneralLotteryRecordsRepository statementRepository
+            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository
         )
         {
-            _statementRepository =
-                statementRepository ?? throw new ArgumentNullException(nameof(statementRepository));
+            _generalLotteryRecordsRepository =
+                generalLotteryRecordsRepository ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
             _idGeneratorService =

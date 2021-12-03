@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Dapr.Actors;
 using EPlusActivities.API.Application.Commands.UserCommands;
+using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Application.Actors.UserActors
 {
@@ -11,5 +12,6 @@ namespace EPlusActivities.API.Application.Actors.UserActors
         Task DeleteUser(DeleteUserCommand command);
 
         Task UpdatePhone(UpdatePhoneCommand command);
+        Task UpdateAsync(ApplicationUser user);
     }
 }

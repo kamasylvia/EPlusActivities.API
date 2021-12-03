@@ -57,6 +57,21 @@ namespace EPlusActivities.API.Application.Actors.UserActors
             }
         }
 
+        public async Task UpdateAsync(ApplicationUser user)
+        {
+            var oldUser = await _userManager.FindByIdAsync(user.Id.ToString());
+            if (user is null)
+            {
+                throw new NotFoundException("Could not find the user.");
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new DatabaseUpdateException(result.ToString());
+            }
+        }
+
         public async Task UpdatePhone(UpdatePhoneCommand command)
         {
             #region Parameter validation
