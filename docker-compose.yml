@@ -23,7 +23,7 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211203
+        image: kamasylvia/eplusactivities:20211206
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
@@ -35,7 +35,7 @@ services:
             - eplusactivities-db
         volumes:
             - ./Logs/ApiLogs:/app/Logs
-            - ./Settings/EplusActivities.API/appsettings.json:/app/appsettings.json:ro
+            - ./Settings/EPlusActivities.API/appsettings.json:/app/appsettings.json:ro
             - ~/.aspnet/https:/root/.aspnet/https:ro
             - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
         networks:
@@ -90,7 +90,7 @@ services:
         restart: always
 
     fileservice:
-        image: kamasylvia/fileservice:20211201
+        image: kamasylvia/fileservice:20211206
         container_name: FileService
         environment:
             - ASPNETCORE_ENVIRONMENT=Production

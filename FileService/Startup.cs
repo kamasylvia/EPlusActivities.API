@@ -57,6 +57,7 @@ namespace FileService
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHttpLogging();
             // app.UseHttpsRedirection();
 
             app.UseStaticFiles(

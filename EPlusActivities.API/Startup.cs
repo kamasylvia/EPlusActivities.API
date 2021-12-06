@@ -116,6 +116,7 @@ namespace EPlusActivities.API
                 );
             }
 
+            app.UseHttpLogging();
             // app.UseHttpsRedirection();
 
             app.UseRouting();

@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <DockerComposeProjectPath>../docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>e0c8c7ba-85eb-4917-bcc6-4006fdbeb7a7</UserSecretsId>
     <noWarn>1591</noWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'FileService-Development' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'FileService-Production' " />
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.5.0" />
