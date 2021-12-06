@@ -89,16 +89,10 @@ namespace EPlusActivities.API.Infrastructure.Filters
                                 break;
                         }
                         break;
-                    case ActorInvokeException ex:
-                        if (ex.InnerException is not ActorInvokeException)
-                        {
-                            Helper(ex.InnerException);
-                        }
-                        else
-                        {
-                            apiResult.StatusCode = StatusCodes.Status500InternalServerError;
-                            apiResult.Errors = "Actor Invoke Error";
-                        }
+                    case ActorMethodInvocationException:
+                    case ActorInvokeException:
+                        apiResult.StatusCode = StatusCodes.Status500InternalServerError;
+                        apiResult.Errors = $"{exception.InnerException.ToString()}";
                         break;
                     default:
                         apiResult.StatusCode = StatusCodes.Status500InternalServerError;

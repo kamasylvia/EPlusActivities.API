@@ -18,10 +18,10 @@ namespace EPlusActivities.API.Application.Commands.PrizeTierCommands
         /// 获奖概率
         /// </summary>
         /// <value></value>
-        public int Percentage { get; set; }
+        public int? Percentage { get; set; }
 
         /// <summary>
-        /// 每日中奖上限  
+        /// 每日中奖上限
         /// </summary>
         /// <value></value>
         public int? DailyLimit { get; set; }

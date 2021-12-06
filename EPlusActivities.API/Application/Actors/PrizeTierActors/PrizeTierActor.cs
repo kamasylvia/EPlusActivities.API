@@ -10,12 +10,14 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Application.Actors.PrizeTierActors
 {
     public class PrizeTierActor : Actor, IPrizeTierActor
     {
         private readonly IMapper _mapper;
+        private readonly ILogger<PrizeTierActor> _logger;
         private readonly IFindByParentIdRepository<PrizeTier> _prizeTierRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
         private readonly IActivityRepository _activityRepository;
@@ -25,10 +27,12 @@ namespace EPlusActivities.API.Application.Actors.PrizeTierActors
             IFindByParentIdRepository<PrizeTier> prizeTypeRepository,
             IPrizeItemRepository prizeItemRepository,
             IActivityRepository activityRepository,
-            IMapper mapper
+            IMapper mapper,
+            ILogger<PrizeTierActor> logger
         ) : base(host)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _prizeTierRepository =
                 prizeTypeRepository ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
             _prizeItemRepository =
@@ -124,7 +128,7 @@ namespace EPlusActivities.API.Application.Actors.PrizeTierActors
 
         public async Task UpdatePrizeTier(UpdatePrizeTierCommand command)
         {
-            var prizeTier = await _prizeTierRepository.FindByIdAsync(command.Id.Value);
+            var prizeTier = await _prizeTierRepository.FindByIdAsync(command.Id);
 
             #region Parameter validation
             if (prizeTier is null)
@@ -132,11 +136,11 @@ namespace EPlusActivities.API.Application.Actors.PrizeTierActors
                 throw new NotFoundException("Could not find the prize tier.");
             }
 
-            var prizeTypes = await _prizeTierRepository.FindByParentIdAsync(
+            var prizeTiers = await _prizeTierRepository.FindByParentIdAsync(
                 command.ActivityId.Value
             );
             if (
-                prizeTypes.Where(pt => pt.Id != command.Id.Value).Select(pt => pt.Percentage).Sum()
+                prizeTiers.Where(pt => pt.Id != command.Id.Value).Select(pt => pt.Percentage).Sum()
                     + command.Percentage
                 > 100
             )
@@ -147,7 +151,7 @@ namespace EPlusActivities.API.Application.Actors.PrizeTierActors
             }
 
             var activity = prizeTier.Activity;
-            var countDiff = command.PrizeItemIds.Count() - prizeTier.PrizeTierPrizeItems.Count();
+            var countDiff = command.PrizeItemIds?.Count() - prizeTier.PrizeTierPrizeItems.Count();
             if (activity.PrizeItemCount + countDiff > 10)
             {
                 throw new BadRequestException("Could not add more than 10 prizes in an activity.");
@@ -155,21 +159,24 @@ namespace EPlusActivities.API.Application.Actors.PrizeTierActors
             #endregion
 
             #region Database operations
-            activity.PrizeItemCount += countDiff;
-            prizeTier.PrizeTierPrizeItems = await command.PrizeItemIds
-                .ToAsyncEnumerable()
-                .SelectAwait(
-                    async id =>
-                        new PrizeTierPrizeItem
-                        {
-                            PrizeTierId = command.Id,
-                            PrizeTier = prizeTier,
-                            PrizeItemId = id,
-                            PrizeItem = await _prizeItemRepository.FindByIdAsync(id)
-                        }
-                )
-                .ToListAsync();
-
+            activity.PrizeItemCount += countDiff ?? 0;
+            if (command.PrizeItemIds?.Count() > 0)
+            {
+                prizeTier.PrizeTierPrizeItems = await command.PrizeItemIds
+                    .ToAsyncEnumerable()
+                    .SelectAwait(
+                        async id =>
+                            new PrizeTierPrizeItem
+                            {
+                                PrizeTierId = command.Id,
+                                PrizeTier = prizeTier,
+                                PrizeItemId = id,
+                                PrizeItem = await _prizeItemRepository.FindByIdAsync(id)
+                            }
+                    )
+                    .ToListAsync();
+            }
+            _logger.LogInformation("Break point 3");
             _prizeTierRepository.Update(
                 _mapper.Map<UpdatePrizeTierCommand, PrizeTier>(command, prizeTier)
             );
