@@ -54,7 +54,7 @@ stages:
           inputs:
             script: |
               git config --global user.email "$(Email)"
-              git config --global user.name "$(UserName)"
+              git config --global user.name "$(Username)"
         # Push formatted code back to remote repository
         - task: CmdLine@2
           continueOnError: true
@@ -67,7 +67,7 @@ stages:
         # Push to GitHub
         - task: gitsync@1
           inputs:
-            GitRepoUrl: 'https://github.com/$(GitHubPersonalAccessToken)@github.com/EPlusActivities.API.git'
+            GitRepoUrl: 'https://github.com/$(GitHubPersonalAccessToken)@github.com/$(Username)/EPlusActivities.API.git'
         # Copy required files to Artiface
         - task: CopyFiles@2
           inputs:
