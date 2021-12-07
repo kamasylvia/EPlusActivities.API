@@ -9,7 +9,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
-  PAT: $(GitHubPersonalAccessToken) 
+  PAT: '$(GitHubPersonalAccessToken)'
 
 stages:
   - stage: Source
