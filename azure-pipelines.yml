@@ -9,6 +9,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  PAT: $(GitHubPersonalAccessToken) 
 
 stages:
   - stage: Source
@@ -67,7 +68,7 @@ stages:
         # Push to GitHub
         - task: gitsync@1
           inputs:
-            GitRepoUrl: 'https://github.com/$(GitHubPersonalAccessToken)@github.com/EPlusActivities.API.git'
+            GitRepoUrl: 'https://github.com/$(PAT)@github.com/EPlusActivities.API.git'
         # Copy required files to Artiface
         - task: CopyFiles@2
           inputs:
