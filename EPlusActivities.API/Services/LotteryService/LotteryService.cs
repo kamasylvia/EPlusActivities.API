@@ -316,10 +316,7 @@ namespace EPlusActivities.API.Services.LotteryService
                     // 总库存减一
                     prizeItem.Stock--;
 
-                    return (
-                        prizeTier,
-                        prizeItem
-                    );
+                    return (prizeTier, prizeItem);
                 }
             }
 
