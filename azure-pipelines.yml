@@ -53,8 +53,8 @@ stages:
           continueOnError: true
           inputs:
             script: |
-              git config --global user.email "zhangyue.dev@outlook.com"
-              git config --global user.name "kamasylvia"
+              git config --global user.email "$(Email)"
+              git config --global user.name "$(UserName)"
         # Push formatted code back to remote repository
         - task: CmdLine@2
           continueOnError: true
