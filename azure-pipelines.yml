@@ -65,10 +65,10 @@ stages:
               git commit --allow-empty -m "Format source code with CSharpier [skip ci]"
               git push
         # Push to GitHub
-        # - task: gitsync@1
-        #   inputs:
-        #     GitRepoUrl: 'https://github.com/kamasylvia/EPlusActivities.API.git'
-        # Copy required files to ArchiveFolder
+        - task: gitsync@1
+          inputs:
+            GitRepoUrl: 'https://github.com/$(GitHubPersonalAccessToken)@github.com/EPlusActivities.API.git'
+        # Copy required files to Artiface
         - task: CopyFiles@2
           inputs:
             Contents: |
