@@ -17,7 +17,7 @@ stages:
     - job: Format_and_Release
       displayName: Format source code and publish docker-compose required files to GitHub Release.
       pool:
-        vmImage: ubuntu-latest
+        vmImage: windows-latest
       steps:
         # Allow scripts to access the system token
         - checkout: self
@@ -64,6 +64,10 @@ stages:
               git add -A
               git commit --allow-empty -m "Format source code with CSharpier [skip ci]"
               git push
+        # Push to GitHub
+        # - task: gitsync@1
+        #   inputs:
+        #     GitRepoUrl: 'https://github.com/kamasylvia/EPlusActivities.API.git'
         # Copy required files to ArchiveFolder
         - task: CopyFiles@2
           inputs:
@@ -74,30 +78,38 @@ stages:
               html/**
               Dapr/**
               README.md
-            TargetFolder: 'ArchiveFolder'
+            TargetFolder: '$(build.artifactstagingdirectory)'
             CleanTargetFolder: true
             OverWrite: true
         # Achieve files
-        - task: ArchiveFiles@2
+        # - task: ArchiveFiles@2
+        #   inputs:
+        #     rootFolderOrFile: '$(Build.SourcesDirectory)/ArchiveFolder'
+        #     includeRootFolder: true
+        #     archiveType: 'zip'
+        #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+        #     replaceExistingArchive: true
+
+        # Publish
+        - task: PublishBuildArtifacts@1
           inputs:
-            rootFolderOrFile: '$(Build.SourcesDirectory)/ArchiveFolder'
-            includeRootFolder: true
-            archiveType: 'zip'
-            archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-            replaceExistingArchive: true
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'docker-compose'
+            publishLocation: 'Container'
+            
         # GitHub Release
-        - task: GitHubRelease@1
-          inputs:
-            gitHubConnection: 'KamasylviaOAuth'
-            repositoryName: '$(Build.Repository.Name)'
-            action: 'create'
-            target: '$(Build.SourceVersion)'
-            tagSource: 'gitTag'
-            tagPattern: '[Rr]elease-v[1-9]*\S*' # required 
-            assets: '$(Build.ArtifactStagingDirectory)/*.zip'
-            # isDraft: true
-            changeLogCompareToRelease: 'lastFullRelease'
-            changeLogType: 'commitBased'
+        # - task: GitHubRelease@1
+        #   inputs:
+        #     gitHubConnection: 'KamasylviaOAuth'
+        #     repositoryName: '$(Build.Repository.Name)'
+        #     action: 'create'
+        #     target: '$(Build.SourceVersion)'
+        #     tagSource: 'gitTag'
+        #     tagPattern: '[Rr]elease-v[1-9]*\S*' # required 
+        #     assets: '$(Build.ArtifactStagingDirectory)/*.zip'
+        #     # isDraft: true
+        #     changeLogCompareToRelease: 'lastFullRelease'
+        #     changeLogType: 'commitBased'
   - stage: Deploy
     displayName: Deploy to production
     jobs:
