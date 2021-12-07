@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -78,10 +79,6 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 .Draw(command);
         */
         {
-#if DEBUG
-            System.Console.WriteLine("进入抽奖方法");
-#endif
-
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(command.UserId.ToString());
             if (user is null)
@@ -252,10 +249,6 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
 
             #region Database operations
 
-#if DEBUG
-            System.Console.WriteLine("Before _userManager.UpdateAsync");
-#endif
-
             // await _actorProxyFactory
             //     .CreateActorProxy<IUserActor>(new ActorId(user.Id.ToString()), nameof(UserActor))
             //     .UpdateAsync(user);
@@ -265,10 +258,6 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             {
                 throw new DatabaseUpdateException(userUpdateResult.ToString());
             }
-
-#if DEBUG
-            System.Console.WriteLine("After _userManager.UpdateAsync");
-#endif
 
             if (requireNewStatement)
                 await _generalLotteryRecordsRepository.AddAsync(generalRecords);

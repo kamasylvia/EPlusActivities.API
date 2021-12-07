@@ -288,7 +288,7 @@ namespace EPlusActivities.API.Services.LotteryService
             foreach (var item in prizeTiers)
             {
                 // 如果上次中奖日期早于今天，今日中奖人数清零
-                if (item.LastDate < DateTime.Now.Date)
+                if (item.LastDate < DateTime.Today)
                     item.TodayWinnerCount = 0;
 
                 total += item.Percentage;
@@ -310,15 +310,15 @@ namespace EPlusActivities.API.Services.LotteryService
                     item.TodayWinnerCount++;
 
                     // 更新上次中奖日期
-                    if (item.LastDate < DateTime.Now.Date)
-                        item.LastDate = DateTime.Now.Date;
+                    if (item.LastDate < DateTime.Today)
+                        item.LastDate = DateTime.Today;
 
                     // 总库存减一
                     prizeItem.Stock--;
 
                     return (
                         prizeTier,
-                        prizeItems.ElementAtOrDefault(random.Next(prizeItems.Count()))
+                        prizeItem
                     );
                 }
             }

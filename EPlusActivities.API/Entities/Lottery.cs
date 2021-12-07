@@ -15,7 +15,7 @@ namespace EPlusActivities.API.Entities
         // 奖品是否发放
         public bool Delivered { get; set; }
 
-        // 用户是否已经领取奖品
+        // 用户是否已经领取奖品
         public bool PickedUp { get; set; }
 
         // 用户领取奖品日期
