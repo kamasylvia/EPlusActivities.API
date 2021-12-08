@@ -23,11 +23,13 @@ services:
         restart: always
 
     eplusactivities-api:
-        image: kamasylvia/eplusactivities:20211207
+        image: kamasylvia/eplusactivities:20211208
         container_name: EplusActivities.API
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
             - ASPNETCORE_URLS=http://+:80
+        ports:
+          - 52538:80
         depends_on:
             - eplusactivities-db
             - placement
