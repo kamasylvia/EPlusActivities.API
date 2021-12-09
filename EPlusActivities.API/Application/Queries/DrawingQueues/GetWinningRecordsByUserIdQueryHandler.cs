@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Entities;
-using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
@@ -16,13 +15,13 @@ using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Queries.DrawingQueries
 {
-    public class GetGeneralRecordsQueryHandler
-        : LotteryRequestHandlerBase,
-          IRequestHandler<GetGeneralRecordsQuery, IEnumerable<LotteryForGetGeneralRecordsResponse>>
+    public class GetWinningRecordsByUserIdQueryHandler
+        : DrawingRequestHandlerBase,
+          IRequestHandler<GetWinningRecordsByUserIdQuery, IEnumerable<DrawingDto>>
     {
-        public GetGeneralRecordsQueryHandler(
+        public GetWinningRecordsByUserIdQueryHandler(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -53,28 +52,21 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 activityService
             ) { }
 
-        public async Task<IEnumerable<LotteryForGetGeneralRecordsResponse>> Handle(
-            GetGeneralRecordsQuery request,
+        public async Task<IEnumerable<DrawingDto>> Handle(
+            GetWinningRecordsByUserIdQuery request,
             CancellationToken cancellationToken
         )
         {
             #region Parameter validation
-            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
-            if (activity is null)
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (user is null)
             {
-                throw new NotFoundException("Could not find the activity.");
+                throw new NotFoundException("Could not find the user.");
             }
-            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
-                activity.Id.Value,
-                request.Channel,
-                request.StartTime,
-                request.EndTime
-            );
             #endregion
 
-            return _mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(
-                generalLotteryRecords
-            );
+            var records = await FindLotteryRecordsAsync(request.UserId.Value);
+            return records.Where(record => record.IsLucky);
         }
     }
 }

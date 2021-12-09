@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Dapr.Actors;
+using Dapr.Actors.Client;
+using EPlusActivities.API.Application.Actors.LotteryStatementActors;
 using EPlusActivities.API.Infrastructure.DependencyInjection;
 using EPlusActivities.API.Infrastructure.Filters;
 using EPlusActivities.API.Services.IdGeneratorService;
@@ -133,6 +136,10 @@ namespace EPlusActivities.API
             app.UseAuthorization();
 
             // app.UseCloudEvents();
+
+            ActorProxy
+                .Create<ILotteryStatementActor>(ActorId.CreateRandom(), "StatementGenerator")
+                .SetReminderAsync();
 
             app.UseEndpoints(
                 endpoints =>

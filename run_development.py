@@ -5,7 +5,7 @@ import subprocess
 black_cmd = "black ."
 csharpier_cmd = "dotnet csharpier ."
 api_dapr_cmd = "dapr run --app-id EPlusActivities --app-port 52537 --dapr-http-port 3500 --components-path Dapr/Components-dev"
-api_dotnet_watch_run_cmd = "dotnet watch  run --project EPlusActivities.API --launch-profile EPlusActivities.API-Development"
+api_dotnet_watch_run_cmd = "dotnet watch run --project EPlusActivities.API --launch-profile EPlusActivities.API-Development"
 api_dapr_dotnet_run_cmd = "dapr run --app-id EPlusActivities --app-port 52537 --dapr-http-port 3500 --components-path Dapr/Components-dev -- dotnet run --project EPlusActivities.API --launch-profile EPlusActivities.API-Development"
 api_dapr_dotnet_watch_run_cmd = "dapr run --app-id EPlusActivities --app-port 52537 --dapr-http-port 3500 --components-path Dapr/Components-dev -- dotnet watch  run --project EPlusActivities.API --launch-profile EPlusActivities.API-Development"
 file_service_dapr_dotnet_run_cmd = "dapr run --app-id FileService --app-port 52500 --app-protocol grpc --components-path Dapr/Components-dev -- dotnet run --project FileService --launch-profile FileService-Development"

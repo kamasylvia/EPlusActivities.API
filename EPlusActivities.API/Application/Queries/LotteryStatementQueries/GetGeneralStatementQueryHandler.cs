@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
@@ -14,13 +16,16 @@ using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.API.Application.Queries.LotteryQueries
+namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public class GetDetailedRecordsQueryHandler
-        : LotteryRequestHandlerBase,
-          IRequestHandler<GetDetailedRecordsQuery, IEnumerable<LotteryRecordsForManagerResponse>>
+    public class GetGeneralStatementQueryHandler
+        : DrawingRequestHandlerBase,
+          IRequestHandler<
+              GetGeneralStatementQuery,
+              IEnumerable<LotteryForGetGeneralRecordsResponse>
+          >
     {
-        public GetDetailedRecordsQueryHandler(
+        public GetGeneralStatementQueryHandler(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -51,8 +56,8 @@ namespace EPlusActivities.API.Application.Queries.LotteryQueries
                 activityService
             ) { }
 
-        public async Task<IEnumerable<LotteryRecordsForManagerResponse>> Handle(
-            GetDetailedRecordsQuery request,
+        public async Task<IEnumerable<LotteryForGetGeneralRecordsResponse>> Handle(
+            GetGeneralStatementQuery request,
             CancellationToken cancellationToken
         )
         {
@@ -62,20 +67,17 @@ namespace EPlusActivities.API.Application.Queries.LotteryQueries
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            var lotteries = await activity.LotteryResults
-                .Where(
-                    lr =>
-                        lr.IsLucky
-                        && request.Channel == lr.ChannelCode
-                        && !(request.StartTime > lr.DateTime)
-                        && !(lr.DateTime > request.EndTime)
-                )
-                .ToAsyncEnumerable()
-                .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
-                .ToListAsync();
+            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
+                activity.Id.Value,
+                request.Channel,
+                request.StartTime,
+                request.EndTime
+            );
             #endregion
 
-            return _lotteryService.CreateLotteryForDownload(lotteries);
+            return _mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(
+                generalLotteryRecords
+            );
         }
     }
 }

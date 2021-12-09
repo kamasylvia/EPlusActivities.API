@@ -15,13 +15,13 @@ using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
-    public class DownloadLotteryExcelCommandHandler
-        : LotteryRequestHandlerBase,
-          IRequestHandler<DownloadLotteryExcelCommand, FileDto>
+    public class DownloadLotteryStatementExcelCommandHandler
+        : DrawingRequestHandlerBase,
+          IRequestHandler<DownloadLotteryStatementExcelCommand, FileDto>
     {
-        public DownloadLotteryExcelCommandHandler(
+        public DownloadLotteryStatementExcelCommandHandler(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -53,7 +53,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             ) { }
 
         public async Task<FileDto> Handle(
-            DownloadLotteryExcelCommand request,
+            DownloadLotteryStatementExcelCommand request,
             CancellationToken cancellationToken
         )
         {

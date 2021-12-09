@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,13 +14,13 @@ using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.API.Application.Queries.LotteryQueries
+namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public class GetWinningRecordsByUserIdQueryHandler
-        : LotteryRequestHandlerBase,
-          IRequestHandler<GetWinningRecordsByUserIdQuery, IEnumerable<LotteryDto>>
+    public class GetDetailedStatementQueryHandler
+        : DrawingRequestHandlerBase,
+          IRequestHandler<GetDetailedStatementQuery, IEnumerable<DetailedLotteryStatementResponse>>
     {
-        public GetWinningRecordsByUserIdQueryHandler(
+        public GetDetailedStatementQueryHandler(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -52,21 +51,31 @@ namespace EPlusActivities.API.Application.Queries.LotteryQueries
                 activityService
             ) { }
 
-        public async Task<IEnumerable<LotteryDto>> Handle(
-            GetWinningRecordsByUserIdQuery request,
+        public async Task<IEnumerable<DetailedLotteryStatementResponse>> Handle(
+            GetDetailedStatementQuery request,
             CancellationToken cancellationToken
         )
         {
             #region Parameter validation
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-            if (user is null)
+            var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
+            if (activity is null)
             {
-                throw new NotFoundException("Could not find the user.");
+                throw new NotFoundException("Could not find the activity.");
             }
+            var lotteries = await activity.LotteryResults
+                .Where(
+                    lr =>
+                        lr.IsLucky
+                        && request.Channel == lr.ChannelCode
+                        && !(request.StartTime > lr.DateTime)
+                        && !(lr.DateTime > request.EndTime)
+                )
+                .ToAsyncEnumerable()
+                .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
+                .ToListAsync();
             #endregion
 
-            var records = await FindLotteryRecordsAsync(request.UserId.Value);
-            return records.Where(record => record.IsLucky);
+            return _lotteryService.CreateLotteryForDownload(lotteries);
         }
     }
 }

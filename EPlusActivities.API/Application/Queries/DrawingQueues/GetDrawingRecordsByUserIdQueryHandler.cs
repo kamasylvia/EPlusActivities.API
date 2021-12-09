@@ -15,13 +15,13 @@ using EPlusActivities.API.Services.MemberService;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.API.Application.Queries.LotteryQueries
+namespace EPlusActivities.API.Application.Queries.DrawingQueries
 {
-    public class GetLotteryRecordsByUserIdQueryHandler
-        : LotteryRequestHandlerBase,
-          IRequestHandler<GetLotteryRecordsByUserIdQuery, IEnumerable<LotteryDto>>
+    public class GetDrawingRecordsByUserIdQueryHandler
+        : DrawingRequestHandlerBase,
+          IRequestHandler<GetDrawingRecordsByUserIdQuery, IEnumerable<DrawingDto>>
     {
-        public GetLotteryRecordsByUserIdQueryHandler(
+        public GetDrawingRecordsByUserIdQueryHandler(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -52,8 +52,8 @@ namespace EPlusActivities.API.Application.Queries.LotteryQueries
                 activityService
             ) { }
 
-        public async Task<IEnumerable<LotteryDto>> Handle(
-            GetLotteryRecordsByUserIdQuery request,
+        public async Task<IEnumerable<DrawingDto>> Handle(
+            GetDrawingRecordsByUserIdQuery request,
             CancellationToken cancellationToken
         )
         {

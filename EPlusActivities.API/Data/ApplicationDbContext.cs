@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -68,7 +66,7 @@ namespace EPlusActivities.API.Data
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
             builder
                 .Entity<GeneralLotteryRecords>()
-                .HasAlternateKey(r => new { r.Channel, r.DateTime });
+                .HasAlternateKey(r => new { r.ActivityId, r.Channel, r.DateTime });
 
             builder
                 .Entity<PrizeTierPrizeItem>()

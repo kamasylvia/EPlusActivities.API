@@ -4,7 +4,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.LotteryDtos
 {
-    public record LotteryRecordsForManagerResponse
+    public record DetailedLotteryStatementResponse
     {
         /// <summary>
         /// 日期时间

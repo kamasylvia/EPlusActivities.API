@@ -8,7 +8,7 @@ namespace EPlusActivities.API.Services.OfficeService
     public interface IExcelService
     {
         Task<Byte[]> DownloadLotteryResults(
-            IEnumerable<LotteryRecordsForManagerResponse> lotteries
+            IEnumerable<DetailedLotteryStatementResponse> lotteries
         );
     }
 }

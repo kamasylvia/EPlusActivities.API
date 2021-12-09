@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
-    public class UpdateLotteryRecordCommand : INotification
+    public record UpdateDrawingRecordCommand : INotification
     {
         /// <summary>
         /// 抽奖记录 ID

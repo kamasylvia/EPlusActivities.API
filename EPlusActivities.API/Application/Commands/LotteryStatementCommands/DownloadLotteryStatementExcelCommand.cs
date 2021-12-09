@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
-    public class DownloadLotteryExcelCommand : IRequest<FileDto>
+    public record DownloadLotteryStatementExcelCommand : IRequest<FileDto>
     {
         /// <summary>
         /// 起始时间

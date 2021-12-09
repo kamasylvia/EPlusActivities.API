@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
-    public class DeleteLotteryRecordCommand : IRequest
+    public class DeleteDrawingRecordCommand : IRequest
     {
         /// <summary>
         /// 抽奖记录 ID

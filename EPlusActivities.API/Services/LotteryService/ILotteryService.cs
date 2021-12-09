@@ -10,7 +10,7 @@ namespace EPlusActivities.API.Services.LotteryService
     {
         Task<(PrizeTier, PrizeItem)> DrawPrizeAsync(Activity activity);
 
-        IEnumerable<LotteryRecordsForManagerResponse> CreateLotteryForDownload(
+        IEnumerable<DetailedLotteryStatementResponse> CreateLotteryForDownload(
             IEnumerable<Lottery> lotteries
         );
 

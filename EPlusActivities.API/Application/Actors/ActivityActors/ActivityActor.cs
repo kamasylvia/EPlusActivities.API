@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Actors.Runtime;
 using EPlusActivities.API.Application.Commands.ActivityCommands;
+using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -14,6 +15,7 @@ using EPlusActivities.API.Services.ActivityService;
 using EPlusActivities.API.Services.IdGeneratorService;
 using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Actors.ActivityActors
@@ -28,6 +30,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
         private readonly IActivityUserRepository _activityUserRepository;
         private readonly ILotteryRepository _lotteryRepository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
         private readonly IActivityRepository _activityRepository;
 
         public ActivityActor(
@@ -39,6 +42,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
             IActivityUserRepository activityUserRepository,
             ILotteryRepository lotteryRepository,
             IMapper mapper,
+            IMediator mediator,
             IActivityService activityService,
             ILotteryService lotteryService
         ) : base(host)
@@ -58,6 +62,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
             _lotteryRepository =
                 lotteryRepository ?? throw new ArgumentNullException(nameof(lotteryRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _activityRepository =
                 activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         }
@@ -92,6 +97,19 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
                 throw new DatabaseUpdateException();
             }
             #endregion
+
+            // 为新活动创建报表数据
+            foreach (var channel in activity.AvailableChannels)
+            {
+                await _mediator.Publish(
+                    new CreateGeneralLotteryStatementCommand
+                    {
+                        ActivityId = activity.Id.Value,
+                        Channel = channel,
+                        DateTime = DateTime.Today
+                    }
+                );
+            }
 
             return _mapper.Map<ActivityDto>(activity);
         }

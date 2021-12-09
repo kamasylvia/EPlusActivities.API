@@ -3,30 +3,30 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Client;
-using EPlusActivities.API.Application.Actors.LotteryActors;
+using EPlusActivities.API.Application.Actors.DrawingActors;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
-    public class UpdateLotteryRecordCommandHandler
-        : INotificationHandler<UpdateLotteryRecordCommand>
+    public class UpdateDrawingRecordCommandHandler
+        : INotificationHandler<UpdateDrawingRecordCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public UpdateLotteryRecordCommandHandler(IActorProxyFactory actorProxyFactory)
+        public UpdateDrawingRecordCommandHandler(IActorProxyFactory actorProxyFactory)
         {
             _actorProxyFactory =
                 actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task Handle(
-            UpdateLotteryRecordCommand command,
+            UpdateDrawingRecordCommand command,
             CancellationToken cancellationToken
         ) =>
             await _actorProxyFactory
-                .CreateActorProxy<ILotteryActor>(
+                .CreateActorProxy<IDrawingActor>(
                     new ActorId(command.Id.ToString()),
-                    nameof(LotteryActor)
+                    nameof(DrawingActor)
                 )
                 .UpdateLotteryRecord(command);
     }

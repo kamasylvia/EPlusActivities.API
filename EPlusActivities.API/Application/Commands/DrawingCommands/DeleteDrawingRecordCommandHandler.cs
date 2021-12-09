@@ -2,29 +2,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Client;
-using EPlusActivities.API.Application.Actors.LotteryActors;
+using EPlusActivities.API.Application.Actors.DrawingActors;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
-    public class DeleteLotteryRecordCommandHandler : IRequestHandler<DeleteLotteryRecordCommand>
+    public class DeleteDrawingRecordCommandHandler : IRequestHandler<DeleteDrawingRecordCommand>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public DeleteLotteryRecordCommandHandler(IActorProxyFactory actorProxyFactory)
+        public DeleteDrawingRecordCommandHandler(IActorProxyFactory actorProxyFactory)
         {
             _actorProxyFactory = actorProxyFactory;
         }
 
         public async Task<Unit> Handle(
-            DeleteLotteryRecordCommand command,
+            DeleteDrawingRecordCommand command,
             CancellationToken cancellationToken
         )
         {
             await _actorProxyFactory
-                .CreateActorProxy<ILotteryActor>(
+                .CreateActorProxy<IDrawingActor>(
                     new ActorId(command.Id.ToString()),
-                    nameof(LotteryActor)
+                    nameof(DrawingActor)
                 )
                 .DeleteLotteryRecord(command);
             return Unit.Value;

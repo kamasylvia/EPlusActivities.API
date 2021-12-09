@@ -12,7 +12,7 @@ namespace EPlusActivities.API.Services.OfficeService
     public class ExcelService : IExcelService
     {
         public Task<byte[]> DownloadLotteryResults(
-            IEnumerable<LotteryRecordsForManagerResponse> lotteries
+            IEnumerable<DetailedLotteryStatementResponse> lotteries
         )
         {
             throw new NotImplementedException();

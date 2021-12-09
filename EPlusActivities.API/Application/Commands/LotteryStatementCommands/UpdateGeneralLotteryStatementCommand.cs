@@ -4,18 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Infrastructure.Enums;
+using MediatR;
 
-namespace EPlusActivities.API.Entities
+namespace EPlusActivities.API.Application.Commands.LotteryStatementCommands
 {
-    public class GeneralLotteryRecords
+    public record UpdateGeneralLotteryStatementCommand : INotification
     {
-        [Required]
-        public Guid? Id { get; set; }
-
-        [Required]
-        public Guid? ActivityId { get; set; }
-
-        public virtual Activity Activity { get; set; }
+        public Guid ActivityId { get; set; }
 
         public ChannelCode Channel { get; set; }
 

@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application
 {
-    public abstract class LotteryRequestHandlerBase
+    public abstract class DrawingRequestHandlerBase
     {
         protected readonly IMapper _mapper;
         protected readonly ILotteryRepository _lotteryRepository;
@@ -30,7 +30,7 @@ namespace EPlusActivities.API.Application
         protected readonly IMemberService _memberService;
         protected readonly IActivityService _activityService;
 
-        protected LotteryRequestHandlerBase(
+        protected DrawingRequestHandlerBase(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -73,7 +73,7 @@ namespace EPlusActivities.API.Application
             _prizeTypeRepository =
                 prizeTypeRepository ?? throw new ArgumentNullException(nameof(prizeTypeRepository));
         }
-        protected async Task<IEnumerable<LotteryDto>> FindLotteryRecordsAsync(Guid userId)
+        protected async Task<IEnumerable<DrawingDto>> FindLotteryRecordsAsync(Guid userId)
         {
             var lotteries = await _lotteryRepository.FindByUserIdAsync(userId);
 
@@ -85,7 +85,7 @@ namespace EPlusActivities.API.Application
                 .Select(
                     x =>
                     {
-                        var resultItem = _mapper.Map<LotteryDto>(x);
+                        var resultItem = _mapper.Map<DrawingDto>(x);
                         resultItem.DateTime = x.DateTime;
                         resultItem.PickedUpTime = x.PickedUpTime;
                         return resultItem;

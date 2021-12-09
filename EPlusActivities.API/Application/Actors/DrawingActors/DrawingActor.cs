@@ -10,9 +10,9 @@ using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
 using Microsoft.AspNetCore.Identity;
 
-namespace EPlusActivities.API.Application.Actors.LotteryActors
+namespace EPlusActivities.API.Application.Actors.DrawingActors
 {
-    public partial class LotteryActor : Actor, ILotteryActor
+    public partial class DrawingActor : Actor, IDrawingActor
     {
         private readonly IActorProxyFactory _actorProxyFactory;
         private readonly ILotteryRepository _lotteryRepository;
@@ -29,7 +29,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
         private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
         private readonly IActivityService _activityService;
 
-        public LotteryActor(
+        public DrawingActor(
             ActorHost host,
             IActorProxyFactory actorProxyFactory,
             ILotteryRepository lotteryRepository,

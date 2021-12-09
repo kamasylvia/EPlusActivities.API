@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
-using EPlusActivities.API.Application.Actors.LotteryActors;
+using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
@@ -20,13 +20,14 @@ using EPlusActivities.API.Services.LotteryService;
 using EPlusActivities.API.Services.MemberService;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
     public class DrawCommandHandler
-        : LotteryRequestHandlerBase,
-          IRequestHandler<DrawCommand, IEnumerable<LotteryDto>>
+        : DrawingRequestHandlerBase,
+          IRequestHandler<DrawCommand, IEnumerable<DrawingDto>>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
+        private readonly IMediator _mediator;
 
         // public DrawCommandHandler(IActorProxyFactory actorProxyFactory)
         // {
@@ -41,6 +42,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
             IPrizeItemRepository prizeItemRepository,
             IFindByParentIdRepository<Entities.PrizeTier> prizeTypeRepository,
             IMapper mapper,
+            IMediator mediator,
             IActivityUserRepository activityUserRepository,
             IRepository<Entities.Coupon> couponResponseDto,
             ILotteryService lotteryService,
@@ -63,9 +65,12 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 idGeneratorService,
                 generalLotteryRecordsRepository,
                 activityService
-            ) { }
+            )
+        {
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
 
-        public async Task<IEnumerable<LotteryDto>> Handle(
+        public async Task<IEnumerable<DrawingDto>> Handle(
             DrawCommand command,
             CancellationToken cancellationToken
         )
@@ -134,33 +139,20 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 );
             }
 
-            var channel = command.ChannelCode;
-            var generalRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
-                command.ActivityId.Value,
-                channel,
-                DateTime.Today
-            );
-            var requireNewStatement = generalRecords is null;
-            if (requireNewStatement)
-            {
-                generalRecords = new GeneralLotteryRecords
-                {
-                    Activity = activity,
-                    DateTime = DateTime.Today,
-                    Channel = channel,
-                };
-            }
             #endregion
 
             #region Consume the draws
             activityUser.RemainingDraws -= command.Count;
             activityUser.TodayUsedDraws += command.Count;
             activityUser.UsedDraws += command.Count;
-            generalRecords.Draws += command.Count;
+            var updateGeneralLotteryStatementCommand =
+                _mapper.Map<UpdateGeneralLotteryStatementCommand>(command);
+            await _mediator.Publish(updateGeneralLotteryStatementCommand);
+            updateGeneralLotteryStatementCommand.Draws = 0;
             #endregion
 
             #region Generate the lottery result
-            var response = new List<LotteryDto>();
+            var response = new List<DrawingDto>();
             var lotteries = new List<Lottery>();
 
             for (int i = 0; i < command.Count; i++)
@@ -177,14 +169,14 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 if (lottery.PrizeTier is not null)
                 {
                     lottery.IsLucky = true;
-                    generalRecords.Winners++;
+                    updateGeneralLotteryStatementCommand.Winners++;
 
                     switch (lottery.PrizeItem.PrizeType)
                     {
                         case PrizeType.Credit:
                             var updateCreditResponseDto = await _memberService.UpdateCreditAsync(
                                 user.Id,
-                                channel,
+                                command.ChannelCode,
                                 new MemberForUpdateCreditRequestDto
                                 {
                                     memberId = user.MemberId,
@@ -200,7 +192,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                             break;
                         case PrizeType.Coupon:
                             var couponResponseDto = await _memberService.ReleaseCouponAsync(
-                                channel,
+                                command.ChannelCode,
                                 new MemberForReleaseCouponRequestDto
                                 {
                                     couponActiveCode = lottery.PrizeItem.CouponActiveCode,
@@ -241,7 +233,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 }
 
                 lotteries.Add(lottery);
-                var result = _mapper.Map<LotteryDto>(lottery);
+                var result = _mapper.Map<DrawingDto>(lottery);
                 result.DateTime = lottery.DateTime; // Skip auto mapper.
                 response.Add(result);
             }
@@ -259,17 +251,14 @@ namespace EPlusActivities.API.Application.Commands.LotteryCommands
                 throw new DatabaseUpdateException(userUpdateResult.ToString());
             }
 
-            if (requireNewStatement)
-                await _generalLotteryRecordsRepository.AddAsync(generalRecords);
-            else
-                _generalLotteryRecordsRepository.Update(generalRecords);
-
             await _lotteryRepository.AddRangeAsync(lotteries);
 
             if (!await _lotteryRepository.SaveAsync())
             {
                 throw new DatabaseUpdateException("Update database exception");
             }
+
+            await _mediator.Publish(updateGeneralLotteryStatementCommand);
             #endregion
 
             return response;

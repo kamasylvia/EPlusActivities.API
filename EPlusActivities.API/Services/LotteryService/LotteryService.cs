@@ -41,11 +41,11 @@ namespace EPlusActivities.API.Services.LotteryService
         /// 管理员根据活动号查询中奖记录报表
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<LotteryRecordsForManagerResponse> CreateLotteryForDownload(
+        public IEnumerable<DetailedLotteryStatementResponse> CreateLotteryForDownload(
             IEnumerable<Lottery> lotteries
         )
         {
-            var response = new List<LotteryRecordsForManagerResponse>();
+            var response = new List<DetailedLotteryStatementResponse>();
             lotteries
                 .ToList()
                 .ForEach(
@@ -66,7 +66,7 @@ namespace EPlusActivities.API.Services.LotteryService
                             default:
                                 break;
                         }
-                        var responseItem = _mapper.Map<LotteryRecordsForManagerResponse>(item);
+                        var responseItem = _mapper.Map<DetailedLotteryStatementResponse>(item);
                         responseItem.DateTime = item.DateTime;
                         responseItem.PrizeContent = prizeContent;
                         response.Add(responseItem);

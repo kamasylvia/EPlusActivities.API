@@ -1,33 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Queries.LotteryQueries
+namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public class GetDetailedRecordsQuery : IRequest<IEnumerable<LotteryRecordsForManagerResponse>>
+    public record GetGeneralStatementQuery
+        : IRequest<IEnumerable<LotteryForGetGeneralRecordsResponse>>
     {
         /// <summary>
-        /// 起始时间
+        /// 开始日期
         /// </summary>
         /// <value></value>
         public DateTime? StartTime { get; set; }
 
         /// <summary>
-        /// 结束时间
+        /// 结束日期
         /// </summary>
         /// <value></value>
         public DateTime? EndTime { get; set; }
-
-        /// <summary>
-        /// 渠道
-        /// </summary>
-        /// <value></value>
-        [Required]
-        [EnumDataType(typeof(ChannelCode))]
-        public ChannelCode Channel { get; set; }
 
         /// <summary>
         /// 活动号
@@ -35,5 +30,12 @@ namespace EPlusActivities.API.Application.Queries.LotteryQueries
         /// <value></value>
         [Required]
         public string ActivityCode { get; set; }
+
+        /// <summary>
+        /// 渠道号
+        /// </summary>
+        /// <value></value>
+        [EnumDataType(typeof(ChannelCode))]
+        public ChannelCode Channel { get; set; }
     }
 }

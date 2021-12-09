@@ -5,6 +5,7 @@ using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using EPlusActivities.API.Application.Actors.ActivityUserActors;
+using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
@@ -23,6 +24,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
           IRequestHandler<RedeemCommand, ActivityUserForRedeemDrawsResponseDto>
     {
         private readonly IActorProxyFactory _actorProxyFactory;
+        private readonly IMediator _mediator;
 
         // public RedeemCommandHandler(IActorProxyFactory actorProxyFactory)
         // {
@@ -36,6 +38,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             Microsoft.AspNetCore.Identity.UserManager<Entities.ApplicationUser> userManager,
             IActivityUserRepository activityUserRepository,
             IMapper mapper,
+            IMediator mediator,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
             IGeneralLotteryRecordsRepository generalLotteryRecords
@@ -49,7 +52,10 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 idGeneratorService,
                 activityService,
                 generalLotteryRecords
-            ) { }
+            )
+        {
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
 
         public async Task<ActivityUserForRedeemDrawsResponseDto> Handle(
             RedeemCommand command,
@@ -69,10 +75,6 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 .Redeem(command);
         */
         {
-#if DEBUG
-            System.Console.WriteLine("进入兑换方法");
-#endif
-
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(command.UserId.ToString());
             if (user is null)
@@ -86,33 +88,6 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 throw new NotFoundException("Could not find the activity.");
             }
 
-#if DEBUG
-            System.Console.WriteLine("断点 1");
-#endif
-
-            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
-                command.ActivityId.Value,
-                command.Channel,
-                DateTime.Today
-            );
-
-#if DEBUG
-            System.Console.WriteLine("断点 2");
-#endif
-            var requireNewStatement = generalLotteryRecords is null;
-            if (requireNewStatement)
-            {
-                generalLotteryRecords = new GeneralLotteryRecords
-                {
-                    Activity = activity,
-                    DateTime = DateTime.Today,
-                    Channel = command.Channel,
-                };
-            }
-#if DEBUG
-            System.Console.WriteLine("断点 3");
-#endif
-
             var activityUser = await _activityUserRepository.FindByIdAsync(
                 command.ActivityId,
                 command.UserId
@@ -121,15 +96,9 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             {
                 throw new NotFoundException("Could not find the ActivityUser link.");
             }
-#if DEBUG
-            System.Console.WriteLine("断点 4");
-#endif
 
             // 今日没登陆过的用户，每日兑换次数清零
             _activityService.UpdateDailyLimitsAsync(user, activityUser);
-#if DEBUG
-            System.Console.WriteLine("断点 5");
-#endif
 
             // 超过每日兑换限制
             if (!(activityUser.TodayUsedRedempion + command.Count > activity.DailyRedemptionLimit))
@@ -142,9 +111,6 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                     "Sorry, the user had already achieved the daily maximum number of redemption of this activity."
                 );
             }
-#if DEBUG
-            System.Console.WriteLine("断点 6");
-#endif
 
             var cost = activity.RequiredCreditForRedeeming * command.Count;
             if (cost > user.Credit)
@@ -169,16 +135,9 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 requestDto: memberForUpdateCreditRequestDto
             );
             #endregion
-#if DEBUG
-            System.Console.WriteLine("断点 7");
-#endif
 
             #region Update the user's credit
             user.Credit = memberForUpdateCreditResponseDto.Body.Content.NewPoints;
-
-#if DEBUG
-            System.Console.WriteLine("Before _userManager.UpdateAsync");
-#endif
 
             // await _actorProxyFactory
             //     .CreateActorProxy<IUserActor>(new ActorId(user.Id.ToString()), nameof(UserActor))
@@ -191,43 +150,15 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             }
             #endregion
 
-#if DEBUG
-            System.Console.WriteLine("After _userManager.UpdateAsync");
-#endif
-
             #region Update ActivityUser link
             activityUser.RemainingDraws += command.Count;
-            generalLotteryRecords.Redemption += command.Count;
-#if DEBUG
-            System.Console.WriteLine("断点 9");
-#endif
-
             _activityUserRepository.Update(activityUser);
-#if DEBUG
-            System.Console.WriteLine("断点 10");
-#endif
-            if (requireNewStatement)
-            {
-                await _generalLotteryRecordsRepository.AddAsync(generalLotteryRecords);
-#if DEBUG
-                System.Console.WriteLine("断点 11");
-#endif
-            }
-            else
-            {
-                _generalLotteryRecordsRepository.Update(generalLotteryRecords);
-#if DEBUG
-                System.Console.WriteLine("断点 12");
-#endif
-            }
-
             if (!await _activityUserRepository.SaveAsync())
             {
                 throw new DatabaseUpdateException("Update database exception");
             }
-#if DEBUG
-            System.Console.WriteLine("断点 13");
-#endif
+
+            await _mediator.Publish(_mapper.Map<UpdateGeneralLotteryStatementCommand>(command));
             #endregion
 
             return _mapper.Map<ActivityUserForRedeemDrawsResponseDto>(activityUser);

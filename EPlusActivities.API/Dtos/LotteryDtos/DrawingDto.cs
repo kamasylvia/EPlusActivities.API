@@ -4,7 +4,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Dtos.LotteryDtos
 {
-    public record LotteryDto
+    public record DrawingDto
     {
         /// <summary>
         /// 抽奖记录 ID

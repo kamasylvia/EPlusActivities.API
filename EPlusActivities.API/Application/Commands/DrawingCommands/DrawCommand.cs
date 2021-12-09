@@ -5,9 +5,9 @@ using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Commands.LotteryCommands
+namespace EPlusActivities.API.Application.Commands.DrawingCommand
 {
-    public class DrawCommand : IRequest<IEnumerable<LotteryDto>>
+    public class DrawCommand : IRequest<IEnumerable<DrawingDto>>
     {
         /// <summary>
         /// 用户访问的渠道，字符串不区分大小写。

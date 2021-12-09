@@ -2,15 +2,18 @@ using System;
 using System.Linq;
 using AutoMapper;
 using EPlusActivities.API.Application.Commands.ActivityCommands;
+using EPlusActivities.API.Application.Commands.ActivityUserCommands;
 using EPlusActivities.API.Application.Commands.AddressCommands;
 using EPlusActivities.API.Application.Commands.AttendanceCommands;
 using EPlusActivities.API.Application.Commands.BrandCommands;
 using EPlusActivities.API.Application.Commands.CategoryCommands;
+using EPlusActivities.API.Application.Commands.DrawingCommand;
 using EPlusActivities.API.Application.Commands.FileCommands;
-using EPlusActivities.API.Application.Queries.FileQueries;
-using EPlusActivities.API.Application.Commands.LotteryCommands;
+using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
 using EPlusActivities.API.Application.Commands.PrizeItemCommands;
 using EPlusActivities.API.Application.Commands.PrizeTierCommands;
+using EPlusActivities.API.Application.Queries.FileQueries;
+using EPlusActivities.API.Application.Queries.SmsQueries;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Dtos.ActivityUserDtos;
 using EPlusActivities.API.Dtos.AddressDtos;
@@ -26,7 +29,6 @@ using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.Grpc.Messages.FileService;
 using Google.Protobuf;
-using EPlusActivities.API.Application.Queries.SmsQueries;
 
 namespace EPlusActivities.API.Configuration
 {
@@ -72,8 +74,8 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Lottery
-            CreateMap<Lottery, LotteryDto>();
-            CreateMap<Lottery, LotteryRecordsForManagerResponse>()
+            CreateMap<Lottery, DrawingDto>();
+            CreateMap<Lottery, DetailedLotteryStatementResponse>()
                 .ForMember(dest => dest.DateTime, opt => opt.Ignore())
                 .ForMember(
                     dest => dest.PhoneNumber,
@@ -94,9 +96,25 @@ namespace EPlusActivities.API.Configuration
                 );
             CreateMap<GeneralLotteryRecords, LotteryForGetGeneralRecordsResponse>();
             CreateMap<DrawCommand, Lottery>();
-            CreateMap<UpdateLotteryRecordCommand, Lottery>();
+            CreateMap<UpdateDrawingRecordCommand, Lottery>();
             #endregion
 
+            #region Statement
+            CreateMap<CreateGeneralLotteryStatementCommand, GeneralLotteryRecords>()
+                .ForMember(dest => dest.Activity, opt => opt.Ignore());
+            CreateMap<UpdateGeneralLotteryStatementCommand, GeneralLotteryRecords>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Activity, opt => opt.Ignore())
+                .ForMember(dest => dest.Channel, opt => opt.Ignore())
+                .ForMember(dest => dest.DateTime, opt => opt.Ignore());
+            CreateMap<DrawCommand, UpdateGeneralLotteryStatementCommand>()
+                .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => src.ChannelCode))
+                .ForMember(dest => dest.Draws, opt => opt.MapFrom(src => src.Count))
+                .ForMember(dest => dest.DateTime, opt => opt.MapFrom(src => DateTime.Today));
+            CreateMap<RedeemCommand, UpdateGeneralLotteryStatementCommand>()
+                .ForMember(dest => dest.Redemption, opt => opt.MapFrom(src => src.Count))
+                .ForMember(dest => dest.DateTime, opt => opt.MapFrom(src => DateTime.Today));
+            #endregion
 
 
             #region Attendance

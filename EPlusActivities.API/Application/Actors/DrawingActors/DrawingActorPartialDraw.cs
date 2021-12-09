@@ -4,23 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapr.Actors;
 using EPlusActivities.API.Application.Actors.UserActors;
-using EPlusActivities.API.Application.Commands.LotteryCommands;
+using EPlusActivities.API.Application.Commands.DrawingCommand;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 
-namespace EPlusActivities.API.Application.Actors.LotteryActors
+namespace EPlusActivities.API.Application.Actors.DrawingActors
 {
-    public partial class LotteryActor
+    public partial class DrawingActor
     {
-        public async Task<IEnumerable<LotteryDto>> Draw(DrawCommand command)
+        public async Task<IEnumerable<DrawingDto>> Draw(DrawCommand command)
         {
-#if DEBUG
-            System.Console.WriteLine("进入抽奖方法");
-#endif
-
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(command.UserId.ToString());
             if (user is null)
@@ -102,7 +98,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
             #endregion
 
             #region Generate the lottery result
-            var response = new List<LotteryDto>();
+            var response = new List<DrawingDto>();
             var lotteries = new List<Lottery>();
 
             for (int i = 0; i < command.Count; i++)
@@ -183,7 +179,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
                 }
 
                 lotteries.Add(lottery);
-                var result = _mapper.Map<LotteryDto>(lottery);
+                var result = _mapper.Map<DrawingDto>(lottery);
                 result.DateTime = lottery.DateTime; // Skip auto mapper.
                 response.Add(result);
             }

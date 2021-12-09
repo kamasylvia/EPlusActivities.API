@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EPlusActivities.API.Application.Commands.LotteryCommands;
-using EPlusActivities.API.Application.Queries.LotteryQueries;
+using EPlusActivities.API.Application.Commands.DrawingCommand;
+using EPlusActivities.API.Application.Queries.DrawingQueries;
+using EPlusActivities.API.Application.Queries.LotteryStatementQueries;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,11 +19,11 @@ namespace EPlusActivities.API.Controllers
     /// </summary>
     [Route("choujiang/api/[controller]")]
     [ApiController]
-    public class LotteryController : Controller
+    public class DrawingController : Controller
     {
         private readonly IMediator _mediator;
 
-        public LotteryController(IMediator mediator)
+        public DrawingController(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
@@ -37,8 +38,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetLotteryRecordsByUserIdAsync(
-            [FromQuery] GetLotteryRecordsByUserIdQuery request
+        public async Task<ActionResult<IEnumerable<DrawingDto>>> GetLotteryRecordsByUserIdAsync(
+            [FromQuery] GetDrawingRecordsByUserIdQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
         )]
-        public async Task<ActionResult<IEnumerable<LotteryDto>>> GetWinningRecordsByUserIdAsync(
+        public async Task<ActionResult<IEnumerable<DrawingDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] GetWinningRecordsByUserIdQuery request
         ) => Ok(await _mediator.Send(request));
 
@@ -64,8 +65,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<ActionResult<LotteryRecordsForManagerResponse>> GetDetailedRecordsAsync(
-            [FromQuery] GetDetailedRecordsQuery request
+        public async Task<ActionResult<DetailedLotteryStatementResponse>> GetDetailedRecordsAsync(
+            [FromQuery] GetDetailedStatementQuery request
         ) => Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace EPlusActivities.API.Controllers
             Roles = "manager, tester"
         )]
         public async Task<IActionResult> DownloadLotteryExcelAsyncs(
-            [FromQuery] DownloadLotteryExcelCommand request
+            [FromQuery] DownloadLotteryStatementExcelCommand request
         )
         {
             var file = await _mediator.Send(request);
@@ -96,7 +97,7 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<
             ActionResult<IEnumerable<LotteryForGetGeneralRecordsResponse>>
-        > GetGeneralRecordsAsync([FromQuery] GetGeneralRecordsQuery request) =>
+        > GetGeneralRecordsAsync([FromQuery] GetGeneralStatementQuery request) =>
             Ok(await _mediator.Send(request));
 
         /// <summary>
@@ -109,7 +110,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "customer, tester"
         )]
-        public async Task<ActionResult<IEnumerable<LotteryDto>>> CreateAsync(
+        public async Task<ActionResult<IEnumerable<DrawingDto>>> CreateAsync(
             [FromBody] DrawCommand request
         ) => Ok(await _mediator.Send(request));
 
@@ -124,7 +125,7 @@ namespace EPlusActivities.API.Controllers
             Policy = "AllRoles"
         )]
         public async Task<IActionResult> UpdateAsync(
-            [FromBody] UpdateLotteryRecordCommand notification
+            [FromBody] UpdateDrawingRecordCommand notification
         )
         {
             await _mediator.Publish(notification);
@@ -141,7 +142,7 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "admin, tester"
         )]
-        public async Task<IActionResult> DeleteAsync([FromBody] DeleteLotteryRecordCommand request)
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteDrawingRecordCommand request)
         {
             await _mediator.Send(request);
             return Ok();

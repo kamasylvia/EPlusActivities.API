@@ -6,11 +6,12 @@ using EPlusActivities.API.Application.Actors.AttendanceActors;
 using EPlusActivities.API.Application.Actors.BrandActors;
 using EPlusActivities.API.Application.Actors.CategoryActors;
 using EPlusActivities.API.Application.Actors.FileActors;
-using EPlusActivities.API.Application.Actors.LotteryActors;
+using EPlusActivities.API.Application.Actors.DrawingActors;
 using EPlusActivities.API.Application.Actors.PrizeItemActors;
 using EPlusActivities.API.Application.Actors.PrizeTierActors;
 using EPlusActivities.API.Application.Actors.UserActors;
 using Microsoft.Extensions.DependencyInjection;
+using EPlusActivities.API.Application.Actors.LotteryStatementActors;
 
 namespace EPlusActivities.API.Infrastructure.DependencyInjection
 {
@@ -20,13 +21,11 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
             services.AddActors(
                 options =>
                 {
-                    var jsonSerializerOptions = new JsonSerializerOptions()
+                    options.JsonSerializerOptions = new JsonSerializerOptions()
                     {
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                         PropertyNameCaseInsensitive = true
                     };
-
-                    options.JsonSerializerOptions = jsonSerializerOptions;
                     options.Actors.RegisterActor<ActivityActor>();
                     options.Actors.RegisterActor<ActivityUserActor>();
                     options.Actors.RegisterActor<AddressActor>();
@@ -34,7 +33,8 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                     options.Actors.RegisterActor<BrandActor>();
                     options.Actors.RegisterActor<CategoryActor>();
                     options.Actors.RegisterActor<FileActor>();
-                    options.Actors.RegisterActor<LotteryActor>();
+                    options.Actors.RegisterActor<DrawingActor>();
+                    options.Actors.RegisterActor<LotteryStatementActor>();
                     options.Actors.RegisterActor<PrizeItemActor>();
                     options.Actors.RegisterActor<PrizeTierActor>();
                     options.Actors.RegisterActor<UserActor>();

@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
-using EPlusActivities.API.Application.Commands.LotteryCommands;
+using EPlusActivities.API.Application.Commands.DrawingCommand;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 
-namespace EPlusActivities.API.Application.Actors.LotteryActors
+namespace EPlusActivities.API.Application.Actors.DrawingActors
 {
-    public partial class LotteryActor
+    public partial class DrawingActor
     {
-        public async Task UpdateLotteryRecord(UpdateLotteryRecordCommand command)
+        public async Task UpdateLotteryRecord(UpdateDrawingRecordCommand command)
         {
             var lottery = await _lotteryRepository.FindByIdAsync(command.Id.Value);
 
@@ -19,7 +19,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
             #endregion
 
             #region Database operations
-            lottery = _mapper.Map<UpdateLotteryRecordCommand, Lottery>(command, lottery);
+            lottery = _mapper.Map<UpdateDrawingRecordCommand, Lottery>(command, lottery);
             lottery.PickedUpTime = command.PickedUpTime; // Skip auto mapper.
             _lotteryRepository.Update(lottery);
             if (!await _lotteryRepository.SaveAsync())
@@ -28,7 +28,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryActors
             }
             #endregion
         }
-        public async Task DeleteLotteryRecord(DeleteLotteryRecordCommand command)
+        public async Task DeleteLotteryRecord(DeleteDrawingRecordCommand command)
         {
             var lottery = await _lotteryRepository.FindByIdAsync(command.Id.Value);
 

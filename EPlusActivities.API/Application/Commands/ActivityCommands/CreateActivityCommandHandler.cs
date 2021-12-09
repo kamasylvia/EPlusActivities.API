@@ -34,7 +34,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
 
             return await _actorProxyFactory
                 .CreateActorProxy<IActivityActor>(
-                    new ActorId($"Create {command.ActivityType.ToString()} activity"),
+                    ActorId.CreateRandom(),
                     nameof(ActivityActor)
                 )
                 .CreateActivity(command);

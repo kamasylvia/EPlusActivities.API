@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Dtos.LotteryDtos;
 using MediatR;
 
-namespace EPlusActivities.API.Application.Queries.LotteryQueries
+namespace EPlusActivities.API.Application.Queries.DrawingQueries
 {
-    public class GetLotteryRecordsByUserIdQuery : IRequest<IEnumerable<LotteryDto>>
+    public class GetWinningRecordsByUserIdQuery : IRequest<IEnumerable<DrawingDto>>
     {
         [Required]
         public Guid? UserId { get; set; }
