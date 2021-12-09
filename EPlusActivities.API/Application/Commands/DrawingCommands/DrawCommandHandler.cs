@@ -8,7 +8,7 @@ using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;

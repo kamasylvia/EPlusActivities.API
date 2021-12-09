@@ -173,11 +173,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Statement
-            var generalLotteryRecords = new GeneralLotteryRecords
-            {
-                ActivityId = activity.Id,
-                Activity = activity
-            };
+            var generalLotteryRecords = new GeneralLotteryRecords { Activity = activity };
             await context.GeneralLotteryRecords.AddAsync(generalLotteryRecords);
             #endregion
 

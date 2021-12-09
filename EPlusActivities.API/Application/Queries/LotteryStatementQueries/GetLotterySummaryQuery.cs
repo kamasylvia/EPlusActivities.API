@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public record GetGeneralStatementQuery
-        : IRequest<IEnumerable<LotteryForGetGeneralRecordsResponse>>
+    public record GetLotterySummaryQuery : IRequest<IEnumerable<GetLotterySummaryResponse>>
     {
         /// <summary>
         /// 开始日期

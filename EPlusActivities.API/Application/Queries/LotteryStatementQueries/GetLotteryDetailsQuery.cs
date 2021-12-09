@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public record GetDetailedStatementQuery
-        : IRequest<IEnumerable<DetailedLotteryStatementResponse>>
+    public record GetLotteryDetailsQuery : IRequest<IEnumerable<GetLotteryDetailsResponse>>
     {
         /// <summary>
         /// 起始时间

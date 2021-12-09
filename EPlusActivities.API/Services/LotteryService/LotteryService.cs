@@ -7,7 +7,7 @@ using AutoMapper;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -31,7 +31,8 @@ namespace EPlusActivities.API.Services.LotteryService
             IMapper mapper
         )
         {
-            _configuration = configuration;
+            _configuration =
+                configuration ?? throw new ArgumentNullException(nameof(configuration));
             _prizeItemRepository =
                 prizeItemRepository ?? throw new ArgumentNullException(nameof(prizeItemRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -41,11 +42,11 @@ namespace EPlusActivities.API.Services.LotteryService
         /// 管理员根据活动号查询中奖记录报表
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<DetailedLotteryStatementResponse> CreateLotteryForDownload(
+        public IEnumerable<GetLotteryDetailsResponse> CreateLotteryForDownload(
             IEnumerable<Lottery> lotteries
         )
         {
-            var response = new List<DetailedLotteryStatementResponse>();
+            var response = new List<GetLotteryDetailsResponse>();
             lotteries
                 .ToList()
                 .ForEach(
@@ -66,12 +67,13 @@ namespace EPlusActivities.API.Services.LotteryService
                             default:
                                 break;
                         }
-                        var responseItem = _mapper.Map<DetailedLotteryStatementResponse>(item);
+                        var responseItem = _mapper.Map<GetLotteryDetailsResponse>(item);
                         responseItem.DateTime = item.DateTime;
                         responseItem.PrizeContent = prizeContent;
                         response.Add(responseItem);
                     }
                 );
+
             return response.OrderBy(x => x.DateTime);
         }
 

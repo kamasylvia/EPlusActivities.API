@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Entities;
 
 namespace EPlusActivities.API.Services.LotteryService
@@ -10,7 +10,7 @@ namespace EPlusActivities.API.Services.LotteryService
     {
         Task<(PrizeTier, PrizeItem)> DrawPrizeAsync(Activity activity);
 
-        IEnumerable<DetailedLotteryStatementResponse> CreateLotteryForDownload(
+        IEnumerable<GetLotteryDetailsResponse> CreateLotteryForDownload(
             IEnumerable<Lottery> lotteries
         );
 

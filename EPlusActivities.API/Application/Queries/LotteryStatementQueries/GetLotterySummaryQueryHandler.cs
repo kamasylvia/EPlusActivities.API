@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
@@ -18,14 +18,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public class GetGeneralStatementQueryHandler
+    public class GetLotterySummaryQueryHandler
         : DrawingRequestHandlerBase,
-          IRequestHandler<
-              GetGeneralStatementQuery,
-              IEnumerable<LotteryForGetGeneralRecordsResponse>
-          >
+          IRequestHandler<GetLotterySummaryQuery, IEnumerable<GetLotterySummaryResponse>>
     {
-        public GetGeneralStatementQueryHandler(
+        public GetLotterySummaryQueryHandler(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -56,8 +53,8 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
                 activityService
             ) { }
 
-        public async Task<IEnumerable<LotteryForGetGeneralRecordsResponse>> Handle(
-            GetGeneralStatementQuery request,
+        public async Task<IEnumerable<GetLotterySummaryResponse>> Handle(
+            GetLotterySummaryQuery request,
             CancellationToken cancellationToken
         )
         {
@@ -75,9 +72,7 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             );
             #endregion
 
-            return _mapper.Map<IEnumerable<LotteryForGetGeneralRecordsResponse>>(
-                generalLotteryRecords
-            );
+            return _mapper.Map<IEnumerable<GetLotterySummaryResponse>>(generalLotteryRecords);
         }
     }
 }

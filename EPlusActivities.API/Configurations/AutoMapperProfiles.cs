@@ -20,7 +20,7 @@ using EPlusActivities.API.Dtos.AddressDtos;
 using EPlusActivities.API.Dtos.AttendanceDtos;
 using EPlusActivities.API.Dtos.BrandDtos;
 using EPlusActivities.API.Dtos.CategoryDtos;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Dtos.PrizeItemDtos;
 using EPlusActivities.API.Dtos.PrizeTierDtos;
@@ -75,7 +75,7 @@ namespace EPlusActivities.API.Configuration
 
             #region Lottery
             CreateMap<Lottery, DrawingDto>();
-            CreateMap<Lottery, DetailedLotteryStatementResponse>()
+            CreateMap<Lottery, GetLotteryDetailsResponse>()
                 .ForMember(dest => dest.DateTime, opt => opt.Ignore())
                 .ForMember(
                     dest => dest.PhoneNumber,
@@ -94,7 +94,7 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.PrizeType,
                     opt => opt.MapFrom(src => src.PrizeItem.PrizeType)
                 );
-            CreateMap<GeneralLotteryRecords, LotteryForGetGeneralRecordsResponse>();
+            CreateMap<GeneralLotteryRecords, GetLotterySummaryResponse>();
             CreateMap<DrawCommand, Lottery>();
             CreateMap<UpdateDrawingRecordCommand, Lottery>();
             #endregion

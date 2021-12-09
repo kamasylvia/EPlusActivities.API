@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.DrawingCommand;
 using EPlusActivities.API.Application.Queries.DrawingQueries;
 using EPlusActivities.API.Application.Queries.LotteryStatementQueries;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -33,7 +33,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("customer/lottery-records")]
+        [HttpGet("records")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -47,7 +47,7 @@ namespace EPlusActivities.API.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("customer/lucky-records")]
+        [HttpGet("winners")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Policy = "AllRoles"
@@ -55,50 +55,6 @@ namespace EPlusActivities.API.Controllers
         public async Task<ActionResult<IEnumerable<DrawingDto>>> GetWinningRecordsByUserIdAsync(
             [FromQuery] GetWinningRecordsByUserIdQuery request
         ) => Ok(await _mediator.Send(request));
-
-        /// <summary>
-        /// 管理员根据活动号查询中奖记录报表
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("manager/detailed-records")]
-        [Authorize(
-            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Roles = "manager, tester"
-        )]
-        public async Task<ActionResult<DetailedLotteryStatementResponse>> GetDetailedRecordsAsync(
-            [FromQuery] GetDetailedStatementQuery request
-        ) => Ok(await _mediator.Send(request));
-
-        /// <summary>
-        /// 管理员根据活动号下载中奖记录报表
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("manager/excel")]
-        [Authorize(
-            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Roles = "manager, tester"
-        )]
-        public async Task<IActionResult> DownloadLotteryExcelAsyncs(
-            [FromQuery] DownloadLotteryStatementExcelCommand request
-        )
-        {
-            var file = await _mediator.Send(request);
-            return File(file.FileStream, file.ContentType);
-        }
-
-        /// <summary>
-        /// 根据活动号和日期查询抽奖数、中奖数、兑换数
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("manager/general-records")]
-        [Authorize(
-            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
-            Roles = "manager, tester"
-        )]
-        public async Task<
-            ActionResult<IEnumerable<LotteryForGetGeneralRecordsResponse>>
-        > GetGeneralRecordsAsync([FromQuery] GetGeneralStatementQuery request) =>
-            Ok(await _mediator.Send(request));
 
         /// <summary>
         /// 抽奖

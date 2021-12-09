@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -16,11 +16,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public class GetDetailedStatementQueryHandler
+    public class GetLotteryDetailsQueryHandler
         : DrawingRequestHandlerBase,
-          IRequestHandler<GetDetailedStatementQuery, IEnumerable<DetailedLotteryStatementResponse>>
+          IRequestHandler<GetLotteryDetailsQuery, IEnumerable<GetLotteryDetailsResponse>>
     {
-        public GetDetailedStatementQueryHandler(
+        public GetLotteryDetailsQueryHandler(
             ILotteryRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
@@ -51,8 +51,8 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
                 activityService
             ) { }
 
-        public async Task<IEnumerable<DetailedLotteryStatementResponse>> Handle(
-            GetDetailedStatementQuery request,
+        public async Task<IEnumerable<GetLotteryDetailsResponse>> Handle(
+            GetLotteryDetailsQuery request,
             CancellationToken cancellationToken
         )
         {

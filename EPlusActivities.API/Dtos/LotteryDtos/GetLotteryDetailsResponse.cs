@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EPlusActivities.API.Dtos.LotteryDtos
+namespace EPlusActivities.API.Dtos.DrawingDtos
 {
-    public record LotteryForGetGeneralRecordsResponse
+    public record GetLotterySummaryResponse
     {
         /// <summary>
         /// 日期

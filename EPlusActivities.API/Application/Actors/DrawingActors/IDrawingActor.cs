@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapr.Actors;
 using EPlusActivities.API.Application.Commands.DrawingCommand;
-using EPlusActivities.API.Dtos.LotteryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 
 namespace EPlusActivities.API.Application.Actors.DrawingActors
 {

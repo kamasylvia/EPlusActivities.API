@@ -66,7 +66,7 @@ namespace EPlusActivities.API.Data
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
             builder
                 .Entity<GeneralLotteryRecords>()
-                .HasAlternateKey(r => new { r.ActivityId, r.Channel, r.DateTime });
+                .HasAlternateKey(r => new { r.Activity, r.Channel, r.DateTime });
 
             builder
                 .Entity<PrizeTierPrizeItem>()

@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using EPlusActivities.API.Infrastructure.Enums;
 
-namespace EPlusActivities.API.Dtos.LotteryDtos
+namespace EPlusActivities.API.Dtos.DrawingDtos
 {
-    public record DetailedLotteryStatementResponse
+    public record GetLotteryDetailsResponse
     {
         /// <summary>
         /// 日期时间

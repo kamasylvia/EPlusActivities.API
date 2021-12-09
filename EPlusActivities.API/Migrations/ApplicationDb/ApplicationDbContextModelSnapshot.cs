@@ -19,7 +19,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Activity", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -74,10 +74,10 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.ActivityUser", b =>
                 {
-                    b.Property<Guid?>("ActivityId")
+                    b.Property<string>("ActivityId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
                     b.Property<int?>("AttendanceDays")
@@ -113,7 +113,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Address", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -142,7 +142,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<string>("Region")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("char(36)");
 
@@ -155,7 +155,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.ApplicationRole", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -182,7 +182,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.ApplicationUser", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -265,16 +265,16 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.ApplicationUserRole", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<string>("RoleId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("RoleId1")
+                    b.Property<string>("RoleId1")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("UserId1")
+                    b.Property<string>("UserId1")
                         .HasColumnType("char(36)");
 
                     b.HasKey("UserId", "RoleId");
@@ -290,11 +290,11 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Attendance", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("ActivityId")
+                    b.Property<string>("ActivityId")
                         .HasColumnType("char(36)");
 
                     b.Property<int>("ChannelCode")
@@ -307,7 +307,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<int>("EarnedCredits")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -321,7 +321,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Brand", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -339,7 +339,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Category", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -357,23 +357,23 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Coupon", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("ActivityId")
+                    b.Property<string>("ActivityId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Code")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid?>("PrizeItemId")
+                    b.Property<string>("PrizeItemId")
                         .HasColumnType("char(36)");
 
                     b.Property<bool>("Used")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -389,7 +389,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Credit", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -419,7 +419,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<int>("UpdateType")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("char(36)");
 
@@ -432,12 +432,11 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.GeneralLotteryRecords", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("ActivityId")
-                        .IsRequired()
+                    b.Property<string>("ActivityId")
                         .HasColumnType("char(36)");
 
                     b.Property<int>("Channel")
@@ -457,18 +456,20 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("ActivityId", "Channel", "DateTime");
+                    b.HasAlternateKey("Channel", "DateTime");
+
+                    b.HasIndex("ActivityId");
 
                     b.ToTable("GeneralLotteryRecords");
                 });
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Lottery", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("ActivityId")
+                    b.Property<string>("ActivityId")
                         .HasColumnType("char(36)");
 
                     b.Property<int>("ChannelCode")
@@ -493,13 +494,13 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<DateTime?>("PickedUpTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("PrizeItemId")
+                    b.Property<string>("PrizeItemId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("PrizeTierId")
+                    b.Property<string>("PrizeTierId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -517,14 +518,14 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.PrizeItem", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("BrandId")
+                    b.Property<string>("BrandId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<string>("CategoryId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("CouponActiveCode")
@@ -560,11 +561,12 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.PrizeTier", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("ActivityId")
+                    b.Property<string>("ActivityId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.Property<int?>("DailyLimit")
@@ -594,10 +596,10 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("EPlusActivities.API.Entities.PrizeTierPrizeItem", b =>
                 {
-                    b.Property<Guid?>("PrizeTierId")
+                    b.Property<string>("PrizeTierId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("PrizeItemId")
+                    b.Property<string>("PrizeItemId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("PrizeTierId", "PrizeItemId");
@@ -619,7 +621,8 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<string>("ClaimValue")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<string>("RoleId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -641,7 +644,8 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<string>("ClaimValue")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -662,7 +666,8 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
@@ -674,7 +679,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("LoginProvider")
@@ -768,9 +773,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                 {
                     b.HasOne("EPlusActivities.API.Entities.Activity", "Activity")
                         .WithMany()
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ActivityId");
                 });
 
             modelBuilder.Entity("EPlusActivities.API.Entities.Lottery", b =>
