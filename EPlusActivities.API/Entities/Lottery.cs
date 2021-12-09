@@ -31,12 +31,12 @@ namespace EPlusActivities.API.Entities
         [Required]
         public DateTime? DateTime { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
-        public Activity Activity { get; set; }
+        public virtual Activity Activity { get; set; }
 
-        public PrizeItem PrizeItem { get; set; }
+        public virtual PrizeItem PrizeItem { get; set; }
 
-        public PrizeTier PrizeTier { get; set; }
+        public virtual PrizeTier PrizeTier { get; set; }
     }
 }

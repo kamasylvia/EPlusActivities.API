@@ -12,6 +12,8 @@ namespace EPlusActivities.API.Entities
         [Required]
         public Guid? Id { get; set; }
 
+        public Guid? ActivityId { get; set; }
+
         public virtual Activity Activity { get; set; }
 
         public ChannelCode Channel { get; set; }

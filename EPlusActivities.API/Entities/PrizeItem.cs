@@ -25,10 +25,10 @@ namespace EPlusActivities.API.Entities
         public string CouponActiveCode { get; set; }
 
         // 奖品种类
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
 
         // 奖品品牌
-        public Brand Brand { get; set; }
+        public virtual Brand Brand { get; set; }
 
         // 奖品单价
         public decimal? UnitPrice { get; set; }
