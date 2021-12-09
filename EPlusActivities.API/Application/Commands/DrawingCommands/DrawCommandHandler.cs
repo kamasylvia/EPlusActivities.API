@@ -240,11 +240,6 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
             #endregion
 
             #region Database operations
-
-            // await _actorProxyFactory
-            //     .CreateActorProxy<IUserActor>(new ActorId(user.Id.ToString()), nameof(UserActor))
-            //     .UpdateAsync(user);
-
             var userUpdateResult = await _userManager.UpdateAsync(user);
             if (!userUpdateResult.Succeeded)
             {
