@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -173,7 +173,11 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Statement
-            var generalLotteryRecords = new GeneralLotteryRecords { ActivityId = activity.Id, Activity = activity };
+            var generalLotteryRecords = new GeneralLotteryRecords
+            {
+                ActivityId = activity.Id,
+                Activity = activity
+            };
             await context.GeneralLotteryRecords.AddAsync(generalLotteryRecords);
             #endregion
 
