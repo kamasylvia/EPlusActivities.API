@@ -41,12 +41,9 @@ namespace EPlusActivities.API.Application.Actors.LotteryStatementActors
         )
         {
             var activity = await _activityRepository.FindByIdAsync(command.ActivityId);
-            var statement =
-                _mapper.Map<GeneralLotteryRecords>(command);
+            var statement = _mapper.Map<GeneralLotteryRecords>(command);
             statement.Activity = activity;
-            await _generalLotteryRecordsRepository.AddAsync(
-               statement
-            );
+            await _generalLotteryRecordsRepository.AddAsync(statement);
 
             if (!await _generalLotteryRecordsRepository.SaveAsync())
             {

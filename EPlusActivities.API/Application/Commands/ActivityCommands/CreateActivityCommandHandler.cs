@@ -33,10 +33,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityCommands
             #endregion
 
             return await _actorProxyFactory
-                .CreateActorProxy<IActivityActor>(
-                    ActorId.CreateRandom(),
-                    nameof(ActivityActor)
-                )
+                .CreateActorProxy<IActivityActor>(ActorId.CreateRandom(), nameof(ActivityActor))
                 .CreateActivity(command);
         }
     }

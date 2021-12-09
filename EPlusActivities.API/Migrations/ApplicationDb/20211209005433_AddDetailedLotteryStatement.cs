@@ -9,15 +9,18 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_GeneralLotteryRecords_Activities_ActivityId",
-                table: "GeneralLotteryRecords");
+                table: "GeneralLotteryRecords"
+            );
 
             migrationBuilder.DropUniqueConstraint(
                 name: "AK_GeneralLotteryRecords_Channel_DateTime",
-                table: "GeneralLotteryRecords");
+                table: "GeneralLotteryRecords"
+            );
 
             migrationBuilder.DropIndex(
                 name: "IX_GeneralLotteryRecords_ActivityId",
-                table: "GeneralLotteryRecords");
+                table: "GeneralLotteryRecords"
+            );
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "ActivityId",
@@ -25,12 +28,14 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                 nullable: false,
                 oldClrType: typeof(Guid),
                 oldType: "char(36)",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AddUniqueConstraint(
                 name: "AK_GeneralLotteryRecords_ActivityId_Channel_DateTime",
                 table: "GeneralLotteryRecords",
-                columns: new[] { "ActivityId", "Channel", "DateTime" });
+                columns: new[] { "ActivityId", "Channel", "DateTime" }
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_GeneralLotteryRecords_Activities_ActivityId",
@@ -38,35 +43,41 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                 column: "ActivityId",
                 principalTable: "Activities",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_GeneralLotteryRecords_Activities_ActivityId",
-                table: "GeneralLotteryRecords");
+                table: "GeneralLotteryRecords"
+            );
 
             migrationBuilder.DropUniqueConstraint(
                 name: "AK_GeneralLotteryRecords_ActivityId_Channel_DateTime",
-                table: "GeneralLotteryRecords");
+                table: "GeneralLotteryRecords"
+            );
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "ActivityId",
                 table: "GeneralLotteryRecords",
                 type: "char(36)",
                 nullable: true,
-                oldClrType: typeof(Guid));
+                oldClrType: typeof(Guid)
+            );
 
             migrationBuilder.AddUniqueConstraint(
                 name: "AK_GeneralLotteryRecords_Channel_DateTime",
                 table: "GeneralLotteryRecords",
-                columns: new[] { "Channel", "DateTime" });
+                columns: new[] { "Channel", "DateTime" }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_GeneralLotteryRecords_ActivityId",
                 table: "GeneralLotteryRecords",
-                column: "ActivityId");
+                column: "ActivityId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_GeneralLotteryRecords_Activities_ActivityId",
@@ -74,7 +85,8 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
                 column: "ActivityId",
                 principalTable: "Activities",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Restrict
+            );
         }
     }
 }

@@ -15,14 +15,14 @@ namespace EPlusActivities.API.Application.Commands.LotteryStatementCommands
 
         public CreateGeneralLotteryStatementCommandHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
         public async Task Handle(
             CreateGeneralLotteryStatementCommand notification,
             CancellationToken cancellationToken
-        )
-         =>
+        ) =>
             await _actorProxyFactory
                 .CreateActorProxy<ILotteryStatementActor>(
                     new ActorId(
