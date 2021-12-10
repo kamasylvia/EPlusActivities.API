@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using EPlusActivities.API.Application.Actors.UserActors;
 using EPlusActivities.API.Application.Commands.DrawingCommand;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;

@@ -8,6 +8,7 @@ using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
@@ -153,7 +154,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
 
             #region Generate the lottery result
             var response = new List<DrawingDto>();
-            var lotteries = new List<LotteryDetail>();
+            var lotteryDetailStatement = new List<LotteryDetail>();
 
             for (int i = 0; i < command.Count; i++)
             {
@@ -232,10 +233,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
                     }
                 }
 
-                lotteries.Add(lottery);
-                var result = _mapper.Map<DrawingDto>(lottery);
-                result.DateTime = lottery.DateTime; // Skip auto mapper.
-                response.Add(result);
+                lotteryDetailStatement.Add(lottery);
             }
             #endregion
 
@@ -246,7 +244,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
                 throw new DatabaseUpdateException(userUpdateResult.ToString());
             }
 
-            await _lotteryRepository.AddRangeAsync(lotteries);
+            await _lotteryRepository.AddRangeAsync(lotteryDetailStatement);
 
             if (!await _lotteryRepository.SaveAsync())
             {
@@ -256,7 +254,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
             await _mediator.Publish(updateGeneralLotteryStatementCommand);
             #endregion
 
-            return response;
+            return _mapper.Map<IEnumerable<DrawingDto>>(lotteryDetailStatement);
         }
     }
 }

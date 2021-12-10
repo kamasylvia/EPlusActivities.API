@@ -20,6 +20,7 @@ using EPlusActivities.API.Dtos.AddressDtos;
 using EPlusActivities.API.Dtos.AttendanceDtos;
 using EPlusActivities.API.Dtos.BrandDtos;
 using EPlusActivities.API.Dtos.CategoryDtos;
+using EPlusActivities.API.Dtos.DrawingDtos;
 using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Dtos.PrizeItemDtos;
