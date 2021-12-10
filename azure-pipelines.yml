@@ -14,8 +14,8 @@ stages:
   - stage: Source
     displayName: Source code management
     jobs:
-    - job: Format_and_Release
-      displayName: Format source code and publish docker-compose required files to GitHub Release.
+    - job: Format_and_Publish
+      displayName: Format source code and publish docker-compose required files to Azure DevOps or GitHub Release.
       pool:
         vmImage: windows-latest
       steps:
@@ -34,14 +34,14 @@ stages:
             command: 'custom'
             custom: 'csharpier'
             arguments: '.'
-        # Copy EPlusActivities.API/appsettings.json to Settings/EPlusActivites.API 
+        # Copy EPlusActivities.API/appsettings.json to Settings/EPlusActivites.API
         - task: CopyFiles@2
           inputs:
             SourceFolder: 'EPlusActivities.API'
             Contents: 'appsettings.json'
             TargetFolder: 'Settings/EPlusActivities.API'
             OverWrite: true
-        # Copy FileService/appsettings.json to Settings/FileService 
+        # Copy FileService/appsettings.json to Settings/FileService
         - task: CopyFiles@2
           inputs:
             SourceFolder: 'FileService'
@@ -78,7 +78,7 @@ stages:
               html/**
               Dapr/**
               README.md
-            TargetFolder: '$(build.artifactstagingdirectory)'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
             CleanTargetFolder: true
             OverWrite: true
         # Achieve files
@@ -94,9 +94,9 @@ stages:
         - task: PublishBuildArtifacts@1
           inputs:
             PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-            ArtifactName: 'docker-compose'
+            ArtifactName: '$(Build.Repository.Name)'
             publishLocation: 'Container'
-            
+
         # GitHub Release
         # - task: GitHubRelease@1
         #   inputs:
@@ -105,7 +105,7 @@ stages:
         #     action: 'create'
         #     target: '$(Build.SourceVersion)'
         #     tagSource: 'gitTag'
-        #     tagPattern: '[Rr]elease-v[1-9]*\S*' # required 
+        #     tagPattern: '[Rr]elease-v[1-9]*\S*' # required
         #     assets: '$(Build.ArtifactStagingDirectory)/*.zip'
         #     # isDraft: true
         #     changeLogCompareToRelease: 'lastFullRelease'
