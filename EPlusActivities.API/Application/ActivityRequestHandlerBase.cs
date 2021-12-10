@@ -17,7 +17,7 @@ namespace EPlusActivities.API.Application
         protected readonly UserManager<ApplicationUser> _userManager;
         protected readonly IIdGeneratorService _idGeneratorService;
         protected readonly IActivityUserRepository _activityUserRepository;
-        protected readonly ILotteryRepository _lotteryRepository;
+        protected readonly ILotteryDetailRepository _lotteryRepository;
         protected readonly IMapper _mapper;
         protected readonly IActivityService _activityService;
         protected readonly ILotteryService _lotteryService;
@@ -27,7 +27,7 @@ namespace EPlusActivities.API.Application
             UserManager<ApplicationUser> userManager,
             IIdGeneratorService idGeneratorService,
             IActivityUserRepository activityUserRepository,
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             IMapper mapper,
             IActivityService activityService,
             ILotteryService lotteryService

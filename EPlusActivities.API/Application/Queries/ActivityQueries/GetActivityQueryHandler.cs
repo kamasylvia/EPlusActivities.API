@@ -24,7 +24,7 @@ namespace EPlusActivities.API.Application.Queries.ActivityQueries
             UserManager<ApplicationUser> userManager,
             IIdGeneratorService idGeneratorService,
             IActivityUserRepository activityUserRepository,
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             IMapper mapper,
             IActivityService activityService,
             ILotteryService lotteryService
