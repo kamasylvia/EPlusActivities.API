@@ -18,12 +18,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
             await _context.Activities
-                .AsAsyncQueryable()
                 .AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date) =>
             await _context.Activities
-                .AsAsyncQueryable()
                 .Where(a => a.StartTime <= date && (!a.EndTime.HasValue || date <= a.EndTime.Value))
                 .ToListAsync();
 
@@ -32,7 +30,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateTime? endTime
         ) =>
             await _context.Activities
-                .AsAsyncQueryable()
                 .Where(a => startTime <= a.StartTime && !(a.EndTime > endTime))
                 .ToListAsync();
 

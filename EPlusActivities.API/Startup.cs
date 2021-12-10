@@ -10,6 +10,7 @@ using EPlusActivities.API.Services.IdGeneratorService;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -82,10 +83,11 @@ namespace EPlusActivities.API
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             // var serverVersion = ServerVersion.AutoDetect(connectionString);
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 25));
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             // 数据库和 IdentityServer4
-            services.AddDbAndIS4(connectionString, migrationsAssembly, Environment.IsDevelopment());
+            services.AddDbAndIS4(connectionString, serverVersion, migrationsAssembly, Environment.IsDevelopment());
 
             // 权限验证策略
             services.AddAppAuthentication();

@@ -17,21 +17,18 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
             await _context.Categories
-                .AsAsyncQueryable()
                 .AnyAsync(c => c.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<bool> ExistsAsync(string name) =>
-            await _context.Categories.AsAsyncQueryable().AnyAsync(c => c.Name == name);
+            await _context.Categories.AnyAsync(c => c.Name == name);
 
         public async Task<IEnumerable<Category>> FindByContainedNameAsync(string name) =>
             await _context.Categories
-                .AsAsyncQueryable()
                 .Where(c => c.Name.Contains(name))
                 .ToListAsync();
 
         public async Task<Category> FindByNameAsync(string name) =>
             await _context.Categories
-                .AsAsyncQueryable()
                 .Where(c => c.Name == name)
                 .SingleOrDefaultAsync();
     }

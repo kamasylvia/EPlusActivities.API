@@ -15,6 +15,7 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
         public static void AddDbAndIS4(
             this IServiceCollection services,
             string connectionString,
+            MySqlServerVersion serverVersion,
             string migrationsAssembly,
             bool isDevelopment
         )
@@ -23,7 +24,7 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                 options =>
                     options.UseMySql(
                         connectionString,
-                        o => o.ServerVersion(new Version(8, 0, 25), ServerType.MySql)
+                        serverVersion
                     )
             );
 
@@ -72,7 +73,7 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                             options.ConfigureDbContext = builder =>
                                 builder.UseMySql(
                                     connectionString,
-                                    sql => sql.MigrationsAssembly(migrationsAssembly)
+                                    serverVersion
                                 );
                         }
                     ) // this adds the operational data from DB (codes, tokens, consents)
@@ -82,7 +83,7 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                             options.ConfigureDbContext = builder =>
                                 builder.UseMySql(
                                     connectionString,
-                                    sql => sql.MigrationsAssembly(migrationsAssembly)
+                                    serverVersion
                                 );
 
                             // this enables automatic token cleanup. this is optional.

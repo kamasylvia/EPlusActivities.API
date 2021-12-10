@@ -19,7 +19,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
             await _context.PrizeTiers
-                .AsAsyncQueryable()
                 .AnyAsync(pt => pt.Id == (Guid)keyValues.FirstOrDefault());
 
         public override async Task<PrizeTier> FindByIdAsync(params object[] keyValues) =>

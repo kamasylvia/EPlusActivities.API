@@ -17,7 +17,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
             await _context.ActivityUserLinks
-                .AsAsyncQueryable()
                 .AnyAsync(
                     activityUser =>
                         activityUser.ActivityId.Value == (Guid)keyValues[0]
@@ -26,7 +25,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<ActivityUser> FindByIdAsync(params object[] keyValues) =>
             await _context.ActivityUserLinks
-                .AsAsyncQueryable()
                 .SingleOrDefaultAsync(
                     activityUser =>
                         activityUser.ActivityId.Value == (Guid)keyValues[0]
@@ -42,7 +40,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public async Task<IEnumerable<ActivityUser>> FindByActivityIdAsync(Guid activityId) =>
             await _context.ActivityUserLinks
-                .AsAsyncQueryable()
                 .Where(au => au.ActivityId == activityId)
                 .ToListAsync();
     }
