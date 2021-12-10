@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Attributes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
             await _context.AttendanceRecord
                 .AsAsyncQueryable()
-                .AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
+                .AnyAsync(a => a.Id == (Guid) keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Attendance>> FindByUserIdAsync(
             Guid userId,
@@ -32,8 +33,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                     a =>
                         a.User.Id == userId
                         && a.Activity.Id == activityId
-                        && a.Date >= startDate.Date
-                        && !(a.Date > endDate)
+                        && a.Date >= startDate.Date.ToDateOnly()
+                        && !(a.Date.Value.ToDateTime() > endDate)
                 )
                 .ToListAsync();
     }

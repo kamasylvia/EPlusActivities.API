@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 

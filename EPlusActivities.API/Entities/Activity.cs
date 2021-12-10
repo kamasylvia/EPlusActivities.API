@@ -55,7 +55,7 @@ namespace EPlusActivities.API.Entities
         )]
         public string Color { get; set; }
 
-        public virtual IEnumerable<Lottery> LotteryResults { get; set; }
+        public virtual IEnumerable<LotteryDetail> LotteryDetailStatement { get; set; }
 
         public virtual IEnumerable<PrizeTier> PrizeTiers { get; set; }
 

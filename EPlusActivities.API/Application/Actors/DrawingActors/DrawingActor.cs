@@ -15,7 +15,7 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
     public partial class DrawingActor : Actor, IDrawingActor
     {
         private readonly IActorProxyFactory _actorProxyFactory;
-        private readonly ILotteryRepository _lotteryRepository;
+        private readonly ILotteryDetailRepository _lotteryRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IActivityRepository _activityRepository;
         private readonly IPrizeItemRepository _prizeItemRepository;
@@ -26,13 +26,13 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
         private readonly ILotteryService _lotteryService;
         private readonly IMemberService _memberService;
         private readonly IIdGeneratorService _idGeneratorService;
-        private readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
+        private readonly ILotterySummaryRepository _lotterySummaryStatementRepository;
         private readonly IActivityService _activityService;
 
         public DrawingActor(
             ActorHost host,
             IActorProxyFactory actorProxyFactory,
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -43,7 +43,7 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            ILotterySummaryRepository lotterySummaryStatementRepository,
             IActivityService activityService
         ) : base(host)
         {
@@ -69,9 +69,9 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
             _idGeneratorService =
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
-            _generalLotteryRecordsRepository =
-                generalLotteryRecordsRepository
-                ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
+            _lotterySummaryStatementRepository =
+                lotterySummaryStatementRepository
+                ?? throw new ArgumentNullException(nameof(lotterySummaryStatementRepository));
             _activityService =
                 activityService ?? throw new ArgumentNullException(nameof(activityService));
         }

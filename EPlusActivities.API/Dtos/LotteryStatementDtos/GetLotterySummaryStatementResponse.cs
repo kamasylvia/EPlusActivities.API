@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace EPlusActivities.API.Dtos.DrawingDtos
+namespace EPlusActivities.API.Dtos.LotteryStatementDtos
 {
-    public record GetLotterySummaryResponse
+    public record GetLotterySummaryStatementResponse
     {
         /// <summary>
         /// 日期
         /// </summary>
         /// <value></value>
-        public DateTime DateTime { get; set; }
+        public DateOnly Date { get; set; }
 
         /// <summary>
         /// 抽奖总数

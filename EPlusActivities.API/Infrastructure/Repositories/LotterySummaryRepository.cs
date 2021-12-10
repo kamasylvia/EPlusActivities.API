@@ -12,44 +12,44 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
     [CustomDependency(ServiceLifetime.Scoped)]
-    public class GeneralLotteryRecordsRepository
-        : RepositoryBase<GeneralLotteryRecords>,
-          IGeneralLotteryRecordsRepository
+    public class LotterySummaryRepository
+        : RepositoryBase<LotterySummary>,
+          ILotterySummaryRepository
     {
-        public GeneralLotteryRecordsRepository(ApplicationDbContext context) : base(context) { }
+        public LotterySummaryRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<GeneralLotteryRecords> FindByDateAsync(
+        public async Task<LotterySummary> FindByDateAsync(
             Guid activityId,
             ChannelCode channel,
-            DateTime date
+            DateOnly date
         ) =>
-            await _context.GeneralLotteryRecords
+            await _context.LotterySummaryStatement
                 .Include(s => s.Activity)
                 .AsAsyncEnumerable()
                 .SingleOrDefaultAsync(
                     s =>
                         s.Activity.Id == activityId
                         && s.Channel == channel
-                        && s.DateTime.Date == date.Date
+                        && s.Date == date
                 );
 
-        public async Task<IEnumerable<GeneralLotteryRecords>> FindByDateRangeAsync(
+        public async Task<IEnumerable<LotterySummary>> FindByDateRangeAsync(
             Guid activityId,
             ChannelCode channel,
-            DateTime? startTime,
-            DateTime? endTime
+            DateOnly? startDate,
+            DateOnly? endDate
         ) =>
-            await _context.GeneralLotteryRecords
+            await _context.LotterySummaryStatement
                 .Include(s => s.Activity)
                 .AsAsyncEnumerable()
                 .Where(
                     s =>
                         s.Activity.Id.Value == activityId
                         && s.Channel == channel
-                        && !(startTime > s.DateTime)
-                        && !(s.DateTime > endTime)
+                        && !(startDate > s.Date)
+                        && !(s.Date > endDate)
                 )
-                .OrderBy(x => x.DateTime)
+                .OrderBy(x => x.Date)
                 .ToListAsync();
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -21,7 +21,7 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
           IRequestHandler<GetLotteryDetailsQuery, IEnumerable<GetLotteryDetailsResponse>>
     {
         public GetLotteryDetailsQueryHandler(
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -32,7 +32,7 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            ILotterySummaryRepository lotterySummaryStatementRepository,
             IActivityService activityService
         )
             : base(
@@ -47,7 +47,7 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
                 lotteryService,
                 memberService,
                 idGeneratorService,
-                generalLotteryRecordsRepository,
+                lotterySummaryStatementRepository,
                 activityService
             ) { }
 
@@ -62,7 +62,7 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            var lotteries = await activity.LotteryResults
+            var lotteries = await activity.LotteryDetailStatement
                 .Where(
                     lr =>
                         lr.IsLucky

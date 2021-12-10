@@ -25,7 +25,7 @@ namespace EPlusActivities.API.Application.Queries.ActivityUserQueries
             IMapper mapper,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IGeneralLotteryRecordsRepository statementRepository
+            ILotterySummaryRepository statementRepository
         )
             : base(
                 activityRepository,

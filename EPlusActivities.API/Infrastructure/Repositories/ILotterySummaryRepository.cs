@@ -7,19 +7,19 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    public interface IGeneralLotteryRecordsRepository : IRepository<GeneralLotteryRecords>
+    public interface ILotterySummaryRepository : IRepository<LotterySummary>
     {
-        Task<IEnumerable<GeneralLotteryRecords>> FindByDateRangeAsync(
+        Task<IEnumerable<LotterySummary>> FindByDateRangeAsync(
             Guid activityId,
             ChannelCode channel,
-            DateTime? startTime,
-            DateTime? endTime
+            DateOnly? startDate,
+            DateOnly? endDate
         );
 
-        Task<GeneralLotteryRecords> FindByDateAsync(
+        Task<LotterySummary> FindByDateAsync(
             Guid activityId,
             ChannelCode channel,
-            DateTime date
+            DateOnly date
         );
     }
 }

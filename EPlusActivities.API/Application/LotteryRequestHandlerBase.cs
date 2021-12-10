@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Repositories;
 using EPlusActivities.API.Services.ActivityService;
@@ -17,7 +17,7 @@ namespace EPlusActivities.API.Application
     public abstract class DrawingRequestHandlerBase
     {
         protected readonly IMapper _mapper;
-        protected readonly ILotteryRepository _lotteryRepository;
+        protected readonly ILotteryDetailRepository _lotteryRepository;
         protected readonly UserManager<ApplicationUser> _userManager;
         protected readonly IActivityRepository _activityRepository;
         protected readonly IPrizeItemRepository _prizeItemRepository;
@@ -26,12 +26,12 @@ namespace EPlusActivities.API.Application
         protected readonly IFindByParentIdRepository<PrizeTier> _prizeTypeRepository;
         protected readonly ILotteryService _lotteryService;
         protected readonly IIdGeneratorService _idGeneratorService;
-        protected readonly IGeneralLotteryRecordsRepository _generalLotteryRecordsRepository;
+        protected readonly ILotterySummaryRepository _lotterySummaryStatementRepository;
         protected readonly IMemberService _memberService;
         protected readonly IActivityService _activityService;
 
         protected DrawingRequestHandlerBase(
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -42,7 +42,7 @@ namespace EPlusActivities.API.Application
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            ILotterySummaryRepository lotterySummaryStatementRepository,
             IActivityService activityService
         )
         {
@@ -50,9 +50,9 @@ namespace EPlusActivities.API.Application
                 idGeneratorService ?? throw new ArgumentNullException(nameof(idGeneratorService));
             _memberService =
                 memberService ?? throw new ArgumentNullException(nameof(memberService));
-            _generalLotteryRecordsRepository =
-                generalLotteryRecordsRepository
-                ?? throw new ArgumentNullException(nameof(generalLotteryRecordsRepository));
+            _lotterySummaryStatementRepository =
+                lotterySummaryStatementRepository
+                ?? throw new ArgumentNullException(nameof(lotterySummaryStatementRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _lotteryService =
                 lotteryService ?? throw new ArgumentNullException(nameof(lotteryService));

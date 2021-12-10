@@ -38,13 +38,13 @@ namespace EPlusActivities.API.Data
 
         public virtual DbSet<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
 
-        public virtual DbSet<Lottery> LotteryResults { get; set; }
+        public virtual DbSet<LotteryDetail> LotteryResults { get; set; }
 
         public virtual DbSet<Credit> Credits { get; set; }
 
         public virtual DbSet<Coupon> Coupons { get; set; }
 
-        public virtual DbSet<GeneralLotteryRecords> GeneralLotteryRecords { get; set; }
+        public virtual DbSet<LotterySummary> LotterySummaryStatement { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
@@ -61,12 +61,12 @@ namespace EPlusActivities.API.Data
             builder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber).IsUnique();
             builder.Entity<Activity>().HasIndex(a => a.ActivityCode).IsUnique();
 
-            // builder.Entity<Activity>().HasAlternateKey(a => a.ActivityCode);
+            builder.Entity<Attendance>().HasAlternateKey(a => a.Date);
             builder.Entity<Brand>().HasIndex(b => b.Name).IsUnique();
             builder.Entity<Category>().HasIndex(b => b.Name).IsUnique();
             builder
-                .Entity<GeneralLotteryRecords>()
-                .HasAlternateKey(r => new { r.ActivityId, r.Channel, r.DateTime });
+                .Entity<LotterySummary>()
+                .HasAlternateKey(r => new { r.ActivityId, r.Channel, r.Date });
 
             builder
                 .Entity<PrizeTierPrizeItem>()

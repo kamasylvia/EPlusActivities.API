@@ -11,8 +11,8 @@ namespace EPlusActivities.API.Application.Actors.LotteryStatementActors
     public interface ILotteryStatementActor : IActor
     {
         Task SetReminderAsync();
-        Task CreateGeneralLotteryStatementAsync(CreateGeneralLotteryStatementCommand command);
-        Task UpdateGeneralLotteryStatementAsync(UpdateGeneralLotteryStatementCommand command);
+        Task CreateLotterySummaryStatementAsync(CreateLotterySummaryStatementCommand command);
+        Task UpdateLotterySummaryStatementAsync(UpdateLotterySummaryStatementCommand command);
         // Task GetGeneralLotteryStatement(Guid statementId);
 
         // Task DeleteGeneralLotteryStatement(Guid statementId);

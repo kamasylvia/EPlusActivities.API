@@ -1,25 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
 using MediatR;
 
 namespace EPlusActivities.API.Application.Commands.LotteryStatementCommands
 {
-    public record UpdateGeneralLotteryStatementCommand : INotification
+    public record CreateLotterySummaryStatementCommand : INotification
     {
         public Guid ActivityId { get; set; }
 
         public ChannelCode Channel { get; set; }
 
-        public DateTime DateTime { get; set; }
-
-        public int Draws { get; set; }
-
-        public int Winners { get; set; }
-
-        public int Redemption { get; set; }
+        public DateOnly DateOnly { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace EPlusActivities.API.Dtos.AttendanceDtos
         /// </summary>
         /// <value></value>
         [Required]
-        public DateTime? Date { get; set; }
+        public DateOnly? Date { get; set; }
 
         /// <summary>
         /// 用户访问的渠道，字符串不区分大小写。

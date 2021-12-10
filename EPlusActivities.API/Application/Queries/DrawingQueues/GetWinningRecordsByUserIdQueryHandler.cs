@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -22,7 +22,7 @@ namespace EPlusActivities.API.Application.Queries.DrawingQueries
           IRequestHandler<GetWinningRecordsByUserIdQuery, IEnumerable<DrawingDto>>
     {
         public GetWinningRecordsByUserIdQueryHandler(
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -33,7 +33,7 @@ namespace EPlusActivities.API.Application.Queries.DrawingQueries
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            ILotterySummaryRepository lotterySummaryStatementRepository,
             IActivityService activityService
         )
             : base(
@@ -48,7 +48,7 @@ namespace EPlusActivities.API.Application.Queries.DrawingQueries
                 lotteryService,
                 memberService,
                 idGeneratorService,
-                generalLotteryRecordsRepository,
+                lotterySummaryStatementRepository,
                 activityService
             ) { }
 

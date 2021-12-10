@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -108,7 +109,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed AttendanceRecord
-            var attendance = new Attendance { User = user, Date = DateTime.MinValue };
+            var attendance = new Attendance { User = user, Date = DateTime.MinValue.ToDateOnly() };
             await context.AttendanceRecord.AddAsync(attendance);
             #endregion
 
@@ -153,7 +154,7 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed LotteryResults
-            var lottery = new Lottery
+            var lottery = new LotteryDetail
             {
                 User = user,
                 Activity = activity,
@@ -173,8 +174,8 @@ namespace EPlusActivities.API.Data
             #endregion
 
             #region Seed Statement
-            var generalLotteryRecords = new GeneralLotteryRecords { Activity = activity };
-            await context.GeneralLotteryRecords.AddAsync(generalLotteryRecords);
+            var lotterySummaryStatement = new LotterySummary { Activity = activity };
+            await context.LotterySummaryStatement.AddAsync(lotterySummaryStatement);
             #endregion
 
             #region Seed Administrator

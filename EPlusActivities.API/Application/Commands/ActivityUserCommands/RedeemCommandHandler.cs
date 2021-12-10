@@ -41,7 +41,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
             IMediator mediator,
             IIdGeneratorService idGeneratorService,
             IActivityService activityService,
-            IGeneralLotteryRecordsRepository generalLotteryRecords
+            ILotterySummaryRepository lotterySummaryStatement
         )
             : base(
                 activityRepository,
@@ -51,7 +51,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 mapper,
                 idGeneratorService,
                 activityService,
-                generalLotteryRecords
+                lotterySummaryStatement
             )
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
@@ -158,7 +158,7 @@ namespace EPlusActivities.API.Application.Commands.ActivityUserCommands
                 throw new DatabaseUpdateException("Update database exception");
             }
 
-            await _mediator.Publish(_mapper.Map<UpdateGeneralLotteryStatementCommand>(command));
+            await _mediator.Publish(_mapper.Map<UpdateLotterySummaryStatementCommand>(command));
             #endregion
 
             return _mapper.Map<ActivityUserForRedeemDrawsResponseDto>(activityUser);

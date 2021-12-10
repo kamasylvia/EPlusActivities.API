@@ -6,6 +6,7 @@ using EPlusActivities.API.Application.Commands.AttendanceCommands;
 using EPlusActivities.API.Dtos.AttendanceDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -132,7 +133,7 @@ namespace EPlusActivities.API.Application.Actors.AttendanceActors
             var attendance = _mapper.Map<Attendance>(command);
             attendance.User = user;
             attendance.Activity = activity;
-            attendance.Date = DateTime.Now.Date;
+            attendance.Date = DateTime.Today.ToDateOnly();
             #endregion
 
             #region Database operations

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
@@ -18,12 +18,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public class GetLotterySummaryQueryHandler
+    public class GetLotterySummaryStatementQueryHandler
         : DrawingRequestHandlerBase,
-          IRequestHandler<GetLotterySummaryQuery, IEnumerable<GetLotterySummaryResponse>>
+          IRequestHandler<GetLotterySummaryStatementQuery, IEnumerable<GetLotterySummaryStatementResponse>>
     {
-        public GetLotterySummaryQueryHandler(
-            ILotteryRepository lotteryRepository,
+        public GetLotterySummaryStatementQueryHandler(
+            ILotteryDetailRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -34,7 +34,7 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            ILotterySummaryRepository lotterySummaryStatementRepository,
             IActivityService activityService
         )
             : base(
@@ -49,12 +49,12 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
                 lotteryService,
                 memberService,
                 idGeneratorService,
-                generalLotteryRecordsRepository,
+                lotterySummaryStatementRepository,
                 activityService
             ) { }
 
-        public async Task<IEnumerable<GetLotterySummaryResponse>> Handle(
-            GetLotterySummaryQuery request,
+        public async Task<IEnumerable<GetLotterySummaryStatementResponse>> Handle(
+            GetLotterySummaryStatementQuery request,
             CancellationToken cancellationToken
         )
         {
@@ -64,15 +64,15 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
+            var lotterySummaryStatement = await _lotterySummaryStatementRepository.FindByDateRangeAsync(
                 activity.Id.Value,
                 request.Channel,
-                request.StartTime,
-                request.EndTime
+                request.StartDate,
+                request.EndDate
             );
             #endregion
 
-            return _mapper.Map<IEnumerable<GetLotterySummaryResponse>>(generalLotteryRecords);
+            return _mapper.Map<IEnumerable<GetLotterySummaryStatementResponse>>(lotterySummaryStatement);
         }
     }
 }

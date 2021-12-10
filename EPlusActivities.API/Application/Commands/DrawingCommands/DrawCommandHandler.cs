@@ -8,7 +8,7 @@ using AutoMapper;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -36,7 +36,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
         // }
 
         public DrawCommandHandler(
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             Microsoft.AspNetCore.Identity.UserManager<Entities.ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -48,7 +48,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            ILotterySummaryRepository lotterySummaryStatementRepository,
             IActivityService activityService
         )
             : base(
@@ -63,7 +63,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
                 lotteryService,
                 memberService,
                 idGeneratorService,
-                generalLotteryRecordsRepository,
+                lotterySummaryStatementRepository,
                 activityService
             )
         {
@@ -146,18 +146,18 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
             activityUser.TodayUsedDraws += command.Count;
             activityUser.UsedDraws += command.Count;
             var updateGeneralLotteryStatementCommand =
-                _mapper.Map<UpdateGeneralLotteryStatementCommand>(command);
+                _mapper.Map<UpdateLotterySummaryStatementCommand>(command);
             await _mediator.Publish(updateGeneralLotteryStatementCommand);
             updateGeneralLotteryStatementCommand.Draws = 0;
             #endregion
 
             #region Generate the lottery result
             var response = new List<DrawingDto>();
-            var lotteries = new List<Lottery>();
+            var lotteries = new List<LotteryDetail>();
 
             for (int i = 0; i < command.Count; i++)
             {
-                var lottery = _mapper.Map<Lottery>(command);
+                var lottery = _mapper.Map<LotteryDetail>(command);
                 lottery.User = user;
                 lottery.Activity = activity;
                 lottery.DateTime = DateTime.Now;

@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using EPlusActivities.API.Application.Actors.UserActors;
 using EPlusActivities.API.Application.Commands.DrawingCommand;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 
@@ -73,18 +74,18 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
             }
 
             var channel = command.ChannelCode;
-            var generalRecords = await _generalLotteryRecordsRepository.FindByDateAsync(
+            var generalRecords = await _lotterySummaryStatementRepository.FindByDateAsync(
                 command.ActivityId.Value,
                 channel,
-                DateTime.Today
+                DateTime.Today.ToDateOnly()
             );
             var requireNewStatement = generalRecords is null;
             if (requireNewStatement)
             {
-                generalRecords = new GeneralLotteryRecords
+                generalRecords = new LotterySummary
                 {
                     Activity = activity,
-                    DateTime = DateTime.Today,
+                    Date = DateTime.Today.ToDateOnly(),
                     Channel = channel,
                 };
             }
@@ -99,11 +100,11 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
 
             #region Generate the lottery result
             var response = new List<DrawingDto>();
-            var lotteries = new List<Lottery>();
+            var lotteries = new List<LotteryDetail>();
 
             for (int i = 0; i < command.Count; i++)
             {
-                var lottery = _mapper.Map<Lottery>(command);
+                var lottery = _mapper.Map<LotteryDetail>(command);
                 lottery.User = user;
                 lottery.Activity = activity;
                 lottery.DateTime = DateTime.Now;
@@ -186,29 +187,16 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
             #endregion
 
             #region Database operations
-
-#if DEBUG
-            System.Console.WriteLine("Before _userManager.UpdateAsync");
-#endif
-
-            // await _actorProxyFactory
-            //     .CreateActorProxy<IUserActor>(new ActorId(user.Id.ToString()), nameof(UserActor))
-            //     .UpdateAsync(user);
-
             var userUpdateResult = await _userManager.UpdateAsync(user);
             if (!userUpdateResult.Succeeded)
             {
                 throw new DatabaseUpdateException(userUpdateResult.ToString());
             }
 
-#if DEBUG
-            System.Console.WriteLine("After _userManager.UpdateAsync");
-#endif
-
             if (requireNewStatement)
-                await _generalLotteryRecordsRepository.AddAsync(generalRecords);
+                await _lotterySummaryStatementRepository.AddAsync(generalRecords);
             else
-                _generalLotteryRecordsRepository.Update(generalRecords);
+                _lotterySummaryStatementRepository.Update(generalRecords);
 
             await _lotteryRepository.AddRangeAsync(lotteries);
 

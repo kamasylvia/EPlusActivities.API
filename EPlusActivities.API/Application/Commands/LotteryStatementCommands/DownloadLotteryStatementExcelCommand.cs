@@ -15,13 +15,13 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
         /// 起始时间
         /// </summary>
         /// <value></value>
-        public DateTime? StartTime { get; set; }
+        public DateOnly? StartDate { get; set; }
 
         /// <summary>
         /// 结束时间
         /// </summary>
         /// <value></value>
-        public DateTime? EndTime { get; set; }
+        public DateOnly? EndDate { get; set; }
 
         /// <summary>
         /// 渠道

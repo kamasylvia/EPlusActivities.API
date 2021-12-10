@@ -42,7 +42,7 @@ namespace EPlusActivities.API.Entities
         // 奖品库存
         public int? Stock { get; set; }
 
-        public virtual IEnumerable<Lottery> LotteryResults { get; set; }
+        public virtual IEnumerable<LotteryDetail> LotteryResults { get; set; }
 
         public virtual IEnumerable<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
 

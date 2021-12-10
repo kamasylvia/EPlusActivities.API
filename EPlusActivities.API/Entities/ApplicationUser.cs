@@ -30,7 +30,7 @@ namespace EPlusActivities.API.Entities
 
         public virtual IEnumerable<Attendance> AttendanceRecord { get; set; }
 
-        public virtual IEnumerable<Lottery> LotteryResults { get; set; }
+        public virtual IEnumerable<LotteryDetail> LotteryResults { get; set; }
 
         public virtual IEnumerable<ActivityUser> ActivityUserLinks { get; set; }
         public virtual IEnumerable<Coupon> Coupons { get; set; }

@@ -8,6 +8,7 @@ using EPlusActivities.API.Application.Commands.ActivityCommands;
 using EPlusActivities.API.Application.Commands.LotteryStatementCommands;
 using EPlusActivities.API.Dtos.ActivityDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -28,7 +29,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
         private readonly IIdGeneratorService _idGeneratorService;
         private readonly IMemberService _memberService;
         private readonly IActivityUserRepository _activityUserRepository;
-        private readonly ILotteryRepository _lotteryRepository;
+        private readonly ILotteryDetailRepository _lotteryRepository;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
         private readonly IActivityRepository _activityRepository;
@@ -40,7 +41,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
             UserManager<ApplicationUser> userManager,
             IIdGeneratorService idGeneratorService,
             IActivityUserRepository activityUserRepository,
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             IMapper mapper,
             IMediator mediator,
             IActivityService activityService,
@@ -102,11 +103,11 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
             foreach (var channel in activity.AvailableChannels)
             {
                 await _mediator.Publish(
-                    new CreateGeneralLotteryStatementCommand
+                    new CreateLotterySummaryStatementCommand
                     {
                         ActivityId = activity.Id.Value,
                         Channel = channel,
-                        DateTime = DateTime.Today
+                        DateOnly = DateTime.Today.ToDateOnly()
                     }
                 );
             }

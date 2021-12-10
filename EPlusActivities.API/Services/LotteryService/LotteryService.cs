@@ -7,7 +7,7 @@ using AutoMapper;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -43,7 +43,7 @@ namespace EPlusActivities.API.Services.LotteryService
         /// </summary>
         /// <returns></returns>
         public IEnumerable<GetLotteryDetailsResponse> CreateLotteryForDownload(
-            IEnumerable<Lottery> lotteries
+            IEnumerable<LotteryDetail> lotteries
         )
         {
             var response = new List<GetLotteryDetailsResponse>();
@@ -82,8 +82,8 @@ namespace EPlusActivities.API.Services.LotteryService
         /// </summary>
         /// <returns></returns>
         public (MemoryStream, string) DownloadLotteryRecords(
-            IEnumerable<GeneralLotteryRecords> generals,
-            IEnumerable<Lottery> details
+            IEnumerable<LotterySummary> generals,
+            IEnumerable<LotteryDetail> details
         )
         {
             var memoryStream = new MemoryStream();
@@ -112,7 +112,7 @@ namespace EPlusActivities.API.Services.LotteryService
 
         private void FillGeneralSheet(
             SpreadsheetDocument spreadsheetDocument,
-            IEnumerable<GeneralLotteryRecords> generals
+            IEnumerable<LotterySummary> generals
         )
         {
             var list = generals.ToList();
@@ -123,7 +123,7 @@ namespace EPlusActivities.API.Services.LotteryService
             {
                 // 日期
                 var cellA = OpenXmlUtils.InsertCellInWorksheet("A", i + 3, worksheetPart);
-                cellA.CellValue = new CellValue(list[Convert.ToInt32(i)].DateTime.Date);
+                cellA.CellValue = new CellValue(list[Convert.ToInt32(i)].Date.ToString());
                 cellA.DataType = new EnumValue<CellValues>(CellValues.Date);
 
                 // 抽奖次数
@@ -183,7 +183,7 @@ namespace EPlusActivities.API.Services.LotteryService
 
         private void FillDetailSheet(
             SpreadsheetDocument spreadsheetDocument,
-            IEnumerable<Lottery> details
+            IEnumerable<LotteryDetail> details
         )
         {
             var data = CreateLotteryForDownload(details).ToList();

@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Entities
         // 今日中奖人数
         public int TodayWinnerCount { get; set; }
 
-        // 上次中奖日期
+        // 上次中奖时间
         public DateTime LastDate { get; set; }
 
         // 所处活动
@@ -37,7 +37,7 @@ namespace EPlusActivities.API.Entities
         public int RequiredCredit { get; set; }
 
         // 所处的中奖结果
-        public virtual IEnumerable<Lottery> LotteryResults { get; set; }
+        public virtual IEnumerable<LotteryDetail> LotteryResults { get; set; }
 
         // 该等第下能兑换的奖品
         public virtual IEnumerable<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }

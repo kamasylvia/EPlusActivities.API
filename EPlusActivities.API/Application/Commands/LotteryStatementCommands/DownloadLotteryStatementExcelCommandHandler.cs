@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.API.Infrastructure.Exceptions;
 using EPlusActivities.API.Infrastructure.Repositories;
@@ -22,7 +23,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
           IRequestHandler<DownloadLotteryStatementExcelCommand, FileDto>
     {
         public DownloadLotteryStatementExcelCommandHandler(
-            ILotteryRepository lotteryRepository,
+            ILotteryDetailRepository lotteryRepository,
             UserManager<ApplicationUser> userManager,
             IActivityRepository activityRepository,
             IPrizeItemRepository prizeItemRepository,
@@ -33,7 +34,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
             ILotteryService lotteryService,
             IMemberService memberService,
             IIdGeneratorService idGeneratorService,
-            IGeneralLotteryRecordsRepository generalLotteryRecordsRepository,
+            ILotterySummaryRepository lotterySummaryStatementRepository,
             IActivityService activityService
         )
             : base(
@@ -48,7 +49,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
                 lotteryService,
                 memberService,
                 idGeneratorService,
-                generalLotteryRecordsRepository,
+                lotterySummaryStatementRepository,
                 activityService
             ) { }
 
@@ -63,30 +64,30 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            var lotteries = await activity.LotteryResults
+            var lotteries = await activity.LotteryDetailStatement
                 .Where(
                     lr =>
                         lr.IsLucky
                         // && Enum.Parse<ChannelCode>(request.Channel, true) == lr.ChannelCode
                         && request.Channel == lr.ChannelCode
-                        && !(request.StartTime > lr.DateTime)
-                        && !(lr.DateTime > request.EndTime)
+                        && !(request.StartDate?.ToDateTime() > lr.DateTime)
+                        && !(lr.DateTime > request.EndDate?.ToDateTime())
                 )
                 .ToAsyncEnumerable()
                 .SelectAwait(async l => await _lotteryRepository.FindByIdAsync(l.Id))
                 .ToListAsync();
             #endregion
 
-            var generalLotteryRecords = await _generalLotteryRecordsRepository.FindByDateRangeAsync(
+            var lotterySummaryStatement = await _lotterySummaryStatementRepository.FindByDateRangeAsync(
                 activity.Id.Value,
                 request.Channel,
                 // Enum.Parse<ChannelCode>(request.Channel, true),
-                request.StartTime,
-                request.EndTime
+                request.StartDate,
+                request.EndDate
             );
 
             var (memoryString, contentType) = _lotteryService.DownloadLotteryRecords(
-                generalLotteryRecords,
+                lotterySummaryStatement,
                 lotteries
             );
 

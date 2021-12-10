@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using EPlusActivities.API.Application.Commands.DrawingCommand;
 using EPlusActivities.API.Application.Queries.DrawingQueries;
 using EPlusActivities.API.Application.Queries.LotteryStatementQueries;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

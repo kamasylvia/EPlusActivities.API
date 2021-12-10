@@ -38,13 +38,13 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         public override async Task<Activity> FindByIdAsync(params object[] keyValues) =>
             await _context.Activities
-                .Include(a => a.LotteryResults)
+                .Include(a => a.LotteryDetailStatement)
                 .Include(a => a.PrizeTiers)
                 .SingleOrDefaultAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<Activity> FindByActivityCodeAsync(string activityCode) =>
             await _context.Activities
-                .Include(a => a.LotteryResults)
+                .Include(a => a.LotteryDetailStatement)
                 .SingleOrDefaultAsync(a => a.ActivityCode == activityCode);
 
         public async Task<Activity> FindWithActivityUserLink(Guid id) =>

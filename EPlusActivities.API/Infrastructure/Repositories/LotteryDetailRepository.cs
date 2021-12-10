@@ -11,16 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
     [CustomDependency(ServiceLifetime.Scoped)]
-    public class LotteryRepository : RepositoryBase<Lottery>, ILotteryRepository
+    public class LotteryDetailRepository : RepositoryBase<LotteryDetail>, ILotteryDetailRepository
     {
-        public LotteryRepository(ApplicationDbContext context) : base(context) { }
+        public LotteryDetailRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
             await _context.LotteryResults
                 .AsAsyncQueryable()
                 .AnyAsync(lr => lr.Id == (Guid)keyValues.FirstOrDefault());
 
-        public override async Task<Lottery> FindByIdAsync(params object[] keyValues) =>
+        public override async Task<LotteryDetail> FindByIdAsync(params object[] keyValues) =>
             await _context.LotteryResults
                 .Include(lottery => lottery.Activity)
                 .Include(lr => lr.User)
@@ -28,7 +28,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(lr => lr.PrizeItem)
                 .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
-        public async Task<IEnumerable<Lottery>> FindByUserIdAsync(Guid userId) =>
+        public async Task<IEnumerable<LotteryDetail>> FindByUserIdAsync(Guid userId) =>
             await _context.LotteryResults
                 .Include(lr => lr.User)
                 .Include(lr => lr.Activity)
@@ -38,7 +38,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Where(a => a.User.Id == userId)
                 .ToListAsync();
 
-        public async Task<IEnumerable<Lottery>> FindByActivityIdAsync(Guid activityId) =>
+        public async Task<IEnumerable<LotteryDetail>> FindByActivityIdAsync(Guid activityId) =>
             await _context.LotteryResults
                 .Include(lr => lr.User)
                 .Include(lr => lr.Activity)

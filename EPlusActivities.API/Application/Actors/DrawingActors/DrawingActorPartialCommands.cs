@@ -19,7 +19,7 @@ namespace EPlusActivities.API.Application.Actors.DrawingActors
             #endregion
 
             #region Database operations
-            lottery = _mapper.Map<UpdateDrawingRecordCommand, Lottery>(command, lottery);
+            lottery = _mapper.Map<UpdateDrawingRecordCommand, LotteryDetail>(command, lottery);
             lottery.PickedUpTime = command.PickedUpTime; // Skip auto mapper.
             _lotteryRepository.Update(lottery);
             if (!await _lotteryRepository.SaveAsync())

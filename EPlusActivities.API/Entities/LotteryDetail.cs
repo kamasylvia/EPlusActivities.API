@@ -4,7 +4,7 @@ using EPlusActivities.API.Infrastructure.Enums;
 
 namespace EPlusActivities.API.Entities
 {
-    public class Lottery
+    public class LotteryDetail
     {
         [Key]
         public Guid? Id { get; set; }
@@ -18,7 +18,7 @@ namespace EPlusActivities.API.Entities
         // 用户是否已经领取奖品
         public bool PickedUp { get; set; }
 
-        // 用户领取奖品日期
+        // 用户领取奖品时间
         public DateTime? PickedUpTime { get; set; }
 
         // 抽奖渠道

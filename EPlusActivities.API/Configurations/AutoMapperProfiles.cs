@@ -20,12 +20,13 @@ using EPlusActivities.API.Dtos.AddressDtos;
 using EPlusActivities.API.Dtos.AttendanceDtos;
 using EPlusActivities.API.Dtos.BrandDtos;
 using EPlusActivities.API.Dtos.CategoryDtos;
-using EPlusActivities.API.Dtos.DrawingDtos;
+using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Dtos.PrizeItemDtos;
 using EPlusActivities.API.Dtos.PrizeTierDtos;
 using EPlusActivities.API.Dtos.UserDtos;
 using EPlusActivities.API.Entities;
+using EPlusActivities.API.Extensions;
 using EPlusActivities.API.Infrastructure.Enums;
 using EPlusActivities.Grpc.Messages.FileService;
 using Google.Protobuf;
@@ -39,7 +40,6 @@ namespace EPlusActivities.API.Configuration
             #region Global configurations.
             CreateMap<string, string>()
                 .ConvertUsing(s => string.IsNullOrEmpty(s) ? null : s.Trim());
-            CreateMap<DateTime, DateTime>().ConvertUsing(d => d.Date);
             #endregion
 
 
@@ -74,8 +74,8 @@ namespace EPlusActivities.API.Configuration
 
 
             #region Lottery
-            CreateMap<Lottery, DrawingDto>();
-            CreateMap<Lottery, GetLotteryDetailsResponse>()
+            CreateMap<LotteryDetail, DrawingDto>();
+            CreateMap<LotteryDetail, GetLotteryDetailsResponse>()
                 .ForMember(dest => dest.DateTime, opt => opt.Ignore())
                 .ForMember(
                     dest => dest.PhoneNumber,
@@ -94,26 +94,24 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.PrizeType,
                     opt => opt.MapFrom(src => src.PrizeItem.PrizeType)
                 );
-            CreateMap<GeneralLotteryRecords, GetLotterySummaryResponse>();
-            CreateMap<DrawCommand, Lottery>();
-            CreateMap<UpdateDrawingRecordCommand, Lottery>();
+            CreateMap<LotterySummary, GetLotterySummaryStatementResponse>();
+            CreateMap<DrawCommand, LotteryDetail>();
+            CreateMap<UpdateDrawingRecordCommand, LotteryDetail>();
             #endregion
 
             #region Statement
-            CreateMap<CreateGeneralLotteryStatementCommand, GeneralLotteryRecords>()
+            CreateMap<CreateLotterySummaryStatementCommand, LotterySummary>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore());
-            CreateMap<UpdateGeneralLotteryStatementCommand, GeneralLotteryRecords>()
+            CreateMap<UpdateLotterySummaryStatementCommand, LotterySummary>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Activity, opt => opt.Ignore())
-                .ForMember(dest => dest.Channel, opt => opt.Ignore())
-                .ForMember(dest => dest.DateTime, opt => opt.Ignore());
-            CreateMap<DrawCommand, UpdateGeneralLotteryStatementCommand>()
+                .ForMember(dest => dest.Channel, opt => opt.Ignore());
+            CreateMap<DrawCommand, UpdateLotterySummaryStatementCommand>()
                 .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => src.ChannelCode))
-                .ForMember(dest => dest.Draws, opt => opt.MapFrom(src => src.Count))
-                .ForMember(dest => dest.DateTime, opt => opt.MapFrom(src => DateTime.Today));
-            CreateMap<RedeemCommand, UpdateGeneralLotteryStatementCommand>()
+                .ForMember(dest => dest.Draws, opt => opt.MapFrom(src => src.Count));
+            CreateMap<RedeemCommand, UpdateLotterySummaryStatementCommand>()
                 .ForMember(dest => dest.Redemption, opt => opt.MapFrom(src => src.Count))
-                .ForMember(dest => dest.DateTime, opt => opt.MapFrom(src => DateTime.Today));
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Today.ToDateOnly()));
             #endregion
 
 
