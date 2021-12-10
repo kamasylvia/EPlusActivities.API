@@ -17,8 +17,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public ActivityRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.Activities
-                .AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
+            await _context.Activities.AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date) =>
             await _context.Activities

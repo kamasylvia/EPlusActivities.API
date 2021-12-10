@@ -21,11 +21,7 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
         )
         {
             services.AddDbContext<ApplicationDbContext>(
-                options =>
-                    options.UseMySql(
-                        connectionString,
-                        serverVersion
-                    )
+                options => options.UseMySql(connectionString, serverVersion)
             );
 
             // 启用 Identity 服务 添加指定的用户和角色类型的默认标识系统配置
@@ -71,20 +67,14 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                         options =>
                         {
                             options.ConfigureDbContext = builder =>
-                                builder.UseMySql(
-                                    connectionString,
-                                    serverVersion
-                                );
+                                builder.UseMySql(connectionString, serverVersion);
                         }
                     ) // this adds the operational data from DB (codes, tokens, consents)
                     .AddOperationalStore(
                         options =>
                         {
                             options.ConfigureDbContext = builder =>
-                                builder.UseMySql(
-                                    connectionString,
-                                    serverVersion
-                                );
+                                builder.UseMySql(connectionString, serverVersion);
 
                             // this enables automatic token cleanup. this is optional.
                             options.EnableTokenCleanup = true;

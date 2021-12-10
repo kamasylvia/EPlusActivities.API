@@ -27,10 +27,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(s => s.Activity)
                 .AsAsyncEnumerable()
                 .SingleOrDefaultAsync(
-                    s =>
-                        s.Activity.Id == activityId
-                        && s.Channel == channel
-                        && s.Date == date
+                    s => s.Activity.Id == activityId && s.Channel == channel && s.Date == date
                 );
 
         public async Task<IEnumerable<LotterySummary>> FindByDateRangeAsync(

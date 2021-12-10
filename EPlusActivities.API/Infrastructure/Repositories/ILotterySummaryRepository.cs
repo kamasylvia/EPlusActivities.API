@@ -16,10 +16,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateOnly? endDate
         );
 
-        Task<LotterySummary> FindByDateAsync(
-            Guid activityId,
-            ChannelCode channel,
-            DateOnly date
-        );
+        Task<LotterySummary> FindByDateAsync(Guid activityId, ChannelCode channel, DateOnly date);
     }
 }

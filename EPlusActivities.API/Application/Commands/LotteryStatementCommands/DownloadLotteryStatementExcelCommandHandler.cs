@@ -78,13 +78,14 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
                 .ToListAsync();
             #endregion
 
-            var lotterySummaryStatement = await _lotterySummaryStatementRepository.FindByDateRangeAsync(
-                activity.Id.Value,
-                request.Channel,
-                // Enum.Parse<ChannelCode>(request.Channel, true),
-                request.StartDate,
-                request.EndDate
-            );
+            var lotterySummaryStatement =
+                await _lotterySummaryStatementRepository.FindByDateRangeAsync(
+                    activity.Id.Value,
+                    request.Channel,
+                    // Enum.Parse<ChannelCode>(request.Channel, true),
+                    request.StartDate,
+                    request.EndDate
+                );
 
             var (memoryString, contentType) = _lotteryService.DownloadLotteryRecords(
                 lotterySummaryStatement,

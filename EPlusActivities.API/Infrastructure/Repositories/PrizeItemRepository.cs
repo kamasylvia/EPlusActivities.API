@@ -24,9 +24,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 );
 
         public async Task<IEnumerable<PrizeItem>> FindByNameAsync(string name) =>
-            await _context.PrizeItems
-                .Where(p => p.Name.Contains(name))
-                .ToArrayAsync();
+            await _context.PrizeItems.Where(p => p.Name.Contains(name)).ToArrayAsync();
 
         public async Task<IEnumerable<PrizeItem>> FindByPrizeTierIdAsync(Guid id) =>
             await _context.PrizeItems
@@ -36,7 +34,6 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .ToListAsync();
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.PrizeItems
-                .AnyAsync(p => p.Id == (Guid)keyValues.FirstOrDefault());
+            await _context.PrizeItems.AnyAsync(p => p.Id == (Guid)keyValues.FirstOrDefault());
     }
 }

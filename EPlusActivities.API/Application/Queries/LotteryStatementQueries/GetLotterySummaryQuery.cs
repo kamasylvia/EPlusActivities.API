@@ -9,7 +9,8 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public record GetLotterySummaryStatementQuery : IRequest<IEnumerable<GetLotterySummaryStatementResponse>>
+    public record GetLotterySummaryStatementQuery
+        : IRequest<IEnumerable<GetLotterySummaryStatementResponse>>
     {
         /// <summary>
         /// 开始日期

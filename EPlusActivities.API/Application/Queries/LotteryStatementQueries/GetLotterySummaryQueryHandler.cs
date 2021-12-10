@@ -20,7 +20,10 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
     public class GetLotterySummaryStatementQueryHandler
         : DrawingRequestHandlerBase,
-          IRequestHandler<GetLotterySummaryStatementQuery, IEnumerable<GetLotterySummaryStatementResponse>>
+          IRequestHandler<
+              GetLotterySummaryStatementQuery,
+              IEnumerable<GetLotterySummaryStatementResponse>
+          >
     {
         public GetLotterySummaryStatementQueryHandler(
             ILotteryDetailRepository lotteryRepository,
@@ -64,15 +67,18 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             {
                 throw new NotFoundException("Could not find the activity.");
             }
-            var lotterySummaryStatement = await _lotterySummaryStatementRepository.FindByDateRangeAsync(
-                activity.Id.Value,
-                request.Channel,
-                request.StartDate,
-                request.EndDate
-            );
+            var lotterySummaryStatement =
+                await _lotterySummaryStatementRepository.FindByDateRangeAsync(
+                    activity.Id.Value,
+                    request.Channel,
+                    request.StartDate,
+                    request.EndDate
+                );
             #endregion
 
-            return _mapper.Map<IEnumerable<GetLotterySummaryStatementResponse>>(lotterySummaryStatement);
+            return _mapper.Map<IEnumerable<GetLotterySummaryStatementResponse>>(
+                lotterySummaryStatement
+            );
         }
     }
 }

@@ -112,7 +112,10 @@ namespace EPlusActivities.API.Configuration
                 .ForMember(dest => dest.Draws, opt => opt.MapFrom(src => src.Count));
             CreateMap<RedeemCommand, UpdateLotterySummaryStatementCommand>()
                 .ForMember(dest => dest.Redemption, opt => opt.MapFrom(src => src.Count))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Today.ToDateOnly()));
+                .ForMember(
+                    dest => dest.Date,
+                    opt => opt.MapFrom(src => DateTime.Today.ToDateOnly())
+                );
             #endregion
 
 

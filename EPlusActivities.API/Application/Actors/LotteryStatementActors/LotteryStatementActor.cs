@@ -56,7 +56,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryStatementActors
             await this.RegisterReminderAsync(
                 "StatementGeneratorReminder",
                 null,
-                new TimeOnly(23,50) - DateTime.Now.ToTimeOnly(),
+                new TimeOnly(23, 50) - DateTime.Now.ToTimeOnly(),
                 TimeSpan.FromDays(1)
             );
 
