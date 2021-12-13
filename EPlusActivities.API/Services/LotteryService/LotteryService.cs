@@ -7,6 +7,7 @@ using AutoMapper;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Elf.WebAPI.Attributes;
 using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
@@ -18,7 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Services.LotteryService
 {
-    [CustomDependency(ServiceLifetime.Scoped)]
+    [AutomaticDependencyInjection(ServiceLifetime.Scoped)]
     public class LotteryService : ILotteryService
     {
         private readonly IConfiguration _configuration;

@@ -24,7 +24,7 @@ namespace EPlusActivities.API.Application.Commands.UserCommands
         )
         {
             await _actorProxyFactory
-                .CreateActorProxy<IUserActor>(new ActorId(command.Role), nameof(UserActor))
+                .CreateActorProxy<IUserActor>(ActorId.CreateRandom(), nameof(UserActor))
                 .CreateAdminOrManager(command);
             return Unit.Value;
         }

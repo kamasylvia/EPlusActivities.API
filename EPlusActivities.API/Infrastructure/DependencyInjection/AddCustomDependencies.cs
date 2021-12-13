@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using EPlusActivities.API.Infrastructure.Attributes;
+using Elf.WebAPI.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.DependencyInjection
@@ -32,10 +33,10 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                 .Where(
                     implementer =>
                         implementer.GetCustomAttributes(
-                            typeof(CustomDependencyAttribute),
+                            typeof(AutomaticDependencyInjectionAttribute),
                             false
                         ).Length > 0
-                        && implementer.GetCustomAttribute<CustomDependencyAttribute>().Lifetime
+                        && implementer.GetCustomAttribute<AutomaticDependencyInjectionAttribute>().Lifetime
                             == serviceLifetime
                         && implementer.IsClass
                         && !implementer.IsAbstract

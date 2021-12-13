@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dapr.Client;
+using Elf.WebAPI.Attributes;
 using EPlusActivities.API.Application.Commands.FileCommands;
 using EPlusActivities.API.Application.Queries.FileQueries;
 using EPlusActivities.API.Infrastructure.Attributes;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.FileService
 {
-    [CustomDependency(ServiceLifetime.Scoped)]
+    [AutomaticDependencyInjection(ServiceLifetime.Scoped)]
     public class FileService : IFileService
     {
         private readonly IHttpClientFactory _httpClientFactory;

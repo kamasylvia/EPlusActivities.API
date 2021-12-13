@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Elf.WebAPI.Attributes;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    [CustomDependency(ServiceLifetime.Scoped)]
+    [AutomaticDependencyInjection(ServiceLifetime.Scoped)]
     public class AddressRepository : RepositoryBase<Address>, IFindByParentIdRepository<Address>
     {
         public AddressRepository(ApplicationDbContext context) : base(context) { }

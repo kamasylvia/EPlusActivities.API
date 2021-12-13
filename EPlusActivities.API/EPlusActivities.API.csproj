@@ -66,5 +66,8 @@
 	<ItemGroup>
 		<Protobuf Include="..\SharedRescourse\Protos\**\*.proto" ProtoRoot="..\SharedRescourse\Protos\" GrpcServices="Client" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\Elf\Elf\Elf.csproj" />
+	</ItemGroup>
 	<Import Project="..\SharedRescourse\SharedRescourse.projitems" Label="Shared" Condition="Exists('..\SharedRescourse\SharedRescourse.projitems')" />
 </Project>

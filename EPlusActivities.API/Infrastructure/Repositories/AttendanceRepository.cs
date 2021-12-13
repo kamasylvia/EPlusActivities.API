@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Elf.WebAPI.Attributes;
 using EPlusActivities.API.Data;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Extensions;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Infrastructure.Repositories
 {
-    [CustomDependency(ServiceLifetime.Scoped)]
+    [AutomaticDependencyInjection(ServiceLifetime.Scoped)]
     public class AttendanceRepository : RepositoryBase<Attendance>, IAttendanceRepository
     {
         public AttendanceRepository(ApplicationDbContext context) : base(context) { }

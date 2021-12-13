@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Elf.WebAPI.Attributes;
 using EPlusActivities.API.Application.Queries.SmsQueries;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
@@ -14,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EPlusActivities.API.Services.IdentityServer
 {
-    [CustomDependency(ServiceLifetime.Scoped)]
+    [AutomaticDependencyInjection(ServiceLifetime.Scoped)]
     public class SmsService : ISmsService
     {
         private readonly IConfiguration _configuration;

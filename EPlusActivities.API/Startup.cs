@@ -3,6 +3,8 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Dapr.Actors;
 using Dapr.Actors.Client;
+using Elf.WebAPI.Extensions;
+using Elf.WebAPI.Filters;
 using EPlusActivities.API.Application.Actors.LotteryStatementActors;
 using EPlusActivities.API.Infrastructure.DependencyInjection;
 using EPlusActivities.API.Infrastructure.Filters;
@@ -37,8 +39,8 @@ namespace EPlusActivities.API
                 .AddControllers(
                     options =>
                     {
-                        options.Filters.Add<CustomExceptionFilterAttribute>();
-                        options.Filters.Add<CustomActionFilterAttribute>();
+                        options.Filters.Add<ElfExceptionFilterAttribute>();
+                        options.Filters.Add<ElfActionFilterAttribute>();
                     }
                 )
                 .AddJsonOptions(
@@ -98,7 +100,7 @@ namespace EPlusActivities.API
             services.AddAppAuthentication();
 
             // 启用自定义依赖，包括仓储和服务
-            services.AddCustomDependencies();
+            services.AddDependencies();
 
             // 启用创建短 ID 服务
             services.AddSingleton<IIdGeneratorService>(

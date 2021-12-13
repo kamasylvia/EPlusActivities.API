@@ -89,10 +89,13 @@ namespace EPlusActivities.API.Infrastructure.Filters
                                 break;
                         }
                         break;
-                    case ActorMethodInvocationException:
-                    case ActorInvokeException:
+                    case ActorMethodInvocationException ex:
                         apiResult.StatusCode = StatusCodes.Status500InternalServerError;
-                        apiResult.Errors = $"{exception.InnerException.ToString()}";
+                        apiResult.Errors = $"{ex.InnerException.ToString()}";
+                        break;
+                    case ActorInvokeException ex:
+                        apiResult.StatusCode = StatusCodes.Status500InternalServerError;
+                        apiResult.Errors = $"{ex.ActualExceptionType}";
                         break;
                     default:
                         apiResult.StatusCode = StatusCodes.Status500InternalServerError;

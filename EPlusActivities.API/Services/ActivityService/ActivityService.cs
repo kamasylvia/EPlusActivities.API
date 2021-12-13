@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Elf.WebAPI.Attributes;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
 using EPlusActivities.API.Infrastructure.Enums;
@@ -14,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.ActivityService
 {
-    [CustomDependency(ServiceLifetime.Scoped)]
+    [AutomaticDependencyInjection(ServiceLifetime.Scoped)]
     public class ActivityService : IActivityService
     {
         private readonly IActivityRepository _activityRepository;

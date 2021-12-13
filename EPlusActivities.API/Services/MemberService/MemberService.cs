@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Elf.WebAPI.Attributes;
 using EPlusActivities.API.Dtos.MemberDtos;
 using EPlusActivities.API.Entities;
 using EPlusActivities.API.Infrastructure.Attributes;
@@ -15,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EPlusActivities.API.Services.MemberService
 {
-    [CustomDependency(ServiceLifetime.Scoped)]
+    [AutomaticDependencyInjection(ServiceLifetime.Scoped)]
     public class MemberService : IMemberService
     {
         private readonly IConfiguration _configuration;
