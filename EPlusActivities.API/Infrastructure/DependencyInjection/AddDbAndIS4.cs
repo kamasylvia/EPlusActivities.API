@@ -67,30 +67,22 @@ namespace EPlusActivities.API.Infrastructure.DependencyInjection
                         options =>
                         {
                             options.ConfigureDbContext = builder =>
-<<<<<<< Updated upstream
-                                builder.UseMySql(connectionString, serverVersion);
-=======
                                 builder.UseMySql(
                                     connectionString,
                                     serverVersion,
                                     sql => sql.MigrationsAssembly(migrationsAssembly)
                                 );
->>>>>>> Stashed changes
                         }
                     ) // this adds the operational data from DB (codes, tokens, consents)
                     .AddOperationalStore(
                         options =>
                         {
                             options.ConfigureDbContext = builder =>
-<<<<<<< Updated upstream
-                                builder.UseMySql(connectionString, serverVersion);
-=======
                                 builder.UseMySql(
                                     connectionString,
                                     serverVersion,
                                     sql => sql.MigrationsAssembly(migrationsAssembly)
                                 );
->>>>>>> Stashed changes
 
                             // this enables automatic token cleanup. this is optional.
                             options.EnableTokenCleanup = true;
