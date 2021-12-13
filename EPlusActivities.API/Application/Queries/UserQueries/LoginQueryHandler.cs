@@ -18,15 +18,21 @@ namespace EPlusActivities.API.Application.Queries.UserQueries
     {
         private readonly IActorProxyFactory _actorProxyFactory;
 
-        public LoginQueryHandler(
-            IActorProxyFactory actorProxyFactory
-        )
+        public LoginQueryHandler(IActorProxyFactory actorProxyFactory)
         {
-            _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+            _actorProxyFactory =
+                actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
         }
 
-        public async Task<UserDto> Handle(LoginQuery request, CancellationToken cancellationToken) => await _actorProxyFactory
-                   .CreateActorProxy<IUserActor>(new ActorId(request.UserId.ToString() + request.ChannelCode.ToString()), nameof(UserActor))
-                   .Login(request);
+        public async Task<UserDto> Handle(
+            LoginQuery request,
+            CancellationToken cancellationToken
+        ) =>
+            await _actorProxyFactory
+                .CreateActorProxy<IUserActor>(
+                    new ActorId(request.UserId.ToString() + request.ChannelCode.ToString()),
+                    nameof(UserActor)
+                )
+                .Login(request);
     }
 }

@@ -18,15 +18,21 @@ namespace EPlusActivities.API.Application.Actors.UserActors
         private readonly IMemberService _memberService;
         private readonly IMapper _mapper;
 
-        public UserActor(ActorHost host, UserManager<ApplicationUser> userManager,IMemberService memberService,IMapper mapper) : base(host)
+        public UserActor(
+            ActorHost host,
+            UserManager<ApplicationUser> userManager,
+            IMemberService memberService,
+            IMapper mapper
+        ) : base(host)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
+            _memberService =
+                memberService ?? throw new ArgumentNullException(nameof(memberService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-       public async Task<UserDto> Login(LoginQuery request)
-       {
+        public async Task<UserDto> Login(LoginQuery request)
+        {
             #region Parameter validation
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user is null)
@@ -58,7 +64,7 @@ namespace EPlusActivities.API.Application.Actors.UserActors
             #endregion
 
             return _mapper.Map<UserDto>(user);
-       }
+        }
 
         public async Task CreateAdminOrManager(CreateAdminOrManagerCommand command)
         {
