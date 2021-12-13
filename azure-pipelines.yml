@@ -7,8 +7,8 @@ trigger:
 resources:
 - repo: self
 
-variables:
-  tag: '$(Build.BuildId)'
+pool:
+  vmImage: windows-2022
 
 stages:
   - stage: Source
@@ -16,8 +16,6 @@ stages:
     jobs:
     - job: Format_and_Publish
       displayName: Format source code and publish docker-compose required files to Azure DevOps or GitHub Release.
-      pool:
-        vmImage: windows-latest
       steps:
         # Allow scripts to access the system token
         - checkout: self

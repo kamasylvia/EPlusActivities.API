@@ -19,6 +19,7 @@
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
 		<PackageReference Include="Dapr.AspNetCore" Version="1.5.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="2.14.0" />
+		<PackageReference Include="Elf" Version="1.0.0-CI-20211213-062033" />
 		<PackageReference Include="IdentityServer4" Version="4.1.2" />
 		<PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
 		<PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
@@ -65,9 +66,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Protobuf Include="..\SharedRescourse\Protos\**\*.proto" ProtoRoot="..\SharedRescourse\Protos\" GrpcServices="Client" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Elf\Elf\Elf.csproj" />
 	</ItemGroup>
 	<Import Project="..\SharedRescourse\SharedRescourse.projitems" Label="Shared" Condition="Exists('..\SharedRescourse\SharedRescourse.projitems')" />
 </Project>
