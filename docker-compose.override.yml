@@ -10,3 +10,8 @@ services:
         build:
             context: .
             dockerfile: FileService/Dockerfile
+
+    elf:
+        build:
+            context: .
+            dockerfile: Elf/Dockerfile
