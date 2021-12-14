@@ -2,7 +2,7 @@
 
 namespace EPlusActivities.API.Dtos.LotteryStatementDtos
 {
-    public record GetLotterySummaryStatementResponse
+    public record GetLotterySummaryResponse
     {
         /// <summary>
         /// 日期

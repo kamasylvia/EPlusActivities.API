@@ -7,10 +7,16 @@ namespace EPlusActivities.API.Dtos.LotteryStatementDtos
     public record GetLotteryDetailsResponse
     {
         /// <summary>
-        /// 日期时间
+        /// 日期
         /// </summary>
         /// <value></value>
-        public DateTime? DateTime { get; set; }
+        public DateOnly? Date { get; set; }
+
+        /// <summary>
+        /// 时间
+        /// </summary>
+        /// <value></value>
+        public TimeOnly? Time { get; set; }
 
         /// <summary>
         /// 用户手机号
@@ -53,8 +59,7 @@ namespace EPlusActivities.API.Dtos.LotteryStatementDtos
         /// 奖励类型
         /// </summary>
         /// <value></value>
-        [EnumDataType(typeof(PrizeType))]
-        public PrizeType PrizeType { get; set; }
+        public string PrizeType { get; set; }
 
         /// <summary>
         /// 中奖内容

@@ -77,7 +77,8 @@ namespace EPlusActivities.API.Configuration
             #region Lottery
             CreateMap<LotteryDetail, DrawingDto>();
             CreateMap<LotteryDetail, GetLotteryDetailsResponse>()
-                .ForMember(dest => dest.DateTime, opt => opt.Ignore())
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.DateTime.ToDateOnly()))
+                .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.DateTime.ToTimeOnly()))
                 .ForMember(
                     dest => dest.PhoneNumber,
                     opt => opt.MapFrom(src => src.User.PhoneNumber)
@@ -93,9 +94,9 @@ namespace EPlusActivities.API.Configuration
                 )
                 .ForMember(
                     dest => dest.PrizeType,
-                    opt => opt.MapFrom(src => src.PrizeItem.PrizeType)
+                    opt => opt.MapFrom(src => src.PrizeItem.PrizeType.ToChinese())
                 );
-            CreateMap<LotterySummary, GetLotterySummaryStatementResponse>();
+            CreateMap<LotterySummary, GetLotterySummaryResponse>();
             CreateMap<DrawCommand, LotteryDetail>();
             CreateMap<UpdateDrawingRecordCommand, LotteryDetail>();
             #endregion

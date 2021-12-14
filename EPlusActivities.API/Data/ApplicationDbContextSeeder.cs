@@ -160,7 +160,7 @@ namespace EPlusActivities.API.Data
                 Activity = activity,
                 DateTime = DateTime.MinValue
             };
-            await context.LotteryResults.AddAsync(lottery);
+            await context.LotteryDetails.AddAsync(lottery);
             #endregion
 
             #region Seed ActivityUser
@@ -175,7 +175,7 @@ namespace EPlusActivities.API.Data
 
             #region Seed Statement
             var lotterySummaryStatement = new LotterySummary { Activity = activity };
-            await context.LotterySummaryStatement.AddAsync(lotterySummaryStatement);
+            await context.LotterySummaries.AddAsync(lotterySummaryStatement);
             #endregion
 
             #region Seed Administrator

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
-using EPlusActivities.API.Application.Commands.DrawingCommand;
+using ClosedXML.Extensions;
 using EPlusActivities.API.Application.Queries.LotteryStatementQueries;
 using EPlusActivities.API.Dtos.LotteryStatementDtos;
 using MediatR;
@@ -33,7 +33,7 @@ namespace EPlusActivities.API.Controllers
             Roles = "manager, tester"
         )]
         public async Task<
-            ActionResult<IEnumerable<GetLotterySummaryStatementResponse>>
+            ActionResult<IEnumerable<GetLotterySummaryResponse>>
         > GetGeneralRecordsAsync([FromQuery] GetLotterySummaryStatementQuery request) =>
             Ok(await _mediator.Send(request));
 
@@ -59,12 +59,8 @@ namespace EPlusActivities.API.Controllers
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
         )]
-        public async Task<IActionResult> DownloadLotteryExcelAsyncs(
-            [FromQuery] DownloadLotteryStatementExcelCommand request
-        )
-        {
-            var file = await _mediator.Send(request);
-            return File(file.FileStream, file.ContentType);
-        }
+        public async Task<HttpResponseMessage> DownloadLotteryExcelAsyncs(
+            [FromQuery] DownloadLotteryStatementQuery request
+        ) => (await _mediator.Send(request)).Deliver($"LotteryStatement-{request.StartDate}-{request.EndDate}.xlsx");
     }
 }

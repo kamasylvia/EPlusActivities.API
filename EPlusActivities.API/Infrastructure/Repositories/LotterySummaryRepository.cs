@@ -24,7 +24,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             ChannelCode channel,
             DateOnly date
         ) =>
-            await _context.LotterySummaryStatement
+            await _context.LotterySummaries
                 .Include(s => s.Activity)
                 .AsAsyncEnumerable()
                 .SingleOrDefaultAsync(
@@ -37,7 +37,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateOnly? startDate,
             DateOnly? endDate
         ) =>
-            await _context.LotterySummaryStatement
+            await _context.LotterySummaries
                 .Include(s => s.Activity)
                 .AsAsyncEnumerable()
                 .Where(

@@ -38,13 +38,13 @@ namespace EPlusActivities.API.Data
 
         public virtual DbSet<PrizeTierPrizeItem> PrizeTierPrizeItems { get; set; }
 
-        public virtual DbSet<LotteryDetail> LotteryResults { get; set; }
+        public virtual DbSet<LotteryDetail> LotteryDetails { get; set; }
 
         public virtual DbSet<Credit> Credits { get; set; }
 
         public virtual DbSet<Coupon> Coupons { get; set; }
 
-        public virtual DbSet<LotterySummary> LotterySummaryStatement { get; set; }
+        public virtual DbSet<LotterySummary> LotterySummaries { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }

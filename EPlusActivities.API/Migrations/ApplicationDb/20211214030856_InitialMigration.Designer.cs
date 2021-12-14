@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EPlusActivities.API.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211210082453_InitialMigration")]
+    [Migration("20211214030856_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -486,7 +486,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LotteryResults");
+                    b.ToTable("LotteryDetails");
                 });
 
             modelBuilder.Entity("EPlusActivities.API.Entities.LotterySummary", b =>
@@ -518,7 +518,7 @@ namespace EPlusActivities.API.Migrations.ApplicationDb
 
                     b.HasAlternateKey("ActivityId", "Channel", "Date");
 
-                    b.ToTable("LotterySummaryStatement");
+                    b.ToTable("LotterySummaries");
                 });
 
             modelBuilder.Entity("EPlusActivities.API.Entities.PrizeItem", b =>
