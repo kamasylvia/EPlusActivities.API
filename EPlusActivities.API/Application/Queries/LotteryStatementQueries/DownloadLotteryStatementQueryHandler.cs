@@ -9,7 +9,8 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public class DownloadLotteryStatementQueryHandler : IRequestHandler<DownloadLotteryStatementQuery, XLWorkbook>
+    public class DownloadLotteryStatementQueryHandler
+        : IRequestHandler<DownloadLotteryStatementQuery, XLWorkbook>
     {
         private readonly ILotteryStatementService _lotteryStatementService;
 
@@ -17,9 +18,14 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             ILotteryStatementService lotteryStatementService
         )
         {
-            _lotteryStatementService = lotteryStatementService ?? throw new ArgumentNullException(nameof(lotteryStatementService));
+            _lotteryStatementService =
+                lotteryStatementService
+                ?? throw new ArgumentNullException(nameof(lotteryStatementService));
         }
 
-        public async Task<XLWorkbook> Handle(DownloadLotteryStatementQuery request, CancellationToken cancellationToken) => await _lotteryStatementService.DownloadLotterStatementAsync(request);
+        public async Task<XLWorkbook> Handle(
+            DownloadLotteryStatementQuery request,
+            CancellationToken cancellationToken
+        ) => await _lotteryStatementService.DownloadLotterStatementAsync(request);
     }
 }

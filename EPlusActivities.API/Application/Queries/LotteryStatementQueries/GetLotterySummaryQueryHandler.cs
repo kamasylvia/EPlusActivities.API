@@ -11,11 +11,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
     public class GetLotterySummaryStatementQueryHandler
-        :
-          IRequestHandler<
-              GetLotterySummaryStatementQuery,
-              IEnumerable<GetLotterySummaryResponse>
-          >
+        : IRequestHandler<GetLotterySummaryStatementQuery, IEnumerable<GetLotterySummaryResponse>>
     {
         private readonly IActivityRepository _activityRepository;
         private readonly IMapper _mapper;
@@ -27,9 +23,12 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
             ILotterySummaryRepository lotterySummaryStatementRepository
         )
         {
-            _activityRepository = activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
+            _activityRepository =
+                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _lotterySummaryStatementRepository = lotterySummaryStatementRepository ?? throw new ArgumentNullException(nameof(lotterySummaryStatementRepository));
+            _lotterySummaryStatementRepository =
+                lotterySummaryStatementRepository
+                ?? throw new ArgumentNullException(nameof(lotterySummaryStatementRepository));
         }
 
         public async Task<IEnumerable<GetLotterySummaryResponse>> Handle(
@@ -52,9 +51,7 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
                 );
             #endregion
 
-            return _mapper.Map<IEnumerable<GetLotterySummaryResponse>>(
-                lotterySummaryStatement
-            );
+            return _mapper.Map<IEnumerable<GetLotterySummaryResponse>>(lotterySummaryStatement);
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -61,6 +61,9 @@ namespace EPlusActivities.API.Controllers
         )]
         public async Task<HttpResponseMessage> DownloadLotteryExcelAsyncs(
             [FromQuery] DownloadLotteryStatementQuery request
-        ) => (await _mediator.Send(request)).Deliver($"LotteryStatement-{request.StartDate}-{request.EndDate}.xlsx");
+        ) =>
+            (await _mediator.Send(request)).Deliver(
+                $"LotteryStatement-{request.StartDate}-{request.EndDate}.xlsx"
+            );
     }
 }

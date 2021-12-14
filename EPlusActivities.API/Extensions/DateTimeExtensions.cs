@@ -23,8 +23,6 @@ namespace EPlusActivities.API.Extensions
             dateOnly.ToDateTime(new TimeOnly());
 
         public static DateTime? ToDateTime(this DateOnly? dateOnly) =>
-            dateOnly.HasValue
-                ? dateOnly.Value.ToDateTime(new TimeOnly())
-                : null;
+            dateOnly.HasValue ? dateOnly.Value.ToDateTime(new TimeOnly()) : null;
     }
 }

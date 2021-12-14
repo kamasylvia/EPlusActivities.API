@@ -10,8 +10,7 @@ using MediatR;
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
     public class GetLotteryDetailsQueryHandler
-        :
-          IRequestHandler<GetLotteryDetailsQuery, IEnumerable<GetLotteryDetailsResponse>>
+        : IRequestHandler<GetLotteryDetailsQuery, IEnumerable<GetLotteryDetailsResponse>>
     {
         private readonly IActivityRepository _activityRepository;
         private readonly ILotteryDetailRepository _lotteryDetailRepository;
@@ -44,7 +43,8 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
                 activity.Id.Value,
                 request.Channel,
                 request.StartTime,
-                request.EndTime);
+                request.EndTime
+            );
             #endregion
 
             return _lotteryStatementService.CreateLotteryDetailStatement(lotteryDetails);

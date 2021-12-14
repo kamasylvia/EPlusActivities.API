@@ -13,9 +13,11 @@ namespace EPlusActivities.API.Infrastructure.Repositories
 
         Task<IEnumerable<LotteryDetail>> FindByActivityIdAsync(Guid activityId);
 
-       Task<IEnumerable<LotteryDetail>> FindByDateRangeAsync(Guid activityId,
+        Task<IEnumerable<LotteryDetail>> FindByDateRangeAsync(
+            Guid activityId,
             ChannelCode channel,
             DateTime? startTime,
-            DateTime? endTime);
+            DateTime? endTime
+        );
     }
 }

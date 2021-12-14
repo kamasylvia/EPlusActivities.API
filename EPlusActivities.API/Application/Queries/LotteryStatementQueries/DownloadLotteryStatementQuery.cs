@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,7 +9,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public record DownloadLotteryStatementQuery:IRequest<XLWorkbook>
+    public record DownloadLotteryStatementQuery : IRequest<XLWorkbook>
     {
         /// <summary>
         /// 开始日期
@@ -36,6 +36,5 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
         /// <value></value>
         [EnumDataType(typeof(ChannelCode))]
         public ChannelCode Channel { get; set; }
-
     }
 }

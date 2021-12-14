@@ -18,7 +18,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public LotteryDetailRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<bool> ExistsAsync(params object[] keyValues) =>
-            await _context.LotteryDetails.AnyAsync(lr => lr.Id == (Guid) keyValues.FirstOrDefault());
+            await _context.LotteryDetails.AnyAsync(lr => lr.Id == (Guid)keyValues.FirstOrDefault());
 
         public override async Task<LotteryDetail> FindByIdAsync(params object[] keyValues) =>
             await _context.LotteryDetails
@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Include(lr => lr.User)
                 .Include(lr => lr.PrizeTier)
                 .Include(lr => lr.PrizeItem)
-                .SingleOrDefaultAsync(lottery => lottery.Id == (Guid) keyValues.FirstOrDefault());
+                .SingleOrDefaultAsync(lottery => lottery.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<LotteryDetail>> FindByUserIdAsync(Guid userId) =>
             await _context.LotteryDetails
@@ -48,16 +48,22 @@ namespace EPlusActivities.API.Infrastructure.Repositories
                 .Where(a => a.Activity.Id == activityId)
                 .ToListAsync();
 
-        public async Task<IEnumerable<LotteryDetail>> FindByDateRangeAsync(Guid activityId,
+        public async Task<IEnumerable<LotteryDetail>> FindByDateRangeAsync(
+            Guid activityId,
             ChannelCode channel,
             DateTime? startTime,
             DateTime? endTime
-        ) => await _context.LotteryDetails.Include(ld => ld.Activity)
-                                          .AsAsyncEnumerable()
-                                          .Where(ld => ld.Activity.Id.Value == activityId
-                                                       && ld.ChannelCode == channel
-                                                       && !(startTime > ld.DateTime)
-                                                       && !(ld.DateTime > endTime))
-                                          .ToListAsync();
+        ) =>
+            await _context.LotteryDetails
+                .Include(ld => ld.Activity)
+                .AsAsyncEnumerable()
+                .Where(
+                    ld =>
+                        ld.Activity.Id.Value == activityId
+                        && ld.ChannelCode == channel
+                        && !(startTime > ld.DateTime)
+                        && !(ld.DateTime > endTime)
+                )
+                .ToListAsync();
     }
 }

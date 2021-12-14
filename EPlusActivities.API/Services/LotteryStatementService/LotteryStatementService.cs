@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,16 +30,22 @@ namespace EPlusActivities.API.Services.LotteryStatementService
             IConfiguration configuration,
             ILotterySummaryRepository lotterySummaryRepository,
             ILotteryDetailRepository lotteryDetailRepository,
-           IMapper mapper,
-            IActivityRepository activityRepository)
+            IMapper mapper,
+            IActivityRepository activityRepository
+        )
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _lotterySummaryRepository = lotterySummaryRepository ?? throw new ArgumentNullException(nameof(lotterySummaryRepository));
-            _lotteryDetailRepository = lotteryDetailRepository ?? throw new ArgumentNullException(nameof(lotteryDetailRepository));
+            _configuration =
+                configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _lotterySummaryRepository =
+                lotterySummaryRepository
+                ?? throw new ArgumentNullException(nameof(lotterySummaryRepository));
+            _lotteryDetailRepository =
+                lotteryDetailRepository
+                ?? throw new ArgumentNullException(nameof(lotteryDetailRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _activityRepository = activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
+            _activityRepository =
+                activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         }
-
 
         /// <summary>
         /// 管理员根据活动号查询中奖记录报表
@@ -80,7 +86,9 @@ namespace EPlusActivities.API.Services.LotteryStatementService
             return response;
         }
 
-        public async Task<XLWorkbook> DownloadLotterStatementAsync(DownloadLotteryStatementQuery request)
+        public async Task<XLWorkbook> DownloadLotterStatementAsync(
+            DownloadLotteryStatementQuery request
+        )
         {
             var activity = await _activityRepository.FindByActivityCodeAsync(request.ActivityCode);
             if (activity is null)
@@ -92,25 +100,34 @@ namespace EPlusActivities.API.Services.LotteryStatementService
                 activity.Id.Value,
                 request.Channel,
                 request.StartDate.ToDateTime(),
-                request.EndDate.ToDateTime());
+                request.EndDate.ToDateTime()
+            );
             var lotterySummaries = await _lotterySummaryRepository.FindByDateRangeAsync(
                 activity.Id.Value,
                 request.Channel,
                 request.StartDate,
-                request.EndDate);
+                request.EndDate
+            );
 
-            using var workbook = XLWorkbook.OpenFromTemplate(_configuration["LotteryStatementTemplatePath"]);
+            using var workbook = XLWorkbook.OpenFromTemplate(
+                _configuration["LotteryStatementTemplatePath"]
+            );
             FillLotterySummaryStatement(
                 workbook.Worksheet(1),
-                _mapper.Map<IEnumerable<GetLotterySummaryResponse>>(lotterySummaries));
+                _mapper.Map<IEnumerable<GetLotterySummaryResponse>>(lotterySummaries)
+            );
             FillLotteryDetailStatement(
                 workbook.Worksheet(2),
-                CreateLotteryDetailStatement(lotteryDetails));
+                CreateLotteryDetailStatement(lotteryDetails)
+            );
 
             return workbook;
         }
 
-        private void FillLotterySummaryStatement(IXLWorksheet worksheet, IEnumerable<GetLotterySummaryResponse> data)
+        private void FillLotterySummaryStatement(
+            IXLWorksheet worksheet,
+            IEnumerable<GetLotterySummaryResponse> data
+        )
         {
             for (int i = 0; i < data.Count(); i++)
             {
@@ -121,7 +138,10 @@ namespace EPlusActivities.API.Services.LotteryStatementService
             }
         }
 
-        private void FillLotteryDetailStatement(IXLWorksheet worksheet, IEnumerable<GetLotteryDetailsResponse> data)
+        private void FillLotteryDetailStatement(
+            IXLWorksheet worksheet,
+            IEnumerable<GetLotteryDetailsResponse> data
+        )
         {
             for (int i = 0; i < data.Count(); i++)
             {
