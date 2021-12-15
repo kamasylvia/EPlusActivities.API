@@ -21,7 +21,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Activities.AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date) =>
-            await _context.Activities.AsAsyncEnumerable()
+            await _context.Activities
+                .AsAsyncEnumerable()
                 .Where(a => !(a.StartTime > date) && !(date > a.EndTime))
                 .ToListAsync();
 
@@ -29,7 +30,8 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateTime startTime,
             DateTime? endTime
         ) =>
-            await _context.Activities.AsAsyncEnumerable()
+            await _context.Activities
+                .AsAsyncEnumerable()
                 .Where(a => startTime <= a.StartTime && !(a.EndTime > endTime))
                 .ToListAsync();
 
