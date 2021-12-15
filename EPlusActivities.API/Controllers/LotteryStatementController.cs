@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EPlusActivities.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("choujiang/api/[controller]")]
     public class LotteryStatementController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,7 +27,7 @@ namespace EPlusActivities.API.Controllers
         /// 根据活动号和日期查询抽奖数、中奖数、兑换数
         /// </summary>
         /// <returns></returns>
-        [HttpGet("summary")]
+        [HttpGet("summaries")]
         [Authorize(
             AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
             Roles = "manager, tester"
