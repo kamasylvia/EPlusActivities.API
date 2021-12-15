@@ -146,10 +146,10 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
             activityUser.RemainingDraws -= command.Count;
             activityUser.TodayUsedDraws += command.Count;
             activityUser.UsedDraws += command.Count;
-            var updateGeneralLotteryStatementCommand =
+            var updateLotterySummaryStatementCommand =
                 _mapper.Map<UpdateLotterySummaryStatementCommand>(command);
-            await _mediator.Publish(updateGeneralLotteryStatementCommand);
-            updateGeneralLotteryStatementCommand.Draws = 0;
+            await _mediator.Publish(updateLotterySummaryStatementCommand);
+            updateLotterySummaryStatementCommand.Draws = 0;
             #endregion
 
             #region Generate the lottery result
@@ -170,7 +170,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
                 if (lottery.PrizeTier is not null)
                 {
                     lottery.IsLucky = true;
-                    updateGeneralLotteryStatementCommand.Winners++;
+                    updateLotterySummaryStatementCommand.Winners++;
 
                     switch (lottery.PrizeItem.PrizeType)
                     {
@@ -251,7 +251,7 @@ namespace EPlusActivities.API.Application.Commands.DrawingCommand
                 throw new DatabaseUpdateException("Update database exception");
             }
 
-            await _mediator.Publish(updateGeneralLotteryStatementCommand);
+            await _mediator.Publish(updateLotterySummaryStatementCommand);
             #endregion
 
             return _mapper.Map<IEnumerable<DrawingDto>>(lotteryDetailStatement);

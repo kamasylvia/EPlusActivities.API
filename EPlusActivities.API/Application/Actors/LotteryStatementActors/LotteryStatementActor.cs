@@ -78,7 +78,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryStatementActors
                         {
                             ActivityId = activity.Id.Value,
                             Channel = channel,
-                            DateOnly = DateTime.Today.ToDateOnly()
+                            Date = DateTime.Today
                         }
                     );
                 }
@@ -92,7 +92,7 @@ namespace EPlusActivities.API.Application.Actors.LotteryStatementActors
             var statement = await _lotterySummaryStatementRepository.FindByDateAsync(
                 command.ActivityId,
                 command.Channel,
-                command.Date
+                command.Date.ToDateOnly()
             );
 
             statement.Draws += command.Draws;

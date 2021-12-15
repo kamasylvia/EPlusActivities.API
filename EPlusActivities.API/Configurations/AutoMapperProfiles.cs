@@ -112,19 +112,25 @@ namespace EPlusActivities.API.Configuration
                 );
             ;
             CreateMap<CreateLotterySummaryStatementCommand, LotterySummary>()
-                .ForMember(dest => dest.Activity, opt => opt.Ignore());
+                .ForMember(dest => dest.Activity, opt => opt.Ignore())
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToDateOnly()));
             CreateMap<UpdateLotterySummaryStatementCommand, LotterySummary>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Activity, opt => opt.Ignore())
-                .ForMember(dest => dest.Channel, opt => opt.Ignore());
+                .ForMember(dest => dest.Channel, opt => opt.Ignore())
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToDateOnly()));
             CreateMap<DrawCommand, UpdateLotterySummaryStatementCommand>()
                 .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => src.ChannelCode))
-                .ForMember(dest => dest.Draws, opt => opt.MapFrom(src => src.Count));
+                .ForMember(dest => dest.Draws, opt => opt.MapFrom(src => src.Count))
+                .ForMember(
+                    dest => dest.Date,
+                    opt => opt.MapFrom(src => DateTime.Today)
+                );
             CreateMap<RedeemCommand, UpdateLotterySummaryStatementCommand>()
                 .ForMember(dest => dest.Redemption, opt => opt.MapFrom(src => src.Count))
                 .ForMember(
                     dest => dest.Date,
-                    opt => opt.MapFrom(src => DateTime.Today.ToDateOnly())
+                    opt => opt.MapFrom(src => DateTime.Today)
                 );
             #endregion
 

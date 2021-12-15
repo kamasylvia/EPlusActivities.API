@@ -32,7 +32,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryStatementCommands
                     new ActorId(
                         notification.ActivityId
                             + notification.Channel.ToString()
-                            + notification.Date.ToDateTime().ToOADate()
+                            + notification.Date.ToOADate()
                     ),
                     nameof(LotteryStatementActor)
                 )

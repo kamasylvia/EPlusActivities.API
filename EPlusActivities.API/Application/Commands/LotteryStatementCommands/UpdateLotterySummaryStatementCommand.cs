@@ -14,7 +14,7 @@ namespace EPlusActivities.API.Application.Commands.LotteryStatementCommands
 
         public ChannelCode Channel { get; set; }
 
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
 
         public int Draws { get; set; }
 

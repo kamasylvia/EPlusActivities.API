@@ -107,7 +107,7 @@ namespace EPlusActivities.API.Application.Actors.ActivityActors
                     {
                         ActivityId = activity.Id.Value,
                         Channel = channel,
-                        DateOnly = DateTime.Today.ToDateOnly()
+                        Date = DateTime.Today
                     }
                 );
             }

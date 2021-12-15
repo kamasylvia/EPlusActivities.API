@@ -1988,7 +1988,7 @@
           }
         }
       },
-      "/api/LotteryStatement/summary": {
+      "/choujiang/api/LotteryStatement/summaries": {
         "get": {
           "tags": [
             "LotteryStatement"
@@ -2115,7 +2115,7 @@
                   "schema": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/GetLotterySummaryStatementResponse"
+                      "$ref": "#/components/schemas/GetLotterySummaryResponse"
                     }
                   }
                 },
@@ -2123,7 +2123,7 @@
                   "schema": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/GetLotterySummaryStatementResponse"
+                      "$ref": "#/components/schemas/GetLotterySummaryResponse"
                     }
                   }
                 },
@@ -2131,7 +2131,7 @@
                   "schema": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/GetLotterySummaryStatementResponse"
+                      "$ref": "#/components/schemas/GetLotterySummaryResponse"
                     }
                   }
                 }
@@ -2140,7 +2140,7 @@
           }
         }
       },
-      "/api/LotteryStatement/details": {
+      "/choujiang/api/LotteryStatement/details": {
         "get": {
           "tags": [
             "LotteryStatement"
@@ -2208,7 +2208,7 @@
           }
         }
       },
-      "/api/LotteryStatement/excel": {
+      "/choujiang/api/LotteryStatement/excel": {
         "get": {
           "tags": [
             "LotteryStatement"
@@ -2310,15 +2310,6 @@
               }
             },
             {
-              "name": "Channel",
-              "in": "query",
-              "description": "渠道",
-              "required": true,
-              "schema": {
-                "$ref": "#/components/schemas/ChannelCode"
-              }
-            },
-            {
               "name": "ActivityCode",
               "in": "query",
               "description": "活动号",
@@ -2326,11 +2317,36 @@
               "schema": {
                 "type": "string"
               }
+            },
+            {
+              "name": "Channel",
+              "in": "query",
+              "description": "渠道号",
+              "schema": {
+                "$ref": "#/components/schemas/ChannelCode"
+              }
             }
           ],
           "responses": {
             "200": {
-              "description": "Success"
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HttpResponseMessage"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HttpResponseMessage"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HttpResponseMessage"
+                  }
+                }
+              }
             }
           }
         }
@@ -3988,10 +4004,14 @@
           "type": "object",
           "properties": {
             "date": {
-              "$ref": "#/components/schemas/DateOnly"
+              "type": "string",
+              "description": "日期",
+              "nullable": true
             },
             "time": {
-              "$ref": "#/components/schemas/TimeOnly"
+              "type": "string",
+              "description": "时间",
+              "nullable": true
             },
             "phoneNumber": {
               "type": "string",
@@ -4022,7 +4042,9 @@
               "nullable": true
             },
             "prizeType": {
-              "$ref": "#/components/schemas/PrizeType"
+              "type": "string",
+              "description": "奖励类型",
+              "nullable": true
             },
             "prizeContent": {
               "type": "string",
@@ -4037,11 +4059,13 @@
           },
           "additionalProperties": false
         },
-        "GetLotterySummaryStatementResponse": {
+        "GetLotterySummaryResponse": {
           "type": "object",
           "properties": {
             "date": {
-              "$ref": "#/components/schemas/DateOnly"
+              "type": "string",
+              "description": "日期",
+              "nullable": true
             },
             "draws": {
               "type": "integer",
@@ -4075,6 +4099,190 @@
             }
           },
           "additionalProperties": false
+        },
+        "HttpContent": {
+          "type": "object",
+          "properties": {
+            "headers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/StringStringIEnumerableKeyValuePair"
+              },
+              "nullable": true,
+              "readOnly": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "HttpMethod": {
+          "type": "object",
+          "properties": {
+            "method": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "HttpRequestMessage": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "$ref": "#/components/schemas/Version"
+            },
+            "versionPolicy": {
+              "$ref": "#/components/schemas/HttpVersionPolicy"
+            },
+            "content": {
+              "$ref": "#/components/schemas/HttpContent"
+            },
+            "method": {
+              "$ref": "#/components/schemas/HttpMethod"
+            },
+            "requestUri": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true
+            },
+            "headers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/StringStringIEnumerableKeyValuePair"
+              },
+              "nullable": true,
+              "readOnly": true
+            },
+            "properties": {
+              "type": "object",
+              "additionalProperties": { },
+              "nullable": true,
+              "readOnly": true,
+              "deprecated": true
+            },
+            "options": {
+              "type": "object",
+              "additionalProperties": { },
+              "nullable": true,
+              "readOnly": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "HttpResponseMessage": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "$ref": "#/components/schemas/Version"
+            },
+            "content": {
+              "$ref": "#/components/schemas/HttpContent"
+            },
+            "statusCode": {
+              "$ref": "#/components/schemas/HttpStatusCode"
+            },
+            "reasonPhrase": {
+              "type": "string",
+              "nullable": true
+            },
+            "headers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/StringStringIEnumerableKeyValuePair"
+              },
+              "nullable": true,
+              "readOnly": true
+            },
+            "trailingHeaders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/StringStringIEnumerableKeyValuePair"
+              },
+              "nullable": true,
+              "readOnly": true
+            },
+            "requestMessage": {
+              "$ref": "#/components/schemas/HttpRequestMessage"
+            },
+            "isSuccessStatusCode": {
+              "type": "boolean",
+              "readOnly": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "HttpStatusCode": {
+          "enum": [
+            "Continue",
+            "SwitchingProtocols",
+            "Processing",
+            "EarlyHints",
+            "OK",
+            "Created",
+            "Accepted",
+            "NonAuthoritativeInformation",
+            "NoContent",
+            "ResetContent",
+            "PartialContent",
+            "MultiStatus",
+            "AlreadyReported",
+            "IMUsed",
+            "MultipleChoices",
+            "MovedPermanently",
+            "Found",
+            "SeeOther",
+            "NotModified",
+            "UseProxy",
+            "Unused",
+            "TemporaryRedirect",
+            "PermanentRedirect",
+            "BadRequest",
+            "Unauthorized",
+            "PaymentRequired",
+            "Forbidden",
+            "NotFound",
+            "MethodNotAllowed",
+            "NotAcceptable",
+            "ProxyAuthenticationRequired",
+            "RequestTimeout",
+            "Conflict",
+            "Gone",
+            "LengthRequired",
+            "PreconditionFailed",
+            "RequestEntityTooLarge",
+            "RequestUriTooLong",
+            "UnsupportedMediaType",
+            "RequestedRangeNotSatisfiable",
+            "ExpectationFailed",
+            "MisdirectedRequest",
+            "UnprocessableEntity",
+            "Locked",
+            "FailedDependency",
+            "UpgradeRequired",
+            "PreconditionRequired",
+            "TooManyRequests",
+            "RequestHeaderFieldsTooLarge",
+            "UnavailableForLegalReasons",
+            "InternalServerError",
+            "NotImplemented",
+            "BadGateway",
+            "ServiceUnavailable",
+            "GatewayTimeout",
+            "HttpVersionNotSupported",
+            "VariantAlsoNegotiates",
+            "InsufficientStorage",
+            "LoopDetected",
+            "NotExtended",
+            "NetworkAuthenticationRequired"
+          ],
+          "type": "string"
+        },
+        "HttpVersionPolicy": {
+          "enum": [
+            "RequestVersionOrLower",
+            "RequestVersionOrHigher",
+            "RequestVersionExact"
+          ],
+          "type": "string"
         },
         "LotteryDisplay": {
           "enum": [
@@ -4234,28 +4442,19 @@
           },
           "additionalProperties": false
         },
-        "TimeOnly": {
+        "StringStringIEnumerableKeyValuePair": {
           "type": "object",
           "properties": {
-            "hour": {
-              "type": "integer",
-              "format": "int32"
+            "key": {
+              "type": "string",
+              "nullable": true
             },
-            "minute": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "second": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "millisecond": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "ticks": {
-              "type": "integer",
-              "format": "int64"
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
             }
           },
           "additionalProperties": false
@@ -4614,6 +4813,38 @@
               "type": "integer",
               "description": "积分",
               "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Version": {
+          "type": "object",
+          "properties": {
+            "major": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "minor": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "build": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "revision": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "majorRevision": {
+              "type": "integer",
+              "format": "int32",
+              "readOnly": true
+            },
+            "minorRevision": {
+              "type": "integer",
+              "format": "int32",
+              "readOnly": true
             }
           },
           "additionalProperties": false
