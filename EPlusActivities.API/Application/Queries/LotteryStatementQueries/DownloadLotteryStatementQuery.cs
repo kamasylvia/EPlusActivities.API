@@ -9,7 +9,7 @@ using MediatR;
 
 namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
 {
-    public record DownloadLotteryStatementQuery : IRequest<(MemoryStream,string)>
+    public record DownloadLotteryStatementQuery : IRequest<(MemoryStream, string)>
     {
         /// <summary>
         /// 开始日期

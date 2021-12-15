@@ -128,18 +128,14 @@ namespace EPlusActivities.API.Services.LotteryStatementService
 
         #region OpenXML
         private void FillLotterySummaryStatement(
-           Worksheet worksheet,
+            Worksheet worksheet,
             IEnumerable<GetLotterySummaryResponse> data
-        )
-        {
-        }
+        ) { }
 
         private void FillLotteryDetailStatement(
-           Worksheet worksheet,
+            Worksheet worksheet,
             IEnumerable<GetLotteryDetailsResponse> data
-        )
-        {
-        }
+        ) { }
         #endregion
     }
 }

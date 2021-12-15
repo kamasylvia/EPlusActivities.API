@@ -26,7 +26,6 @@ namespace EPlusActivities.API.Application.Queries.LotteryStatementQueries
         public async Task<(MemoryStream, string)> Handle(
             DownloadLotteryStatementQuery request,
             CancellationToken cancellationToken
-        ) =>
-        await _lotteryStatementService.DownloadLotterStatementAsync(request);
+        ) => await _lotteryStatementService.DownloadLotterStatementAsync(request);
     }
 }
