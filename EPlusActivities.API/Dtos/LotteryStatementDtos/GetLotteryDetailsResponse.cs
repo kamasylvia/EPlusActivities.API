@@ -10,13 +10,13 @@ namespace EPlusActivities.API.Dtos.LotteryStatementDtos
         /// 日期
         /// </summary>
         /// <value></value>
-        public DateOnly? Date { get; set; }
+        public string Date { get; set; }
 
         /// <summary>
         /// 时间
         /// </summary>
         /// <value></value>
-        public TimeOnly? Time { get; set; }
+        public string Time { get; set; }
 
         /// <summary>
         /// 用户手机号

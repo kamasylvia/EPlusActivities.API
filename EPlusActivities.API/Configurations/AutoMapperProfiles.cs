@@ -72,13 +72,11 @@ namespace EPlusActivities.API.Configuration
                 .ForMember(dest => dest.User, opt => opt.Ignore());
             #endregion
 
-
-
             #region Lottery
             CreateMap<LotteryDetail, DrawingDto>();
             CreateMap<LotteryDetail, GetLotteryDetailsResponse>()
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.DateTime.ToDateOnly()))
-                .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.DateTime.ToTimeOnly()))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.DateTime.Value.ToShortDateString()))
+                .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.DateTime.Value.ToLongTimeString()))
                 .ForMember(
                     dest => dest.PhoneNumber,
                     opt => opt.MapFrom(src => src.User.PhoneNumber)
