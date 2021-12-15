@@ -23,7 +23,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Brands.AnyAsync(b => b.Name == name);
 
         public async Task<IEnumerable<Brand>> FindByContainedNameAsync(string name) =>
-            await _context.Brands.Where(p => p.Name.Contains(name)).ToListAsync();
+            await _context.Brands.AsAsyncEnumerable().Where(p => p.Name.Contains(name)).ToListAsync();
 
         public async Task<Brand> FindByNameAsync(string name) =>
             await _context.Brands.Where(p => p.Name == name).SingleOrDefaultAsync();

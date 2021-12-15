@@ -30,7 +30,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
         public async Task<IEnumerable<PrizeItem>> FindByPrizeTierIdAsync(Guid id) =>
             await _context.PrizeItems
                 .Include(pi => pi.PrizeTierPrizeItems)
-                .ThenInclude(ptpi => ptpi.PrizeTier)
+                .ThenInclude(ptpi => ptpi.PrizeTier).AsAsyncEnumerable()
                 .Where(pt => pt.PrizeTierPrizeItems.Any(ptpi => ptpi.PrizeTier.Id == id))
                 .ToListAsync();
 

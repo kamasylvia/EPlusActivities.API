@@ -66,12 +66,11 @@ namespace EPlusActivities.API.Services.ActivityService
             DateTime? endTime = null
         )
         {
-            var result = new List<Activity>();
             var activitiesAtStartTime = await _activityRepository.FindAvailableActivitiesAsync(
                 startTime
             );
             var activitiesAtEndTime = await _activityRepository.FindAvailableActivitiesAsync(
-                endTime ?? DateTime.Now.Date
+                endTime ?? DateTime.Today
             );
 
             return activitiesAtStartTime
@@ -142,9 +141,8 @@ namespace EPlusActivities.API.Services.ActivityService
             }
 
             await _activityUserRepository.AddRangeAsync(result);
-            var dbResult = await _activityUserRepository.SaveAsync();
 
-            if (!dbResult)
+            if (!await _activityUserRepository.SaveAsync())
             {
                 _logger.LogError("绑定用户和活动失败。");
             }

@@ -21,15 +21,15 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Activities.AnyAsync(a => a.Id == (Guid)keyValues.FirstOrDefault());
 
         public async Task<IEnumerable<Activity>> FindAvailableActivitiesAsync(DateTime date) =>
-            await _context.Activities
-                .Where(a => a.StartTime <= date && (!a.EndTime.HasValue || date <= a.EndTime.Value))
+            await _context.Activities.AsAsyncEnumerable()
+                .Where(a => !(a.StartTime > date) && !(date > a.EndTime))
                 .ToListAsync();
 
         public async Task<IEnumerable<Activity>> FindActivitiesAsync(
             DateTime startTime,
             DateTime? endTime
         ) =>
-            await _context.Activities
+            await _context.Activities.AsAsyncEnumerable()
                 .Where(a => startTime <= a.StartTime && !(a.EndTime > endTime))
                 .ToListAsync();
 

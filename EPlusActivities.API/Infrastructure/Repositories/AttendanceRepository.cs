@@ -26,7 +26,7 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateTime startDate,
             DateTime? endDate
         ) =>
-            await _context.AttendanceRecord
+            await _context.AttendanceRecord.AsAsyncEnumerable()
                 .Where(
                     a =>
                         a.User.Id == userId

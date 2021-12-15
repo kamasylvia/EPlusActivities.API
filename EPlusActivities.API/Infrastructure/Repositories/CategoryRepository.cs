@@ -23,9 +23,9 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             await _context.Categories.AnyAsync(c => c.Name == name);
 
         public async Task<IEnumerable<Category>> FindByContainedNameAsync(string name) =>
-            await _context.Categories.Where(c => c.Name.Contains(name)).ToListAsync();
+            await _context.Categories.AsAsyncEnumerable().Where(c => c.Name.Contains(name)).ToListAsync();
 
         public async Task<Category> FindByNameAsync(string name) =>
-            await _context.Categories.Where(c => c.Name == name).SingleOrDefaultAsync();
+            await _context.Categories.AsAsyncEnumerable().Where(c => c.Name == name).SingleOrDefaultAsync();
     }
 }
