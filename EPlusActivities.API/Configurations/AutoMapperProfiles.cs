@@ -106,8 +106,11 @@ namespace EPlusActivities.API.Configuration
 
             #region Statement
             CreateMap<LotterySummary, GetLotterySummaryResponse>()
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToShortDateString()));
-                ;
+                .ForMember(
+                    dest => dest.Date,
+                    opt => opt.MapFrom(src => src.Date.ToShortDateString())
+                );
+            ;
             CreateMap<CreateLotterySummaryStatementCommand, LotterySummary>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore());
             CreateMap<UpdateLotterySummaryStatementCommand, LotterySummary>()
