@@ -55,7 +55,10 @@ namespace EPlusActivities.API.Infrastructure.Repositories
             DateTime? endTime
         ) =>
             await _context.LotteryDetails
-                .Include(ld => ld.Activity)
+                .Include(lr => lr.User)
+                .Include(lr => lr.Activity)
+                .Include(lr => lr.PrizeTier)
+                .Include(lr => lr.PrizeItem)
                 .AsAsyncEnumerable()
                 .Where(
                     ld =>
