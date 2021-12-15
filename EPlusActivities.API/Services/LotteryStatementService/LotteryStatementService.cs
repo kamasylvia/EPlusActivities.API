@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Elf.WebAPI.Attributes;
 using Elf.WebAPI.Exceptions;
 using EPlusActivities.API.Application.Commands.DrawingCommand;
@@ -86,7 +88,7 @@ namespace EPlusActivities.API.Services.LotteryStatementService
             return response;
         }
 
-        public async Task<XLWorkbook> DownloadLotterStatementAsync(
+        public async Task<(MemoryStream, string)> DownloadLotterStatementAsync(
             DownloadLotteryStatementQuery request
         )
         {
@@ -109,53 +111,35 @@ namespace EPlusActivities.API.Services.LotteryStatementService
                 request.EndDate
             );
 
-            using var workbook = XLWorkbook.OpenFromTemplate(
+            #region OpenXML
+            var memoryStream = new MemoryStream();
+            using var spreadsheetDocument = SpreadsheetDocument.CreateFromTemplate(
                 _configuration["LotteryStatementTemplatePath"]
             );
-            FillLotterySummaryStatement(
-                workbook.Worksheet(1),
-                _mapper.Map<IEnumerable<GetLotterySummaryResponse>>(lotterySummaries)
-            );
-            FillLotteryDetailStatement(
-                workbook.Worksheet(2),
-                CreateLotteryDetailStatement(lotteryDetails)
-            );
+            // FillLotterySummaryStatement();
+            // FillLotteryDetailStatement();
 
-            return workbook;
+            spreadsheetDocument.Clone(memoryStream);
+            memoryStream.Position = 0;
+            #endregion
+
+            return (memoryStream, spreadsheetDocument.RootPart.ContentType);
         }
 
+        #region OpenXML
         private void FillLotterySummaryStatement(
-            IXLWorksheet worksheet,
+           Worksheet worksheet,
             IEnumerable<GetLotterySummaryResponse> data
         )
         {
-            for (int i = 0; i < data.Count(); i++)
-            {
-                worksheet.Cell(i + 3, 1).Value = data.ElementAt(i).Date;
-                worksheet.Cell(i + 3, 2).Value = data.ElementAt(i).Draws;
-                worksheet.Cell(i + 3, 3).Value = data.ElementAt(i).Winners;
-                worksheet.Cell(i + 3, 4).Value = data.ElementAt(i).Redemption;
-            }
         }
 
         private void FillLotteryDetailStatement(
-            IXLWorksheet worksheet,
+           Worksheet worksheet,
             IEnumerable<GetLotteryDetailsResponse> data
         )
         {
-            for (int i = 0; i < data.Count(); i++)
-            {
-                worksheet.Cell(i + 3, 1).Value = data.ElementAt(i).Date;
-                worksheet.Cell(i + 3, 2).Value = data.ElementAt(i).Time;
-                worksheet.Cell(i + 3, 3).Value = data.ElementAt(i).PhoneNumber;
-                worksheet.Cell(i + 3, 4).Value = data.ElementAt(i).ChannelCode.ToString();
-                worksheet.Cell(i + 3, 5).Value = data.ElementAt(i).ActivityCode;
-                worksheet.Cell(i + 3, 6).Value = data.ElementAt(i).UserId;
-                worksheet.Cell(i + 3, 7).Value = data.ElementAt(i).PrizeTierName;
-                worksheet.Cell(i + 3, 8).Value = data.ElementAt(i).PrizeType.ToString();
-                worksheet.Cell(i + 3, 9).Value = data.ElementAt(i).PrizeContent;
-                worksheet.Cell(i + 3, 10).Value = data.ElementAt(i).UsedCredit;
-            }
         }
+        #endregion
     }
 }

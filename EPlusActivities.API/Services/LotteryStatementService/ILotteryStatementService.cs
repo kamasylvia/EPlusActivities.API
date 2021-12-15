@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using ClosedXML.Excel;
 using EPlusActivities.API.Application.Commands.DrawingCommand;
 using EPlusActivities.API.Application.Queries.LotteryStatementQueries;
 using EPlusActivities.API.Dtos.LotteryStatementDtos;
@@ -12,7 +12,10 @@ namespace EPlusActivities.API.Services.LotteryStatementService
 {
     public interface ILotteryStatementService
     {
-        Task<XLWorkbook> DownloadLotterStatementAsync(DownloadLotteryStatementQuery request);
+        Task<(MemoryStream, string)> DownloadLotterStatementAsync(
+            DownloadLotteryStatementQuery request
+        );
+
         IEnumerable<GetLotteryDetailsResponse> CreateLotteryDetailStatement(
             IEnumerable<LotteryDetail> lotteryDetails
         );
