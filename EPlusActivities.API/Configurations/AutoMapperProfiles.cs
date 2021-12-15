@@ -100,12 +100,14 @@ namespace EPlusActivities.API.Configuration
                     dest => dest.PrizeType,
                     opt => opt.MapFrom(src => src.PrizeItem.PrizeType.ToChinese())
                 );
-            CreateMap<LotterySummary, GetLotterySummaryResponse>();
             CreateMap<DrawCommand, LotteryDetail>();
             CreateMap<UpdateDrawingRecordCommand, LotteryDetail>();
             #endregion
 
             #region Statement
+            CreateMap<LotterySummary, GetLotterySummaryResponse>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToShortDateString()));
+                ;
             CreateMap<CreateLotterySummaryStatementCommand, LotterySummary>()
                 .ForMember(dest => dest.Activity, opt => opt.Ignore());
             CreateMap<UpdateLotterySummaryStatementCommand, LotterySummary>()

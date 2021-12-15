@@ -8,7 +8,7 @@ namespace EPlusActivities.API.Dtos.LotteryStatementDtos
         /// 日期
         /// </summary>
         /// <value></value>
-        public DateOnly Date { get; set; }
+        public string Date { get; set; }
 
         /// <summary>
         /// 抽奖总数
