@@ -47,7 +47,7 @@
 		<PackageReference Include="System.Linq.Async.Queryable" Version="5.1.0"/>
 		<PackageReference Include="Yitter.IdGenerator" Version="1.0.12"/>
 		<PackageReference Include="Grpc.AspNetCore" Version="2.41.0"/>
-		<PackageReference Include="Grpc.Net.Client" Version="2.41.0"/>
+		<PackageReference Include="Grpc.Net.Client" Version="2.52.0"/>
 		<PackageReference Include="Grpc.Tools" Version="2.42.0">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
